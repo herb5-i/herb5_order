@@ -100,7 +100,7 @@ async function orders(env, q) {
   for (let offset = 0; offset <= 15000; offset += 1000) {
     const u = new URL(base(env) + '/admin/orders');
     u.searchParams.set('date_type', 'pay_date'); u.searchParams.set('start_date', day(from)); u.searchParams.set('end_date', day(to));
-    u.searchParams.set('embed', 'items,receivers'); u.searchParams.set('limit', '1000'); u.searchParams.set('offset', String(offset));
+    u.searchParams.set('embed', 'items,receivers,buyer'); u.searchParams.set('limit', '1000'); u.searchParams.set('offset', String(offset));
     const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 주문을 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
@@ -108,11 +108,13 @@ async function orders(env, q) {
     list.forEach(o => {
       if (o.paid !== 'T' || o.canceled === 'T' || !o.payment_date) return;
       const t = kst(o.payment_date); if (t < from || t >= to) return;
-      const rc = (o.receivers || [])[0] || {};
+      const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
       out.push({
         order_id: o.order_id, order_date: o.order_date, payment_date: o.payment_date,
+        payment_method: o.payment_method || [], payment_method_name: o.payment_method_name || [], order_place_id: o.order_place_id || '',
+        buyer: { name: by.name || '', phone: by.phone || '', cellphone: by.cellphone || '', zipcode: by.buyer_zipcode || '', address1: by.buyer_address1 || '', address2: by.buyer_address2 || '' },
         receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '', shipping_message: rc.shipping_message || '' },
-        items: (o.items || []).filter(i => !/^[CR]/.test(i.order_status || '')).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, order_status: i.order_status || '' }))
+        items: (o.items || []).filter(i => !/^[CR]/.test(i.order_status || '')).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, custom_variant_code: i.custom_variant_code || '', option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, order_status: i.order_status || '' }))
       });
     });
     if (list.length < 1000) break;

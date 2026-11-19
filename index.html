@@ -5219,14 +5219,21 @@ async function c24Status() {
   try { const d = await c24Call('/status'); st.className = 'c24st ' + (d.connected ? 'on' : 'off'); st.textContent = d.connected ? '연결됨 · ' + d.mall : '연결 필요'; }
   catch (e) { st.className = 'c24st off'; st.textContent = '연결 확인 실패'; st.title = e.message; }
 }
-function c24Rows(list, dayIso) {   // 카페24 엑셀과 같은 모양으로 바꿔요
-  const H = ['쇼핑몰', '쇼핑몰번호', '주문번호', '품목별 주문번호', '발주일', '주문상품명', '옵션', '판매가', '수량', '수령인', '우편번호', '주소', '수령지전화', '전화번호', '핸드폰', '비고', '옵션추가 가격'];
-  const [y, m, d] = dayIso.split('-').map(Number), D = new Date(y, m - 1, d), rows = [H];
-  list.slice().sort((a, b) => String(a.payment_date).localeCompare(String(b.payment_date))).forEach(o => {
-    const rc = o.receiver || {};
+const C24_PAY = { card: '신용카드', credit: '선불금', prepaid: '선불금', cash: '무통장입금', tcash: '계좌이체', icash: '가상계좌', cell: '휴대폰', mileage: '적립금', point: '적립금', deferpay: '후불' };
+function c24Pay(o) {   // 카페24 엑셀의 [결제수단]처럼 적어요 (네이버페이 같은 외부 결제는 '기타')
+  if (o.order_place_id && o.order_place_id !== 'self' && !/^cafe24/i.test(o.order_place_id)) return '기타';
+  const m = (o.payment_method || []).map(k => C24_PAY[k]).filter(Boolean);
+  return m.length ? [...new Set(m)].join(',') : ((o.payment_method || []).length ? '기타' : null);
+}
+function c24Rows(list, dayIso) {   // 카페24 엑셀과 같은 열 · 같은 순서(최신 주문이 위)로 바꿔요
+  const H = ['쇼핑몰', '쇼핑몰번호', '주문번호', '발주일', '주문상품명', '상품번호', '옵션', '자체품목코드', '결제수단', '결제업체', '결제정보', '판매가', '수량', '수령인', '우편번호', '주소', '수령지전화', '전화번호', '핸드폰', '비고', '주문자', '주문자우편번호', '주문자주소', '주문자전화번호', '주문자핸드폰', '옵션추가 가격', '배송비 정보', '품목별 주문번호'];
+  const [y, m, d] = dayIso.split('-').map(Number), D = new Date(y, m - 1, d), rows = [H], nz = v => (v === '' || v == null) ? null : v;
+  list.slice().sort((a, b) => String(b.order_id).localeCompare(String(a.order_id))).forEach(o => {
+    const rc = o.receiver || {}, by = o.buyer || {}, pay = c24Pay(o);
     (o.items || []).forEach(i => {
       const note = [rc.shipping_message, i.additional_option_value].map(v => String(v || '').trim()).filter(Boolean).join(' / ');
-      rows.push(['카페24', 1, o.order_id, i.order_item_code, D, i.product_name, i.option_value || null, i.product_price || null, i.quantity, rc.name || '', rc.zipcode || '', [rc.address1, rc.address2].filter(Boolean).join(' '), null, rc.phone || null, rc.cellphone || null, note || null, i.option_price || null]);
+      rows.push(['카페24', 1, o.order_id, D, i.product_name, null, nz(i.option_value), nz(i.custom_variant_code), pay, null, null, nz(i.product_price), i.quantity, rc.name || '', nz(rc.zipcode), [rc.address1, rc.address2].filter(Boolean).join(' '), null, nz(rc.phone), nz(rc.cellphone), note || null,
+        nz(by.name), nz(by.zipcode), nz([by.address1, by.address2].filter(Boolean).join(' ')), nz(by.phone), nz(by.cellphone), nz(i.option_price), '선불', i.order_item_code]);
     });
   });
   return rows;
