@@ -1320,6 +1320,11 @@ body.is-guest .adm-only{display:none}
 .c24 .c24row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .c24 .c24row input[type=date],.c24 .c24row input[type=time],.c24 .c24row input[type=text],.c24 .c24row input[type=url]{height:38px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 10px;font:inherit;background:var(--card,#fff);color:inherit;min-width:0}
 .c24 .c24win{font-size:13px;color:var(--mut,#667)}
+.c24 .c24seg{display:inline-flex;border:1px solid var(--line,#dcdfd8);border-radius:12px;overflow:hidden;background:var(--card,#fff)}
+.c24 .c24seg button{border:0;background:none;padding:4px 14px;height:38px;cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.c24 .c24seg button b{font-size:13.5px}.c24 .c24seg button span{font-size:11px;opacity:.7}
+.c24 .c24seg button.on{background:#2f6b3e;color:#fff}
+html.dark .c24 .c24seg{background:rgba(255,255,255,.04)}
 .c24 details{margin-top:10px;font-size:13.5px}.c24 summary{cursor:pointer;color:var(--mut,#667)}
 .c24 .c24days{display:flex;gap:4px}.c24 .c24days label{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);cursor:pointer;font-size:13px}
 .c24 .c24days input{display:none}.c24 .c24days label:has(input:checked){background:#2f6b3e;color:#fff;border-color:#2f6b3e}
@@ -1694,13 +1699,14 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         <div class="c24h"><b>카페24에서 바로 불러오기</b><span class="c24st" id="c24st">확인 중…</span></div>
         <div class="c24row">
           <label class="c24win">보낼 날 <input type="date" id="c24day"></label>
+          <span class="c24seg" id="c24slot"><button type="button" data-c24slot="am"><b>오전</b><span></span></button><button type="button" data-c24slot="pm"><b>오후</b><span></span></button></span>
           <button class="btn pri" id="c24go" type="button">주문 불러오기</button>
         </div>
         <p class="c24win" id="c24win"></p>
         <p class="msg" id="c24msg"></p>
         <details class="adm-only" id="c24set"><summary>연결 설정 (관리자)</summary>
           <div class="c24row"><label>중계 서버 주소 <input type="url" id="c24url" placeholder="https://herb5-cafe24.○○○.workers.dev" style="width:min(340px,100%)"></label></div>
-          <div class="c24row"><label>마감 시간(결제 기준) <input type="time" id="c24cut" step="60"></label></div>
+          <div class="c24row"><label>오전 마감(결제 기준) <input type="time" id="c24am" step="60"></label><label>오후 마감 <input type="time" id="c24pm" step="60"></label></div>
           <div class="c24row"><span>보내는 요일</span><span class="c24days" id="c24dw"></span></div>
           <div class="c24row"><label>쉬는 날 <input type="text" id="c24off" placeholder="예: 2026-12-25, 2027-01-01" style="width:min(300px,100%)"></label></div>
           <div class="c24row"><button class="btn" id="c24save" type="button">설정 저장</button><button class="btn" id="c24link" type="button">카페24 연결</button></div>
@@ -3268,7 +3274,8 @@ async function histSafeWrite(d, entry) { if (entry) return histWrite(d, entry); 
 async function uplSafeWrite(d, entry) { if (entry) return uplWrite(d, entry); try { await uplWrite(d, null); } catch (e) { await uplWrite(d, { updatedAt: new Date().toISOString() }); delete upl[d]; } }
 const last4 = v => String(v ?? '').replace(/\D/g, '').slice(-4);
 function nameHash(v) { const t = String(v ?? '').replace(/\s+/g, ''); if (!t) return ''; let h = 2166136261; for (const c of t) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36); }
-async function histSaveUpload(rows, fname) {
+async function histSaveUpload(rows, fname, opt) {
+  opt = opt || {};
   const msg = $('histsave');
   try {
     if (!rows || !rows.length) return;
@@ -3282,7 +3289,7 @@ async function histSaveUpload(rows, fname) {
       const n = (occ.get(base) || 0) + 1; occ.set(base, n); keysOf[ri + 1] = { k: base + '|' + n, d };
       (byDate[d] = byDate[d] || []).push({ k: base + '|' + n, o: str(g(r, '주문번호')), p: str(g(r, '주문상품명')), op: str(g(r, '옵션')), q: Number(g(r, '수량')) || 0, a: shortAddr(g(r, '주소')), n: str(g(r, '비고')), pr: Number(String(g(r, '판매가') ?? '').replace(/,/g, '')) || 0, ad: Number(String(g(r, '옵션추가 가격') ?? '').replace(/,/g, '')) || 0, rn: nameHash(g(r, '수령인')), rp: [...new Set(['핸드폰', '전화번호', '수령지전화'].map(k => last4(g(r, k))).filter(Boolean))].join(',') });
     });
-    const nowD = new Date(), now = nowD.toISOString(), slot = nowD.getHours() < 12 ? 'am' : 'pm', saved = [], fid = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    const nowD = new Date(), now = nowD.toISOString(), slot = opt.slot || (nowD.getHours() < 12 ? 'am' : 'pm'), saved = [], fid = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
     for (const d of Object.keys(byDate).sort()) {
       const prev = hist[d] || { rows: [], files: [] }, map = new Map((prev.rows || []).map(x => [x.k, x]));
       let added = 0; byDate[d].forEach(x => { const old = map.get(x.k); if (!old) added++; else { if (old.del) x.del = true; if (old.ov) x.ov = old.ov; } x.f = [...new Set(((old && old.f) || []).concat(fid))]; map.set(x.k, x); });
@@ -3293,12 +3300,12 @@ async function histSaveUpload(rows, fname) {
       saved.push(d.slice(5).replace('-', '/') + (added ? ' 새 ' + added + '줄' : ' 이미 있음'));
     }
     if (!histSel || !hist[histSel]) histSel = Object.keys(byDate).sort().pop();
-    const upDay = isoDate(nowD), prevU = upl[upDay] || {};
+    const upDay = opt.day || isoDate(nowD), prevU = upl[upDay] || {};
     const allRows = []; Object.keys(byDate).forEach(d => byDate[d].forEach(x => allRows.push(Object.assign({ d }, x))));
     srcKeys = keysOf; lastUp = { day: upDay, slot };
     await uplWrite(upDay, Object.assign({}, prevU, { [slot]: uplMerge(prevU[slot], slot, fid, fname, now, allRows), updatedAt: now }));
     lastFid = fid;
-    sumSel = upDay; sumSlot = slot; sumMonth = new Date(nowD.getFullYear(), nowD.getMonth(), 1);
+    sumSel = upDay; sumSlot = slot; sumMonth = new Date(Number(upDay.slice(0, 4)), Number(upDay.slice(5, 7)) - 1, 1);
     msg.className = 'msg ok'; msg.textContent = '기록에 자동 저장했어요 (' + (slot === 'am' ? '오전' : '오후') + ' 업로드) · ' + saved.join(', ');
     if ($('undoup')) { const u = $('undoup'); u.classList.remove('hidden'); u.dataset.ufile = upDay + '|' + slot + '|' + fid; u.title = fname + ' 올린 것 되돌리기'; delete u.dataset.sure; u.classList.remove('sure'); u.querySelector('span').textContent = '방금 올린 것 되돌리기'; }
     if (edRestoreFromStore()) { runProcess(); msg.textContent += ' · 예전에 직접 고친 것도 다시 적용했어요'; }
@@ -5132,15 +5139,16 @@ document.addEventListener('click', async e => {
 invBind(); renderInv();
 
 // ---------- 카페24에서 바로 불러오기 (웹 버전 전용 · 중계 서버를 거쳐요) ----------
-const C24_DEF = { worker: '', cutoff: '13:00', days: [1, 2, 3, 4, 5], off: [] };
-const c24Cfg = () => Object.assign({}, C24_DEF, rules.cafe24 || {});
+const C24_DEF = { worker: '', amCut: '08:00', pmCut: '13:10', days: [1, 2, 3, 4, 5], off: [] };
+const c24Cfg = () => { const c = Object.assign({}, C24_DEF, rules.cafe24 || {}); if (rules.cafe24 && !rules.cafe24.pmCut && rules.cafe24.cutoff) c.pmCut = rules.cafe24.cutoff; return c; };
+let c24Slot = new Date().getHours() < 12 ? 'am' : 'pm';
 const c24Off = c => new Set((c.off || []).map(String));
 const c24IsShip = (d, c) => c.days.includes(d.getDay()) && !c24Off(c).has(isoDate(d));
 function c24Shift(d, step, c) { const x = new Date(d); for (let i = 0; i < 30; i++) { x.setDate(x.getDate() + step); if (c24IsShip(x, c)) return x; } return x; }
-function c24Window(dayIso, c) {   // 보낼 날 D: 바로 전 보내는 날 마감 ~ D 마감 사이에 결제된 주문
+function c24Window(dayIso, c, slot) {   // 오전: 바로 전 보내는 날 오후 마감 ~ 그날 오전 마감 / 오후: 그날 오전 마감 ~ 오후 마감
   const [y, m, d] = dayIso.split('-').map(Number), D = new Date(y, m - 1, d), P = c24Shift(D, -1, c);
-  const at = (x) => new Date(isoDate(x) + 'T' + (c.cutoff || '13:00') + ':00+09:00');
-  return { from: at(P), to: at(D), prev: P, day: D };
+  const at = (x, t) => new Date(isoDate(x) + 'T' + t + ':00+09:00');
+  return slot === 'am' ? { from: at(P, c.pmCut), to: at(D, c.amCut), fromDay: P, toDay: D } : { from: at(D, c.amCut), to: at(D, c.pmCut), fromDay: D, toDay: D };
 }
 function c24DefaultDay(c) {
   const now = new Date(), t = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -5149,8 +5157,10 @@ function c24DefaultDay(c) {
 const c24Fmt = d => (d.getMonth() + 1) + '/' + d.getDate() + '(' + '일월화수목금토'[d.getDay()] + ')';
 function c24ShowWin() {
   const c = c24Cfg(), el = $('c24day'); if (!el.value) el.value = isoDate(c24DefaultDay(c));
-  const w = c24Window(el.value, c);
-  $('c24win').textContent = c24Fmt(w.prev) + ' ' + c.cutoff + ' ~ ' + c24Fmt(w.day) + ' ' + c.cutoff + ' 사이에 결제된 주문을 가져와요' + (c24IsShip(w.day, c) ? '' : ' · 이 날은 보내는 날이 아니에요');
+  const w = c24Window(el.value, c, c24Slot), hm = d => pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  $('c24slot').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.c24slot === c24Slot));
+  $('c24slot').querySelector('[data-c24slot=am] span').textContent = '~' + c.amCut; $('c24slot').querySelector('[data-c24slot=pm] span').textContent = '~' + c.pmCut;
+  $('c24win').textContent = c24Fmt(w.fromDay) + ' ' + (c24Slot === 'am' ? c.pmCut : c.amCut) + ' ~ ' + c24Fmt(w.toDay) + ' ' + (c24Slot === 'am' ? c.amCut : c.pmCut) + ' 사이에 결제된 주문을 가져와요' + (c24IsShip(w.toDay, c) ? '' : ' · 이 날은 보내는 날이 아니에요');
 }
 async function c24Call(path, opt) {
   const c = c24Cfg(); if (!c.worker) throw new Error('관리자가 [연결 설정]에서 중계 서버 주소를 넣어 주세요');
@@ -5183,24 +5193,24 @@ function c24Rows(list, dayIso) {   // 카페24 엑셀과 같은 모양으로 바
 async function c24Import() {
   const btn = $('c24go'), msg = $('c24msg'), c = c24Cfg(), day = $('c24day').value;
   if (!day) return;
-  const w = c24Window(day, c);
+  const w = c24Window(day, c, c24Slot), slot = c24Slot;
   btn.disabled = true; msg.className = 'msg'; msg.textContent = '카페24에서 주문을 가져오는 중…';
   try {
     const d = await c24Call('/orders?from=' + encodeURIComponent(w.from.toISOString()) + '&to=' + encodeURIComponent(w.to.toISOString()));
     if (!d.orders.length) { msg.className = 'msg'; msg.textContent = '이 시간에 결제된 주문이 없어요'; return; }
-    const rows = c24Rows(d.orders, day), fname = '카페24_' + day.replace(/-/g, '') + '_' + c.cutoff.replace(':', '') + '마감.api';
+    const rows = c24Rows(d.orders, day), fname = '카페24_' + day.replace(/-/g, '') + '_' + (slot === 'am' ? '오전' : '오후') + '.api';
     userEdits = new Map(); edMode = false;
     srcRows = rows; srcName = fname.replace(/\.api$/, ''); srcAt = new Date();
-    msg.className = 'msg ok'; msg.textContent = '주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요';
+    msg.className = 'msg ok'; msg.textContent = (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요';
     $('runmsg').textContent = '';
     runProcess();
-    histSaveUpload(srcRows, fname);
+    histSaveUpload(srcRows, fname, { slot, day });
   } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; if (e.code === 'not_connected' || e.code === 'expired') c24Status(); }
   finally { btn.disabled = false; }
 }
 function c24FillSet() {
   const c = c24Cfg();
-  $('c24url').value = c.worker || ''; $('c24cut').value = c.cutoff; $('c24off').value = (c.off || []).join(', ');
+  $('c24url').value = c.worker || ''; $('c24am').value = c.amCut; $('c24pm').value = c.pmCut; $('c24off').value = (c.off || []).join(', ');
   $('c24dw').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(n => `<label><input type="checkbox" value="${n}" ${c.days.includes(n) ? 'checked' : ''}>${'일월화수목금토'[n]}</label>`).join('');
 }
 async function c24Callback() {   // 카페24 동의 화면에서 돌아왔을 때
@@ -5219,11 +5229,12 @@ function c24Bind() {
   if (!$('c24')) return;
   c24FillSet(); c24ShowWin();
   $('c24day').onchange = c24ShowWin;
+  $('c24slot').onclick = e => { const b = e.target.closest('[data-c24slot]'); if (b) { c24Slot = b.dataset.c24slot; c24ShowWin(); } };
   $('c24go').onclick = c24Import;
   $('c24save').onclick = async () => {
     const off = $('c24off').value.split(/[\s,]+/).map(x => x.trim()).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
     const days = [...$('c24dw').querySelectorAll('input:checked')].map(x => Number(x.value));
-    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), cutoff: $('c24cut').value || '13:00', days: days.length ? days : C24_DEF.days, off };
+    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off };
     await saveRules(); c24FillSet(); $('c24day').value = ''; c24ShowWin(); c24Status();
     $('c24msg').className = 'msg ok'; $('c24msg').textContent = '연결 설정을 저장했어요';
   };
