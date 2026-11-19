@@ -57,7 +57,7 @@ function authUrl(env, state) {
   const u = new URL(base(env) + '/oauth/authorize');
   u.searchParams.set('response_type', 'code'); u.searchParams.set('client_id', env.CAFE24_CLIENT_ID);
   u.searchParams.set('state', state); u.searchParams.set('redirect_uri', env.REDIRECT_URI);
-  u.searchParams.set('scope', 'mall.read_order mall.write_order');
+  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping');
   return u.toString();
 }
 async function tokenCall(env, body) {
@@ -127,8 +127,8 @@ async function shipments(env, body, who) {
   const list = Array.isArray(body && body.items) ? body.items : [], status = body && body.status === 'standby' ? 'standby' : 'shipping';
   if (!list.length) throw fail(400, 'empty', '등록할 송장이 없어요');
   if (list.length > 2000) throw fail(400, 'too_many', '한 번에 2000건까지만 등록할 수 있어요');
-  const token = await accessToken(env), ok = [], bad = [];
-  const reqOf = x => { const r = { order_id: String(x.order_id), tracking_no: String(x.tracking_no).replace(/[^0-9A-Za-z]/g, ''), shipping_company_code: String(x.shipping_company_code || ''), status };
+  const token = await accessToken(env), ok = [], bad = [], carrier = await carrierOf(env, token, list[0] && list[0].shipping_company_code);
+  const reqOf = x => { const r = { order_id: String(x.order_id), tracking_no: String(x.tracking_no).replace(/[^0-9A-Za-z]/g, ''), shipping_company_code: carrier.code, carrier_id: carrier.id, status };
     if (Array.isArray(x.order_item_code) && x.order_item_code.length) r.order_item_code = x.order_item_code.map(String); return r; };
   const send = async reqs => {
     const r = await fetch(base(env) + '/admin/shipments', { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION }, body: JSON.stringify({ shop_no: 1, requests: reqs }) });
@@ -146,4 +146,23 @@ async function shipments(env, body, who) {
     }
   }
   return { ok: ok.length, fail: bad, status, by: who.email };
+}
+
+// 사이트에 넣는 [배송 업체 번호](카페24 엑셀 일괄배송 화면의 6, 4 같은 번호 = carrier_id)를
+// API가 원하는 배송업체 코드(0006 같은 4자리)로 바꿔요. 쇼핑몰 배송사 목록을 읽어서 맞춰요.
+async function carrierOf(env, token, raw) {
+  const v = String(raw || '').trim(); if (!v) throw fail(400, 'carrier', '배송 업체 번호를 넣어 주세요');
+  const cacheKey = 'carriers', cached = JSON.parse((await env.TOKENS.get(cacheKey)) || 'null');
+  let list = cached && Date.now() - cached.at < 864e5 ? cached.list : null;
+  if (!list) {
+    const r = await fetch(base(env) + '/admin/carriers', { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401 || r.status === 403) throw fail(403, 'scope_shipping', '카페24 앱에 [배송 읽기] 권한이 필요해요. 개발자센터에서 권한을 추가하고, 사이트에서 [카페24 연결]을 다시 눌러 주세요');
+    if (!r.ok) throw fail(r.status, 'cafe24', '카페24 배송사 목록을 읽지 못했어요: ' + ((d.error && d.error.message) || r.status));
+    list = (d.carriers || []).map(c => ({ id: Number(c.carrier_id), code: String(c.shipping_carrier_code || ''), name: c.shipping_carrier || '' }));
+    await env.TOKENS.put(cacheKey, JSON.stringify({ at: Date.now(), list }));
+  }
+  const n = Number(v), hit = list.find(c => c.id === n && !/^0\d{3}$/.test(v)) || list.find(c => c.code === v) || list.find(c => c.id === n);
+  if (!hit) throw fail(400, 'carrier', '배송 업체 번호 ' + v + '번을 쇼핑몰 배송사 목록에서 찾지 못했어요. 있는 번호: ' + list.map(c => c.id + '(' + c.name + ')').join(', '));
+  return hit;
 }
