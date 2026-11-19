@@ -1096,6 +1096,13 @@ header.top .tabs .tab.on{background:linear-gradient(180deg,#72b07a 0%,#4c8a5b 55
 }
 /* 홈 머리 카드 버튼 */
 .ph-cta{display:none;gap:10px;flex-wrap:wrap;margin-top:18px}
+.tabbar{display:none;align-items:center;gap:12px;margin:0 0 14px;padding:10px 18px;border-radius:20px;background:rgba(255,253,248,.85);border:1px solid rgba(255,255,255,.95);box-shadow:0 10px 24px -18px rgba(40,60,30,.45),0 0 0 1px rgba(60,70,40,.05)}
+body:not(.is-home) .tabbar{display:flex}
+.tabbar .tb-mark{width:40px;height:40px;object-fit:contain;flex:none}
+.tabbar .tb-txt{display:flex;flex-direction:column;line-height:1.15}.tabbar .tb-txt b{font-size:16px;color:var(--ink)}.tabbar .tb-sub{font-size:11px;color:var(--mute);letter-spacing:.3px}
+.tabbar .tb-dt{margin-left:auto;display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums}.tabbar .tb-dt span{font-size:13.5px;color:var(--mute)}.tabbar .tb-dt b{font-size:20px;color:var(--moss2,#3f7f50);letter-spacing:-.3px}
+html.dark .tabbar{background:rgba(20,34,38,.55);border-color:var(--glassb,rgba(255,255,255,.06))}
+@media(max-width:999px){.tabbar{padding:8px 14px;margin-bottom:10px}.tabbar .tb-mark,.tabbar .tb-txt{display:none}.tabbar .tb-dt{margin-left:0;width:100%;justify-content:space-between}.tabbar .tb-dt b{font-size:17px}}
 body.is-home .ph-cta{display:flex}
 body:not(.is-home) .pagehead{display:none!important}
 body.is-home .pagehead h2::after{display:none}
@@ -1785,6 +1792,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
   </header>
 
+  <div class="tabbar" id="tabbar"><img class="tb-mark" id="tb-mark" alt="허브아이"><div class="tb-txt"><b>허브아이</b></div><div class="tb-dt"><span id="tb-date"></span><b id="tb-time"></b></div></div>
   <div class="pagehead"><p class="hello" id="hello"></p><h2 id="pagetitle">홈</h2>
     <div class="ph-cta" id="phcta">
       <button class="hm-up" type="button" data-go="run" data-pick="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>주문 엑셀 올리기</button>
@@ -2443,7 +2451,15 @@ const ymd = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') 
 // tabs
 const PAGE_TITLE = { issue: '이슈 관리', home: '홈', run: '정리하기', sum: '집계 보기', stock: '재고 관리', hist: '기록·통계', rules: '규칙 관리' };
 const helloTxt = () => { const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토']; return '허브아이 · ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + W[d.getDay()] + '요일'; };
+function tabbarTick() {
+  const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토'], h = d.getHours();
+  const a = $('tb-date'), b = $('tb-time'); if (!a) return;
+  a.textContent = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + W[d.getDay()] + ')';
+  b.textContent = (h < 12 ? '오전 ' : '오후 ') + ((h % 12) || 12) + ':' + String(d.getMinutes()).padStart(2, '0');
+  const m = $('tb-mark'), src = document.querySelector('.brand .mark'); if (m && !m.src && src) m.src = src.src;
+}
 function homeHead() {
+  tabbarTick();
   if (!document.body.classList.contains('is-home')) return;
   const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토'], h = d.getHours();
   if ($('hello')) $('hello').innerHTML = '허브아이 · <span class="hy">' + d.getFullYear() + '년 </span>' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + W[d.getDay()] + '요일';
@@ -2457,7 +2473,7 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   document.body.classList.toggle('is-home', b.dataset.t === 'home');
   try { window.scrollTo(0, 0); } catch (e) {}
   $('v-home').classList.toggle('hidden', b.dataset.t !== 'home');
-  if (b.dataset.t === 'home') { homeHead(); renderHome(); } else if ($('hello')) $('hello').textContent = helloTxt();
+  tabbarTick(); if (b.dataset.t === 'home') { homeHead(); renderHome(); } else if ($('hello')) $('hello').textContent = helloTxt();
   $('v-run').classList.toggle('hidden', b.dataset.t !== 'run');
   $('v-rules').classList.toggle('hidden', b.dataset.t !== 'rules');
   if (b.dataset.t === 'rules') showLock();
