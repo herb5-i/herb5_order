@@ -1523,6 +1523,7 @@ html.dark .mr-isslist span{background:rgba(208,122,82,.16)}html.dark .mr-rank .r
 .mall .mbc.ys{box-shadow:-1px 0 0 rgba(0,0,0,.12)}
 .mall .mstk{display:flex;flex-direction:column;border-radius:4px 4px 1px 1px;overflow:hidden;min-height:1px}.mall .mstk i{display:block;background:var(--c);min-height:1px}
 .mall .mchl{margin-top:4px;height:16px}.mall .mchl span{font-size:10.5px;color:var(--mut,#889);white-space:nowrap;overflow:visible}
+.mall tr.msrc td{font-size:12px;color:var(--mut,#778);white-space:normal;text-align:left!important;padding-left:24px}
 .mall tr.mi.focus td{background:rgba(47,107,62,.06)}
 html.dark .mall .mch{background:rgba(255,255,255,.03)}
 .mall .mraw{margin-top:12px;font-size:12.5px;color:var(--mut,#667)}
@@ -2074,6 +2075,12 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div id="ed-stockUnits"></div>
       <div class="sa-prev" id="su-prev"></div>
     </div>
+    <div class="card stkrule">
+      <h2>⑮ 쇼핑몰 비교 — 품목 묶기</h2>
+      <p class="help">기록·통계 → <b>쇼핑몰 비교</b>에서 쓰는 묶기예요. 쇼핑몰마다 상품명이 달라도 <b>키워드</b>가 상품명에 들어 있으면 왼쪽 <b>이름</b> 하나로 묶어서 세요. 예) 키워드 <code>비올라</code> → "식용꽃 30송이 비올라", "식용꽃 비올라", "비올라 30송이"가 모두 <b>식용꽃 비올라</b>로 묶여요. 그 안에서는 <b>옵션</b>이 같은 것끼리 합쳐요.<br>
+      키워드는 쉼표(,)로 여러 개, 띄어쓰기·대소문자 상관없어요. 위에 있는 줄부터 먼저 맞춰 보고, <b>빼는 키워드</b>가 들어 있으면 그 줄은 건너뛰어요. 어디에도 안 맞는 상품은 이름 그대로 보여요.</p>
+      <div id="ed-mallAlias"></div>
+    </div>
     <div class="savebar">
       <span class="msg" id="savemsg"></span>
       <button class="btn pri" id="save">규칙 저장</button>
@@ -2384,6 +2391,7 @@ const TABLES = {
   bands: { get: () => rules.weather.bands, cols: [['basis','기준 (최저/최고)'],['min','이상 (°C)'],['max','이하 (°C)'],['label','넣을 문구'],['color','색 코드'],['warn','경고 (선택)']] },
   groups: { get: () => (rules.summary.groups = rules.summary.groups || clone(DEFAULT_RULES.summary.groups)), cols: [['match','상품명에 이 글자가 있으면'],['group','묶음 이름']] },
   stockUnits: { get: () => (rules.stockUnits = rules.stockUnits || []), cols: [['item','재고 품목 이름'],['unit','단위 (kg · g · 개 · 팩 · 송이 …)'],['per','주문 1개당 빠지는 양 (선택)'],['min','최소 수량 (부족 알림)']] },
+  mallAlias: { get: () => (rules.mallAlias = Array.isArray(rules.mallAlias) ? rules.mallAlias : JSON.parse(JSON.stringify(MALL_ALIAS0))), cols: [['item','비교에서 보일 이름'],['keywords','묶을 키워드 (쉼표로)'],['exclude','빼는 키워드 (선택)']] },
   stockAlias: { get: () => (rules.stockAlias = rules.stockAlias || []), cols: [['item','재고 품목 이름'],['keywords','같이 셀 키워드 (쉼표로)'],['exclude','빼는 키워드 (선택)']] },
   regions: { get: () => rules.weather.regions, cols: [['match','주소에 이 글자가 있으면'],['region','날씨 지역']] },
 };
@@ -2881,7 +2889,7 @@ function localData() {
 }
 const RULE_LISTS = [['names', x => x.from], ['requests', x => x.keyword], ['optionMap', x => (x.product || '') + '|' + x.from], ['fixedValues', x => x.col],
   ['summary.merge', x => x.from], ['summary.optionMerge', x => (x.product || '') + '|' + x.from], ['summary.groups', x => x.match], ['weather.regions', x => x.match],
-  ['stockAlias', x => x.item], ['stockUnits', x => x.item], ['checkWords', x => x], ['dropColumns', x => x], ['summary.order', x => x], ['summary.bagProducts', x => x], ['optionClean.removeWords', x => x]];
+  ['stockAlias', x => x.item], ['mallAlias', x => x.item], ['stockUnits', x => x.item], ['checkWords', x => x], ['dropColumns', x => x], ['summary.order', x => x], ['summary.bagProducts', x => x], ['optionClean.removeWords', x => x]];
 function mergeRulesAdd(remote, local) {
   const out = clone(remote); let added = 0;
   const at = (o, p) => p.split('.').reduce((a, k) => (a == null ? a : a[k]), o);
@@ -5211,6 +5219,13 @@ const mallChOf = o => { const m = String(o.market_id || '').toLowerCase(), pl = 
   if (!m || m === 'self') return 'self';
   return 'etc'; };
 const mallZ = () => Object.fromEntries(MALL_CH.map(c => [c[0], 0]));
+const MALL_ALIAS0 = [{ item: '식용꽃 비올라', keywords: '비올라', exclude: '' }, { item: '식용꽃 혼합', keywords: '혼합', exclude: '' }, { item: '식용꽃 패랭이', keywords: '패랭이', exclude: '' }, { item: '식용꽃 보리지', keywords: '보리지', exclude: '' }, { item: '식용꽃 팬지', keywords: '팬지', exclude: '' },
+  { item: '미니장미', keywords: '장미', exclude: '' }, { item: '애플민트', keywords: '애플민트', exclude: '' }, { item: '스피아민트', keywords: '스피아민트', exclude: '' }, { item: '로즈마리', keywords: '로즈마리', exclude: '' }, { item: '타임', keywords: '타임', exclude: '' },
+  { item: '자스민', keywords: '자스민', exclude: '' }, { item: '나스터튬잎 한련화잎', keywords: '나스터튬, 한련화', exclude: '' }];
+function mallAliasFn() {   // 규칙 ⑮: 키워드가 상품명에 있으면 그 이름으로 묶어요
+  const rows = (Array.isArray(rules.mallAlias) ? rules.mallAlias : MALL_ALIAS0).map(r => ({ key: stkK(r.item), kw: saWords(r.keywords), ex: saWords(r.exclude) })).filter(r => r.key && r.kw.length), memo = new Map();
+  return n => { if (memo.has(n)) return memo.get(n); const t = stkTxt(n), hit = rows.find(r => r.kw.some(w => t.includes(w)) && !r.ex.some(w => t.includes(w))), out = hit ? hit.key : n; memo.set(n, out); return out; };
+}
 const MALL_YEARS = 5;
 let mallPer = 'month', mallFrom = '', mallTo = '', mallOpen = new Set(), mallBusy = false, mallMsg = '', mallStop = false, mallFocus = '', mallReady = false;
 const mallMem = new Map();   // 'YYYY-MM' → { at, rows:[[날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓]] } · 이 기기 IndexedDB에 보관
@@ -5279,16 +5294,16 @@ async function mallLoad(opt) {
   finally { mallBusy = false; renderMall(); }
 }
 function mallAgg(from, to) {
-  const items = new Map(), tot = mallZ(), raw = new Map(), byM = new Map(), z = mallZ;
+  const items = new Map(), tot = mallZ(), raw = new Map(), byM = new Map(), z = mallZ; const alias = mallAliasFn();
   if (!from) return { items, tot, raw, byM };
   for (let d = dOf(from.slice(0, 7) + '-01'); ymOf(d) <= to.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) {
     const c = mallMem.get(ymOf(d)); if (!c) continue;
     c.rows.forEach(([day, ch, nm, opt0, q, mk]) => { if (day < from || day > to || !q) return;
-      const n = groupOf(nm), op = [nm !== n || !opt0 ? nm : '', opt0].filter(Boolean).join(' · ');   // 집계 보기처럼: 키워드로 묶고, 그 안에서 같은 상품·옵션끼리 묶어요
+      const n = alias(nm), op = opt0;   // 규칙 ⑮ 키워드로 품목을 묶고, 그 안에서는 옵션이 같은 것끼리 합쳐요
       tot[ch] += q; raw.set(mk, (raw.get(mk) || 0) + q);
       const mo = day.slice(0, 7); if (!byM.has(mo)) byM.set(mo, { all: z(), it: new Map() }); const bm = byM.get(mo); bm.all[ch] += q; if (!bm.it.has(n)) bm.it.set(n, z()); bm.it.get(n)[ch] += q;
-      if (!items.has(n)) items.set(n, { n, c: z(), t: 0, ops: new Map() });
-      const it = items.get(n); it.c[ch] += q; it.t += q;
+      if (!items.has(n)) items.set(n, { n, c: z(), t: 0, ops: new Map(), src: new Map() });
+      const it = items.get(n); it.c[ch] += q; it.t += q; it.src.set(nm, (it.src.get(nm) || 0) + q);
       if (!it.ops.has(op)) it.ops.set(op, { c: z(), t: 0 }); const o = it.ops.get(op); o.c[ch] += q; o.t += q; });
   }
   return { items, tot, raw, byM };
@@ -5325,10 +5340,10 @@ function renderMall() {
   const list = [...A.items.values()].sort((a, b) => b.t - a.t);
   const cells = (o, prev) => chs.map(([k]) => `<td class="${o.c[k] ? '' : 'z'}">${o.c[k] ? fmt(o.c[k]) : '–'}</td>`).join('') + `<td><b>${fmt(o.t)}</b>${prev !== undefined ? chg(o.t, prev) : ''}</td>` +
     `<td class="sb"><div class="sbar">${chs.map(([k, , c]) => o.c[k] ? `<i style="--c:${c};width:${o.c[k] / o.t * 100}%"></i>` : '').join('')}</div></td>`;
-  h += `<div class="tblwrap"><table><thead><tr><th>품목 · 상품/옵션</th>${chs.map(([, l, , sl]) => `<th><span class="lf">${l}</span><span class="ls">${sl}</span></th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
+  h += `<div class="tblwrap"><table><thead><tr><th>품목 · 옵션</th>${chs.map(([, l, , sl]) => `<th><span class="lf">${l}</span><span class="ls">${sl}</span></th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
     list.map(it => { const op = mallOpen.has(it.n), pv = P.items.get(it.n);
-      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}종류</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
-        (op ? [...it.ops.entries()].sort((a, b) => b[1].t - a[1].t).map(([o, v]) => `<tr class="mo"><td>${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? pv.ops.get(o).t : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
+      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">옵션 ${it.ops.size}개${it.src.size > 1 ? ' · 상품명 ' + it.src.size + '개 묶음' : ''}</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
+        (op ? (it.src.size > 1 ? `<tr class="mo msrc"><td colspan="${chs.length + 3}">묶인 상품명: ${[...it.src.entries()].sort((a, b) => b[1] - a[1]).map(([k, q]) => esc(k) + ' <small>' + fmt(q) + '</small>').join(' · ')}</td></tr>` : '') + [...it.ops.entries()].sort((a, b) => b[1].t - a[1].t).map(([o, v]) => `<tr class="mo"><td>${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? pv.ops.get(o).t : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
   h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값(마켓 / 주문경로)과 수량이에요. 다르게 잡힌 게 있으면 이 목록을 캡처해서 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m.split(' / ')[0], order_place_id: m.split(' / ').slice(1).join(' ') }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
   el.innerHTML = h;
 }
