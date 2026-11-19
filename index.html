@@ -4750,8 +4750,12 @@ function tblSales() {
 }
 
 // ---------- 5. 송장번호 등록 파일 (택배사 송장 엑셀 → 카페24 엑셀 일괄배송 양식) ----------
-const INV_TPL0 = ['주문번호', '품목별 주문번호', '배송 업체 번호', '운송장번호'];
-const invCfg = () => (rules.invoice = rules.invoice || { carrier: '', template: INV_TPL0.slice() });
+const INV_TPL0 = ['주문번호', '품목별 주문번호', '운송장번호', '수량']; // 카페24 엑셀 일괄배송 샘플 양식 (excel_sample_old.csv)
+function invCfg() {
+  const c = (rules.invoice = rules.invoice || { carrier: '', template: INV_TPL0.slice(), fmt: 'csv' });
+  if (Array.isArray(c.template) && c.template.join('|') === '주문번호|품목별 주문번호|배송 업체 번호|운송장번호') { c.template = INV_TPL0.slice(); c.fmt = 'csv'; } // 예전 기본값 → 카페24 샘플 양식
+  return c;
+}
 let invLast = null;
 const invTxt = v => String(v ?? '').replace(/\s+/g, '').trim();
 const RX_ORD = /^\d{8}-\d{7}$/, RX_ITEM = /^\d{8}-\d{7}-\d{1,3}$/;
@@ -4843,14 +4847,17 @@ function invBuild(rows) {
     out.push({ order, item, track, how, who: C.name >= 0 ? String(r[C.name] ?? '') : (S && S.orders.get(order) && S.orders.get(order).name) || '' });
   });
   const multi = [...perOrder.entries()].filter(([, t]) => t.length > 1);
+  // 품목별 주문번호 없이 같은 주문에 송장이 여러 개면 카페24가 헷갈리니 첫 송장만 넣고 나머지는 따로 알려줘요
+  const firstOnly = new Set(); { const seenO = new Set(); out.forEach((x, i) => { if (x.item) return; if (seenO.has(x.order)) firstOnly.add(i); else seenO.add(x.order); }); }
+  const extra = out.filter((_, i) => firstOnly.has(i)); for (let i = out.length - 1; i >= 0; i--) if (firstOnly.has(i)) out.splice(i, 1);
   const missing = S && S.fromSrc ? [...S.orders.values()].filter(x => x.name && !perOrder.has(x.o)).map(x => x.o) : [];
   const tpl = (cfg.template && cfg.template.length ? cfg.template : INV_TPL0);
   const aoa = [tpl].concat(out.map(x => tpl.map(h => { const ro = invRole(h); return ro === 'order' ? x.order : ro === 'item' ? x.item : ro === 'carrier' ? String(cfg.carrier || '') : ro === 'track' ? x.track : ''; })));
-  return { C, out, bad, multi, missing, aoa, tpl, S };
+  return { C, out, bad, multi, missing, aoa, tpl, S, extra };
 }
 function renderInv() {
   const box = $('invout'); if (!box) return; const R = invLast;
-  const cfg = invCfg(); $('inv-carrier').value = cfg.carrier || '';
+  const cfg = invCfg(); $('inv-carrier').value = cfg.carrier || ''; $('inv-carrier').closest('label').classList.toggle('hidden', !(cfg.template || INV_TPL0).some(h => invRole(h) === 'carrier'));
   $('inv-tplmsg').innerHTML = '카페24 양식 열 순서: ' + (cfg.template || INV_TPL0).map(h => `<code>${esc(h)}</code>`).join(' ');
   if (!R) { box.innerHTML = ''; return; }
   const col = i => i >= 0 ? `<b>${esc(R.C.head[i])}</b>` : '<em>없음</em>';
@@ -4860,7 +4867,7 @@ function renderInv() {
     <div class="tblwrap inv-tbl"><table class="ed"><thead><tr>${R.tpl.map(h => `<th>${esc(h)}</th>`).join('')}<th>받는 분</th></tr></thead><tbody>${R.out.slice(0, 200).map((x, i) => `<tr>${R.aoa[i + 1].map(v => `<td>${esc(v)}</td>`).join('')}<td class="mu">${esc(x.who)}${x.how === 'name' ? ' <small>(이름으로 찾음)</small>' : ''}</td></tr>`).join('')}</tbody></table></div>
     ${R.out.length > 200 ? `<p class="msg">처음 200줄만 보여요 · 파일에는 ${R.out.length}줄 모두 들어가요</p>` : ''}
     ${R.bad.length ? `<details class="inv-det" open><summary>못 찾은 송장 ${R.bad.length}건</summary><ul>${R.bad.map(b => `<li>${b.line}번째 줄 · ${esc(b.track)}${b.who ? ' · ' + esc(b.who) : ''} — ${esc(b.why)}</li>`).join('')}</ul></details>` : ''}
-    ${R.multi.length ? `<details class="inv-det"><summary>한 주문에 송장이 여러 개 ${R.multi.length}건</summary><ul>${R.multi.map(([o, t]) => `<li>${esc(o)} · ${t.map(esc).join(', ')}</li>`).join('')}</ul><p class="msg">카페24에는 줄마다 하나씩 들어가요. 한 주문을 여러 상자로 보낸 거라면 그대로 두면 돼요.</p></details>` : ''}
+    ${R.multi.length ? `<details class="inv-det"><summary>한 주문에 송장이 여러 개 ${R.multi.length}건</summary><ul>${R.multi.map(([o, t]) => `<li>${esc(o)} · ${t.map(esc).join(', ')}</li>`).join('')}</ul><p class="msg">파일에는 첫 번째 송장만 넣었어요. 나머지 송장(${R.extra.map(x => esc(x.track)).join(', ')})은 카페24 주문 화면에서 직접 더해 주세요.</p></details>` : ''}
     ${R.missing.length ? `<details class="inv-det"><summary>지금 올린 주문 중 송장이 없는 주문 ${R.missing.length}건</summary><ul>${R.missing.map(o => `<li>${esc(o)}${R.S.orders.get(o) && R.S.orders.get(o).name ? ' · ' + esc(R.S.orders.get(o).name) : ''}</li>`).join('')}</ul></details>` : ''}
     <div class="row inv-act"><span class="msg" id="invmsg"></span><button class="btn pri" id="invdl" type="button" ${R.out.length ? '' : 'disabled'}>카페24 송장 등록 파일 내려받기</button></div>`;
 }
@@ -4885,7 +4892,7 @@ function invBind() {
     const f = $('invtpl').files[0]; $('invtpl').value = ''; if (!f) return; const m = $('invmsg0');
     try { const rows = await invRead(f), head = (rows[0] || []).map(v => String(v ?? '').trim()).filter(Boolean);
       if (!head.some(h => invRole(h) === 'track')) throw new Error('양식 첫 줄에 운송장번호 칸이 없어요');
-      invCfg().template = head; await saveRules(); m.className = 'msg ok'; m.textContent = '카페24 양식을 저장했어요 · 다음부터 이 순서로 만들어요'; renderInvAgain(); }
+      invCfg().template = head; invCfg().fmt = /\.csv$/i.test(f.name) ? 'csv' : 'xlsx'; await saveRules(); m.className = 'msg ok'; m.textContent = '카페24 양식을 저장했어요 · 다음부터 이 순서로 만들어요'; renderInvAgain(); }
     catch (e) { m.className = 'msg err'; m.textContent = '양식을 읽지 못했어요: ' + (e.message || e); }
   };
 }
@@ -4897,6 +4904,13 @@ document.addEventListener('click', async e => {
   if (!e.target.closest('#invdl') || !invLast) return;
   const m = $('invmsg');
   try {
+    if ((invCfg().fmt || 'csv') === 'csv') {
+      const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+      const lines = invLast.aoa.map((r, i) => { if (i === 0) return r.join(','); const a = r.slice(); while (a.length && !String(a[a.length - 1] ?? '')) a.pop(); return a.map(q).join(','); });
+      const nm = '카페24_송장등록_' + isoDate(new Date()) + '.csv';
+      await saveFile(nm, new Blob(['\ufeff' + lines.join('\n') + '\n'], { type: 'text/csv;charset=utf-8' }));
+      m.className = 'msg ok'; m.textContent = nm + ' 로 내려받았어요 · 카페24 배송준비중 → 엑셀 일괄배송 처리에 올리세요'; return;
+    }
     const ws = XLSX.utils.aoa_to_sheet(invLast.aoa.map(r => r.map(v => String(v ?? ''))));
     const rg = XLSX.utils.decode_range(ws['!ref']); for (let R = 0; R <= rg.e.r; R++) for (let C = 0; C <= rg.e.c; C++) { const c = ws[XLSX.utils.encode_cell({ r: R, c: C })]; if (c) { c.t = 's'; c.z = '@'; } }
     ws['!cols'] = invLast.tpl.map(h => ({ wch: Math.max(14, String(h).length * 2 + 2) }));
