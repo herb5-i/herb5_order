@@ -4869,6 +4869,7 @@ function renderInv() {
     ${R.bad.length ? `<details class="inv-det" open><summary>못 찾은 송장 ${R.bad.length}건</summary><ul>${R.bad.map(b => `<li>${b.line}번째 줄 · ${esc(b.track)}${b.who ? ' · ' + esc(b.who) : ''} — ${esc(b.why)}</li>`).join('')}</ul></details>` : ''}
     ${R.multi.length ? `<details class="inv-det"><summary>한 주문에 송장이 여러 개 ${R.multi.length}건</summary><ul>${R.multi.map(([o, t]) => `<li>${esc(o)} · ${t.map(esc).join(', ')}</li>`).join('')}</ul><p class="msg">파일에는 첫 번째 송장만 넣었어요. 나머지 송장(${R.extra.map(x => esc(x.track)).join(', ')})은 카페24 주문 화면에서 직접 더해 주세요.</p></details>` : ''}
     ${R.missing.length ? `<details class="inv-det"><summary>지금 올린 주문 중 송장이 없는 주문 ${R.missing.length}건</summary><ul>${R.missing.map(o => `<li>${esc(o)}${R.S.orders.get(o) && R.S.orders.get(o).name ? ' · ' + esc(R.S.orders.get(o).name) : ''}</li>`).join('')}</ul></details>` : ''}
+    <p class="inv-warn">받은 CSV는 <b>엑셀로 열어서 저장하지 말고 그대로</b> 카페24에 올려 주세요. 엑셀이 송장번호를 4.63E+11처럼 바꿔 버려서, 저장하면 번호가 망가져요. 내용은 위 표에서 확인하면 돼요.</p>
     <div class="row inv-act"><span class="msg" id="invmsg"></span><button class="btn pri" id="invdl" type="button" ${R.out.length ? '' : 'disabled'}>카페24 송장 등록 파일 내려받기</button></div>`;
 }
 async function invHandle(file) {
