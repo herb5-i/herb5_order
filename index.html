@@ -5202,7 +5202,10 @@ invBind(); renderInv();
 
 // ---------- 기록·통계 → 쇼핑몰 비교 (카페24 결제일 기준 · 품목/쇼핑몰/세부옵션별 수량 · 최대 5년) ----------
 const MALL_CH = [['self', '자사몰', '#3d7a4f'], ['coupang', '쿠팡', '#d9663f'], ['naver', '네이버', '#2f86c4'], ['etc', '기타', '#9a9a92']];
-const mallChOf = o => { const m = String(o.market_id || '').toLowerCase(); if (!m || m === 'self') return 'self'; if (/coupang/.test(m)) return 'coupang'; if (/naver|smartstore|storefarm|nstore/.test(m)) return 'naver'; return 'etc'; };
+const mallPlace = o => [o.order_place_id, o.order_place_name].filter(Boolean).join(' ');
+const mallChOf = o => { const m = String(o.market_id || '').toLowerCase(), pl = mallPlace(o).toLowerCase();
+  if (/ncheckout|naver|네이버|storefarm|smartstore/.test(pl)) return 'naver';   // 네이버쇼핑 → 네이버페이로 들어온 주문
+  if (!m || m === 'self') return 'self'; if (/coupang/.test(m)) return 'coupang'; if (/naver|smartstore|storefarm|nstore/.test(m)) return 'naver'; return 'etc'; };
 const MALL_YEARS = 5;
 let mallPer = 'month', mallFrom = '', mallTo = '', mallOpen = new Set(), mallBusy = false, mallMsg = '', mallStop = false, mallFocus = '', mallReady = false;
 const mallMem = new Map();   // 'YYYY-MM' → { at, rows:[[날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓]] } · 이 기기 IndexedDB에 보관
@@ -5229,7 +5232,7 @@ function mallRange() {   // [from, to] 날짜(포함) · 비교할 바로 앞 �
 }
 function mallNorm(list) {   // 정리하기와 같은 규칙(상품명·옵션·요청사항)으로 이름을 맞춘 뒤 [날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓]
   const H = ['주문번호', '주문상품명', '옵션', '수량', '비고', '수령인', '결제일', '쇼핑몰구분', '마켓'], rows = [H];
-  list.forEach(o => { const ch = mallChOf(o), d = mallKst(o.payment_date); (o.items || []).forEach(i => rows.push([o.order_id, i.product_name, i.option_value || null, i.quantity, (o.receiver && o.receiver.shipping_message) || null, '-', d, ch, o.market_id || 'self'])); });
+  list.forEach(o => { const ch = mallChOf(o), d = mallKst(o.payment_date); (o.items || []).forEach(i => rows.push([o.order_id, i.product_name, i.option_value || null, i.quantity, (o.receiver && o.receiver.shipping_message) || null, '-', d, ch, (o.market_id || 'self') + (mallPlace(o) ? ' / ' + mallPlace(o) : '')])); });
   if (rows.length < 2) return [];
   let out; try { const R = CORE.process(rows, rules, {}), h = R.sheet1[0], ix = k => h.indexOf(k), alias = stkAliasFn();
     out = R.sheet1.slice(1).map(r => { const n = String(r[ix('주문상품명')] ?? ''), op = String(r[ix('옵션')] ?? ''), al = alias({ n, o: op }); return [r[ix('결제일')], r[ix('쇼핑몰구분')], al || n, op, Number(r[ix('수량')]) || 0, r[ix('마켓')]]; });
@@ -5245,14 +5248,14 @@ async function mallFetchMonth(ym) {
     const d = await c24Call('/orders?lite=1&limit=200&offset=' + off + '&from=' + encodeURIComponent(from.toISOString()) + '&to=' + encodeURIComponent(to.toISOString()));
     all.push(...(d.orders || [])); off = d.next === undefined ? null : d.next;
   }
-  const v = { at: Date.now(), rows: mallNorm(all), n: all.length }; mallMem.set(ym, v); await mallIdbPut(ym, v); return v;
+  const v = { at: Date.now(), rows: mallNorm(all), n: all.length, v: 2 }; mallMem.set(ym, v); await mallIdbPut(ym, v); return v;
 }
 async function mallLoad(opt) {
   opt = opt || {}; await mallInit(); if (mallBusy) return;
   const rg = mallRange(), cur = ymOf(new Date()), first = mallFirstYm(), months = [];
   const start = opt.all ? first : (rg.pfrom || rg.from).slice(0, 7);
   for (let d = dOf(start + '-01'); ymOf(d) <= (opt.all ? cur : rg.to.slice(0, 7)); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) if (ymOf(d) >= first) months.push(ymOf(d));
-  const need = months.filter(ym => { const c = mallMem.get(ym); return opt.force || !c || (ym >= cur && Date.now() - c.at > 10 * 60e3) || (ym === ymOf(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)) && c.at < dOf(cur + '-01').getTime() + 864e5 * 2); });
+  const need = months.filter(ym => { const c = mallMem.get(ym); return opt.force || !c || c.v !== 2 || (ym >= cur && Date.now() - c.at > 10 * 60e3) || (ym === ymOf(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)) && c.at < dOf(cur + '-01').getTime() + 864e5 * 2); });
   if (!need.length) { renderMall(); return; }
   mallBusy = true; mallStop = false; renderMall(); let done = 0;
   try {
@@ -5315,7 +5318,7 @@ function renderMall() {
     list.map(it => { const op = mallOpen.has(it.n), pv = P.items.get(it.n);
       return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}개 옵션</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
         (op ? [...it.ops.entries()].sort((a, b) => b[1].t - a[1].t).map(([o, v]) => `<tr class="mo"><td>${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? pv.ops.get(o).t : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
-  h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값과 수량이에요. 쿠팡·네이버가 '기타'로 잡히면 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
+  h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값(마켓 / 주문경로)과 수량이에요. 다르게 잡힌 게 있으면 이 목록을 캡처해서 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m.split(' / ')[0], order_place_id: m.split(' / ').slice(1).join(' ') }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
   el.innerHTML = h;
 }
 document.addEventListener('click', e => {
