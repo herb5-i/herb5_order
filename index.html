@@ -5156,7 +5156,8 @@ async function c24Call(path, opt) {
   const c = c24Cfg(); if (!c.worker) throw new Error('관리자가 [연결 설정]에서 중계 서버 주소를 넣어 주세요');
   if (!window.h5Fb) throw new Error('웹 버전에서 로그인해야 쓸 수 있어요');
   const tok = await window.h5Fb.token();
-  const r = await fetch(c.worker.replace(/\/+$/, '') + path, Object.assign({}, opt || {}, { headers: Object.assign({ Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' }, (opt && opt.headers) || {}) }));
+  const wb = /^https?:\/\//i.test(c.worker) ? c.worker : 'https://' + c.worker;
+  const r = await fetch(wb.replace(/\/+$/, '') + path, Object.assign({}, opt || {}, { headers: Object.assign({ Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' }, (opt && opt.headers) || {}) }));
   const d = await r.json().catch(() => ({}));
   if (!r.ok) { const e = new Error(d.message || ('중계 서버 오류 ' + r.status)); e.code = d.error; throw e; }
   return d;
@@ -5222,7 +5223,7 @@ function c24Bind() {
   $('c24save').onclick = async () => {
     const off = $('c24off').value.split(/[\s,]+/).map(x => x.trim()).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
     const days = [...$('c24dw').querySelectorAll('input:checked')].map(x => Number(x.value));
-    rules.cafe24 = { worker: $('c24url').value.trim().replace(/\/+$/, ''), cutoff: $('c24cut').value || '13:00', days: days.length ? days : C24_DEF.days, off };
+    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), cutoff: $('c24cut').value || '13:00', days: days.length ? days : C24_DEF.days, off };
     await saveRules(); c24FillSet(); $('c24day').value = ''; c24ShowWin(); c24Status();
     $('c24msg').className = 'msg ok'; $('c24msg').textContent = '연결 설정을 저장했어요';
   };
