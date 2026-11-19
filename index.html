@@ -326,7 +326,7 @@ em.up{color:var(--acc)}em.down{color:var(--bad)}
 .rrow .pbar i{background:var(--acc)}
 
 .btn.dangerfill{background:var(--bad);border-color:var(--bad);color:#fff}
-.modal{position:fixed;inset:0;background:rgba(20,30,24,.45);display:grid;place-items:center;padding:16px;z-index:50}
+.modal{position:fixed;inset:0;background:rgba(20,30,24,.45);display:grid;place-items:center;padding:16px;z-index:120}
 .modal.hidden{display:none}
 .mbox{background:var(--card);border-radius:16px;max-width:440px;width:100%;padding:24px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
 .mbox h2{font:400 20px/1.3 var(--display);margin:0 0 10px}
@@ -1227,6 +1227,21 @@ body.is-home .pagehead .hello{font-size:15px}
 .iss-cats button{white-space:nowrap;border:0;background:none;font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:13px;cursor:pointer;color:var(--mute,#667)}
 .iss-cats button.on{background:linear-gradient(180deg,#68a873,#3f7f50);color:#fff;box-shadow:0 6px 14px -8px rgba(40,90,50,.7)}
 .iss-cats i{font-style:normal;font-size:12px;margin-left:4px;opacity:.85}
+.rp-box{max-width:860px;width:calc(100vw - 24px);max-height:calc(100vh - 40px);display:flex;flex-direction:column;gap:12px;overflow:auto}
+.rp-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.rp-h h2{margin:0 0 4px}
+.rp-src{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13.5px}.rp-src label{display:flex;gap:8px;align-items:center;white-space:nowrap;min-width:0;max-width:100%}.rp-src select{height:38px;border-radius:10px;padding:0 10px;font:inherit;max-width:100%;min-width:0}
+.rp-only{font-size:13px;color:var(--mute,#667)}
+.rp-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}.rp-kpi div{border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.65);border:1px solid var(--line,#e4e7e1)}
+.rp-kpi b{display:block;font-size:19px;font-variant-numeric:tabular-nums}.rp-kpi span{font-size:12px;color:var(--mute,#667)}
+.rp-kpi .hot{border-color:#e7b27a;background:#fff6ea}.rp-kpi .bad{border-color:#e8a59a;background:#fdeeea}.rp-kpi .good{border-color:#a9d3b3;background:#eef8f0}
+.rp-note{font-size:13px;color:#8a6a2f;background:#fff6ea;border-radius:10px;padding:8px 12px;margin:0}
+.rp-t{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}.rp-t td{white-space:normal!important;overflow-wrap:anywhere}.rp-t th,.rp-t td{padding:7px 8px;border-bottom:1px solid var(--line,#eceee9);text-align:left;vertical-align:top}.rp-t th{font-size:12px;color:var(--mute,#667)}
+.rp-t td small{display:block;font-size:11.5px;color:var(--mute,#778);margin-top:2px}.rp-t tr.ch td{background:#fffaf0}.rp-t del{color:#a99;text-decoration:line-through}.rp-t td b{color:#2f6b3e}
+.rp-t td.up{color:#2f7a45;font-weight:700}.rp-t td.dn{color:#c4503a;font-weight:700}
+.rp-w summary{cursor:pointer;font-size:13.5px}.rp-w ul{font-size:13px;padding-left:18px}
+.rp-f{display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:-1px;background:inherit;padding-top:6px}
+html.dark .rp-kpi div{background:rgba(255,255,255,.04)}html.dark .rp-t tr.ch td{background:rgba(255,200,120,.06)}
+@media(max-width:620px){.rp-t .rp-old{display:none}.rp-t th:first-child,.rp-t td:first-child{width:52%}.rp-t th,.rp-t td{padding:6px 4px;font-size:12px}.rp-box{padding:16px}}
 .iss-sync.hidden,#iss-syncbtn.hidden{display:none!important}
 .iss-sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 12px;font-size:13px;color:var(--mute,#667)}.iss-sync span{flex:1;min-width:200px}
 #v-issue[data-cat="claim"] .iss-has .iss-c{color:#c4503a}
@@ -2145,9 +2160,18 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
     <div class="savebar">
       <span class="msg" id="savemsg"></span>
+      <button class="btn" id="rprev" type="button">미리 돌려보기</button>
       <button class="btn pri" id="save">규칙 저장</button>
     </div>
   </section>
+  <div class="modal hidden" id="rpModal" role="dialog" aria-modal="true" aria-labelledby="rp-t">
+    <div class="mbox rp-box">
+      <div class="rp-h"><div><h2 id="rp-t">규칙 미리 돌려보기</h2><p class="msg">저장하기 전에, 고친 규칙으로 정리하면 어떻게 바뀌는지 미리 봐요. 아직 아무것도 저장되지 않아요.</p></div><button class="iss-close" id="rp-close" type="button" aria-label="닫기">✕</button></div>
+      <div class="rp-src"><label>돌려볼 주문 <select id="rp-src"></select></label><label class="rp-only"><input type="checkbox" id="rp-only" checked> 바뀐 줄만</label></div>
+      <div id="rp-out"></div>
+      <div class="rp-f"><button class="btn" id="rp-close2" type="button">닫기</button><button class="btn pri" id="rp-save" type="button">이대로 규칙 저장</button></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -2398,7 +2422,7 @@ function detectDayIndex(text, target, regions) {
 
 const DEFAULT_RULES = {"checkWords":["색","잎으로","송이씩","크기","큰잎","작은","센치","cm","굵","얇","길이"],"defaultNote":"★신선식품★빠른배송부탁드립니다.","dropColumns":["쇼핑몰","쇼핑몰번호"],"fixedValues":[{"col":"상품번호","value":"우정/허브다섯메"}],"names":[{"from":"애플민트","to":"애플민트"},{"from":"애플민트 100g","to":"애플민트"},{"from":"애플민트 생잎 10g","to":"애플민트"},{"from":"애플민트 생잎 100g","to":"애플민트"},{"from":"애플민트 크기지정 X 100g","to":"애플민트"},{"from":"스피아민트","to":"스피아민트"},{"from":"스피아민트 생잎 100g","to":"스피아민트"},{"from":"로즈마리","to":"로즈마리"},{"from":"로즈마리 생잎 10g","to":"로즈마리"},{"from":"로즈마리 생잎 100g","to":"로즈마리"},{"from":"타임","to":"타임"},{"from":"타임 생잎 10g","to":"타임"},{"from":"타임 생잎 100g","to":"타임"},{"from":"자스민 100잎","to":"자스민 100잎"},{"from":"자스민 잎 100잎","to":"자스민 100잎"},{"from":"자스민 생잎 100잎","to":"자스민 100잎"},{"from":"식용꽃 30송이","to":"식용꽃 30송이"},{"from":"식용꽃 혼합 30송이","to":"식용꽃 혼합 30송이"},{"from":"식용꽃 먹는꽃 혼합 30송이","to":"식용꽃 먹는꽃 혼합 30송이"},{"from":"식용꽃 비올라 30송이","to":"식용꽃 비올라 30송이"},{"from":"식용꽃 패랭이 30송이","to":"식용꽃 패랭이 30송이"},{"from":"비올라 30송이","to":"비올라 30송이"},{"from":"미니장미 생화 5송이(장식용)","to":"미니장미 생화 5송이(장식용)"},{"from":"나스터튬잎 한련화잎 25g","to":"나스터튬잎 한련화잎"},{"from":"나스터튬잎 한련화잎","to":"나스터튬잎 한련화잎"},{"from":"나스터튬잎","to":"나스터튬잎 한련화잎"},{"from":"나스터튬잎 25g","to":"나스터튬잎 한련화잎"},{"from":"한련화잎","to":"나스터튬잎 한련화잎"},{"from":"한련화잎 25g","to":"나스터튬잎 한련화잎"},{"from":"식용꽃 보리지 30송이","to":"식용꽃 보리지 30송이"},{"from":"타임 허브 생잎 100g","to":"타임"},{"from":"타임 허브 생잎 10g","to":"타임"},{"from":"스피아민트 허브 생잎 100g 큰잎","to":"스피아민트"},{"from":"식용꽃 비올라 먹는꽃 30송이","to":"식용꽃 비올라 30송이"},{"from":"나스터튬잎 30g","to":"나스터튬잎 한련화잎"},{"from":"식용꽃 보리지 먹는꽃 30송이","to":"식용꽃 보리지 30송이"},{"from":"미니장미 생화 장식용 5송이","to":"미니장미 생화 5송이(장식용)"},{"from":"애플민트 생잎 [장식용 큰잎 길고 큰잎]","to":"애플민트"},{"from":"식용꽃 팬지 30송이","to":"식용꽃 팬지 30송이"}],"optionClean":{"removeWords":["1개"],"stripPrefix":true},"optionMap":[{"from":"100g","product":"애플민트 크기지정 X 100g","to":"크기지정 X [랜덤] 100g"},{"from":"30개","product":"","to":""},{"from":"100개입","product":"","to":""},{"from":"[큰 잎] 100g","product":"","to":"[큰잎] 100g"}],"requests":[{"keyword":"투톤","newName":"★투톤 식용꽃 비올라 30송이","product":"비올라","unitFrom":"","unitTo":""},{"keyword":"보라","newName":"★보라 비올라 30송이","product":"비올라","unitFrom":"","unitTo":""},{"keyword":"작은잎","newName":"★작은 자스민 잎 100잎","product":"자스민","unitFrom":"","unitTo":""},{"keyword":"하얀","newName":"★얇고 하얀 타임","product":"타임","unitFrom":"","unitTo":""},{"keyword":"120송이","newName":"★식용꽃 120송이","product":"식용꽃 30송이","unitFrom":"30","unitTo":"120"},{"keyword":"긴걸로","newName":"★길게 로즈마리","product":"로즈마리","unitFrom":"","unitTo":""},{"keyword":"작고 단단","newName":"★작고 단단 자스민","product":"자스민","unitFrom":"","unitTo":""},{"keyword":"10cm","newName":"★10cm 로즈마리","product":"로즈마리","unitFrom":"","unitTo":""}],"summary":{"bagProducts":["애플민트","로즈마리","타임","스피아민트"],"bagUnit":"100g","extra":[],"groups":[{"group":"미니장미","match":"장미"},{"group":"식용꽃","match":"비올라"},{"group":"식용꽃","match":"송이"},{"group":"애플민트","match":"애플민트"},{"group":"로즈마리","match":"로즈마리"},{"group":"타임","match":"타임"},{"group":"스피아민트","match":"스피아민트"},{"group":"자스민","match":"자스민"},{"group":"나스터튬","match":"나스터튬"}],"merge":[{"from":"식용꽃 30송이","to":"식용꽃 혼합 30송이"},{"from":"식용꽃 먹는꽃 혼합 30송이","to":"식용꽃 혼합 30송이"},{"from":"자스민 잎 100잎","to":"자스민 100잎"},{"from":"자스민 생잎 100잎","to":"자스민 100잎"},{"from":"[큰 잎] 100g","to":"[큰잎] 100g"}],"optionMerge":[{"from":"100g","product":"애플민트","to":"[보통잎] 100g"},{"from":"30g","product":"애플민트","to":"[보통잎] 30g"},{"from":"10g","product":"애플민트","to":"[보통잎] 10g"}],"order":["★투톤 식용꽃 비올라 30송이","★보라 비올라 30송이","★식용꽃 120송이","식용꽃 혼합 30송이","식용꽃 비올라 30송이","식용꽃 패랭이 30송이","식용꽃 보리지 30송이","애플민트","로즈마리","타임","★얇고 하얀 타임","스피아민트","미니장미 생화 5송이(장식용)","★작은 자스민 잎 100잎","자스민 100잎","나스터튬잎 한련화잎"]},"weather":{"bands":[{"basis":"최저","color":"BFBFBF","label":"배송X","max":-10,"min":"","warn":"배송 불가"},{"basis":"최저","color":"FFC7CE","label":"신문지 및 에어캡 두껍게","max":-5,"min":-10,"warn":""},{"basis":"최저","color":"FFEB9C","label":"신문지 및 에어캡 얇게","max":-1,"min":-5,"warn":""},{"basis":"최고","color":"FFC7CE","label":"아이스팩 2~3개","max":"","min":31,"warn":""},{"basis":"최고","color":"FFEB9C","label":"아이스팩 1개","max":30,"min":21,"warn":""},{"basis":"최고","color":"C6EFCE","label":"아이스팩 X","max":20,"min":"","warn":""}],"col":"포장방법","regions":[{"match":"서울","region":"서울"},{"match":"인천","region":"인천"},{"match":"경기","region":"경기"},{"match":"강원","region":"강원"},{"match":"충북","region":"충북"},{"match":"충청북도","region":"충북"},{"match":"대전","region":"대전"},{"match":"세종","region":"세종"},{"match":"충남","region":"충남"},{"match":"충청남도","region":"충남"},{"match":"전북","region":"전북"},{"match":"전라북도","region":"전북"},{"match":"전남광주통합특별시 동구","region":"광주"},{"match":"전남광주통합특별시 서구","region":"광주"},{"match":"전남광주통합특별시 남구","region":"광주"},{"match":"전남광주통합특별시 북구","region":"광주"},{"match":"전남광주통합특별시 광산구","region":"광주"},{"match":"광주광역시","region":"광주"},{"match":"광주 ","region":"광주"},{"match":"전남광주","region":"전남"},{"match":"전남","region":"전남"},{"match":"전라남도","region":"전남"},{"match":"대구","region":"대구"},{"match":"경북","region":"경북"},{"match":"경상북도","region":"경북"},{"match":"부산","region":"부산"},{"match":"울산","region":"울산"},{"match":"경남","region":"경남"},{"match":"경상남도","region":"경남"},{"match":"제주","region":"제주"},{"match":"서귀포","region":"제주"}]}};
 const clone = o => JSON.parse(JSON.stringify(o));
-let rules = clone(DEFAULT_RULES);
+let rules = clone(DEFAULT_RULES), rulesSavedJ = JSON.stringify(rules);
 let db = null, rulesDoc = null, dirty = false;
 let srcRows = null, srcName = '', srcAt = null, result = null, curSheet = 0;
 let srcKeys = [], lastUp = null;
@@ -2500,7 +2524,7 @@ async function saveRules() {
   try {
     if (rulesDoc) { await rulesDoc.set({ rules: rules, updatedAt: new Date().toISOString() }); }
     else { try { localStorage.setItem('cafe24rules', JSON.stringify(rules)); } catch (e) {} }
-    dirty = false; $('savemsg').className = 'msg ok';
+    dirty = false; rulesSavedJ = JSON.stringify(rules); $('savemsg').className = 'msg ok';
     $('savemsg').textContent = rulesDoc ? '저장했어요' : '이 브라우저에만 저장했어요 (공유 저장소에 연결되지 않음)';
     if (srcRows) runProcess();
   } catch (e) {
@@ -5276,6 +5300,60 @@ document.addEventListener('click', async e => {
 });
 invBind(); renderInv();
 
+// ---------- 규칙 미리 돌려보기: 저장된 규칙 ↔ 지금 고친 규칙 ----------
+function rpSources() {
+  const out = []; if (srcRows && srcRows.length > 1) out.push(['src', '지금 정리하기에 올린 주문 · ' + (srcName || '원본') + ' (' + (srcRows.length - 1) + '줄)']);
+  Object.keys(upl).sort().reverse().slice(0, 30).forEach(d => ['am', 'pm'].forEach(sl => { const b = upl[d] && upl[d][sl]; if (b && b.rows && b.rows.length) out.push([d + '|' + sl, fmtDay(d) + ' ' + (sl === 'am' ? '오전' : '오후') + ' 업로드 (' + b.rows.filter(r => !r.del).length + '줄)']); }));
+  return out;
+}
+function rpRows(key) {
+  if (key === 'src') return srcRows;
+  const [d, sl] = key.split('|'), b = (upl[d] || {})[sl]; if (!b) return null;
+  const H = ['주문번호', '주문상품명', '옵션', '수량', '비고', '수령인', '주소'];
+  return [H].concat((b.rows || []).filter(r => !r.del).map(r => [r.o, r.p, r.op || null, r.q, r.n || null, '-', r.a || '']));
+}
+function rpRun(rows, R) { try { return CORE.process(rows, R, {}); } catch (e) { return { err: e.message }; } }
+function renderRp() {
+  const sel = $('rp-src'), key = sel.value, rows = key && rpRows(key), box = $('rp-out'), only = $('rp-only').checked;
+  const changedRules = rulesSavedJ !== JSON.stringify(rules);
+  if (!rows) { box.innerHTML = '<p class="iss-empty">돌려볼 주문이 없어요. 정리하기에서 주문을 한 번 올리거나 불러와 주세요.</p>'; return; }
+  const A = rpRun(rows, JSON.parse(rulesSavedJ)), B = rpRun(rows, rules);
+  if (A.err || B.err) { box.innerHTML = `<p class="msg err">${esc(B.err || A.err)}</p>`; return; }
+  const h1 = A.sheet1[0], h2 = B.sheet1[0], ix = (h, k) => h.indexOf(k), cell = (r, h, k) => { const i = ix(h, k); return i < 0 ? '' : String(r[i] ?? ''); };
+  const W = R => R.warnings.filter(w => !w.flags.every(f => /기온/.test(f)));
+  const wa = W(A), wb = W(B), unreg = R => R.warnings.filter(w => w.flags.includes('미등록 상품')).length;
+  const same = A.sheet1.length === B.sheet1.length, lines = [];
+  if (same) for (let i = 1; i < B.sheet1.length; i++) {
+    const a = A.sheet1[i], b = B.sheet1[i], an = cell(a, h1, '주문상품명'), ao = cell(a, h1, '옵션'), aq = cell(a, h1, '수량'), bn = cell(b, h2, '주문상품명'), bo = cell(b, h2, '옵션'), bq = cell(b, h2, '수량');
+    const ch = an !== bn || ao !== bo || aq !== bq, orig = rows[i] || [], oh = rows[0].map(String);
+    if (ch || !only) lines.push({ ch, o: [orig[oh.indexOf('주문상품명')], orig[oh.indexOf('옵션')]].filter(Boolean).join(' / '), a: [an, ao, aq + '개'], b: [bn, bo, bq + '개'], note: String(orig[oh.indexOf('비고')] ?? '').slice(0, 40) });
+  }
+  const sumMap = R => { const m = new Map(); R.sheet3.slice(1).forEach(([n, o, q]) => m.set(String(n) + (o ? ' · ' + String(o) : ''), Number(q) || 0)); return m; };
+  const sa = sumMap(A), sb = sumMap(B), keys = [...new Set([...sa.keys(), ...sb.keys()])], sd = keys.filter(k => (sa.get(k) || 0) !== (sb.get(k) || 0));
+  const nch = lines.filter(x => x.ch).length;
+  const dv = (x, y) => x === y ? esc(y) : `<del>${esc(x)}</del> <b>${esc(y)}</b>`;
+  box.innerHTML = `<div class="rp-kpi"><div><b>${rows.length - 1}</b><span>돌려본 줄</span></div><div class="${nch ? 'hot' : ''}"><b>${same ? nch : '?'}</b><span>바뀌는 줄</span></div>
+      <div class="${wb.length > wa.length ? 'bad' : wb.length < wa.length ? 'good' : ''}"><b>${wa.length} → ${wb.length}</b><span>확인 필요</span></div><div class="${unreg(B) > unreg(A) ? 'bad' : unreg(B) < unreg(A) ? 'good' : ''}"><b>${unreg(A)} → ${unreg(B)}</b><span>미등록 상품</span></div><div class="${sd.length ? 'hot' : ''}"><b>${sd.length}</b><span>집계가 바뀌는 품목</span></div></div>
+    ${changedRules ? '' : '<p class="rp-note">아직 고친 규칙이 없어요. 규칙을 고친 다음 다시 돌려보면 바뀌는 줄이 표시돼요.</p>'}
+    ${sd.length ? `<h3 class="sub3">집계 차이</h3><div class="tblwrap"><table class="rp-t"><thead><tr><th>품목 · 옵션</th><th>저장된 규칙</th><th>고친 규칙</th></tr></thead><tbody>${sd.map(k => `<tr><td>${esc(k)}</td><td>${sa.has(k) ? sa.get(k) : '–'}</td><td class="${(sb.get(k) || 0) > (sa.get(k) || 0) ? 'up' : 'dn'}">${sb.has(k) ? sb.get(k) : '–'}</td></tr>`).join('')}</tbody></table></div>` : ''}
+    <h3 class="sub3">${only ? '바뀌는 줄' : '모든 줄'} ${lines.length}개</h3>
+    ${!same ? '<p class="msg">줄 수가 달라져서 줄별 비교는 못 했어요. 위의 집계 차이를 봐 주세요.</p>' : lines.length ? `<div class="tblwrap"><table class="rp-t"><thead><tr><th>원래 상품명 / 옵션</th><th class="rp-old">저장된 규칙</th><th>고친 규칙</th></tr></thead><tbody>${lines.slice(0, 300).map(x => `<tr class="${x.ch ? 'ch' : ''}"><td>${esc(x.o)}${x.note ? `<small>비고: ${esc(x.note)}</small>` : ''}</td><td class="rp-old">${esc(x.a[0])}<small>${esc(x.a[1] || '옵션 없음')} · ${esc(x.a[2])}</small></td><td>${dv(x.a[0], x.b[0])}<small>${dv(x.a[1] || '옵션 없음', x.b[1] || '옵션 없음')} · ${dv(x.a[2], x.b[2])}</small></td></tr>`).join('')}</tbody></table></div>${lines.length > 300 ? '<p class="msg">처음 300줄만 보여요</p>' : ''}` : '<p class="iss-empty">바뀌는 줄이 없어요</p>'}
+    ${wb.length ? `<details class="rp-w"><summary>고친 규칙으로 확인 필요한 줄 ${wb.length}개</summary><ul>${wb.slice(0, 100).map(w => `<li>${w.flags.map(f => '<span class="tag">' + esc(f) + '</span>').join('')} ${w.row}행 · <b>${esc(w.product)}</b>${w.note ? ' · 비고 "' + esc(w.note) + '"' : ''}</li>`).join('')}</ul></details>` : ''}`;
+  $('rp-save').disabled = !changedRules;
+}
+function openRp() {
+  const src = rpSources(), sel = $('rp-src');
+  sel.innerHTML = src.length ? src.map(([k, l]) => `<option value="${esc(k)}">${esc(l)}</option>`).join('') : '<option value="">돌려볼 주문이 없어요</option>';
+  $('rpModal').classList.remove('hidden'); renderRp();
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('#rprev')) return openRp();
+  if (e.target.closest('#rp-close,#rp-close2') || e.target.id === 'rpModal') return $('rpModal').classList.add('hidden');
+  if (e.target.closest('#rp-save')) { $('rpModal').classList.add('hidden'); saveRules(); }
+});
+document.addEventListener('change', e => { if (e.target.id === 'rp-src' || e.target.id === 'rp-only') renderRp(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('rpModal') && !$('rpModal').classList.contains('hidden')) $('rpModal').classList.add('hidden'); });
+
 
 // ---------- 이슈 → 상품 후기 (카페24 후기 게시판 · 네이버페이 후기 포함) ----------
 var revBusy = false, revMsg = '';
@@ -5873,6 +5951,7 @@ srcLabel('규칙을 불러오는 중…');
     histInit(null);
     try { const l = localStorage.getItem('cafe24rules'); if (l) rules = Object.assign(clone(DEFAULT_RULES), JSON.parse(l)); } catch (e) {}
     try { const l = localStorage.getItem('cafe24weather'); if (l) { wdata = JSON.parse(l); computeTemps(); } } catch (e) {}
+    rulesSavedJ = JSON.stringify(rules);
     renderRules(); srcLabel('Firebase에 연결되지 않아 이 브라우저에만 저장돼요.'); webWeatherAuto(); return;
   }
   rulesDoc = db.doc('config/rules');
@@ -5893,7 +5972,7 @@ srcLabel('규칙을 불러오는 중…');
   rulesDoc.onSnapshot(snap => {
     if (!snap.metadata.fromCache) clearTimeout(timer);
     if (snap.exists && snap.data().rules) {
-      if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); renderRules(); if (srcRows && first) runProcess(); }
+      if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); rulesSavedJ = JSON.stringify(rules); renderRules(); if (srcRows && first) runProcess(); }
       const u = snap.data().updatedAt; srcLabel('저장된 규칙 사용 중' + (u ? ' · 마지막 저장 ' + new Date(u).toLocaleString('ko-KR') : ''));
     } else if (!snap.metadata.fromCache) srcLabel('저장된 규칙이 없어 기본 규칙을 보여드려요. 고친 뒤 [규칙 저장]을 누르세요.');
     first = false;
