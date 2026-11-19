@@ -111,7 +111,7 @@ async function orders(env, q) {
       const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
       out.push({
         order_id: o.order_id, order_date: o.order_date, payment_date: o.payment_date,
-        payment_method: o.payment_method || [], payment_method_name: o.payment_method_name || [], order_place_id: o.order_place_id || '',
+        payment_method: o.payment_method || [], payment_method_name: o.payment_method_name || [], order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '',
         buyer: { name: by.name || '', phone: by.phone || '', cellphone: by.cellphone || '', zipcode: by.buyer_zipcode || '', address1: by.buyer_address1 || '', address2: by.buyer_address2 || '' },
         receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '', shipping_message: rc.shipping_message || '' },
         items: (o.items || []).filter(i => !/^[CR]/.test(i.order_status || '')).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, custom_variant_code: i.custom_variant_code || '', option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, order_status: i.order_status || '' }))

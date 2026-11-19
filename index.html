@@ -1495,6 +1495,31 @@ html.dark .mr-isslist span{background:rgba(208,122,82,.16)}html.dark .mr-rank .r
 @media(max-width:560px){.mrep{padding:18px 16px!important}.mr-head h2{font-size:22px!important}.mr-hact{width:100%;justify-content:space-between}.mr-kpis b{font-size:24px}.mr-rank .mv{width:34px}.mr-tbl{font-size:12.5px}.mr-tbl th,.mr-tbl td{padding:7px 6px}}
 .mr-tbl td:first-child{min-width:110px;word-break:keep-all}
 .mrep .tblwrap{overflow-x:auto}
+.mall .mh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.mall .mh h2{margin:0 auto 0 0;font-size:18px}
+.mall .mper{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.mall .mper button{height:34px;padding:0 12px;border-radius:99px;border:1px solid var(--line,#dcdfd8);background:var(--card,#fff);color:inherit;font:inherit;font-size:13px;cursor:pointer}
+.mall .mper button.on{background:#2f6b3e;border-color:#2f6b3e;color:#fff}
+.mall .mper input[type=date]{height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 8px;font:inherit;font-size:13px;background:var(--card,#fff);color:inherit}
+.mall .mnote{font-size:12.5px;color:var(--mut,#778);margin:4px 0 12px}
+.mall .mkpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.mall .mkpi div{border-radius:16px;padding:12px 14px;background:rgba(255,255,255,.6);border:1px solid var(--line,#e4e7e1);position:relative;overflow:hidden}
+.mall .mkpi div::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.mall .mkpi span{font-size:12.5px;color:var(--mut,#667);display:block}.mall .mkpi b{font-size:22px;font-variant-numeric:tabular-nums}.mall .mkpi small{font-size:12px;margin-left:6px;color:var(--mut,#778)}
+.mall .mkpi .up,.mall .mkpi .dn,.mall .mkpi .nw{display:inline;font-size:12px;margin-left:6px}.mall .mkpi .up{color:#2f7a45}.mall .mkpi .dn{color:#c4503a}
+@media(max-width:620px){.mall .mkpi{grid-template-columns:repeat(2,1fr);gap:8px}.mall .mkpi div{padding:10px 12px}.mall .mkpi b{font-size:19px}}
+.mall .mbar{display:flex;height:10px;border-radius:99px;overflow:hidden;background:#eceee9;margin:0 0 16px}.mall .mbar i{display:block;height:100%;background:var(--c)}
+.mall .mlg{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;margin:-8px 0 12px;color:var(--mut,#667)}.mall .mlg span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+.mall table{width:100%;border-collapse:collapse;font-size:13.5px}.mall th,.mall td{padding:8px 8px;border-bottom:1px solid var(--line,#eceee9);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mall th{font-size:12px;color:var(--mut,#667);font-weight:600}.mall th:first-child,.mall td:first-child{text-align:left;white-space:normal}
+.mall tr.mi{cursor:pointer}.mall tr.mi:hover td{background:rgba(47,107,62,.04)}.mall tr.mi td:first-child::before{content:"▸";display:inline-block;width:14px;color:var(--mut,#999);transition:transform .15s}.mall tr.mi.open td:first-child::before{transform:rotate(90deg)}
+.mall tr.mo td{font-size:12.5px;background:rgba(0,0,0,.015)}.mall tr.mo td:first-child{padding-left:24px;color:var(--mut,#556)}
+.mall td.z{color:#c9ccc4}.mall td.sb{width:150px}.mall .sbar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:#eceee9;min-width:90px}.mall .sbar i{background:var(--c)}
+.mall .up{color:#2f7a45;font-size:11.5px;margin-left:4px}.mall .dn{color:#c4503a;font-size:11.5px;margin-left:4px}
+.mall .mraw{margin-top:12px;font-size:12.5px;color:var(--mut,#667)}
+.mall .mempty{padding:26px 10px;text-align:center;color:var(--mut,#778)}
+@media(max-width:620px){.mall td.sb,.mall th.sb{display:none}.mall th,.mall td{padding:7px 5px;font-size:12.5px}}
+html.dark .mall .mkpi div{background:rgba(255,255,255,.04)}html.dark .mall .mbar,html.dark .mall .sbar{background:rgba(255,255,255,.08)}
+
 /* ---------- 탭 안의 작은 메뉴 ---------- */
 .subtabs{position:sticky;top:10px;z-index:25;display:flex;gap:6px;padding:6px;margin:0 0 16px;border-radius:20px;background:rgba(255,253,248,.88);border:1px solid rgba(255,255,255,.95);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 10px 24px -16px rgba(40,60,30,.45),0 0 0 1px rgba(60,70,40,.05)}
 .subtabs button{position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:46px;border:0;border-radius:15px;background:none;font:600 14.5px var(--body);color:var(--mute);cursor:pointer;transition:background .15s,color .15s;min-width:0;white-space:nowrap}
@@ -1505,7 +1530,7 @@ html.dark .mr-isslist span{background:rgba(208,122,82,.16)}html.dark .mr-rank .r
 .subtabs button.alert .sdot{display:block}
 section[data-cur] > [data-sub]{animation:subIn .28s ease both}
 #v-run[data-cur="order"] > [data-sub]:not([data-sub="order"]),#v-run[data-cur="wx"] > [data-sub]:not([data-sub="wx"]),#v-run[data-cur="inv"] > [data-sub]:not([data-sub="inv"]),
-#v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]){display:none!important}
+#v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]),#v-hist[data-cur="mall"] > [data-sub]:not([data-sub="mall"]){display:none!important}
 body.is-guest #v-hist .subtabs{display:none!important}
 @keyframes subIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.06)}html.dark .subtabs .sdot{box-shadow:0 0 0 2px #1c241e}
@@ -1882,7 +1907,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
 
   <section id="v-hist" class="hidden" data-cur="report">
     <div class="histlock"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></i><h2>관리자만 볼 수 있어요</h2><p>기록·통계(매출)는 관리자 아이디로 로그인했을 때만 열려요.</p><button class="btn" type="button" data-go="home">홈으로</button></div>
-    <nav class="subtabs" data-subfor="hist" role="tablist"><button type="button" role="tab" data-subgo="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 16v-3M12 16v-6M15.5 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>월간 보고서</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="days"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>날짜별 기록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="sales"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l3.5-4 3 2.5L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>매출</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="hist" role="tablist"><button type="button" role="tab" data-subgo="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 16v-3M12 16v-6M15.5 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>월간 보고서</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="days"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>날짜별 기록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="sales"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l3.5-4 3 2.5L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>매출</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="mall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5 5.5 4h13L20 9.5M4 9.5h16M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0M5.5 12v8h13v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>쇼핑몰 비교</span><i class="sdot"></i></button></nav>
     <div class="card mrep" id="mrep" data-sub="report"></div>
     <div class="histrow" data-sub="days">
       <div class="card">
@@ -1901,6 +1926,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
     <div class="card" id="hstat" data-sub="days"></div>
     <div class="card" id="hsales" data-sub="sales"></div>
+    <div class="card mall" id="hmall" data-sub="mall"></div>
   </section>
 
   <section id="v-rules" class="hidden locked">
@@ -5163,6 +5189,97 @@ document.addEventListener('click', async e => {
   } catch (er) { if (er && er.code === 'declined') return; m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); }
 });
 invBind(); renderInv();
+
+// ---------- 기록·통계 → 쇼핑몰 비교 (카페24 결제일 기준 · 품목/쇼핑몰/세부옵션별 수량) ----------
+const MALL_CH = [['self', '자사몰', '#3d7a4f'], ['coupang', '쿠팡', '#d9663f'], ['naver', '네이버', '#2f86c4'], ['etc', '기타', '#9a9a92']];
+const mallChOf = o => { const m = String(o.market_id || '').toLowerCase(); if (!m || m === 'self') return 'self'; if (/coupang/.test(m)) return 'coupang'; if (/naver|smartstore|storefarm|nstore/.test(m)) return 'naver'; return 'etc'; };
+let mallPer = 'month', mallFrom = '', mallTo = '', mallOpen = new Set(), mallBusy = false, mallMsg = '';
+const mallKst = iso => { const d = new Date(new Date(iso).getTime() + 9 * 3600e3); return d.toISOString().slice(0, 10); };
+const mallCacheGet = ym => { try { return JSON.parse(localStorage.getItem('herb5_mall_' + ym) || 'null'); } catch (e) { return null; } };
+const mallCachePut = (ym, v) => { try { localStorage.setItem('herb5_mall_' + ym, JSON.stringify(v)); } catch (e) {} };
+function mallRange() {   // [from, to] 날짜(포함) · 비교할 바로 앞 기간
+  const t = new Date(), td = new Date(t.getFullYear(), t.getMonth(), t.getDate()); let a, b;
+  if (mallPer === 'week') { a = new Date(td); a.setDate(a.getDate() - ((a.getDay() + 6) % 7)); b = td; }
+  else if (mallPer === 'month') { a = new Date(td.getFullYear(), td.getMonth(), 1); b = td; }
+  else if (mallPer === 'last') { a = new Date(td.getFullYear(), td.getMonth() - 1, 1); b = new Date(td.getFullYear(), td.getMonth(), 0); }
+  else if (mallPer === '3m') { a = new Date(td.getFullYear(), td.getMonth() - 2, 1); b = td; }
+  else { a = mallFrom ? dOf(mallFrom) : new Date(td.getFullYear(), td.getMonth(), 1); b = mallTo ? dOf(mallTo) : td; if (b < a) [a, b] = [b, a]; }
+  const days = Math.round((b - a) / 864e5) + 1, pb = new Date(a); pb.setDate(pb.getDate() - 1); const pa = new Date(pb); pa.setDate(pa.getDate() - days + 1);
+  if (mallPer === 'month' || mallPer === 'last') { pa.setTime(new Date(a.getFullYear(), a.getMonth() - 1, 1).getTime()); const e = new Date(a.getFullYear(), a.getMonth(), 0); pb.setTime(Math.min(e.getTime(), new Date(a.getFullYear(), a.getMonth() - 1, b.getDate()).getTime())); }
+  return { from: isoDate(a), to: isoDate(b), pfrom: isoDate(pa), pto: isoDate(pb), days };
+}
+function mallNorm(list) {   // 정리하기와 같은 규칙(상품명·옵션·요청사항)으로 이름을 맞춘 뒤 [날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓원래값]
+  const H = ['주문번호', '주문상품명', '옵션', '수량', '비고', '수령인', '결제일', '쇼핑몰구분', '마켓'], rows = [H];
+  list.forEach(o => { const ch = mallChOf(o), d = mallKst(o.payment_date); (o.items || []).forEach(i => rows.push([o.order_id, i.product_name, i.option_value || null, i.quantity, (o.receiver && o.receiver.shipping_message) || null, '-', d, ch, o.market_id || 'self'])); });
+  if (rows.length < 2) return [];
+  let R; try { R = CORE.process(rows, rules, {}); } catch (e) { return rows.slice(1).map(r => [r[6], r[7], String(r[1]), String(r[2] || ''), Number(r[3]) || 0, r[8]]); }
+  const h = R.sheet1[0], ix = k => h.indexOf(k), alias = stkAliasFn();
+  return R.sheet1.slice(1).map(r => { const n = String(r[ix('주문상품명')] ?? ''), op = String(r[ix('옵션')] ?? ''), al = alias({ n, o: op });
+    return [r[ix('결제일')], r[ix('쇼핑몰구분')], al || n, op, Number(r[ix('수량')]) || 0, r[ix('마켓')]]; });
+}
+async function mallLoad(force) {
+  const rg = mallRange(), months = new Set(), cur = isoDate(new Date()).slice(0, 7);
+  for (let d = dOf(rg.pfrom); isoDate(d) <= rg.to; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) months.add(isoDate(d).slice(0, 7));
+  const need = [...months].filter(ym => { const c = mallCacheGet(ym); return force || !c || (ym >= cur && Date.now() - c.at > 10 * 60e3); });
+  if (!need.length) return;
+  mallBusy = true; renderMall();
+  try {
+    for (const ym of need) {
+      mallMsg = ym.replace('-', '년 ') + '월 주문을 카페24에서 받는 중…'; renderMall();
+      const [y, m] = ym.split('-').map(Number), from = new Date(y, m - 1, 1), to = new Date(y, m, 1);
+      const d = await c24Call('/orders?from=' + encodeURIComponent(new Date(isoDate(from) + 'T00:00:00+09:00').toISOString()) + '&to=' + encodeURIComponent(new Date(isoDate(to) + 'T00:00:00+09:00').toISOString()));
+      mallCachePut(ym, { at: Date.now(), rows: mallNorm(d.orders || []) });
+    }
+    mallMsg = '';
+  } catch (e) { mallMsg = '불러오지 못했어요: ' + (e.code === 'not_found' ? '중계 서버 코드를 최신으로 바꿔 주세요' : e.message); }
+  finally { mallBusy = false; renderMall(); }
+}
+function mallAgg(from, to) {
+  const rows = []; for (let d = dOf(from); isoDate(d) <= to; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) { const c = mallCacheGet(isoDate(d).slice(0, 7)); if (c) rows.push(...c.rows); }
+  const items = new Map(), tot = { self: 0, coupang: 0, naver: 0, etc: 0 }, raw = new Map();
+  rows.forEach(([day, ch, n, op, q, mk]) => { if (day < from || day > to || !q) return;
+    tot[ch] += q; raw.set(mk, (raw.get(mk) || 0) + q);
+    if (!items.has(n)) items.set(n, { n, c: { self: 0, coupang: 0, naver: 0, etc: 0 }, t: 0, ops: new Map() });
+    const it = items.get(n); it.c[ch] += q; it.t += q;
+    if (!it.ops.has(op)) it.ops.set(op, { c: { self: 0, coupang: 0, naver: 0, etc: 0 }, t: 0 }); const o = it.ops.get(op); o.c[ch] += q; o.t += q; });
+  return { items, tot, raw };
+}
+function renderMall() {
+  const el = $('hmall'); if (!el) return;
+  if (!document.body.classList.contains('fbmode') || typeof c24Cfg !== 'function' || !c24Cfg().worker) { el.innerHTML = '<div class="mh"><h2>쇼핑몰 비교</h2></div><p class="mempty">웹 버전에서 카페24를 연결하면 자사몰 · 쿠팡 · 네이버 주문량을 비교할 수 있어요.<br>정리하기 → 주문 정리 → 카페24에서 바로 불러오기에서 연결해 주세요.</p>'; return; }
+  const rg = mallRange(), A = mallAgg(rg.from, rg.to), P = mallAgg(rg.pfrom, rg.pto), chs = MALL_CH.filter(c => c[0] !== 'etc' || A.tot.etc || P.tot.etc);
+  const sum = Object.values(A.tot).reduce((a, b) => a + b, 0), psum = Object.values(P.tot).reduce((a, b) => a + b, 0);
+  const pct = (a, b) => b ? Math.round(a / b * 100) : 0, fmt = n => n.toLocaleString('ko-KR');
+  const chg = (a, b) => { if (!b && !a) return ''; if (!b) return '<span class="up">새로</span>'; const r = Math.round((a - b) / b * 100); return r > 0 ? `<span class="up">▲${r}%</span>` : r < 0 ? `<span class="dn">▼${-r}%</span>` : ''; };
+  const md = s => s.slice(5).replace('-', '/');
+  const per = [['week', '이번 주'], ['month', '이번 달'], ['last', '지난달'], ['3m', '최근 3개월'], ['custom', '직접']];
+  let h = `<div class="mh"><h2>쇼핑몰 비교</h2><button class="btn sm" id="mallre" type="button" ${mallBusy ? 'disabled' : ''}>카페24에서 새로 받기</button></div>
+    <div class="mper">${per.map(([k, l]) => `<button type="button" data-mallper="${k}" class="${mallPer === k ? 'on' : ''}">${l}</button>`).join('')}
+    ${mallPer === 'custom' ? `<input type="date" id="mallf" value="${rg.from}"> ~ <input type="date" id="mallt" value="${rg.to}">` : ''}</div>
+    <p class="mnote">결제일 기준 ${md(rg.from)} ~ ${md(rg.to)} · 비교: ${md(rg.pfrom)} ~ ${md(rg.pto)} · 취소된 주문은 빼고 수량만 세요${mallMsg ? ' · <b>' + esc(mallMsg) + '</b>' : ''}</p>`;
+  if (!sum && !mallBusy) { el.innerHTML = h + '<p class="mempty">이 기간에 결제된 주문이 없어요</p>'; return; }
+  h += `<div class="mkpi">${chs.map(([k, l, c]) => `<div style="--c:${c}"><span>${l}</span><b>${fmt(A.tot[k])}</b><small>${pct(A.tot[k], sum)}%</small>${chg(A.tot[k], P.tot[k])}</div>`).join('')}<div style="--c:#2b2f2a"><span>합계</span><b>${fmt(sum)}</b>${chg(sum, psum)}</div></div>
+    <div class="mbar">${chs.map(([k, , c]) => A.tot[k] ? `<i style="--c:${c};width:${A.tot[k] / sum * 100}%" title="${fmt(A.tot[k])}"></i>` : '').join('')}</div>
+    <div class="mlg">${chs.map(([, l, c]) => `<span style="--c:${c}">${l}</span>`).join('')}</div>`;
+  const list = [...A.items.values()].sort((a, b) => b.t - a.t);
+  const cells = (o, prev) => chs.map(([k]) => `<td class="${o.c[k] ? '' : 'z'}">${o.c[k] ? fmt(o.c[k]) : '–'}</td>`).join('') + `<td><b>${fmt(o.t)}</b>${prev !== undefined ? chg(o.t, prev) : ''}</td>` +
+    `<td class="sb"><div class="sbar">${chs.map(([k, , c]) => o.c[k] ? `<i style="--c:${c};width:${o.c[k] / o.t * 100}%"></i>` : '').join('')}</div></td>`;
+  h += `<div class="tblwrap"><table><thead><tr><th>품목 · 옵션</th>${chs.map(([, l]) => `<th>${l}</th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
+    list.map(it => { const op = mallOpen.has(it.n), pv = P.items.get(it.n);
+      return `<tr class="mi ${op ? 'open' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}개 옵션</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
+        (op ? [...it.ops.entries()].sort((a, b) => b[1].t - a[1].t).map(([o, v]) => `<tr class="mo"><td>${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? pv.ops.get(o).t : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
+  h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값과 수량이에요. 쿠팡·네이버가 '기타'로 잡히면 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
+  el.innerHTML = h;
+}
+document.addEventListener('click', e => {
+  const p = e.target.closest('[data-mallper]'); if (p) { mallPer = p.dataset.mallper; mallOpen.clear(); renderMall(); mallLoad(); return; }
+  const it = e.target.closest('[data-mallitem]'); if (it) { const n = it.dataset.mallitem; mallOpen.has(n) ? mallOpen.delete(n) : mallOpen.add(n); renderMall(); return; }
+  if (e.target.closest('#mallre')) { mallLoad(true); return; }
+  const sg = e.target.closest('[data-subgo="mall"]'); if (sg) { renderMall(); mallLoad(); }
+});
+document.addEventListener('change', e => { if (e.target.id === 'mallf' || e.target.id === 'mallt') { mallFrom = $('mallf').value; mallTo = $('mallt').value; renderMall(); mallLoad(); } });
+document.addEventListener('click', e => { const t = e.target.closest('.tab[data-t=hist]'); if (t && $('v-hist').dataset.cur === 'mall') setTimeout(() => { renderMall(); mallLoad(); }, 0); });
+window.addEventListener('h5ready', () => setTimeout(() => { if ($('v-hist').dataset.cur === 'mall') { renderMall(); mallLoad(); } }, 1500));
 
 // ---------- 송장번호를 카페24에 바로 등록 (웹 버전 · 중계 서버) ----------
 const C24_SENT = 'herb5_c24sent';
