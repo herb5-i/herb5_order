@@ -1550,7 +1550,7 @@ html.dark .mall .mch{background:rgba(255,255,255,.03)}
 .mall .msq svg{width:18px;height:18px;color:var(--mut,#889);flex:none}.mall .msq input{flex:1;border:0!important;outline:0;box-shadow:none!important;-webkit-appearance:none;appearance:none;height:auto;padding:0;background:none!important;font:inherit;font-size:14px;color:inherit;min-width:0}
 .mall .msq button{border:0;background:#eceee9;border-radius:99px;width:22px;height:22px;cursor:pointer;color:#666;font-size:14px;line-height:1}
 .mall .msd,.mall .msc{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}.mall .msd>span,.mall .msc>span{color:var(--mut,#667);min-width:42px;font-size:12.5px}
-.mall .msd input{width:auto;max-width:150px;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 8px;font:inherit;font-size:13px;background:var(--card,#fff);color:inherit}
+.mall .msd input{width:auto;max-width:160px;min-width:0;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 8px;font:inherit;font-size:13px;background:var(--card,#fff);color:inherit}
 .mall .msc button{height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line,#dcdfd8);background:var(--card,#fff);font:inherit;font-size:13px;cursor:pointer;color:inherit;display:inline-flex;align-items:center;gap:6px}
 .mall .msc button::before{content:"";width:8px;height:8px;border-radius:3px;background:var(--c);opacity:.35}.mall .msc button.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff)}.mall .msc button.on::before{opacity:1}
 .mall .mtbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 8px}.mall .mtbar>span{margin-right:auto;font-size:12.5px}
@@ -1565,6 +1565,22 @@ body.mdragging,body.mdragging *{cursor:grabbing!important;user-select:none!impor
 .mall tr.mdrag td{background:#fff!important;box-shadow:0 8px 20px -8px rgba(30,50,30,.35);position:relative;z-index:3}
 .mall tr.mdrop-b td{box-shadow:inset 0 3px 0 #2f6b3e}.mall tr.mdrop-a td{box-shadow:inset 0 -3px 0 #2f6b3e}
 html.dark .mall tr.mdrag td{background:#26302a!important}
+@media(max-width:620px){
+.mall .msd{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr);gap:6px}.mall .msd input{max-width:none;width:100%;font-size:12.5px;padding:0 6px}
+.mall .msd>span{min-width:0}.mall .msc{gap:5px}.mall .msc button{height:30px;padding:0 10px;font-size:12.5px}
+.mall .msq{height:40px}.mall .msq input{font-size:13.5px}
+.mall .mper button{height:32px;padding:0 11px;font-size:12.5px}
+.mall .mnote{font-size:12px;line-height:1.5}
+.mall table{font-size:12.5px}.mall th,.mall td{padding:8px 4px!important}.mall th{font-size:11.5px}
+.mall th:first-child,.mall td:first-child{min-width:0!important;width:34%}
+.mall tr.mi td:first-child small.mu{display:block;margin-top:2px;font-size:11px;line-height:1.35}
+.mall tr.mi td:first-child::before{width:11px}
+.mall tr.mo td:first-child{padding-left:16px!important}
+.mall .mtbar .seg.sm button{padding:0 8px}
+.mall .mh h2{font-size:17px}
+}
+.mall .mchb .mbc.nd .mstk{height:100%!important;background:repeating-linear-gradient(135deg,rgba(0,0,0,.04) 0 4px,transparent 4px 8px);border-radius:3px}
+@media(max-width:520px){#hello .hy{display:none}}
 .mall .mraw{margin-top:12px;font-size:12.5px;color:var(--mut,#667)}
 .mall .mempty{padding:26px 10px;text-align:center;color:var(--mut,#778)}
 .mall .ls{display:none}
@@ -2396,7 +2412,7 @@ const helloTxt = () => { const d = new Date(), W = ['일', '월', '화', '수', 
 function homeHead() {
   if (!document.body.classList.contains('is-home')) return;
   const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토'], h = d.getHours();
-  if ($('hello')) $('hello').textContent = '허브아이 · ' + d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + W[d.getDay()] + '요일';
+  if ($('hello')) $('hello').innerHTML = '허브아이 · <span class="hy">' + d.getFullYear() + '년 </span>' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + W[d.getDay()] + '요일';
   if ($('pagetitle')) $('pagetitle').innerHTML = '<span class="hm-ap">' + (h < 12 ? '오전' : '오후') + '</span>' + ((h % 12) || 12) + '<span class="hm-col">:</span>' + String(d.getMinutes()).padStart(2, '0');
 }
 setInterval(homeHead, 5000);
@@ -5490,7 +5506,8 @@ function mallChart(A, rg, chs, names) {   // 월별 쌓인 막대 (고른 쇼핑
   const what = mallFocus ? esc(mallFocus) + ' <button class="lnk" type="button" id="mallallc">전체 보기</button>' : names ? '검색된 품목 ' + names.length + '개' : '전체 품목 <small class="mu">(품목을 누르면 그 품목만 보여요)</small>';
   return `<div class="mch"><div class="mchh"><b>월별 추이</b> · ${what}</div>
     <div class="mchw"><div class="mchb" style="min-width:${ms.length * 9}px">${ms.map((mo, i) => { const v = vs[i], t = tt(v);
-      return `<div class="mbc ${yrs && mo.endsWith('-01') ? 'ys' : ''}" title="${mo.replace('-', '년 ')}월 · ${fmt(t)}개${chs.map(([k, l]) => v[k] ? ' · ' + l + ' ' + fmt(v[k]) : '').join('')}"><div class="mstk" style="height:${Math.round(t / mx * 120)}px">${chs.slice().reverse().map(([k, , c]) => v[k] ? `<i style="--c:${c};flex:${v[k]}"></i>` : '').join('')}</div></div>`; }).join('')}</div>
+      const nd = !mallMem.has(mo);
+      return `<div class="mbc ${yrs && mo.endsWith('-01') ? 'ys' : ''} ${nd ? 'nd' : ''}" title="${mo.replace('-', '년 ')}월 · ${nd ? '아직 안 받음' : fmt(t) + '개'}${chs.map(([k, l]) => v[k] ? ' · ' + l + ' ' + fmt(v[k]) : '').join('')}"><div class="mstk" style="height:${Math.round(t / mx * 120)}px">${chs.slice().reverse().map(([k, , c]) => v[k] ? `<i style="--c:${c};flex:${v[k]}"></i>` : '').join('')}</div></div>`; }).join('')}</div>
     <div class="mchl" style="min-width:${ms.length * 9}px">${ms.map(mo => `<span>${ms.length <= 14 ? Number(mo.slice(5)) + '월' : mo.endsWith('-01') ? mo.slice(0, 4) : ''}</span>`).join('')}</div></div></div>`;
 }
 function renderMall() {
@@ -5514,13 +5531,13 @@ function renderMall() {
   const sum = totOf(sumT), psum = totOf(sumP);
   let h = `<div class="mh"><h2>쇼핑몰 비교</h2>${shareBtns('mall')}<button class="ibtn" id="malltsv" type="button" title="표 복사 (엑셀·구글 시트에 붙여넣기)" aria-label="엑셀용 표 복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15" stroke="currentColor" stroke-width="1.6"/></svg></button><span class="mhsp"></span>${mallBusy ? '<button class="btn sm" id="mallstop" type="button">멈추기</button>' : `<button class="btn sm" id="mallall" type="button" title="받아 둔 달: ${have}/${want}개월">${have >= want ? '5년치 다시 받기' : '5년치 모두 받기'}</button><button class="btn sm" id="mallre" type="button">새로 받기</button>`}</div>
     <div class="msearch">
-      <label class="msq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="mallq" type="search" placeholder="품목 · 옵션 검색 (예: 비올라, 애플민트 100g)" value="${esc(mallQ)}" autocomplete="off">${mallQ ? '<button type="button" id="mallqx" aria-label="지우기">×</button>' : ''}</label>
+      <label class="msq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="mallq" type="search" placeholder="품목 · 옵션 검색 (예: 비올라)" value="${esc(mallQ)}" autocomplete="off">${mallQ ? '<button type="button" id="mallqx" aria-label="지우기">×</button>' : ''}</label>
       <div class="msd"><span>기간</span><input type="date" id="mallf" value="${rg.from}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"> ~ <input type="date" id="mallt" value="${rg.to}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"></div>
       <div class="msc"><span>쇼핑몰</span>${shown.map(([k, l, c]) => `<button type="button" data-mallch="${k}" class="${mallChSel.has(k) ? 'on' : ''}" style="--c:${c}">${l}</button>`).join('')}</div>
     </div>
     <div class="mper">${per.map(([k, l]) => `<button type="button" data-mallper="${k}" class="${mallPer === k ? 'on' : ''}">${l}</button>`).join('')}</div>
     <p class="mnote">결제일 기준 ${md(rg.from)} ~ ${md(rg.to)}${hasP ? ' · 비교: ' + md(rg.pfrom) + ' ~ ' + md(rg.pto) : ''} · 취소된 주문은 빼고 수량만 세요 · 받아 둔 달 ${have}/${want}개월${mallMsg ? ' · <b>' + esc(mallMsg) + '</b>' : ''}</p>`;
-  const done = () => { el.innerHTML = h; if (keepFocus) { const q = $('mallq'); q.focus(); try { q.setSelectionRange(keepFocus[0], keepFocus[1]); } catch (e) {} } };
+  const done = () => { el.innerHTML = h; const cw = el.querySelector('.mchw'); if (cw) cw.scrollLeft = cw.scrollWidth; if (keepFocus) { const q = $('mallq'); q.focus(); try { q.setSelectionRange(keepFocus[0], keepFocus[1]); } catch (e) {} } };
   if (!chs.length) { h += '<p class="mempty">쇼핑몰을 하나 이상 골라 주세요</p>'; return done(); }
   if (!sum) { h += `<p class="mempty">${mallBusy ? '카페24에서 받는 중이에요…' : filtered ? '"' + esc(mallQ) + '"에 맞는 품목이 이 기간에 없어요' : '이 기간에 결제된 주문이 없어요' + (mallPer === 'all' && have < want ? '<br>[5년치 모두 받기]를 누르면 지난 주문까지 받아 와요' : '')}</p>`; return done(); }
   h += `<div class="mkpi">${chs.map(([k, l, c]) => `<div style="--c:${c}"><span>${l}</span><b>${fmt(sumT[k])}</b><small>${pct(sumT[k], sum)}%</small>${chg(sumT[k], sumP[k])}</div>`).join('')}<div style="--c:#2b2f2a"><span>합계${filtered ? ' (검색)' : ''}</span><b>${fmt(sum)}</b>${chg(sum, psum)}</div></div>
