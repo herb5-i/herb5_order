@@ -3154,6 +3154,8 @@ document.addEventListener('click', async e => {
 // 하루 기록이 다 비면 지우는데, 지우기 권한이 없으면(게스트) 빈 기록으로 남겨요
 async function histSafeWrite(d, entry) { if (entry) return histWrite(d, entry); try { await histWrite(d, null); } catch (e) { await histWrite(d, { rows: [], files: [], batches: {}, updatedAt: new Date().toISOString() }); delete hist[d]; } }
 async function uplSafeWrite(d, entry) { if (entry) return uplWrite(d, entry); try { await uplWrite(d, null); } catch (e) { await uplWrite(d, { updatedAt: new Date().toISOString() }); delete upl[d]; } }
+const last4 = v => String(v ?? '').replace(/\D/g, '').slice(-4);
+function nameHash(v) { const t = String(v ?? '').replace(/\s+/g, ''); if (!t) return ''; let h = 2166136261; for (const c of t) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36); }
 async function histSaveUpload(rows, fname) {
   const msg = $('histsave');
   try {
@@ -3166,7 +3168,7 @@ async function histSaveUpload(rows, fname) {
       if (!r || !r.some(v => str(v))) return;
       const d = dateKeyOf(r, idx), base = [g(r, '주문번호'), g(r, '주문상품명'), g(r, '옵션')].map(str).join('|');
       const n = (occ.get(base) || 0) + 1; occ.set(base, n); keysOf[ri + 1] = { k: base + '|' + n, d };
-      (byDate[d] = byDate[d] || []).push({ k: base + '|' + n, o: str(g(r, '주문번호')), p: str(g(r, '주문상품명')), op: str(g(r, '옵션')), q: Number(g(r, '수량')) || 0, a: shortAddr(g(r, '주소')), n: str(g(r, '비고')), pr: Number(String(g(r, '판매가') ?? '').replace(/,/g, '')) || 0, ad: Number(String(g(r, '옵션추가 가격') ?? '').replace(/,/g, '')) || 0 });
+      (byDate[d] = byDate[d] || []).push({ k: base + '|' + n, o: str(g(r, '주문번호')), p: str(g(r, '주문상품명')), op: str(g(r, '옵션')), q: Number(g(r, '수량')) || 0, a: shortAddr(g(r, '주소')), n: str(g(r, '비고')), pr: Number(String(g(r, '판매가') ?? '').replace(/,/g, '')) || 0, ad: Number(String(g(r, '옵션추가 가격') ?? '').replace(/,/g, '')) || 0, rn: nameHash(g(r, '수령인')), rp: [...new Set(['핸드폰', '전화번호', '수령지전화'].map(k => last4(g(r, k))).filter(Boolean))].join(',') });
     });
     const nowD = new Date(), now = nowD.toISOString(), slot = nowD.getHours() < 12 ? 'am' : 'pm', saved = [], fid = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
     for (const d of Object.keys(byDate).sort()) {
@@ -4785,37 +4787,63 @@ function invColumns(rows) { // 머리글 줄과 열 찾기 (이름 + 값 모양)
   const item = find(/품목별주문번호|품목주문번호/, RX_ITEM);
   let order = head.findIndex((h, i) => i !== item && /주문번호|고객주문|주문코드/.test(h) && !/품목/.test(h));
   if (order < 0) { let best = -1, bs = .5; head.forEach((_, i) => { if (i === item || i === track) return; const s = share(i, /^\d{8}-\d{7}(-\d{1,3})?$/); if (s > bs) { bs = s; best = i; } }); order = best; }
-  const name = head.findIndex(h => /받는분|받는사람|수령인|수취인|수하인/.test(h) && !/주소|전화|연락|휴대/.test(h));
-  const phone = head.findIndex(h => /(받는분|수령인|수취인|수하인)?(휴대폰|핸드폰|전화|연락처)/.test(h) && !/보내는|송하인|발송인/.test(h));
-  return { hr, head, body, track, order, item, name, phone };
+  const RCV = /받는분|받으시는분|받는사람|수령인|수취인|수하인|고객명/;
+  const name = head.findIndex(h => RCV.test(h) && !/주소|전화|연락|휴대|핸드폰|우편|담당/.test(h));
+  const phones = head.map((h, i) => /(휴대폰|핸드폰|전화|연락처)/.test(h) && !/보내는|송하인|발송인|보내시는/.test(h) ? i : -1).filter(i => i >= 0);
+  const addr = head.findIndex(h => /주소/.test(h) && !/보내는|송하인|보내시는/.test(h));
+  const prods = head.map((h, i) => /^(내품명|품목명|상품명)\d*$/.test(h) ? i : -1).filter(i => i >= 0);
+  const phone = phones.length ? phones[0] : -1;
+  return { hr, head, body, track, order, item, name, phone, phones, addr, prods };
 }
-const last4 = v => invTxt(v).replace(/\D/g, '').slice(-4);
-function invSrcIndex() { // 지금 정리하기에 올린 원본으로 이름+전화 → 주문번호 (택배사 파일에 주문번호가 없을 때)
-  if (!srcRows || !srcRows.length) return null;
-  const h = srcRows[0].map(invTxt), oc = h.indexOf('주문번호'), ic = h.findIndex(x => /품목별주문번호/.test(x));
-  const nc = h.findIndex(x => /^(수령인|수령인명|받는분)$/.test(x)), pc0 = h.findIndex(x => /^(수령인)?(핸드폰|휴대폰|휴대전화)$/.test(x)), pc = pc0 >= 0 ? pc0 : h.findIndex(x => /수령.*전화|^전화번호$/.test(x));
-  const byNP = new Map(), items = new Map(), orders = new Map();
-  srcRows.slice(1).forEach(r => { const o = invTxt(r[oc]); if (!o) return; if (!orders.has(o)) orders.set(o, nc >= 0 ? String(r[nc] ?? '') : ''); if (ic >= 0 && invTxt(r[ic])) { if (!items.has(o)) items.set(o, []); items.get(o).push(invTxt(r[ic])); }
-    if (nc >= 0) { const k = invTxt(r[nc]) + '|' + (pc >= 0 ? last4(r[pc]) : ''); if (!byNP.has(k)) byNP.set(k, new Set()); byNP.get(k).add(o); } });
-  return { byNP, items, orders, hasPhone: pc >= 0 };
+const invNorm = v => String(v ?? '').replace(/[\s★()\[\]·,./_-]+/g, '').toLowerCase();
+const addr2 = v => String(v ?? '').trim().split(/\s+/).slice(0, 2).join(' ');
+function invSrcIndex() { // 송장과 맞출 주문 후보: 정리하기에 지금 올린 원본 + 최근 3일 동안 올린 기록
+  const orders = new Map(); // o → { o, nh, phones:Set, addr, prods:Set, name, items:[] }
+  const get = o => { if (!orders.has(o)) orders.set(o, { o, nh: '', phones: new Set(), addr: '', prods: new Set(), name: '', items: [] }); return orders.get(o); };
+  if (srcRows && srcRows.length) {
+    const h = srcRows[0].map(invTxt), ix = k => h.indexOf(k), oc = ix('주문번호'), nc = ix('수령인'), ac = ix('주소'), pc = ix('주문상품명'), ic = h.findIndex(x => /품목별주문번호/.test(x));
+    const phc = ['핸드폰', '전화번호', '수령지전화', '수령인휴대전화', '수령인전화번호'].map(ix).filter(i => i >= 0);
+    srcRows.slice(1).forEach(r => { const o = invTxt(r[oc]); if (!o) return; const x = get(o);
+      if (nc >= 0 && r[nc]) { x.nh = nameHash(r[nc]); x.name = String(r[nc]); }
+      phc.forEach(i => { const p = last4(r[i]); if (p) x.phones.add(p); });
+      if (ac >= 0 && r[ac]) x.addr = addr2(r[ac]); if (pc >= 0 && r[pc]) x.prods.add(invNorm(r[pc]));
+      if (ic >= 0 && invTxt(r[ic])) x.items.push(invTxt(r[ic])); });
+  }
+  const d0 = (() => { const d = new Date(); d.setDate(d.getDate() - 3); return isoDate(d); })();
+  Object.keys(upl).filter(d => d >= d0).forEach(d => ['am', 'pm'].forEach(sl => ((upl[d][sl] && upl[d][sl].rows) || []).forEach(r => { if (r.del || !r.o) return; const x = get(r.o);
+    if (r.rn && !x.nh) x.nh = r.rn; String(r.rp || '').split(',').filter(Boolean).forEach(p => x.phones.add(p)); if (r.a && !x.addr) x.addr = r.a; if (r.p) x.prods.add(invNorm(r.p)); })));
+  const byName = new Map(); orders.forEach(x => { if (!x.nh) return; if (!byName.has(x.nh)) byName.set(x.nh, []); byName.get(x.nh).push(x); });
+  return orders.size ? { orders, byName, fromSrc: !!(srcRows && srcRows.length) } : null;
+}
+function invPick(S, C, r, used) { // 이름 → 전화 뒤 4자리 → 주소 → 상품명 순서로 좁혀요
+  if (!S || C.name < 0) return null;
+  let cs = S.byName.get(nameHash(r[C.name])) || []; if (!cs.length) return null;
+  const ph = C.phones.map(i => last4(r[i])).filter(Boolean);
+  const narrow = f => { const n = cs.filter(f); if (n.length) cs = n; };
+  if (cs.length > 1 && ph.length) narrow(x => ph.some(p => x.phones.has(p)));
+  if (cs.length > 1 && C.addr >= 0) { const a = addr2(r[C.addr]); narrow(x => x.addr && a.startsWith(x.addr)); }
+  if (cs.length > 1 && C.prods.length) { const ps = C.prods.map(i => invNorm(r[i])).filter(Boolean); narrow(x => ps.some(p => [...x.prods].some(q => q.includes(p) || p.includes(q)))); }
+  if (cs.length > 1) narrow(x => !used.has(x.o));
+  if (cs.length === 1) { const x = cs[0]; const phoneOk = !ph.length || !x.phones.size || ph.some(p => x.phones.has(p)); return phoneOk ? x : null; }
+  return null;
 }
 function invBuild(rows) {
   const C = invColumns(rows), cfg = invCfg(), S = invSrcIndex();
   if (C.track < 0) throw new Error('송장번호(운송장번호) 칸을 찾지 못했어요. 머리글에 "운송장번호"나 "송장번호"가 있는지 확인해 주세요');
-  const out = [], bad = [], seen = new Set(), perOrder = new Map();
+  const out = [], bad = [], seen = new Set(), perOrder = new Map(), usedO = new Set();
   C.body.forEach((r, i) => {
     const track = invTxt(r[C.track]).replace(/-/g, ''); if (!track) return;
     let order = C.order >= 0 ? invTxt(r[C.order]) : '', item = C.item >= 0 ? invTxt(r[C.item]) : '', how = 'order';
     if (RX_ITEM.test(order) && !item) { item = order; order = order.replace(/-\d{1,3}$/, ''); }
     if (!order && item) order = item.replace(/-\d{1,3}$/, '');
-    if (!order && S && C.name >= 0) { const k = invTxt(r[C.name]) + '|' + (S.hasPhone && C.phone >= 0 ? last4(r[C.phone]) : ''); const set = S.byNP.get(k); if (set && set.size === 1) { order = [...set][0]; how = 'name'; } }
-    if (!order) { bad.push({ line: C.hr + i + 2, track, who: C.name >= 0 ? String(r[C.name] ?? '') : '', why: C.order < 0 && !S ? '주문번호 칸이 없어요' : '맞는 주문을 못 찾았어요' }); return; }
+    if (!order && S) { const x = invPick(S, C, r, usedO); if (x) { order = x.o; how = 'name'; if (!item && x.items.length === 1) item = x.items[0]; } }
+    if (!order) { bad.push({ line: C.hr + i + 2, track, who: C.name >= 0 ? String(r[C.name] ?? '') : '', why: C.order < 0 && !S ? '주문번호 칸이 없어서, 정리하기에 그날 원본을 먼저 올려야 맞출 수 있어요' : C.order < 0 ? '이름 · 전화로 맞는 주문을 못 찾았어요' : '맞는 주문을 못 찾았어요' }); return; }
     const key = order + '|' + item + '|' + track; if (seen.has(key)) return; seen.add(key);
-    if (!perOrder.has(order)) perOrder.set(order, []); perOrder.get(order).push(track);
-    out.push({ order, item, track, how, who: C.name >= 0 ? String(r[C.name] ?? '') : (S && S.orders.get(order)) || '' });
+    usedO.add(order); if (!perOrder.has(order)) perOrder.set(order, []); perOrder.get(order).push(track);
+    out.push({ order, item, track, how, who: C.name >= 0 ? String(r[C.name] ?? '') : (S && S.orders.get(order) && S.orders.get(order).name) || '' });
   });
   const multi = [...perOrder.entries()].filter(([, t]) => t.length > 1);
-  const missing = S ? [...S.orders.keys()].filter(o => !perOrder.has(o)) : [];
+  const missing = S && S.fromSrc ? [...S.orders.values()].filter(x => x.name && !perOrder.has(x.o)).map(x => x.o) : [];
   const tpl = (cfg.template && cfg.template.length ? cfg.template : INV_TPL0);
   const aoa = [tpl].concat(out.map(x => tpl.map(h => { const ro = invRole(h); return ro === 'order' ? x.order : ro === 'item' ? x.item : ro === 'carrier' ? String(cfg.carrier || '') : ro === 'track' ? x.track : ''; })));
   return { C, out, bad, multi, missing, aoa, tpl, S };
@@ -4827,13 +4855,13 @@ function renderInv() {
   if (!R) { box.innerHTML = ''; return; }
   const col = i => i >= 0 ? `<b>${esc(R.C.head[i])}</b>` : '<em>없음</em>';
   box.innerHTML = `<div class="inv-sum"><span class="ok">송장 ${R.out.length}건 연결</span>${R.bad.length ? `<span class="bad">못 찾음 ${R.bad.length}건</span>` : ''}${R.multi.length ? `<span class="warn">한 주문에 송장 여러 개 ${R.multi.length}건</span>` : ''}${R.missing.length ? `<span class="warn">송장 없는 주문 ${R.missing.length}건</span>` : ''}</div>
-    <p class="inv-cols">읽은 칸 · 운송장번호 ${col(R.C.track)} · 주문번호 ${col(R.C.order)}${R.C.item >= 0 ? ' · 품목별 주문번호 ' + col(R.C.item) : ''}${R.C.order < 0 && R.S ? ' · 받는 분 이름+전화로 지금 올린 주문과 맞췄어요' : ''}</p>
+    <p class="inv-cols">읽은 칸 · 운송장번호 ${col(R.C.track)} · 주문번호 ${col(R.C.order)}${R.C.item >= 0 ? ' · 품목별 주문번호 ' + col(R.C.item) : ''}${R.C.order < 0 ? ' · 주문번호 칸이 없어서 받는 분 ' + col(R.C.name) + ' + 전화 뒷자리로 ' + (R.S && R.S.fromSrc ? '지금 올린 원본과' : '최근 3일 올린 주문과') + ' 맞췄어요' : ''}</p>
     ${!cfg.carrier && R.tpl.some(h => invRole(h) === 'carrier') ? '<p class="inv-warn">배송 업체 번호를 넣어 주세요. 카페24 배송준비중 → 엑셀 일괄배송 처리의 [배송 업체 번호] 버튼에서 확인할 수 있어요.</p>' : ''}
     <div class="tblwrap inv-tbl"><table class="ed"><thead><tr>${R.tpl.map(h => `<th>${esc(h)}</th>`).join('')}<th>받는 분</th></tr></thead><tbody>${R.out.slice(0, 200).map((x, i) => `<tr>${R.aoa[i + 1].map(v => `<td>${esc(v)}</td>`).join('')}<td class="mu">${esc(x.who)}${x.how === 'name' ? ' <small>(이름으로 찾음)</small>' : ''}</td></tr>`).join('')}</tbody></table></div>
     ${R.out.length > 200 ? `<p class="msg">처음 200줄만 보여요 · 파일에는 ${R.out.length}줄 모두 들어가요</p>` : ''}
     ${R.bad.length ? `<details class="inv-det" open><summary>못 찾은 송장 ${R.bad.length}건</summary><ul>${R.bad.map(b => `<li>${b.line}번째 줄 · ${esc(b.track)}${b.who ? ' · ' + esc(b.who) : ''} — ${esc(b.why)}</li>`).join('')}</ul></details>` : ''}
     ${R.multi.length ? `<details class="inv-det"><summary>한 주문에 송장이 여러 개 ${R.multi.length}건</summary><ul>${R.multi.map(([o, t]) => `<li>${esc(o)} · ${t.map(esc).join(', ')}</li>`).join('')}</ul><p class="msg">카페24에는 줄마다 하나씩 들어가요. 한 주문을 여러 상자로 보낸 거라면 그대로 두면 돼요.</p></details>` : ''}
-    ${R.missing.length ? `<details class="inv-det"><summary>지금 올린 주문 중 송장이 없는 주문 ${R.missing.length}건</summary><ul>${R.missing.map(o => `<li>${esc(o)}${R.S.orders.get(o) ? ' · ' + esc(R.S.orders.get(o)) : ''}</li>`).join('')}</ul></details>` : ''}
+    ${R.missing.length ? `<details class="inv-det"><summary>지금 올린 주문 중 송장이 없는 주문 ${R.missing.length}건</summary><ul>${R.missing.map(o => `<li>${esc(o)}${R.S.orders.get(o) && R.S.orders.get(o).name ? ' · ' + esc(R.S.orders.get(o).name) : ''}</li>`).join('')}</ul></details>` : ''}
     <div class="row inv-act"><span class="msg" id="invmsg"></span><button class="btn pri" id="invdl" type="button" ${R.out.length ? '' : 'disabled'}>카페24 송장 등록 파일 내려받기</button></div>`;
 }
 async function invHandle(file) {
