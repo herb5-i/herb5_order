@@ -1815,6 +1815,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
           <div class="c24row"><span>보내는 요일</span><span class="c24days" id="c24dw"></span></div>
           <div class="c24row"><label>쉬는 날 <input type="text" id="c24off" placeholder="예: 2026-12-25, 2027-01-01" style="width:min(300px,100%)"></label></div>
           <div class="c24row"><button class="btn" id="c24save" type="button">설정 저장</button><button class="btn" id="c24link" type="button">카페24 연결</button></div>
+          <p class="c24win" id="c24scopes"></p>
         </details>
         <p class="c24or">또는 엑셀 파일로 올리기</p>
       </div>
@@ -5733,10 +5734,12 @@ async function c24Call(path, opt) {
   if (!r.ok) { const e = new Error(d.message || ('중계 서버 오류 ' + r.status)); e.code = d.error; throw e; }
   return d;
 }
+function c24ScopeTxt(sc) { const M = { read_order: '주문 읽기', write_order: '주문 쓰기', read_shipping: '배송 읽기', read_community: '게시판 읽기', read_product: '상품 읽기', read_salesreport: '매출통계 읽기', read_application: '앱 읽기', write_application: '앱 쓰기' };
+  return (sc || []).map(x => M[String(x).replace(/^mall\./, '')] || x).join(', ') || '(없음)'; }
 async function c24Status() {
   const st = $('c24st');
   if (!c24Cfg().worker) { st.className = 'c24st off'; st.textContent = '설정 전'; return; }
-  try { const d = await c24Call('/status'); st.className = 'c24st ' + (d.connected ? 'on' : 'off'); st.textContent = d.connected ? '연결됨 · ' + d.mall : '연결 필요'; }
+  try { const d = await c24Call('/status'); st.className = 'c24st ' + (d.connected ? 'on' : 'off'); st.textContent = d.connected ? '연결됨 · ' + d.mall : '연결 필요'; st.title = d.scopes ? '받은 권한: ' + c24ScopeTxt(d.scopes) : ''; if ($('c24scopes')) $('c24scopes').textContent = d.scopes && d.scopes.length ? '받은 권한: ' + c24ScopeTxt(d.scopes) : ''; }
   catch (e) { st.className = 'c24st off'; st.textContent = '연결 확인 실패'; st.title = e.message; }
 }
 const C24_PAY = { card: '신용카드', credit: '선불금', prepaid: '선불금', cash: '무통장입금', tcash: '계좌이체', icash: '가상계좌', cell: '휴대폰', mileage: '적립금', point: '적립금', deferpay: '후불' };
@@ -5789,7 +5792,7 @@ async function c24Callback() {   // 카페24 동의 화면에서 돌아왔을 �
   let want = ''; try { want = localStorage.getItem('herb5_c24state') || ''; localStorage.removeItem('herb5_c24state'); } catch (e) {}
   if (!want || want !== state) { msg.className = 'msg err'; msg.textContent = '연결 확인 값이 맞지 않아요. [카페24 연결]을 다시 눌러 주세요'; return; }
   msg.className = 'msg'; msg.textContent = '카페24 연결을 마무리하는 중…';
-  try { const d = await c24Call('/exchange', { method: 'POST', body: JSON.stringify({ code }) }); msg.className = 'msg ok'; msg.textContent = '카페24(' + d.mall + ')와 연결했어요. 이제 [주문 불러오기]를 눌러 보세요'; }
+  try { const d = await c24Call('/exchange', { method: 'POST', body: JSON.stringify({ code }) }); msg.className = 'msg ok'; msg.textContent = '카페24(' + d.mall + ')와 연결했어요 · 받은 권한: ' + c24ScopeTxt(d.scopes); }
   catch (e) { msg.className = 'msg err'; msg.textContent = '연결하지 못했어요: ' + e.message; }
   c24Status();
 }
