@@ -1950,8 +1950,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-issue" class="hidden">
-    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button><button type="button" role="tab" data-isscat="review">상품 후기<i id="iss-rvn"></i></button></div>
-    <div class="card iss-cmp hidden" id="iss-cmp"></div>
+    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button></div>
     <div class="iss-sync hidden" id="iss-sync"><span id="iss-syncmsg"></span><button class="btn sm" type="button" id="iss-syncbtn">카페24에서 지금 가져오기</button></div>
     <div class="iss-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -5289,6 +5288,7 @@ function revSyncLine() {
   $('iss-syncbtn').classList.toggle('hidden', !ok); $('iss-syncbtn').disabled = revBusy;
 }
 async function revSync(force) {
+  return;   // 상품 후기 칸은 뺐어요
   if (revBusy || !document.body.classList.contains('fbmode') || typeof c24Cfg !== 'function' || !c24Cfg().worker) return;
   const L = revLast(); if (!force && L.at && Date.now() - new Date(L.at).getTime() < 60 * 60e3) return;
   revBusy = true; revMsg = ''; issSyncLine(); let add = 0, upd = 0;
