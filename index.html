@@ -5235,14 +5235,19 @@ function mallRange() {   // [from, to] 날짜(포함) · 비교할 바로 앞 �
   if (!pa && mallPer !== 'all') { pb = back(a, 1); pa = back(pb, days - 1); }
   return { from: isoDate(a), to: isoDate(b), pfrom: pa ? isoDate(pa) : '', pto: pb ? isoDate(pb) : '', days };
 }
-function mallNorm(list) {   // 정리하기와 같은 규칙(상품명·옵션·요청사항)으로 이름을 맞춘 뒤 [날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓]
-  const H = ['주문번호', '주문상품명', '옵션', '수량', '비고', '수령인', '결제일', '쇼핑몰구분', '마켓'], rows = [H];
-  list.forEach(o => { const ch = mallChOf(o), d = mallKst(o.payment_date); (o.items || []).forEach(i => rows.push([o.order_id, i.product_name, i.option_value || null, i.quantity, (o.receiver && o.receiver.shipping_message) || null, '-', d, ch, (o.market_id || 'self') + (mallPlace(o) ? ' / ' + mallPlace(o) : '')])); });
-  if (rows.length < 2) return [];
-  let out; try { const R = CORE.process(rows, rules, {}), h = R.sheet1[0], ix = k => h.indexOf(k), alias = stkAliasFn();
-    out = R.sheet1.slice(1).map(r => { const n = String(r[ix('주문상품명')] ?? ''), op = String(r[ix('옵션')] ?? ''), al = alias({ n, o: op }); return [r[ix('결제일')], r[ix('쇼핑몰구분')], al || n, op, Number(r[ix('수량')]) || 0, r[ix('마켓')]]; });
-  } catch (e) { out = rows.slice(1).map(r => [r[6], r[7], String(r[1]), String(r[2] || ''), Number(r[3]) || 0, r[8]]); }
-  const m = new Map(); out.forEach(r => { const k = r.slice(0, 4).concat(r[5]).join('\u0001'); if (m.has(k)) m.get(k)[4] += r[4]; else m.set(k, r.slice()); });   // 같은 날 · 같은 품목 · 같은 옵션은 합쳐서 가볍게
+function mallNorm(list) {   // 집계 보기와 똑같이: 정리 규칙 → 합치기 규칙 → [날짜, 쇼핑몰, 상품명, 옵션, 수량, 판매처]
+  const H = ['주문번호', '주문상품명', '옵션', '수량', '비고', '수령인'], by = new Map();
+  list.forEach(o => { const ch = mallChOf(o), d = mallKst(o.payment_date), mk = (o.market_id || 'self') + (mallPlace(o) ? ' / ' + mallPlace(o) : ''), k = d + '\u0001' + ch + '\u0001' + mk;
+    if (!by.has(k)) by.set(k, [H]); (o.items || []).forEach(i => by.get(k).push([o.order_id, i.product_name, i.option_value || null, i.quantity, (o.receiver && o.receiver.shipping_message) || null, '-'])); });
+  const out = [];
+  by.forEach((rows, k) => { const [d, ch, mk] = k.split('\u0001'); if (rows.length < 2) return;
+    try { const R = CORE.process(rows, rules, {}), h = R.sheet1[0], ix = k => h.indexOf(k), S = rules.summary || {};
+      const merge = new Map((S.merge || []).map(m => [String(m.from || '').trim(), String(m.to || '').trim()])), om = (S.optionMerge || []).map(m => ({ p: String(m.product || '').trim(), f: String(m.from || '').trim(), t: String(m.to || '').trim() }));
+      R.sheet1.slice(1).forEach(r => { const q = Number(r[ix('수량')]) || 0; if (!q) return;   // 집계 보기의 [합칠 이름] · [옵션 합치기] 규칙까지 적용 (봉지 묶음은 빼고 개수 그대로)
+        const n0 = String(r[ix('주문상품명')] ?? '').trim(), n = merge.get(n0) || n0; let op = String(r[ix('옵션')] ?? '').trim(); const m = om.find(x => x.p === n && x.f === op); if (m) op = m.t;
+        out.push([d, ch, n, op, q, mk]); }); }
+    catch (e) { rows.slice(1).forEach(r => out.push([d, ch, String(r[1]), String(r[2] || ''), Number(r[3]) || 0, mk])); } });
+  const m = new Map(); out.forEach(r => { const k = r.slice(0, 4).concat(r[5]).join('\u0001'); if (m.has(k)) m.get(k)[4] += r[4]; else m.set(k, r.slice()); });
   return [...m.values()];
 }
 async function mallFetchMonth(ym) {
@@ -5253,14 +5258,14 @@ async function mallFetchMonth(ym) {
     const d = await c24Call('/orders?lite=1&limit=200&offset=' + off + '&from=' + encodeURIComponent(from.toISOString()) + '&to=' + encodeURIComponent(to.toISOString()));
     all.push(...(d.orders || [])); off = d.next === undefined ? null : d.next;
   }
-  const v = { at: Date.now(), rows: mallNorm(all), n: all.length, v: 3 }; mallMem.set(ym, v); await mallIdbPut(ym, v); return v;
+  const v = { at: Date.now(), rows: mallNorm(all), n: all.length, v: 5 }; mallMem.set(ym, v); await mallIdbPut(ym, v); return v;
 }
 async function mallLoad(opt) {
   opt = opt || {}; await mallInit(); if (mallBusy) return;
   const rg = mallRange(), cur = ymOf(new Date()), first = mallFirstYm(), months = [];
   const start = opt.all ? first : (rg.pfrom || rg.from).slice(0, 7);
   for (let d = dOf(start + '-01'); ymOf(d) <= (opt.all ? cur : rg.to.slice(0, 7)); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) if (ymOf(d) >= first) months.push(ymOf(d));
-  const need = months.filter(ym => { const c = mallMem.get(ym); return opt.force || !c || c.v !== 3 || (ym >= cur && Date.now() - c.at > 10 * 60e3) || (ym === ymOf(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)) && c.at < dOf(cur + '-01').getTime() + 864e5 * 2); });
+  const need = months.filter(ym => { const c = mallMem.get(ym); return opt.force || !c || c.v !== 5 || (ym >= cur && Date.now() - c.at > 10 * 60e3) || (ym === ymOf(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)) && c.at < dOf(cur + '-01').getTime() + 864e5 * 2); });
   if (!need.length) { renderMall(); return; }
   mallBusy = true; mallStop = false; renderMall(); let done = 0;
   try {
@@ -5278,7 +5283,8 @@ function mallAgg(from, to) {
   if (!from) return { items, tot, raw, byM };
   for (let d = dOf(from.slice(0, 7) + '-01'); ymOf(d) <= to.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) {
     const c = mallMem.get(ymOf(d)); if (!c) continue;
-    c.rows.forEach(([day, ch, n, op, q, mk]) => { if (day < from || day > to || !q) return;
+    c.rows.forEach(([day, ch, nm, opt0, q, mk]) => { if (day < from || day > to || !q) return;
+      const n = groupOf(nm), op = [nm !== n || !opt0 ? nm : '', opt0].filter(Boolean).join(' · ');   // 집계 보기처럼: 키워드로 묶고, 그 안에서 같은 상품·옵션끼리 묶어요
       tot[ch] += q; raw.set(mk, (raw.get(mk) || 0) + q);
       const mo = day.slice(0, 7); if (!byM.has(mo)) byM.set(mo, { all: z(), it: new Map() }); const bm = byM.get(mo); bm.all[ch] += q; if (!bm.it.has(n)) bm.it.set(n, z()); bm.it.get(n)[ch] += q;
       if (!items.has(n)) items.set(n, { n, c: z(), t: 0, ops: new Map() });
@@ -5319,9 +5325,9 @@ function renderMall() {
   const list = [...A.items.values()].sort((a, b) => b.t - a.t);
   const cells = (o, prev) => chs.map(([k]) => `<td class="${o.c[k] ? '' : 'z'}">${o.c[k] ? fmt(o.c[k]) : '–'}</td>`).join('') + `<td><b>${fmt(o.t)}</b>${prev !== undefined ? chg(o.t, prev) : ''}</td>` +
     `<td class="sb"><div class="sbar">${chs.map(([k, , c]) => o.c[k] ? `<i style="--c:${c};width:${o.c[k] / o.t * 100}%"></i>` : '').join('')}</div></td>`;
-  h += `<div class="tblwrap"><table><thead><tr><th>품목 · 옵션</th>${chs.map(([, l, , sl]) => `<th><span class="lf">${l}</span><span class="ls">${sl}</span></th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
+  h += `<div class="tblwrap"><table><thead><tr><th>품목 · 상품/옵션</th>${chs.map(([, l, , sl]) => `<th><span class="lf">${l}</span><span class="ls">${sl}</span></th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
     list.map(it => { const op = mallOpen.has(it.n), pv = P.items.get(it.n);
-      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}개 옵션</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
+      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}종류</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
         (op ? [...it.ops.entries()].sort((a, b) => b[1].t - a[1].t).map(([o, v]) => `<tr class="mo"><td>${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? pv.ops.get(o).t : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
   h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값(마켓 / 주문경로)과 수량이에요. 다르게 잡힌 게 있으면 이 목록을 캡처해서 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m.split(' / ')[0], order_place_id: m.split(' / ').slice(1).join(' ') }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
   el.innerHTML = h;
