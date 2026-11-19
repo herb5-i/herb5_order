@@ -1215,6 +1215,15 @@ html.dark .wrap>header.top .navs .acct{background:rgba(255,255,255,.07)}html.dar
 header.top .tabs .tab[data-t=issue]::before{color:var(--clay,#d07a52)}
 @media(max-width:999px){header.top .navs .tabs{grid-template-columns:repeat(6,minmax(0,1fr))!important;width:min(470px,calc(100% - 20px))!important;gap:2px!important;padding:6px!important}header.top .navs .tabs .tab{height:50px;border-radius:17px!important}header.top .tabs .tab::before{width:21px;height:21px}}
 body.is-home .pagehead .hello{font-size:15px}
+.iss-cats{display:flex;gap:6px;padding:5px;margin:0 0 12px;border-radius:18px;background:rgba(255,253,248,.88);border:1px solid rgba(60,70,40,.08);width:fit-content;max-width:100%}
+.iss-cats button{border:0;background:none;font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:13px;cursor:pointer;color:var(--mute,#667)}
+.iss-cats button.on{background:linear-gradient(180deg,#68a873,#3f7f50);color:#fff;box-shadow:0 6px 14px -8px rgba(40,90,50,.7)}
+.iss-cats i{font-style:normal;font-size:12px;margin-left:4px;opacity:.85}
+.iss-sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 12px;font-size:13px;color:var(--mute,#667)}.iss-sync span{flex:1;min-width:200px}
+#v-issue[data-cat="claim"] .iss-has .iss-c{color:#c4503a}
+.iss-chip .iss-ct{font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;margin-right:6px;vertical-align:1px;color:#fff;background:#999}
+.iss-ct-c{background:#8a8f87!important}.iss-ct-r{background:#d9663f!important}.iss-ct-e{background:#2f86c4!important}.iss-ct-m{background:#b59a52!important}
+html.dark .iss-cats{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.06)}
 .iss-search{position:relative;display:flex;align-items:center;gap:10px;height:58px;padding:0 10px 0 18px;margin:0 0 16px;border-radius:20px;background:linear-gradient(180deg,#fffdf8,#faf7ef);border:1px solid rgba(255,255,255,.95);box-shadow:var(--shadow);transition:box-shadow .15s}
 .iss-search:focus-within{box-shadow:var(--shadow),0 0 0 3px rgba(208,122,82,.25)}
 .iss-search>svg{width:21px;height:21px;color:#b48a6c;flex:none}
@@ -1909,6 +1918,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-issue" class="hidden">
+    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim">취소 · 반품 · 교환<i id="iss-cln"></i></button></div>
+    <div class="iss-sync hidden" id="iss-sync"><span id="iss-syncmsg"></span><button class="btn sm" type="button" id="iss-syncbtn">카페24에서 지금 가져오기</button></div>
     <div class="iss-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <input id="iss-q" type="search" list="iss-names" placeholder="품목 검색 · 그 품목의 이슈를 한번에 봐요" autocomplete="off">
@@ -3538,11 +3549,14 @@ document.addEventListener('click', async e => {
 let issDay = null, issMonth = null, issModalItem = null, issEditId = null;
 const issOpen = () => $('v-issue') && !$('v-issue').classList.contains('hidden');
 const issDocId = day => 'iss' + day.slice(0, 7).replace('-', '');
-function issAll() { // [{ day, id, item, text, at }]
+function issAllRaw() { // [{ day, id, item, text, at, cat? }]
   const out = [];
   Object.entries(stock).forEach(([id, v]) => { if (!v || v.kind !== 'issues' || !v.days) return; Object.entries(v.days).forEach(([day, arr]) => (arr || []).forEach(x => out.push(Object.assign({ day }, x)))); });
   return out.sort((a, b) => b.day.localeCompare(a.day) || String(b.at || '').localeCompare(String(a.at || '')));
 }
+let issCat = 'item';   // 'item' 품목 이슈 · 'claim' 취소·반품·교환
+const issItems = () => issAllRaw().filter(x => x.cat !== 'claim');
+const issAll = () => issAllRaw().filter(x => (x.cat === 'claim') === (issCat === 'claim'));
 const issOfDay = day => issAll().filter(x => x.day === day);
 const issNorm = t => String(t || '').replace(/\s+/g, '').toLowerCase();
 async function issWrite(day, fn) {
@@ -3560,7 +3574,8 @@ function renderIssue() {
   if (!$('isscal')) return;
   const today = isoDate(new Date()); if (!issDay) issDay = today;
   if (!issMonth) { const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); }
-  const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(x.item); });
+  const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(issCat === 'claim' ? x.id : x.item); });
+  document.querySelectorAll('[data-isscat]').forEach(b => b.classList.toggle('on', b.dataset.isscat === issCat)); $('v-issue').dataset.cat = issCat; try { issSyncLine(); } catch (e) {}
   $('iss-names').innerHTML = issNames().map(n => `<option value="${esc(n)}">`).join('');
   // 달력
   const y = issMonth.getFullYear(), mo = issMonth.getMonth(), first = new Date(y, mo, 1), n = new Date(y, mo + 1, 0).getDate();
@@ -3569,7 +3584,7 @@ function renderIssue() {
   for (let i = 0; i < first.getDay(); i++) g += '<div></div>';
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, mo, d), iso = isoDate(dt), c = byDay.has(iso) ? byDay.get(iso).size : 0;
-    g += `<button class="hd ${c ? 'has iss-has' : ''} ${iso === issDay ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-issday="${iso}"><span class="n">${d}</span><span class="iss-c">${c ? c + '품목' : ''}</span></button>`;
+    g += `<button class="hd ${c ? 'has iss-has' : ''} ${iso === issDay ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-issday="${iso}"><span class="n">${d}</span><span class="iss-c">${c ? c + (issCat === 'claim' ? '건' : '품목') : ''}</span></button>`;
   }
   $('isscal').innerHTML = g + '</div>';
   // 고른 날
@@ -3577,8 +3592,8 @@ function renderIssue() {
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
-    `<button class="iss-chip" type="button" data-issitem="${esc(it)}"><b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
-    : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>';
+    `<button class="iss-chip ${issCat === 'claim' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
+    : (issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
   renderIssueSearch();
 }
 function renderIssueSearch() {
@@ -3637,7 +3652,7 @@ document.addEventListener('submit', async e => {
     if (issPend.length) { m.className = 'msg'; m.textContent = '사진 올리는 중…'; for (const d of issPend) { const pid = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); await photoPut(pid, d, { day: issDay, item, by: who }); ph.push(pid); } }
     await issWrite(issDay, arr => {
       if (eid) { const x = arr.find(v => v.id === eid); if (x) { x.text = text; x.editedAt = new Date().toISOString(); if (ph.length) x.ph = (x.ph || []).concat(ph); } }
-      else { const nx = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), item, text, at: new Date().toISOString(), by: who }; if (ph.length) nx.ph = ph; arr.push(nx); }
+      else { const nx = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), item, text, at: new Date().toISOString(), by: who }; if (issCat === 'claim') { nx.cat = 'claim'; nx.ctype = '메모'; } if (ph.length) nx.ph = ph; arr.push(nx); }
     });
     issPend = []; renderPend();
     issModalItem = item; issEditId = null; $('iss-mt').textContent = item; $('iss-item').classList.add('hidden');
@@ -3716,8 +3731,8 @@ function renderHome() {
   (($('hm-s-hist')||{}).textContent) = mrev ? (now.getMonth() + 1) + '월 ' + won(mrev) : '이번 달 기록 없음';
   // 최근 품목별 이슈: 품목마다 가장 최근 것 하나씩, 최근 순으로 5개
   const seen = new Set(), recent = [];
-  issAll().forEach(x => { if (!seen.has(x.item) && recent.length < 5) { seen.add(x.item); recent.push(x); } });
-  const cnt = new Map(); issAll().forEach(x => cnt.set(x.item, (cnt.get(x.item) || 0) + 1));
+  issItems().forEach(x => { if (!seen.has(x.item) && recent.length < 5) { seen.add(x.item); recent.push(x); } });
+  const cnt = new Map(); issItems().forEach(x => cnt.set(x.item, (cnt.get(x.item) || 0) + 1));
   $('hm-isslist').innerHTML = recent.length ? recent.map(x => `<li><button type="button" class="hm-issbtn" data-issjump="${x.day}" data-issjumpitem="${esc(x.item)}"><span class="hm-isd">${esc(fmtDay(x.day).replace(/ \(.\)$/, ''))}</span><span class="nm">${esc(x.item)}<small>${esc(x.text.split('\n')[0])}</small></span>${cnt.get(x.item) > 1 ? `<b class="hm-isc">${cnt.get(x.item)}건</b>` : ''}</button></li>`).join('')
     : '<li class="hm-empty">이슈 관리에서 품목별 이슈를 적으면 여기에 보여요</li>';
   // 최근 올린 파일
@@ -4888,7 +4903,7 @@ function mrepCalc(ym) {
   }));
   const rank = [...items.values()].sort((a, b) => b.q - a.q || b.g - a.g);
   // 이슈
-  const iss = issAll().filter(x => x.day.startsWith(ym)), issBy = new Map(); iss.forEach(x => issBy.set(x.item, (issBy.get(x.item) || 0) + 1));
+  const iss = issItems().filter(x => x.day.startsWith(ym)), issBy = new Map(); iss.forEach(x => issBy.set(x.item, (issBy.get(x.item) || 0) + 1));
   // 재고 회전
   let stk = []; try { stk = stkCompute().items.filter(x => x.rec); } catch (e) {}
   const mStart = ym + '-01', mEnd = ym + '-' + String(nDays).padStart(2, '0'), endT = isCur ? new Date().toISOString() : new Date(Y, M - 1, nDays, 23, 59, 59).toISOString(), startT = new Date(Y, M - 1, 1).toISOString();
@@ -5228,6 +5243,54 @@ document.addEventListener('click', async e => {
   } catch (er) { if (er && er.code === 'declined') return; m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); }
 });
 invBind(); renderInv();
+
+// ---------- 이슈 → 취소 · 반품 · 교환 (카페24에서 자동 기록) ----------
+const CLAIM_T = { cancel: '취소', return: '반품', exchange: '교환' };
+const claimStat = (t, st) => { const n = String(st || '').slice(1, 2); return CLAIM_T[t] + (n === '0' ? ' 신청' : n === '4' ? ' 완료' : st ? ' 진행 중' : ''); };
+var claimBusy = false, claimMsg = '';
+function claimLast() { try { return JSON.parse(localStorage.getItem('herb5_claimsync') || '{}'); } catch (e) { return {}; } }
+function claimName(n) { const m = new Map((rules.names || []).map(r => [String(r.from || '').trim(), String(r.to || '').trim() || String(r.from || '').trim()])), t = String(n || '').trim(); return mallAliasFn()(m.get(t) || t); }
+function claimMk(c) { return MALL_CH.find(x => x[0] === mallChOf(c))[1]; }
+function issSyncLine() {
+  const box = $('iss-sync'); if (!box) return; const on = issCat === 'claim'; box.classList.toggle('hidden', !on);
+  const n = issAllRaw().filter(x => x.cat === 'claim' && x.day >= isoDate(new Date(Date.now() - 6 * 864e5))).length; const b = $('iss-cln'); if (b) b.textContent = n ? ' ' + n : '';
+  if (!on) return; const L = claimLast();
+  const ok = document.body.classList.contains('fbmode') && typeof c24Cfg === 'function' && c24Cfg().worker;
+  $('iss-syncmsg').innerHTML = !ok ? '웹 버전에서 카페24를 연결하면 취소·반품·교환이 자동으로 기록돼요' : claimBusy ? esc(claimMsg || '카페24에서 가져오는 중…') : (claimMsg ? esc(claimMsg) + ' · ' : '') + (L.at ? '마지막으로 가져온 때: ' + esc(hhmm(L.at)) + ' · 최근 14일을 30분마다 저절로 확인해요' : '아직 가져온 적이 없어요');
+  $('iss-syncbtn').classList.toggle('hidden', !ok); $('iss-syncbtn').disabled = claimBusy;
+}
+async function claimSync(force) {
+  if (claimBusy || !document.body.classList.contains('fbmode') || typeof c24Cfg !== 'function' || !c24Cfg().worker) return;
+  const L = claimLast(); if (!force && L.at && Date.now() - new Date(L.at).getTime() < 30 * 60e3) return;
+  claimBusy = true; claimMsg = ''; issSyncLine();
+  let add = 0, upd = 0;
+  try {
+    for (let i = 13; i >= 0; i--) {
+      const day = isoDate(new Date(Date.now() - i * 864e5)); claimMsg = fmtDay(day) + ' 확인 중…'; issSyncLine();
+      const d = await c24Call('/claims?day=' + day), list = d.claims || [];
+      if (!list.length) continue;
+      const cur = issAllRaw().filter(x => x.day === day && x.key);
+      const want = list.map(c => { const key = 'c24:' + c.type + ':' + (c.order_item_code || c.order_id + ':' + c.product_name), ct = CLAIM_T[c.type];
+        const text = [claimStat(c.type, c.status), c.option_value ? '옵션 ' + c.option_value : '', c.quantity ? c.quantity + '개' : '', c.reason ? '사유: ' + c.reason : '', claimMk(c), '주문 ' + c.order_id].filter(Boolean).join(' · ');
+        return { key, ct, text, item: claimName(c.product_name) }; });
+      const changed = want.filter(w => { const o = cur.find(x => x.key === w.key); return !o || o.text !== w.text || o.item !== w.item; });
+      if (!changed.length) continue;
+      await issWrite(day, arr => changed.forEach(w => { const o = arr.find(x => x.key === w.key);
+        if (o) { o.text = w.text; o.item = w.item; o.editedAt = new Date().toISOString(); upd++; }
+        else { arr.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: w.key, cat: 'claim', ctype: w.ct, item: w.item, text: w.text, at: new Date().toISOString(), by: '카페24 자동' }); add++; } }));
+    }
+    try { localStorage.setItem('herb5_claimsync', JSON.stringify({ at: new Date().toISOString() })); } catch (e) {}
+    claimMsg = add || upd ? `새로 ${add}건${upd ? ' · 바뀐 것 ' + upd + '건' : ''} 기록했어요` : '새로 들어온 건이 없어요';
+  } catch (e) { claimMsg = '가져오지 못했어요: ' + (e.code === 'not_found' ? '중계 서버 코드를 최신으로 바꿔 주세요' : e.message); }
+  finally { claimBusy = false; issSyncLine(); if (issOpen()) renderIssue(); }
+}
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-isscat]'); if (c) { issCat = c.dataset.isscat; renderIssue(); if (issCat === 'claim') claimSync(); return; }
+  if (e.target.closest('#iss-syncbtn')) claimSync(true);
+  const t = e.target.closest('.tab[data-t=issue]'); if (t) setTimeout(() => claimSync(), 300);
+});
+window.addEventListener('h5ready', () => setTimeout(() => claimSync(), 4000));
+setInterval(() => { if (!document.hidden) claimSync(); }, 10 * 60e3);
 
 // ---------- 기록·통계 → 쇼핑몰 비교 (카페24 결제일 기준 · 품목/쇼핑몰/세부옵션별 수량 · 최대 5년) ----------
 const MALL_CH = [['self', '자사몰', '#3d7a4f', '자사'], ['npay', '네이버페이', '#1fae5b', 'N페이'], ['smart', '스마트스토어', '#2f86c4', '스마트'], ['coupang', '쿠팡', '#d9663f', '쿠팡'], ['etc', '기타', '#9a9a92', '기타']];

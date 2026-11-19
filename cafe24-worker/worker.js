@@ -21,6 +21,7 @@ export default {
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
+      if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
       return json({ error: 'not_found' }, cors, 404);
@@ -167,4 +168,34 @@ async function carrierOf(env, token, raw) {
   const n = Number(v), hit = list.find(c => c.id === n && !/^0\d{3}$/.test(v)) || list.find(c => c.code === v) || list.find(c => c.id === n);
   if (!hit) throw fail(400, 'carrier', '배송 업체 번호 ' + v + '번을 쇼핑몰 배송사 목록에서 찾지 못했어요. 있는 번호: ' + list.map(c => c.id + '(' + c.name + ')').join(', '));
   return hit;
+}
+
+// ---------- 취소 · 반품 · 교환: 신청일이 그날인 주문의 해당 품목 ----------
+async function claims(env, q) {
+  const day = String(q.get('day') || ''); if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) throw fail(400, 'day', '날짜가 맞지 않아요');
+  const token = await accessToken(env), out = [];
+  const T = [['cancel', 'cancel_request_date', 'C', 'cancellation'], ['return', 'return_request_date', 'R', 'return'], ['exchange', 'exchange_request_date', 'E', 'exchange']];
+  const pick = (o, ks) => { for (const k of ks) if (o && o[k] != null && String(o[k]).trim()) return String(o[k]).trim(); return ''; };
+  const RK = ['claim_reason', 'reason', 'claim_reason_type_text', 'claim_reason_type', 'cancel_reason', 'return_reason', 'exchange_reason'];
+  for (const [type, dt, pre, emb] of T) {
+    for (let offset = 0; offset <= 15000; offset += 500) {
+      const u = new URL(base(env) + '/admin/orders');
+      u.searchParams.set('date_type', dt); u.searchParams.set('start_date', day); u.searchParams.set('end_date', day);
+      u.searchParams.set('embed', 'items,' + emb); u.searchParams.set('limit', '500'); u.searchParams.set('offset', String(offset));
+      const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 취소·반품·교환을 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
+      const list = d.orders || [];
+      list.forEach(o => {
+        const cl = [].concat(o[emb] || []), creason = cl.map(c => pick(c, RK)).find(Boolean) || '';
+        (o.items || []).filter(i => String(i.order_status || '').startsWith(pre) || String(i.claim_type || '').toUpperCase().startsWith(pre)).forEach(i => {
+          const ci = cl.find(c => [].concat(c.items || []).some(x => x.order_item_code === i.order_item_code)) || {};
+          out.push({ type, day, order_id: o.order_id, order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.claim_quantity || i.quantity) || 0,
+            status: i.order_status || '', reason: pick(i, RK) || pick(ci, RK) || creason, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '' });
+        });
+      });
+      if (list.length < 500) break;
+    }
+  }
+  return { day, claims: out };
 }
