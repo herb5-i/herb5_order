@@ -754,6 +754,10 @@ body.stk-dragging,body.stk-dragging *{cursor:grabbing!important}
 .sg-tile.st-out{background:linear-gradient(180deg,#fdf1f3,#f9e1e7);border-color:rgba(196,80,109,.22)}.sg-tile.st-out b{color:#c4506d}
 .sg-tile.st-none{background:#f6f4ee;border-style:dashed;border-color:rgba(60,70,40,.18);box-shadow:none}.sg-tile.st-none b{color:#a3a797;font-size:15px;font-weight:600;padding:4px 0}
 .stkempty{color:var(--mute);text-align:center;padding:26px 12px;line-height:1.7}.stkempty.sm{padding:18px 8px}
+.sg-tile .sg-note{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#8a6a2f;font-size:11.5px;margin-top:2px}
+.stknote{display:flex;flex-direction:column;gap:6px;margin:4px 0 10px;font-size:12.5px;color:var(--mute)}.stknote small{font-weight:400;margin-left:6px;color:var(--mute)}
+.stknote textarea{width:100%;min-height:58px;resize:vertical;font:inherit;font-size:15px;line-height:1.5;padding:10px 14px;border-radius:14px;color:var(--ink)}
+.sg-memo{display:inline-block;width:14px;height:14px;margin-left:5px;vertical-align:-2px;background:currentColor;opacity:.55;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 4h14v12l-4 4H5z M15 20v-4h4' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M8 9h8M8 13h5' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 4h14v12l-4 4H5z M15 20v-4h4' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M8 9h8M8 13h5' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
 .stkform2{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr) 84px auto;gap:10px;align-items:end}
 .stkform2 label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--mute)}
 .stkform2 input,.stkform2 select{width:100%;box-sizing:border-box;min-width:0;font-size:16px;padding:11px 14px;border-radius:14px}
@@ -1943,6 +1947,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         </div>
         <datalist id="stk-names"></datalist>
         <p class="msg" id="stkmsg"></p>
+        <label class="stknote hidden" id="stknotebox"><span>품목 메모 <small id="stknote-st"></small></span><textarea id="stk-note" rows="2" placeholder="이 품목에 남길 메모 (예: 하우스 2번 · 다음 주 수확 많음 · 잎 작음)"></textarea></label>
         <div class="stkunits hidden" id="stkunits"><div class="su-h">단위 편집 <small>단위를 넣거나 지워요. kg·g 는 무게(주문 g 만큼 빠짐), 나머지는 개수로 세요.</small></div><div class="su-list"></div><div class="su-add"><input id="su-new" placeholder="새 단위 (예: 송이, 팩, 박스)" maxlength="8" autocomplete="off"><button class="ibtn ibtn-acc" id="su-addbtn" title="단위 추가" aria-label="단위 추가"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="ibtn" id="su-reset" title="처음 단위로 (개 · kg · g)" aria-label="처음 단위로"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button></div><p class="msg" id="su-msg"></p></div>
         <p class="help">＋ 들어온 만큼 더하기 · − 따로 나간 만큼 빼기 · ＝ 실제로 센 수량으로 맞추기. 재고를 넣은 뒤에 올린 원본(오전·오후)부터 집계 수량만큼 실시간으로 빠져요. 이미 올라와 있던 주문은 빼지 않아요 (무게는 100g 단위 올림, 예: 560g → 600g).</p>
         <div class="stkeditfoot"><button class="ibtn ibtn-bad" id="stk-del" title="품목 지우기" aria-label="품목 지우기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M10 11v5.5M14 11v5.5"/><path d="M6.5 7l.8 11.2A2 2 0 0 0 9.3 20h5.4a2 2 0 0 0 2-1.8L17.5 7M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2"/></svg></button><span class="sp"></span><button class="ibtn" id="stk-unitbtn" title="단위 편집" aria-label="단위 편집"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 15.5 15.5 3.5l5 5-12 12-5-5Z"/><path d="m7.5 11.5 2 2M10.5 8.5l2 2M13.5 5.5l2 2"/></svg></button></div>
@@ -4449,7 +4454,7 @@ async function stkSaveLayout() {
   const host = $('stklist'), gorder = [], order = [], grp = {};
   host.querySelectorAll('.sg-group').forEach(sec => { const g = sec.dataset.g; gorder.push(g); sec.querySelectorAll('.sg-tile').forEach(t => { order.push(t.dataset.stkpick); grp[t.dataset.stkpick] = g; }); });
   const prev = stkLayout(), keep = (prev.order || []).filter(k => !order.includes(k));
-  try { await stockWrite(STK_LAYOUT_ID, { kind: 'layout', name: '__layout', units: prev.units || null, hidden: prev.hidden || [], order: order.concat(keep), gorder, grp: Object.assign({}, prev.grp || {}, grp), updatedAt: new Date().toISOString() }); $('stkmsg').className = 'msg ok'; $('stkmsg').textContent = '순서를 저장했어요'; }
+  try { await stockWrite(STK_LAYOUT_ID, { kind: 'layout', name: '__layout', units: prev.units || null, hidden: prev.hidden || [], notes: prev.notes || {}, order: order.concat(keep), gorder, grp: Object.assign({}, prev.grp || {}, grp), updatedAt: new Date().toISOString() }); $('stkmsg').className = 'msg ok'; $('stkmsg').textContent = '순서를 저장했어요'; }
   catch (e) { $('stkmsg').className = 'msg err'; $('stkmsg').textContent = '순서를 저장하지 못했어요: ' + (e.message || e.code); }
 }
 // 끌어서 순서 바꾸기 (마우스: 바로 끌기 · 휴대폰: 꾹 누른 뒤 끌기)
@@ -4533,7 +4538,7 @@ function renderStock() {
   host.innerHTML = items.length ? gs.map(g => `<section class="sg-group" data-g="${esc(g)}"><div class="sg-gh"><span class="sg-grip" title="끌어서 순서 바꾸기">⠿</span><b>${esc(g)}</b><small>${groups.get(g).length}</small></div><div class="sg-tiles">` +
     groups.get(g).sort((a, b) => oidx(a.key) - oidx(b.key) || a.key.localeCompare(b.key, 'ko')).map(x => {
       const st = x.cur === null ? 'none' : x.cur <= 0 ? 'out' : x.low ? 'low' : 'ok';
-      return `<button class="sg-tile st-${st} ${sel === x.key ? 'sel' : ''}" data-stkpick="${esc(x.key)}"><span class="sg-nm">${esc(x.key)}</span><b>${x.cur === null ? '미입력' : esc(stkShow(x.unit, x.cur))}</b>${x.today ? `<small>오늘 −${esc(stkShow(x.unit, x.today))}</small>` : ''}${x.days !== null ? `<small class="sg-days ${x.days < 3 ? 'soon' : ''}">약 ${x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치'}</small>` : ''}${x.low ? '<em class="sg-low">부족</em>' : x.cur !== null && x.cur <= 0 ? '<em class="sg-low">품절</em>' : ''}</button>`;
+      return `<button class="sg-tile st-${st} ${sel === x.key ? 'sel' : ''}" data-stkpick="${esc(x.key)}"><span class="sg-nm">${esc(x.key)}${stkNote(x.key) ? '<i class="sg-memo" title="' + esc(stkNote(x.key)) + '"></i>' : ''}</span><b>${x.cur === null ? '미입력' : esc(stkShow(x.unit, x.cur))}</b>${x.today ? `<small>오늘 −${esc(stkShow(x.unit, x.today))}</small>` : ''}${stkNote(x.key) ? `<small class="sg-note">${esc(stkNote(x.key).split('\n')[0])}</small>` : ''}${x.days !== null ? `<small class="sg-days ${x.days < 3 ? 'soon' : ''}">약 ${x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치'}</small>` : ''}${x.low ? '<em class="sg-low">부족</em>' : x.cur !== null && x.cur <= 0 ? '<em class="sg-low">품절</em>' : ''}</button>`;
     }).join('') + '</div></section>').join('') : '<div class="stkempty">정리하기에서 원본을 올리면 집계에 나온 품목이 여기에 자동으로 생겨요.<br>아직 주문이 없는 품목은 아래 재고 수정에서 이름을 적고 ＋로 넣으면 돼요.</div>';
   $('stksum').textContent = items.length ? items.filter(x => x.rec).length + ' / ' + items.length + '개 품목 입력됨' : '';
   $('stk-names').innerHTML = items.map(x => `<option value="${esc(x.key)}">`).join('');
@@ -4548,7 +4553,20 @@ function stkCurLine(items) {
   if (x) { const sel = $('stk-u'); if (stkIsW(x.unit)) sel.value = sel.value === 'g' ? 'g' : 'kg'; else { if (![...sel.options].some(o => o.value === x.unit)) sel.add(new Option(x.unit, x.unit)); sel.value = x.unit; } }
   $('stk-cur').textContent = x ? (x.cur === null ? '아직 재고를 안 넣었어요' : '지금 ' + stkShow(x.unit, x.cur)) : (k ? '새 품목' : '');
   document.querySelectorAll('.sg-tile').forEach(t => t.classList.toggle('sel', t.dataset.stkpick === k));
+  const nb = $('stknotebox'), ta = $('stk-note'); if (nb) { nb.classList.toggle('hidden', !k); if (stkNoteKey !== k || document.activeElement !== ta) { if (stkNoteKey !== k) { stkNoteFlush(); $('stknote-st').textContent = ''; } stkNoteKey = k; ta.value = k ? stkNote(k) : ''; } }
 }
+// 품목 메모: 재고 배치 문서(layout0)의 notes 에 품목별로 보관해요 (재고 수치에는 영향 없음)
+var stkNoteKey = '', stkNoteT = null;
+function stkNote(k) { const n = (stkLayout().notes || {})[k]; return n && n.t ? n.t : ''; }
+async function stkNoteSave(k, t) {
+  const L = stkLayout(), notes = Object.assign({}, L.notes || {}), who = (typeof fbUser !== 'undefined' && fbUser && fbUser.email && typeof showId === 'function') ? showId(fbUser.email) : '';
+  if (t.trim()) notes[k] = { t: t.trim(), at: new Date().toISOString(), by: who }; else delete notes[k];
+  await stockWrite(STK_LAYOUT_ID, Object.assign({ order: [], gorder: [], grp: {} }, L, { kind: 'layout', name: '__layout', notes, updatedAt: new Date().toISOString() }));
+}
+function stkNoteFlush() { if (!stkNoteT) return; clearTimeout(stkNoteT); stkNoteT = null; const k = stkNoteKey, t = $('stk-note').value; if (k && t.trim() !== stkNote(k)) stkNoteSave(k, t).catch(() => {}); }
+document.addEventListener('input', e => { if (e.target.id !== 'stk-note') return; const st = $('stknote-st'); st.textContent = '저장 중…'; clearTimeout(stkNoteT);
+  stkNoteT = setTimeout(async () => { stkNoteT = null; const k = stkNoteKey; if (!k) return; try { await stkNoteSave(k, $('stk-note').value); st.textContent = '저장했어요'; } catch (er) { st.textContent = '저장 못 했어요: ' + (er.message || er.code); } }, 700); });
+document.addEventListener('focusout', e => { if (e.target.id === 'stk-note') stkNoteFlush(); });
 function stkParseQty(txt, unitSel) {
   const m = String(txt || '').replace(/,/g, '').trim().match(/^(\d+(?:\.\d+)?)\s*([^\d\s]*)$/);
   if (!m) return null;
