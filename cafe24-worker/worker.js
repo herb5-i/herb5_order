@@ -21,6 +21,7 @@ export default {
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
+      if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
@@ -58,7 +59,7 @@ function authUrl(env, state) {
   const u = new URL(base(env) + '/oauth/authorize');
   u.searchParams.set('response_type', 'code'); u.searchParams.set('client_id', env.CAFE24_CLIENT_ID);
   u.searchParams.set('state', state); u.searchParams.set('redirect_uri', env.REDIRECT_URI);
-  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping');
+  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping mall.read_community mall.read_product');
   return u.toString();
 }
 async function tokenCall(env, body) {
@@ -198,4 +199,44 @@ async function claims(env, q) {
     }
   }
   return { day, claims: out };
+}
+
+// ---------- 상품 후기: 후기 게시판 글 + 상품 이름 (작성자 이름·이메일은 보내지 않아요) ----------
+async function c24get(env, token, path, params) {
+  const u = new URL(base(env) + path); Object.entries(params || {}).forEach(([k, v]) => u.searchParams.set(k, String(v)));
+  const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401 || r.status === 403) throw fail(403, 'scope_review', '카페24 앱에 [게시판 읽기] · [상품 읽기] 권한이 필요해요. 개발자센터에서 권한을 추가하고, 사이트에서 [카페24 연결]을 다시 눌러 주세요');
+  if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
+  return d;
+}
+async function reviewBoards(env, token) {
+  const c = JSON.parse((await env.TOKENS.get('rboards')) || 'null'); if (c && Date.now() - c.at < 7 * 864e5) return c.list;
+  const d = await c24get(env, token, '/admin/boards', {});
+  let list = (d.boards || []).filter(b => /후기|리뷰|review/i.test(String(b.board_name || '')) || String(b.board_type) === '4' || Number(b.board_no) === 4).map(b => ({ no: Number(b.board_no), name: b.board_name || '' }));
+  if (!list.length) list = [{ no: 4, name: '상품 사용후기' }];
+  await env.TOKENS.put('rboards', JSON.stringify({ at: Date.now(), list })); return list;
+}
+async function reviews(env, q) {
+  const from = String(q.get('from') || ''), to = String(q.get('to') || '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) throw fail(400, 'range', '기간이 맞지 않아요');
+  const token = await accessToken(env), boards = await reviewBoards(env, token), out = [];
+  for (const b of boards) {
+    for (let offset = 0; offset <= 8000; offset += 100) {
+      const d = await c24get(env, token, '/admin/boards/' + b.no + '/articles', { start_date: from, end_date: to, limit: 100, offset });
+      const list = d.articles || [];
+      list.forEach(a => { if (Number(a.reply_depth) > 0 || a.deleted === 'T' || a.notice === 'T') return;
+        out.push({ id: b.no + ':' + a.article_no, board: b.name, created: a.created_date, product_no: Number(a.product_no) || 0, rating: Number(a.rating) || 0,
+          title: String(a.title || '').slice(0, 120), content: String(a.content || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 400),
+          npay: !!a.naverpay_review_id, photos: (a.attach_file_urls || []).length, order_id: a.order_id || '' }); });
+      if (list.length < 100) break;
+    }
+  }
+  const nos = [...new Set(out.map(r => r.product_no).filter(Boolean))], names = {};
+  for (let i = 0; i < nos.length; i += 100) {
+    const d = await c24get(env, token, '/admin/products', { product_no: nos.slice(i, i + 100).join(','), fields: 'product_no,product_name', limit: 100 });
+    (d.products || []).forEach(p => { names[p.product_no] = p.product_name; });
+  }
+  out.forEach(r => { r.product_name = names[r.product_no] || ''; });
+  return { from, to, reviews: out };
 }

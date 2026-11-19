@@ -1215,14 +1215,23 @@ html.dark .wrap>header.top .navs .acct{background:rgba(255,255,255,.07)}html.dar
 header.top .tabs .tab[data-t=issue]::before{color:var(--clay,#d07a52)}
 @media(max-width:999px){header.top .navs .tabs{grid-template-columns:repeat(6,minmax(0,1fr))!important;width:min(470px,calc(100% - 20px))!important;gap:2px!important;padding:6px!important}header.top .navs .tabs .tab{height:50px;border-radius:17px!important}header.top .tabs .tab::before{width:21px;height:21px}}
 body.is-home .pagehead .hello{font-size:15px}
+.iss-rv{background:#e0a526!important}.iss-rv.low{background:#c4503a!important}
+.iss-cmp{margin:0 0 16px;padding:16px 18px}.iss-cmph{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}.iss-cmph small{color:var(--mute,#778);font-size:12.5px}
+.iss-cmpt{width:100%;border-collapse:collapse;font-size:13.5px}.iss-cmpt th,.iss-cmpt td{padding:8px 10px;border-bottom:1px solid var(--line,#eceee9);text-align:right;white-space:nowrap}
+.iss-cmpt th{font-size:12px;color:var(--mute,#667);font-weight:600}.iss-cmpt th:first-child,.iss-cmpt td:first-child{text-align:left;white-space:normal}
+.iss-cmpt tr[data-isscmp]{cursor:pointer}.iss-cmpt tr[data-isscmp]:hover td{background:rgba(47,107,62,.05)}
+.iss-cmpt td.bad{color:#c4503a;font-weight:700}.iss-cmpt td.warn{color:#b8613b;font-weight:600}
+.iss-cats .ls,.iss-cmp .ls{display:none}
+@media(max-width:620px){.iss-cats .lf,.iss-cmp .lf{display:none}.iss-cats .ls,.iss-cmp .ls{display:inline}.iss-cmpt td:first-child{min-width:96px;word-break:keep-all}.iss-cmpt th,.iss-cmpt td{padding:7px 5px;font-size:12.5px}.iss-cats{width:100%}.iss-cats button{flex:1;padding:9px 6px;font-size:13px}}
 .iss-cats{display:flex;gap:6px;padding:5px;margin:0 0 12px;border-radius:18px;background:rgba(255,253,248,.88);border:1px solid rgba(60,70,40,.08);width:fit-content;max-width:100%}
-.iss-cats button{border:0;background:none;font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:13px;cursor:pointer;color:var(--mute,#667)}
+.iss-cats button{white-space:nowrap;border:0;background:none;font:inherit;font-size:14px;font-weight:600;padding:9px 16px;border-radius:13px;cursor:pointer;color:var(--mute,#667)}
 .iss-cats button.on{background:linear-gradient(180deg,#68a873,#3f7f50);color:#fff;box-shadow:0 6px 14px -8px rgba(40,90,50,.7)}
 .iss-cats i{font-style:normal;font-size:12px;margin-left:4px;opacity:.85}
 .iss-sync.hidden,#iss-syncbtn.hidden{display:none!important}
 .iss-sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 12px;font-size:13px;color:var(--mute,#667)}.iss-sync span{flex:1;min-width:200px}
 #v-issue[data-cat="claim"] .iss-has .iss-c{color:#c4503a}
-.iss-chip .iss-ct{font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;margin-right:6px;vertical-align:1px;color:#fff;background:#999}
+.iss-tl .iss-ct{margin-right:6px}
+.iss-ct{display:inline-block;line-height:1.5;font-style:normal;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;margin-right:6px;vertical-align:1px;color:#fff;background:#999}
 .iss-ct-c{background:#8a8f87!important}.iss-ct-r{background:#d9663f!important}.iss-ct-e{background:#2f86c4!important}.iss-ct-m{background:#b59a52!important}
 html.dark .iss-cats{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.06)}
 .iss-search{position:relative;display:flex;align-items:center;gap:10px;height:58px;padding:0 10px 0 18px;margin:0 0 16px;border-radius:20px;background:linear-gradient(180deg,#fffdf8,#faf7ef);border:1px solid rgba(255,255,255,.95);box-shadow:var(--shadow);transition:box-shadow .15s}
@@ -1919,7 +1928,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-issue" class="hidden">
-    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim">취소 · 반품 · 교환<i id="iss-cln"></i></button></div>
+    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button><button type="button" role="tab" data-isscat="review">상품 후기<i id="iss-rvn"></i></button></div>
+    <div class="card iss-cmp hidden" id="iss-cmp"></div>
     <div class="iss-sync hidden" id="iss-sync"><span id="iss-syncmsg"></span><button class="btn sm" type="button" id="iss-syncbtn">카페24에서 지금 가져오기</button></div>
     <div class="iss-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -3556,8 +3566,8 @@ function issAllRaw() { // [{ day, id, item, text, at, cat? }]
   return out.sort((a, b) => b.day.localeCompare(a.day) || String(b.at || '').localeCompare(String(a.at || '')));
 }
 let issCat = 'item';   // 'item' 품목 이슈 · 'claim' 취소·반품·교환
-const issItems = () => issAllRaw().filter(x => x.cat !== 'claim');
-const issAll = () => issAllRaw().filter(x => (x.cat === 'claim') === (issCat === 'claim'));
+const issItems = () => issAllRaw().filter(x => !x.cat || x.cat === 'item');
+const issAll = () => issAllRaw().filter(x => (x.cat || 'item') === issCat);
 const issOfDay = day => issAll().filter(x => x.day === day);
 const issNorm = t => String(t || '').replace(/\s+/g, '').toLowerCase();
 async function issWrite(day, fn) {
@@ -3575,7 +3585,7 @@ function renderIssue() {
   if (!$('isscal')) return;
   const today = isoDate(new Date()); if (!issDay) issDay = today;
   if (!issMonth) { const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); }
-  const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(issCat === 'claim' ? x.id : x.item); });
+  const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(issCat !== 'item' ? x.id : x.item); });
   document.querySelectorAll('[data-isscat]').forEach(b => b.classList.toggle('on', b.dataset.isscat === issCat)); $('v-issue').dataset.cat = issCat; try { issSyncLine(); } catch (e) {}
   $('iss-names').innerHTML = issNames().map(n => `<option value="${esc(n)}">`).join('');
   // 달력
@@ -3585,7 +3595,7 @@ function renderIssue() {
   for (let i = 0; i < first.getDay(); i++) g += '<div></div>';
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, mo, d), iso = isoDate(dt), c = byDay.has(iso) ? byDay.get(iso).size : 0;
-    g += `<button class="hd ${c ? 'has iss-has' : ''} ${iso === issDay ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-issday="${iso}"><span class="n">${d}</span><span class="iss-c">${c ? c + (issCat === 'claim' ? '건' : '품목') : ''}</span></button>`;
+    g += `<button class="hd ${c ? 'has iss-has' : ''} ${iso === issDay ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-issday="${iso}"><span class="n">${d}</span><span class="iss-c">${c ? c + (issCat !== 'item' ? '건' : '품목') : ''}</span></button>`;
   }
   $('isscal').innerHTML = g + '</div>';
   // 고른 날
@@ -3593,20 +3603,21 @@ function renderIssue() {
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
-    `<button class="iss-chip ${issCat === 'claim' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
-    : (issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
+    `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
+    : (issCat === 'review' ? '<p class="iss-empty">이 날 들어온 상품 후기가 없어요.<br>카페24 후기 게시판에 글이 올라오면 자동으로 여기에 기록돼요.</p>' : issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
   renderIssueSearch();
 }
 function renderIssueSearch() {
   const q = issNorm($('iss-q').value), box = $('iss-res');
   $('iss-x').classList.toggle('hidden', !q);
   if (!q) { box.classList.add('hidden'); box.innerHTML = ''; return; }
-  const hit = issAll().filter(x => issNorm(x.item).includes(q) || issNorm(x.text).includes(q));
+  const pool = issCat === 'review' ? issAllRaw().filter(x => x.cat === 'review' || !x.cat || x.cat === 'item') : issAll();   // 후기 칸에서는 품목 이슈도 같이 나란히
+  const hit = pool.filter(x => issNorm(x.item).includes(q) || issNorm(x.text).includes(q));
   const groups = new Map(); hit.forEach(x => { if (!groups.has(x.item)) groups.set(x.item, []); groups.get(x.item).push(x); });
   box.classList.remove('hidden');
   box.innerHTML = `<div class="iss-rh"><b>'${esc($('iss-q').value.trim())}'</b> 검색 결과<span>${groups.size}품목 · ${hit.length}건</span></div>` + (hit.length ? [...groups.entries()].map(([it, arr]) =>
     `<div class="iss-rg"><div class="iss-rgh"><b>${esc(it)}</b><small>${arr.length}건</small></div><ol class="iss-tl">${arr.map(x =>
-      `<li><button type="button" data-issjump="${x.day}" data-issjumpitem="${esc(x.item)}"><span class="iss-d">${esc(fmtDay(x.day))}</span><span class="iss-t">${esc(x.text).replace(/\n/g, '<br>')}${x.ph && x.ph.length ? ` <i class="iss-cam"></i><small>${x.ph.length}</small>` : ''}</span></button></li>`).join('')}</ol></div>`).join('')
+      `<li><button type="button" data-issjump="${x.day}" data-issjumpitem="${esc(x.item)}" data-issjumpcat="${x.cat || 'item'}"><span class="iss-d">${esc(fmtDay(x.day))}</span><span class="iss-t">${issCat === 'review' ? `<i class="iss-ct ${x.cat === 'review' ? 'iss-rv' + (x.rating && x.rating <= 3 ? ' low' : '') : 'iss-ct-m'}">${x.cat === 'review' ? '후기' : '품목 이슈'}</i>` : ''}${esc(x.text).replace(/\n/g, '<br>')}${x.ph && x.ph.length ? ` <i class="iss-cam"></i><small>${x.ph.length}</small>` : ''}</span></button></li>`).join('')}</ol></div>`).join('')
     : '<p class="iss-empty">찾는 이슈가 없어요</p>');
 }
 function issOpenModal(item) {
@@ -3634,7 +3645,7 @@ document.addEventListener('click', async e => {
   if (t.closest('#iss-addbtn')) return issOpenModal(null);
   if (t.closest('#iss-close') || t.id === 'issModal') return issClose();
   if (t.closest('#iss-x')) { $('iss-q').value = ''; renderIssueSearch(); $('iss-q').focus(); return; }
-  const j = t.closest('[data-issjump]'); if (j) { if (!issOpen()) document.querySelector('.tab[data-t=issue]').click(); issDay = j.dataset.issjump; const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderIssue(); issOpenModal(j.dataset.issjumpitem); return; }
+  const j = t.closest('[data-issjump]'); if (j) { if (!issOpen()) document.querySelector('.tab[data-t=issue]').click(); if (j.dataset.issjumpcat) issCat = j.dataset.issjumpcat; issDay = j.dataset.issjump; const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderIssue(); issOpenModal(j.dataset.issjumpitem); return; }
   const ed = t.closest('[data-issedit]'); if (ed) { const x = issOfDay(issDay).find(v => v.id === ed.dataset.issedit); if (!x) return; issEditId = x.id; $('iss-text').value = x.text; $('iss-save').textContent = '고친 내용 저장'; renderIssList(); $('iss-text').focus(); return; }
   const del = t.closest('[data-issdel]'); if (del) { if (!confirmTap(del, del.dataset.issdel, '한 번 더 누르면 이 메모를 지워요')) return;
     try { const gone = issOfDay(issDay).find(v => v.id === del.dataset.issdel); await issWrite(issDay, arr => { const i = arr.findIndex(v => v.id === del.dataset.issdel); if (i >= 0) arr.splice(i, 1); }); ((gone && gone.ph) || []).forEach(photoDel); renderIssList(); if (!issOfDay(issDay).some(x => x.item === issModalItem)) issClose(); } catch (er) { $('iss-msg').className = 'msg err'; $('iss-msg').textContent = '지우지 못했어요: ' + (er.message || er.code); } return; }
@@ -3653,7 +3664,7 @@ document.addEventListener('submit', async e => {
     if (issPend.length) { m.className = 'msg'; m.textContent = '사진 올리는 중…'; for (const d of issPend) { const pid = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); await photoPut(pid, d, { day: issDay, item, by: who }); ph.push(pid); } }
     await issWrite(issDay, arr => {
       if (eid) { const x = arr.find(v => v.id === eid); if (x) { x.text = text; x.editedAt = new Date().toISOString(); if (ph.length) x.ph = (x.ph || []).concat(ph); } }
-      else { const nx = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), item, text, at: new Date().toISOString(), by: who }; if (issCat === 'claim') { nx.cat = 'claim'; nx.ctype = '메모'; } if (ph.length) nx.ph = ph; arr.push(nx); }
+      else { const nx = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), item, text, at: new Date().toISOString(), by: who }; if (issCat !== 'item') { nx.cat = issCat; nx.ctype = '메모'; } if (ph.length) nx.ph = ph; arr.push(nx); }
     });
     issPend = []; renderPend();
     issModalItem = item; issEditId = null; $('iss-mt').textContent = item; $('iss-item').classList.add('hidden');
@@ -5245,6 +5256,63 @@ document.addEventListener('click', async e => {
 });
 invBind(); renderInv();
 
+
+// ---------- 이슈 → 상품 후기 (카페24 후기 게시판 · 네이버페이 후기 포함) ----------
+var revBusy = false, revMsg = '';
+function revLast() { try { return JSON.parse(localStorage.getItem('herb5_revsync') || '{}'); } catch (e) { return {}; } }
+function revStars(arr) { const rs = arr.map(x => Number(x.rating) || 0).filter(Boolean); if (!rs.length) return ''; const a = rs.reduce((p, c) => p + c, 0) / rs.length; return `<i class="iss-ct iss-rv ${a <= 3 ? 'low' : ''}">★ ${a.toFixed(1)}</i>`; }
+function revSyncLine() {
+  const L = revLast(), ok = document.body.classList.contains('fbmode') && typeof c24Cfg === 'function' && c24Cfg().worker;
+  $('iss-syncmsg').innerHTML = !ok ? '웹 버전에서 카페24를 연결하면 상품 후기가 자동으로 기록돼요' : revBusy ? esc(revMsg || '카페24에서 후기 가져오는 중…') : (revMsg ? esc(revMsg) + ' · ' : '') + (L.at ? '마지막으로 가져온 때: ' + esc(hhmm(L.at)) + ' · 1시간마다 저절로 확인해요 · 자사몰 · 네이버페이 후기' : '처음 가져올 때 지난 1년 치를 받아요');
+  $('iss-syncbtn').classList.toggle('hidden', !ok); $('iss-syncbtn').disabled = revBusy;
+}
+async function revSync(force) {
+  if (revBusy || !document.body.classList.contains('fbmode') || typeof c24Cfg !== 'function' || !c24Cfg().worker) return;
+  const L = revLast(); if (!force && L.at && Date.now() - new Date(L.at).getTime() < 60 * 60e3) return;
+  revBusy = true; revMsg = ''; issSyncLine(); let add = 0, upd = 0;
+  try {
+    const today = new Date(), ranges = [];
+    if (!L.at) { for (let i = 11; i >= 0; i--) { const a = new Date(today.getFullYear(), today.getMonth() - i, 1), b = new Date(today.getFullYear(), today.getMonth() - i + 1, 0); ranges.push([isoDate(a), isoDate(b < today ? b : today)]); } }
+    else ranges.push([isoDate(new Date(Date.now() - 14 * 864e5)), isoDate(today)]);
+    for (const [f, t] of ranges) {
+      revMsg = f.slice(0, 7).replace('-', '년 ') + '월 후기 확인 중…'; issSyncLine();
+      const d = await c24Call('/reviews?from=' + f + '&to=' + t), byDay = new Map();
+      (d.reviews || []).forEach(r => { const day = mallKst(r.created || new Date().toISOString()); if (!byDay.has(day)) byDay.set(day, []); byDay.get(day).push(r); });
+      for (const [day, list] of byDay) {
+        const cur = issAllRaw().filter(x => x.day === day && x.key && x.cat === 'review');
+        const want = list.map(r => { const n = Math.max(0, Math.min(5, Math.round(r.rating))), ch = r.npay ? '네이버페이' : '자사몰';
+          const text = [(n ? '★'.repeat(n) + '☆'.repeat(5 - n) + ' ' + n + '점' : '별점 없음'), r.title, r.content && r.content !== r.title ? r.content : '', r.photos ? '사진 ' + r.photos + '장' : '', ch].filter(Boolean).join(' · ');
+          return { key: 'rv:' + r.id, item: r.product_name ? claimName(r.product_name) : '(상품 정보 없음)', text, rating: n, ct: ch }; });
+        const changed = want.filter(w => { const o = cur.find(x => x.key === w.key); return !o || o.text !== w.text || o.item !== w.item; });
+        if (!changed.length) continue;
+        await issWrite(day, arr => changed.forEach(w => { const o = arr.find(x => x.key === w.key);
+          if (o) { o.text = w.text; o.item = w.item; o.rating = w.rating; upd++; }
+          else { arr.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: w.key, cat: 'review', ctype: w.ct, rating: w.rating, item: w.item, text: w.text, at: new Date().toISOString(), by: '카페24 자동' }); add++; } }));
+      }
+    }
+    try { localStorage.setItem('herb5_revsync', JSON.stringify({ at: new Date().toISOString() })); } catch (e) {}
+    revMsg = add || upd ? `새 후기 ${add}건${upd ? ' · 바뀐 것 ' + upd + '건' : ''} 기록했어요` : '새로 올라온 후기가 없어요';
+  } catch (e) { revMsg = '가져오지 못했어요: ' + (e.code === 'not_found' ? '중계 서버 코드를 최신으로 바꿔 주세요' : e.message); }
+  finally { revBusy = false; issSyncLine(); if (issOpen()) renderIssue(); }
+}
+function renderIssCmp() {   // 고른 달: 품목별 후기(개수 · 평균 별점 · 낮은 별점) ↔ 품목 이슈 · 취소·반품·교환
+  const box = $('iss-cmp'); if (!box) return; if (issCat !== 'review' || !issMonth) { box.classList.add('hidden'); return; }
+  const ym = isoDate(issMonth).slice(0, 7), all = issAllRaw().filter(x => x.day.startsWith(ym)), m = new Map();
+  const g = n => { if (!m.has(n)) m.set(n, { n, rv: 0, sum: 0, low: 0, iss: 0, cl: 0 }); return m.get(n); };
+  all.forEach(x => { const r = g(x.item); if (x.cat === 'review') { r.rv++; if (x.rating) { r.sum += x.rating; if (x.rating <= 3) r.low++; } } else if (x.cat === 'claim') r.cl++; else r.iss++; });
+  const rows = [...m.values()].filter(r => r.rv || r.iss || r.cl).sort((a, b) => (b.low * 3 + b.iss * 2 + b.cl) - (a.low * 3 + a.iss * 2 + a.cl) || b.rv - a.rv);
+  box.classList.remove('hidden');
+  box.innerHTML = `<div class="iss-cmph"><b>${Number(ym.slice(5))}월 품목별 후기 ↔ 품질 이슈</b><small>문제가 많은 품목이 위로 와요 · 품목을 누르면 그 품목을 검색해요</small></div>` + (rows.length ? `<div class="tblwrap"><table class="iss-cmpt"><thead><tr><th>품목</th><th>후기</th><th><span class="lf">평균 별점</span><span class="ls">평균★</span></th><th><span class="lf">낮은 별점(3점 이하)</span><span class="ls">3점↓</span></th><th><span class="lf">품목 이슈</span><span class="ls">이슈</span></th><th><span class="lf">취소·반품·교환</span><span class="ls">취소등</span></th></tr></thead><tbody>${rows.map(r => {
+    const av = r.sum && r.rv ? r.sum / (r.rv) : 0;
+    return `<tr data-isscmp="${esc(r.n)}"><td><b>${esc(r.n)}</b></td><td>${r.rv || '–'}</td><td class="${av && av <= 3.5 ? 'bad' : ''}">${av ? '★ ' + av.toFixed(1) : '–'}</td><td class="${r.low ? 'bad' : ''}">${r.low || '–'}</td><td class="${r.iss ? 'warn' : ''}">${r.iss || '–'}</td><td class="${r.cl ? 'warn' : ''}">${r.cl || '–'}</td></tr>`; }).join('')}</tbody></table></div>` : '<p class="iss-empty">이 달에는 후기도 이슈도 없어요</p>');
+}
+document.addEventListener('click', e => {
+  const r = e.target.closest('[data-isscmp]'); if (r) { $('iss-q').value = r.dataset.isscmp; renderIssueSearch(); $('iss-res').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  const c = e.target.closest('[data-isscat="review"]'); if (c) setTimeout(() => revSync(), 0);
+  if (e.target.closest('#iss-syncbtn') && issCat === 'review') { e.stopImmediatePropagation(); revSync(true); }
+}, true);
+window.addEventListener('h5ready', () => setTimeout(() => revSync(), 6000));
+setInterval(() => { if (!document.hidden) revSync(); }, 20 * 60e3);
 // ---------- 이슈 → 취소 · 반품 · 교환 (카페24에서 자동 기록) ----------
 const CLAIM_T = { cancel: '취소', return: '반품', exchange: '교환' };
 const claimStat = (t, st) => { const n = String(st || '').slice(1, 2); return CLAIM_T[t] + (n === '0' ? ' 신청' : n === '4' ? ' 완료' : st ? ' 진행 중' : ''); };
@@ -5253,9 +5321,11 @@ function claimLast() { try { return JSON.parse(localStorage.getItem('herb5_claim
 function claimName(n) { const m = new Map((rules.names || []).map(r => [String(r.from || '').trim(), String(r.to || '').trim() || String(r.from || '').trim()])), t = String(n || '').trim(); return mallAliasFn()(m.get(t) || t); }
 function claimMk(c) { return MALL_CH.find(x => x[0] === mallChOf(c))[1]; }
 function issSyncLine() {
-  const box = $('iss-sync'); if (!box) return; const on = issCat === 'claim'; box.classList.toggle('hidden', !on);
-  const n = issAllRaw().filter(x => x.cat === 'claim' && x.day >= isoDate(new Date(Date.now() - 6 * 864e5))).length; const b = $('iss-cln'); if (b) b.textContent = n ? ' ' + n : '';
-  if (!on) return; const L = claimLast();
+  const box = $('iss-sync'); if (!box) return; const on = issCat !== 'item'; box.classList.toggle('hidden', !on);
+  const wk = isoDate(new Date(Date.now() - 6 * 864e5)), cnt = c => issAllRaw().filter(x => x.cat === c && x.day >= wk).length;
+  const b = $('iss-cln'); if (b) b.textContent = cnt('claim') ? ' ' + cnt('claim') : ''; const b2 = $('iss-rvn'); if (b2) b2.textContent = cnt('review') ? ' ' + cnt('review') : '';
+  try { renderIssCmp(); } catch (e) {}
+  if (!on) return; if (issCat === 'review') return revSyncLine(); const L = claimLast();
   const ok = document.body.classList.contains('fbmode') && typeof c24Cfg === 'function' && c24Cfg().worker;
   $('iss-syncmsg').innerHTML = !ok ? '웹 버전에서 카페24를 연결하면 취소·반품·교환이 자동으로 기록돼요' : claimBusy ? esc(claimMsg || '카페24에서 가져오는 중…') : (claimMsg ? esc(claimMsg) + ' · ' : '') + (L.at ? '마지막으로 가져온 때: ' + esc(hhmm(L.at)) + ' · 최근 14일을 30분마다 저절로 확인해요' : '아직 가져온 적이 없어요');
   $('iss-syncbtn').classList.toggle('hidden', !ok); $('iss-syncbtn').disabled = claimBusy;
@@ -5287,7 +5357,7 @@ async function claimSync(force) {
 }
 document.addEventListener('click', e => {
   const c = e.target.closest('[data-isscat]'); if (c) { issCat = c.dataset.isscat; renderIssue(); if (issCat === 'claim') claimSync(); return; }
-  if (e.target.closest('#iss-syncbtn')) claimSync(true);
+  if (e.target.closest('#iss-syncbtn') && issCat === 'claim') claimSync(true);
   const t = e.target.closest('.tab[data-t=issue]'); if (t) setTimeout(() => claimSync(), 300);
 });
 window.addEventListener('h5ready', () => setTimeout(() => claimSync(), 4000));
