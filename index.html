@@ -1311,6 +1311,20 @@ body.is-home .pagehead h2 .hm-col{animation:hmBlink 2s steps(1) infinite;margin:
 @media(max-width:999px){body.is-home .pagehead h2{font-size:38px!important}body.is-home .pagehead h2 .hm-ap{font-size:16px;vertical-align:5px}}
 html.dark body.is-home .pagehead h2 .hm-ap{color:var(--acc)}
 .stkrule2 select,.stkrule2 .ed input{min-width:0}
+.c24{display:none;margin:0 0 14px;padding:14px 16px;border:1px solid var(--line,#e4e7e1);border-radius:16px;background:linear-gradient(135deg,rgba(64,120,80,.07),rgba(64,120,80,.02))}
+body.fbmode .c24{display:block}
+body.is-guest .adm-only{display:none}
+.c24 .c24h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.c24 .c24h b{font-size:15px}.c24 .c24st{font-size:12.5px;padding:3px 9px;border-radius:99px;background:#eceee9;color:#666}
+.c24 .c24st.on{background:#dcefe0;color:#2f6b3e}.c24 .c24st.off{background:#fbe6df;color:#a8562f}
+.c24 .c24row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.c24 .c24row input[type=date],.c24 .c24row input[type=time],.c24 .c24row input[type=text],.c24 .c24row input[type=url]{height:38px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 10px;font:inherit;background:var(--card,#fff);color:inherit;min-width:0}
+.c24 .c24win{font-size:13px;color:var(--mut,#667)}
+.c24 details{margin-top:10px;font-size:13.5px}.c24 summary{cursor:pointer;color:var(--mut,#667)}
+.c24 .c24days{display:flex;gap:4px}.c24 .c24days label{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);cursor:pointer;font-size:13px}
+.c24 .c24days input{display:none}.c24 .c24days label:has(input:checked){background:#2f6b3e;color:#fff;border-color:#2f6b3e}
+.c24 .c24or{margin:12px 0 0;text-align:center;font-size:12px;color:var(--mut,#889)}
+html.dark .c24{background:rgba(255,255,255,.03)}html.dark .c24 .c24st{background:rgba(255,255,255,.08);color:#bbb}
 .undoup{display:inline-flex;align-items:center;gap:7px;margin-top:8px;height:38px;padding:0 14px;border-radius:12px;border:1px solid #ecd7c9;background:#fdf5ef;color:#a8562f;font:600 13.5px var(--body);cursor:pointer}
 .undoup svg{width:17px;height:17px}
 .undoup.sure,.uf-del.sure{background:#c4503a!important;border-color:#c4503a!important;color:#fff!important}
@@ -1676,6 +1690,23 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="wx"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2.5v1.4M9 14.1v1.4M2.5 9h1.4M14.1 9h1.4M4.4 4.4l1 1M12.6 12.6l1 1M4.4 13.6l1-1M12.6 5.4l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 20h8a3 3 0 0 0 .4-6 4.5 4.5 0 0 0-8.6-.6A3.3 3.3 0 0 0 10.5 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>배송일 · 날씨</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>송장 등록</span><i class="sdot"></i></button></nav>
     <div class="card step upcard" data-sub="order">
       <div class="sh"><span class="num">1</span><div><h2>원본 엑셀 올리기</h2><p>Cafe24에서 내려받은 주문 파일 (.xlsx · .csv)</p></div></div>
+      <div class="c24" id="c24">
+        <div class="c24h"><b>카페24에서 바로 불러오기</b><span class="c24st" id="c24st">확인 중…</span></div>
+        <div class="c24row">
+          <label class="c24win">보낼 날 <input type="date" id="c24day"></label>
+          <button class="btn pri" id="c24go" type="button">주문 불러오기</button>
+        </div>
+        <p class="c24win" id="c24win"></p>
+        <p class="msg" id="c24msg"></p>
+        <details class="adm-only" id="c24set"><summary>연결 설정 (관리자)</summary>
+          <div class="c24row"><label>중계 서버 주소 <input type="url" id="c24url" placeholder="https://herb5-cafe24.○○○.workers.dev" style="width:min(340px,100%)"></label></div>
+          <div class="c24row"><label>마감 시간(결제 기준) <input type="time" id="c24cut" step="60"></label></div>
+          <div class="c24row"><span>보내는 요일</span><span class="c24days" id="c24dw"></span></div>
+          <div class="c24row"><label>쉬는 날 <input type="text" id="c24off" placeholder="예: 2026-12-25, 2027-01-01" style="width:min(300px,100%)"></label></div>
+          <div class="c24row"><button class="btn" id="c24save" type="button">설정 저장</button><button class="btn" id="c24link" type="button">카페24 연결</button></div>
+        </details>
+        <p class="c24or">또는 엑셀 파일로 올리기</p>
+      </div>
       <div class="drop" id="drop">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <b>파일을 여기에 끌어다 놓기</b>
@@ -2333,7 +2364,7 @@ for (const k in LISTS) $(k).addEventListener('input', () => { LISTS[k][1]($(k).v
 $('stripPrefix').addEventListener('change', () => { rules.optionClean = rules.optionClean || {}; rules.optionClean.stripPrefix = $('stripPrefix').checked; markDirty(); });
 $('removeWords').addEventListener('input', () => { rules.optionClean = rules.optionClean || {}; rules.optionClean.removeWords = $('removeWords').value.split(',').map(x => x.trim()).filter(Boolean); markDirty(); });
 $('defaultNote').addEventListener('input', () => { rules.defaultNote = $('defaultNote').value; markDirty(); });
-function renderRules() {
+function renderRules() { try { if ($('c24') && typeof c24FillSet === 'function' && rules) { c24FillSet(); if ($('c24day')) c24ShowWin(); } } catch (e) {}
   Object.keys(TABLES).forEach(renderTable); saPreviewSoon();
   for (const k in LISTS) $(k).value = LISTS[k][0]().join('\n');
   $('defaultNote').value = rules.defaultNote;
@@ -2620,6 +2651,8 @@ function enter(role) {
   if (changed) { location.reload(); return; }
   applyRole();
   if (!fbReady) { fbReady = true; fbResolve(fbStore); }
+  window.h5Fb = { ready: true, token: () => fbUser.getIdToken(), role: () => fbRole };
+  setTimeout(() => window.dispatchEvent(new Event('h5ready')), 0);
 }
 async function handleUser(u) {
   fbUser = u;
@@ -3775,7 +3808,7 @@ function readFile(f) {
 
 const SHEETS = [['주문정리', 'sheet1'], ['수령인별', 'sheet2'], ['집계', 'sheet3']];
 function runProcess() {
-  try { result = CORE.process(srcRows, rules, wxCtx()); applyUserEdits(result, userEdits); }
+  try { const R0 = (srcRows[0] || []).includes('품목별 주문번호') && !(rules.dropColumns || []).includes('품목별 주문번호') ? Object.assign({}, rules, { dropColumns: (rules.dropColumns || []).concat('품목별 주문번호') }) : rules; result = CORE.process(srcRows, R0, wxCtx()); applyUserEdits(result, userEdits); }
   catch (e) { $('runmsg').className = 'msg err'; $('runmsg').textContent = e.message; $('out').classList.add('hidden'); return; }
   $('out').classList.remove('hidden');
   const W = result.warnings, orders = new Set(result.sheet1.slice(1).map(r => r[result.sheet1[0].indexOf('주문번호')]));
@@ -5097,6 +5130,115 @@ document.addEventListener('click', async e => {
   } catch (er) { if (er && er.code === 'declined') return; m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); }
 });
 invBind(); renderInv();
+
+// ---------- 카페24에서 바로 불러오기 (웹 버전 전용 · 중계 서버를 거쳐요) ----------
+const C24_DEF = { worker: '', cutoff: '13:00', days: [1, 2, 3, 4, 5], off: [] };
+const c24Cfg = () => Object.assign({}, C24_DEF, rules.cafe24 || {});
+const c24Off = c => new Set((c.off || []).map(String));
+const c24IsShip = (d, c) => c.days.includes(d.getDay()) && !c24Off(c).has(isoDate(d));
+function c24Shift(d, step, c) { const x = new Date(d); for (let i = 0; i < 30; i++) { x.setDate(x.getDate() + step); if (c24IsShip(x, c)) return x; } return x; }
+function c24Window(dayIso, c) {   // 보낼 날 D: 바로 전 보내는 날 마감 ~ D 마감 사이에 결제된 주문
+  const [y, m, d] = dayIso.split('-').map(Number), D = new Date(y, m - 1, d), P = c24Shift(D, -1, c);
+  const at = (x) => new Date(isoDate(x) + 'T' + (c.cutoff || '13:00') + ':00+09:00');
+  return { from: at(P), to: at(D), prev: P, day: D };
+}
+function c24DefaultDay(c) {
+  const now = new Date(), t = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return c24IsShip(t, c) ? t : c24Shift(t, 1, c);
+}
+const c24Fmt = d => (d.getMonth() + 1) + '/' + d.getDate() + '(' + '일월화수목금토'[d.getDay()] + ')';
+function c24ShowWin() {
+  const c = c24Cfg(), el = $('c24day'); if (!el.value) el.value = isoDate(c24DefaultDay(c));
+  const w = c24Window(el.value, c);
+  $('c24win').textContent = c24Fmt(w.prev) + ' ' + c.cutoff + ' ~ ' + c24Fmt(w.day) + ' ' + c.cutoff + ' 사이에 결제된 주문을 가져와요' + (c24IsShip(w.day, c) ? '' : ' · 이 날은 보내는 날이 아니에요');
+}
+async function c24Call(path, opt) {
+  const c = c24Cfg(); if (!c.worker) throw new Error('관리자가 [연결 설정]에서 중계 서버 주소를 넣어 주세요');
+  if (!window.h5Fb) throw new Error('웹 버전에서 로그인해야 쓸 수 있어요');
+  const tok = await window.h5Fb.token();
+  const r = await fetch(c.worker.replace(/\/+$/, '') + path, Object.assign({}, opt || {}, { headers: Object.assign({ Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json' }, (opt && opt.headers) || {}) }));
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(d.message || ('중계 서버 오류 ' + r.status)); e.code = d.error; throw e; }
+  return d;
+}
+async function c24Status() {
+  const st = $('c24st');
+  if (!c24Cfg().worker) { st.className = 'c24st off'; st.textContent = '설정 전'; return; }
+  try { const d = await c24Call('/status'); st.className = 'c24st ' + (d.connected ? 'on' : 'off'); st.textContent = d.connected ? '연결됨 · ' + d.mall : '연결 필요'; }
+  catch (e) { st.className = 'c24st off'; st.textContent = '연결 확인 실패'; st.title = e.message; }
+}
+function c24Rows(list, dayIso) {   // 카페24 엑셀과 같은 모양으로 바꿔요
+  const H = ['쇼핑몰', '쇼핑몰번호', '주문번호', '품목별 주문번호', '발주일', '주문상품명', '옵션', '판매가', '수량', '수령인', '우편번호', '주소', '수령지전화', '전화번호', '핸드폰', '비고', '옵션추가 가격'];
+  const [y, m, d] = dayIso.split('-').map(Number), D = new Date(y, m - 1, d), rows = [H];
+  list.slice().sort((a, b) => String(a.payment_date).localeCompare(String(b.payment_date))).forEach(o => {
+    const rc = o.receiver || {};
+    (o.items || []).forEach(i => {
+      const note = [rc.shipping_message, i.additional_option_value].map(v => String(v || '').trim()).filter(Boolean).join(' / ');
+      rows.push(['카페24', 1, o.order_id, i.order_item_code, D, i.product_name, i.option_value || null, i.product_price || null, i.quantity, rc.name || '', rc.zipcode || '', [rc.address1, rc.address2].filter(Boolean).join(' '), null, rc.phone || null, rc.cellphone || null, note || null, i.option_price || null]);
+    });
+  });
+  return rows;
+}
+async function c24Import() {
+  const btn = $('c24go'), msg = $('c24msg'), c = c24Cfg(), day = $('c24day').value;
+  if (!day) return;
+  const w = c24Window(day, c);
+  btn.disabled = true; msg.className = 'msg'; msg.textContent = '카페24에서 주문을 가져오는 중…';
+  try {
+    const d = await c24Call('/orders?from=' + encodeURIComponent(w.from.toISOString()) + '&to=' + encodeURIComponent(w.to.toISOString()));
+    if (!d.orders.length) { msg.className = 'msg'; msg.textContent = '이 시간에 결제된 주문이 없어요'; return; }
+    const rows = c24Rows(d.orders, day), fname = '카페24_' + day.replace(/-/g, '') + '_' + c.cutoff.replace(':', '') + '마감.api';
+    userEdits = new Map(); edMode = false;
+    srcRows = rows; srcName = fname.replace(/\.api$/, ''); srcAt = new Date();
+    msg.className = 'msg ok'; msg.textContent = '주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요';
+    $('runmsg').textContent = '';
+    runProcess();
+    histSaveUpload(srcRows, fname);
+  } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; if (e.code === 'not_connected' || e.code === 'expired') c24Status(); }
+  finally { btn.disabled = false; }
+}
+function c24FillSet() {
+  const c = c24Cfg();
+  $('c24url').value = c.worker || ''; $('c24cut').value = c.cutoff; $('c24off').value = (c.off || []).join(', ');
+  $('c24dw').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(n => `<label><input type="checkbox" value="${n}" ${c.days.includes(n) ? 'checked' : ''}>${'일월화수목금토'[n]}</label>`).join('');
+}
+async function c24Callback() {   // 카페24 동의 화면에서 돌아왔을 때
+  const q = new URLSearchParams(location.search), code = q.get('code'), state = q.get('state');
+  if (!code) return;
+  history.replaceState(null, '', location.pathname + location.hash);
+  const msg = $('c24msg'); subSet('run', 'order', true); document.querySelector('.tab[data-t=run]') && document.querySelector('.tab[data-t=run]').click();
+  let want = ''; try { want = localStorage.getItem('herb5_c24state') || ''; localStorage.removeItem('herb5_c24state'); } catch (e) {}
+  if (!want || want !== state) { msg.className = 'msg err'; msg.textContent = '연결 확인 값이 맞지 않아요. [카페24 연결]을 다시 눌러 주세요'; return; }
+  msg.className = 'msg'; msg.textContent = '카페24 연결을 마무리하는 중…';
+  try { const d = await c24Call('/exchange', { method: 'POST', body: JSON.stringify({ code }) }); msg.className = 'msg ok'; msg.textContent = '카페24(' + d.mall + ')와 연결했어요. 이제 [주문 불러오기]를 눌러 보세요'; }
+  catch (e) { msg.className = 'msg err'; msg.textContent = '연결하지 못했어요: ' + e.message; }
+  c24Status();
+}
+function c24Bind() {
+  if (!$('c24')) return;
+  c24FillSet(); c24ShowWin();
+  $('c24day').onchange = c24ShowWin;
+  $('c24go').onclick = c24Import;
+  $('c24save').onclick = async () => {
+    const off = $('c24off').value.split(/[\s,]+/).map(x => x.trim()).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
+    const days = [...$('c24dw').querySelectorAll('input:checked')].map(x => Number(x.value));
+    rules.cafe24 = { worker: $('c24url').value.trim().replace(/\/+$/, ''), cutoff: $('c24cut').value || '13:00', days: days.length ? days : C24_DEF.days, off };
+    await saveRules(); c24FillSet(); $('c24day').value = ''; c24ShowWin(); c24Status();
+    $('c24msg').className = 'msg ok'; $('c24msg').textContent = '연결 설정을 저장했어요';
+  };
+  $('c24link').onclick = async () => {
+    const msg = $('c24msg');
+    try {
+      const st = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+      try { localStorage.setItem('herb5_c24state', st); } catch (e) {}
+      const d = await c24Call('/auth-url?state=' + st); location.href = d.url;
+    } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; }
+  };
+  const go = () => { c24FillSet(); c24ShowWin(); c24Status(); c24Callback(); };
+  if (window.h5Fb && window.h5Fb.ready) go(); else window.addEventListener('h5ready', go, { once: true });
+}
+c24Bind();
+
 // ---------- 내려받기 ----------
 function buildXlsx() {
   const wb = XLSX.utils.book_new();
