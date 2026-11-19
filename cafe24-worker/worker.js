@@ -97,10 +97,11 @@ async function orders(env, q) {
   if (isNaN(from) || isNaN(to) || to <= from) throw fail(400, 'range', '기간이 맞지 않아요');
   const day = d => new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10);   // 한국 날짜
   const token = await accessToken(env), out = [];
-  for (let offset = 0; offset <= 15000; offset += 1000) {
+  const one = q.has('offset'), lim = one ? Math.min(500, Math.max(50, Number(q.get('limit')) || 200)) : 1000, lite = q.get('lite') === '1';
+  for (let offset = one ? Math.max(0, Number(q.get('offset')) || 0) : 0; offset <= 15000; offset += lim) {
     const u = new URL(base(env) + '/admin/orders');
     u.searchParams.set('date_type', 'pay_date'); u.searchParams.set('start_date', day(from)); u.searchParams.set('end_date', day(to));
-    u.searchParams.set('embed', 'items,receivers,buyer'); u.searchParams.set('limit', '1000'); u.searchParams.set('offset', String(offset));
+    u.searchParams.set('embed', lite ? 'items' : 'items,receivers,buyer'); u.searchParams.set('limit', String(lim)); u.searchParams.set('offset', String(offset));
     const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 주문을 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
@@ -117,7 +118,8 @@ async function orders(env, q) {
         items: (o.items || []).filter(i => !/^[CR]/.test(i.order_status || '')).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, custom_variant_code: i.custom_variant_code || '', option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, order_status: i.order_status || '' }))
       });
     });
-    if (list.length < 1000) break;
+    if (one) return { orders: out, count: out.length, next: list.length < lim || offset + lim > 15000 ? null : offset + lim };
+    if (list.length < lim) break;
   }
   return { orders: out, count: out.length, from: from.toISOString(), to: to.toISOString() };
 }

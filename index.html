@@ -1515,6 +1515,16 @@ html.dark .mr-isslist span{background:rgba(208,122,82,.16)}html.dark .mr-rank .r
 .mall tr.mo td{font-size:12.5px;background:rgba(0,0,0,.015)}.mall tr.mo td:first-child{padding-left:24px;color:var(--mut,#556)}
 .mall td.z{color:#c9ccc4}.mall td.sb{width:150px}.mall .sbar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:#eceee9;min-width:90px}.mall .sbar i{background:var(--c)}
 .mall .up{color:#2f7a45;font-size:11.5px;margin-left:4px}.mall .dn{color:#c4503a;font-size:11.5px;margin-left:4px}
+.mall .mch{margin:4px 0 16px;padding:12px 12px 6px;border-radius:16px;border:1px solid var(--line,#e4e7e1);background:rgba(255,255,255,.5)}
+.mall .mchh{font-size:13px;margin-bottom:8px}.mall .mchh .lnk{border:0;background:none;color:#2f6b3e;text-decoration:underline;cursor:pointer;font:inherit;font-size:12.5px;padding:0 4px}
+.mall .mchw{overflow-x:auto;padding-bottom:2px}
+.mall .mchb,.mall .mchl{display:flex;gap:2px}.mall .mchb{align-items:flex-end;height:124px}
+.mall .mbc,.mall .mchl span{flex:1 1 0;min-width:0;max-width:46px}.mall .mbc{height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.mall .mbc.ys{box-shadow:-1px 0 0 rgba(0,0,0,.12)}
+.mall .mstk{display:flex;flex-direction:column;border-radius:4px 4px 1px 1px;overflow:hidden;min-height:1px}.mall .mstk i{display:block;background:var(--c);min-height:1px}
+.mall .mchl{margin-top:4px;height:16px}.mall .mchl span{font-size:10.5px;color:var(--mut,#889);white-space:nowrap;overflow:visible}
+.mall tr.mi.focus td{background:rgba(47,107,62,.06)}
+html.dark .mall .mch{background:rgba(255,255,255,.03)}
 .mall .mraw{margin-top:12px;font-size:12.5px;color:var(--mut,#667)}
 .mall .mempty{padding:26px 10px;text-align:center;color:var(--mut,#778)}
 @media(max-width:620px){.mall td.sb,.mall th.sb{display:none}.mall th,.mall td{padding:7px 5px;font-size:12.5px}}
@@ -5190,96 +5200,136 @@ document.addEventListener('click', async e => {
 });
 invBind(); renderInv();
 
-// ---------- 기록·통계 → 쇼핑몰 비교 (카페24 결제일 기준 · 품목/쇼핑몰/세부옵션별 수량) ----------
+// ---------- 기록·통계 → 쇼핑몰 비교 (카페24 결제일 기준 · 품목/쇼핑몰/세부옵션별 수량 · 최대 5년) ----------
 const MALL_CH = [['self', '자사몰', '#3d7a4f'], ['coupang', '쿠팡', '#d9663f'], ['naver', '네이버', '#2f86c4'], ['etc', '기타', '#9a9a92']];
 const mallChOf = o => { const m = String(o.market_id || '').toLowerCase(); if (!m || m === 'self') return 'self'; if (/coupang/.test(m)) return 'coupang'; if (/naver|smartstore|storefarm|nstore/.test(m)) return 'naver'; return 'etc'; };
-let mallPer = 'month', mallFrom = '', mallTo = '', mallOpen = new Set(), mallBusy = false, mallMsg = '';
+const MALL_YEARS = 5;
+let mallPer = 'month', mallFrom = '', mallTo = '', mallOpen = new Set(), mallBusy = false, mallMsg = '', mallStop = false, mallFocus = '', mallReady = false;
+const mallMem = new Map();   // 'YYYY-MM' → { at, rows:[[날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓]] } · 이 기기 IndexedDB에 보관
 const mallKst = iso => { const d = new Date(new Date(iso).getTime() + 9 * 3600e3); return d.toISOString().slice(0, 10); };
-const mallCacheGet = ym => { try { return JSON.parse(localStorage.getItem('herb5_mall_' + ym) || 'null'); } catch (e) { return null; } };
-const mallCachePut = (ym, v) => { try { localStorage.setItem('herb5_mall_' + ym, JSON.stringify(v)); } catch (e) {} };
+const mallDb = () => new Promise((res, rej) => { try { const r = indexedDB.open('herb5_mall', 1); r.onupgradeneeded = () => r.result.createObjectStore('m'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } });
+async function mallIdbAll() { try { const db = await mallDb(); return await new Promise(res => { const out = [], tx = db.transaction('m', 'readonly'), st = tx.objectStore('m'), c = st.openCursor(); c.onsuccess = () => { const cur = c.result; if (cur) { out.push([cur.key, cur.value]); cur.continue(); } else res(out); }; c.onerror = () => res(out); }); } catch (e) { return []; } }
+async function mallIdbPut(ym, v) { try { const db = await mallDb(); await new Promise(res => { const tx = db.transaction('m', 'readwrite'); tx.objectStore('m').put(v, ym); tx.oncomplete = res; tx.onerror = res; }); } catch (e) {} }
+async function mallInit() { if (mallReady) return; (await mallIdbAll()).forEach(([k, v]) => mallMem.set(k, v)); try { Object.keys(localStorage).filter(k => k.startsWith('herb5_mall_')).forEach(k => { const ym = k.slice(11); if (!mallMem.has(ym)) { const v = JSON.parse(localStorage.getItem(k)); mallMem.set(ym, v); mallIdbPut(ym, v); } localStorage.removeItem(k); }); } catch (e) {} mallReady = true; }
+const mallFirstYm = () => { const t = new Date(); return ymOf(new Date(t.getFullYear() - MALL_YEARS, t.getMonth(), 1)); };
 function mallRange() {   // [from, to] 날짜(포함) · 비교할 바로 앞 기간
-  const t = new Date(), td = new Date(t.getFullYear(), t.getMonth(), t.getDate()); let a, b;
-  if (mallPer === 'week') { a = new Date(td); a.setDate(a.getDate() - ((a.getDay() + 6) % 7)); b = td; }
-  else if (mallPer === 'month') { a = new Date(td.getFullYear(), td.getMonth(), 1); b = td; }
-  else if (mallPer === 'last') { a = new Date(td.getFullYear(), td.getMonth() - 1, 1); b = new Date(td.getFullYear(), td.getMonth(), 0); }
+  const t = new Date(), td = new Date(t.getFullYear(), t.getMonth(), t.getDate()); let a, b, pa = null, pb = null;
+  const back = (d, n) => { const x = new Date(d); x.setDate(x.getDate() - n); return x; };
+  if (mallPer === 'week') { a = back(td, (td.getDay() + 6) % 7); b = td; }
+  else if (mallPer === 'month') { a = new Date(td.getFullYear(), td.getMonth(), 1); b = td; pa = new Date(td.getFullYear(), td.getMonth() - 1, 1); pb = new Date(td.getFullYear(), td.getMonth() - 1, Math.min(td.getDate(), new Date(td.getFullYear(), td.getMonth(), 0).getDate())); }
+  else if (mallPer === 'last') { a = new Date(td.getFullYear(), td.getMonth() - 1, 1); b = new Date(td.getFullYear(), td.getMonth(), 0); pa = new Date(td.getFullYear(), td.getMonth() - 2, 1); pb = new Date(td.getFullYear(), td.getMonth() - 1, 0); }
   else if (mallPer === '3m') { a = new Date(td.getFullYear(), td.getMonth() - 2, 1); b = td; }
+  else if (mallPer === 'year') { a = new Date(td.getFullYear(), 0, 1); b = td; pa = new Date(td.getFullYear() - 1, 0, 1); pb = new Date(td.getFullYear() - 1, td.getMonth(), td.getDate()); }
+  else if (mallPer === 'lastyear') { a = new Date(td.getFullYear() - 1, 0, 1); b = new Date(td.getFullYear() - 1, 11, 31); pa = new Date(td.getFullYear() - 2, 0, 1); pb = new Date(td.getFullYear() - 2, 11, 31); }
+  else if (mallPer === 'all') { a = dOf(mallFirstYm() + '-01'); b = td; }
   else { a = mallFrom ? dOf(mallFrom) : new Date(td.getFullYear(), td.getMonth(), 1); b = mallTo ? dOf(mallTo) : td; if (b < a) [a, b] = [b, a]; }
-  const days = Math.round((b - a) / 864e5) + 1, pb = new Date(a); pb.setDate(pb.getDate() - 1); const pa = new Date(pb); pa.setDate(pa.getDate() - days + 1);
-  if (mallPer === 'month' || mallPer === 'last') { pa.setTime(new Date(a.getFullYear(), a.getMonth() - 1, 1).getTime()); const e = new Date(a.getFullYear(), a.getMonth(), 0); pb.setTime(Math.min(e.getTime(), new Date(a.getFullYear(), a.getMonth() - 1, b.getDate()).getTime())); }
-  return { from: isoDate(a), to: isoDate(b), pfrom: isoDate(pa), pto: isoDate(pb), days };
+  const days = Math.round((b - a) / 864e5) + 1;
+  if (!pa && mallPer !== 'all') { pb = back(a, 1); pa = back(pb, days - 1); }
+  return { from: isoDate(a), to: isoDate(b), pfrom: pa ? isoDate(pa) : '', pto: pb ? isoDate(pb) : '', days };
 }
-function mallNorm(list) {   // 정리하기와 같은 규칙(상품명·옵션·요청사항)으로 이름을 맞춘 뒤 [날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓원래값]
+function mallNorm(list) {   // 정리하기와 같은 규칙(상품명·옵션·요청사항)으로 이름을 맞춘 뒤 [날짜, 쇼핑몰, 품목, 옵션, 수량, 마켓]
   const H = ['주문번호', '주문상품명', '옵션', '수량', '비고', '수령인', '결제일', '쇼핑몰구분', '마켓'], rows = [H];
   list.forEach(o => { const ch = mallChOf(o), d = mallKst(o.payment_date); (o.items || []).forEach(i => rows.push([o.order_id, i.product_name, i.option_value || null, i.quantity, (o.receiver && o.receiver.shipping_message) || null, '-', d, ch, o.market_id || 'self'])); });
   if (rows.length < 2) return [];
-  let R; try { R = CORE.process(rows, rules, {}); } catch (e) { return rows.slice(1).map(r => [r[6], r[7], String(r[1]), String(r[2] || ''), Number(r[3]) || 0, r[8]]); }
-  const h = R.sheet1[0], ix = k => h.indexOf(k), alias = stkAliasFn();
-  return R.sheet1.slice(1).map(r => { const n = String(r[ix('주문상품명')] ?? ''), op = String(r[ix('옵션')] ?? ''), al = alias({ n, o: op });
-    return [r[ix('결제일')], r[ix('쇼핑몰구분')], al || n, op, Number(r[ix('수량')]) || 0, r[ix('마켓')]]; });
+  let out; try { const R = CORE.process(rows, rules, {}), h = R.sheet1[0], ix = k => h.indexOf(k), alias = stkAliasFn();
+    out = R.sheet1.slice(1).map(r => { const n = String(r[ix('주문상품명')] ?? ''), op = String(r[ix('옵션')] ?? ''), al = alias({ n, o: op }); return [r[ix('결제일')], r[ix('쇼핑몰구분')], al || n, op, Number(r[ix('수량')]) || 0, r[ix('마켓')]]; });
+  } catch (e) { out = rows.slice(1).map(r => [r[6], r[7], String(r[1]), String(r[2] || ''), Number(r[3]) || 0, r[8]]); }
+  const m = new Map(); out.forEach(r => { const k = r.slice(0, 4).concat(r[5]).join('\u0001'); if (m.has(k)) m.get(k)[4] += r[4]; else m.set(k, r.slice()); });   // 같은 날 · 같은 품목 · 같은 옵션은 합쳐서 가볍게
+  return [...m.values()];
 }
-async function mallLoad(force) {
-  const rg = mallRange(), months = new Set(), cur = isoDate(new Date()).slice(0, 7);
-  for (let d = dOf(rg.pfrom); isoDate(d) <= rg.to; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) months.add(isoDate(d).slice(0, 7));
-  const need = [...months].filter(ym => { const c = mallCacheGet(ym); return force || !c || (ym >= cur && Date.now() - c.at > 10 * 60e3); });
-  if (!need.length) return;
-  mallBusy = true; renderMall();
+async function mallFetchMonth(ym) {
+  const [y, m] = ym.split('-').map(Number), from = new Date(isoDate(new Date(y, m - 1, 1)) + 'T00:00:00+09:00'), to = new Date(isoDate(new Date(y, m, 1)) + 'T00:00:00+09:00');
+  const all = []; let off = 0, guard = 0;
+  while (off !== null && guard++ < 80) {
+    if (mallStop) throw new Error('멈췄어요');
+    const d = await c24Call('/orders?lite=1&limit=200&offset=' + off + '&from=' + encodeURIComponent(from.toISOString()) + '&to=' + encodeURIComponent(to.toISOString()));
+    all.push(...(d.orders || [])); off = d.next === undefined ? null : d.next;
+  }
+  const v = { at: Date.now(), rows: mallNorm(all), n: all.length }; mallMem.set(ym, v); await mallIdbPut(ym, v); return v;
+}
+async function mallLoad(opt) {
+  opt = opt || {}; await mallInit(); if (mallBusy) return;
+  const rg = mallRange(), cur = ymOf(new Date()), first = mallFirstYm(), months = [];
+  const start = opt.all ? first : (rg.pfrom || rg.from).slice(0, 7);
+  for (let d = dOf(start + '-01'); ymOf(d) <= (opt.all ? cur : rg.to.slice(0, 7)); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) if (ymOf(d) >= first) months.push(ymOf(d));
+  const need = months.filter(ym => { const c = mallMem.get(ym); return opt.force || !c || (ym >= cur && Date.now() - c.at > 10 * 60e3) || (ym === ymOf(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)) && c.at < dOf(cur + '-01').getTime() + 864e5 * 2); });
+  if (!need.length) { renderMall(); return; }
+  mallBusy = true; mallStop = false; renderMall(); let done = 0;
   try {
-    for (const ym of need) {
-      mallMsg = ym.replace('-', '년 ') + '월 주문을 카페24에서 받는 중…'; renderMall();
-      const [y, m] = ym.split('-').map(Number), from = new Date(y, m - 1, 1), to = new Date(y, m, 1);
-      const d = await c24Call('/orders?from=' + encodeURIComponent(new Date(isoDate(from) + 'T00:00:00+09:00').toISOString()) + '&to=' + encodeURIComponent(new Date(isoDate(to) + 'T00:00:00+09:00').toISOString()));
-      mallCachePut(ym, { at: Date.now(), rows: mallNorm(d.orders || []) });
+    for (const ym of need.reverse()) {   // 최근 달부터
+      mallMsg = `${ym.replace('-', '년 ')}월 받는 중… (${++done}/${need.length})`; renderMall();
+      await mallFetchMonth(ym);
+      if (done % 3 === 0) renderMall();
     }
-    mallMsg = '';
-  } catch (e) { mallMsg = '불러오지 못했어요: ' + (e.code === 'not_found' ? '중계 서버 코드를 최신으로 바꿔 주세요' : e.message); }
+    mallMsg = opt.all ? `${need.length}개월 치를 다 받았어요` : '';
+  } catch (e) { mallMsg = e.message === '멈췄어요' ? `${done - 1}개월 받고 멈췄어요 · 다시 누르면 이어서 받아요` : '불러오지 못했어요: ' + (e.code === 'not_found' ? '중계 서버 코드를 최신으로 바꿔 주세요' : e.message); }
   finally { mallBusy = false; renderMall(); }
 }
 function mallAgg(from, to) {
-  const rows = []; for (let d = dOf(from); isoDate(d) <= to; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) { const c = mallCacheGet(isoDate(d).slice(0, 7)); if (c) rows.push(...c.rows); }
-  const items = new Map(), tot = { self: 0, coupang: 0, naver: 0, etc: 0 }, raw = new Map();
-  rows.forEach(([day, ch, n, op, q, mk]) => { if (day < from || day > to || !q) return;
-    tot[ch] += q; raw.set(mk, (raw.get(mk) || 0) + q);
-    if (!items.has(n)) items.set(n, { n, c: { self: 0, coupang: 0, naver: 0, etc: 0 }, t: 0, ops: new Map() });
-    const it = items.get(n); it.c[ch] += q; it.t += q;
-    if (!it.ops.has(op)) it.ops.set(op, { c: { self: 0, coupang: 0, naver: 0, etc: 0 }, t: 0 }); const o = it.ops.get(op); o.c[ch] += q; o.t += q; });
-  return { items, tot, raw };
+  const items = new Map(), tot = { self: 0, coupang: 0, naver: 0, etc: 0 }, raw = new Map(), byM = new Map(), z = () => ({ self: 0, coupang: 0, naver: 0, etc: 0 });
+  if (!from) return { items, tot, raw, byM };
+  for (let d = dOf(from.slice(0, 7) + '-01'); ymOf(d) <= to.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) {
+    const c = mallMem.get(ymOf(d)); if (!c) continue;
+    c.rows.forEach(([day, ch, n, op, q, mk]) => { if (day < from || day > to || !q) return;
+      tot[ch] += q; raw.set(mk, (raw.get(mk) || 0) + q);
+      const mo = day.slice(0, 7); if (!byM.has(mo)) byM.set(mo, { all: z(), it: new Map() }); const bm = byM.get(mo); bm.all[ch] += q; if (!bm.it.has(n)) bm.it.set(n, z()); bm.it.get(n)[ch] += q;
+      if (!items.has(n)) items.set(n, { n, c: z(), t: 0, ops: new Map() });
+      const it = items.get(n); it.c[ch] += q; it.t += q;
+      if (!it.ops.has(op)) it.ops.set(op, { c: z(), t: 0 }); const o = it.ops.get(op); o.c[ch] += q; o.t += q; });
+  }
+  return { items, tot, raw, byM };
+}
+function mallChart(A, rg, chs) {   // 월별 쌓인 막대 (전체 또는 고른 품목)
+  const ms = []; for (let d = dOf(rg.from.slice(0, 7) + '-01'); ymOf(d) <= rg.to.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) ms.push(ymOf(d));
+  if (ms.length < 2) return '';
+  const val = mo => { const b = A.byM.get(mo); if (!b) return { self: 0, coupang: 0, naver: 0, etc: 0 }; return mallFocus ? (b.it.get(mallFocus) || { self: 0, coupang: 0, naver: 0, etc: 0 }) : b.all; };
+  const vs = ms.map(val), mx = Math.max(1, ...vs.map(v => v.self + v.coupang + v.naver + v.etc)), fmt = n => n.toLocaleString('ko-KR');
+  const yrs = ms.length > 24;   // 2년이 넘으면 연도 구분선
+  return `<div class="mch"><div class="mchh"><b>월별 추이</b> · ${mallFocus ? esc(mallFocus) + ' <button class="lnk" type="button" id="mallallc">전체 보기</button>' : '전체 품목 <small class="mu">(품목을 누르면 그 품목만 보여요)</small>'}</div>
+    <div class="mchw"><div class="mchb" style="min-width:${ms.length * 9}px">${ms.map((mo, i) => { const v = vs[i], t = v.self + v.coupang + v.naver + v.etc;
+      return `<div class="mbc ${yrs && mo.endsWith('-01') ? 'ys' : ''}" title="${mo.replace('-', '년 ')}월 · ${fmt(t)}개${chs.map(([k, l]) => v[k] ? ' · ' + l + ' ' + fmt(v[k]) : '').join('')}"><div class="mstk" style="height:${Math.round(t / mx * 120)}px">${chs.slice().reverse().map(([k, , c]) => v[k] ? `<i style="--c:${c};flex:${v[k]}"></i>` : '').join('')}</div></div>`; }).join('')}</div>
+    <div class="mchl" style="min-width:${ms.length * 9}px">${ms.map(mo => `<span>${ms.length <= 14 ? Number(mo.slice(5)) + '월' : mo.endsWith('-01') ? mo.slice(0, 4) : ''}</span>`).join('')}</div></div></div>`;
 }
 function renderMall() {
   const el = $('hmall'); if (!el) return;
   if (!document.body.classList.contains('fbmode') || typeof c24Cfg !== 'function' || !c24Cfg().worker) { el.innerHTML = '<div class="mh"><h2>쇼핑몰 비교</h2></div><p class="mempty">웹 버전에서 카페24를 연결하면 자사몰 · 쿠팡 · 네이버 주문량을 비교할 수 있어요.<br>정리하기 → 주문 정리 → 카페24에서 바로 불러오기에서 연결해 주세요.</p>'; return; }
   const rg = mallRange(), A = mallAgg(rg.from, rg.to), P = mallAgg(rg.pfrom, rg.pto), chs = MALL_CH.filter(c => c[0] !== 'etc' || A.tot.etc || P.tot.etc);
   const sum = Object.values(A.tot).reduce((a, b) => a + b, 0), psum = Object.values(P.tot).reduce((a, b) => a + b, 0);
-  const pct = (a, b) => b ? Math.round(a / b * 100) : 0, fmt = n => n.toLocaleString('ko-KR');
-  const chg = (a, b) => { if (!b && !a) return ''; if (!b) return '<span class="up">새로</span>'; const r = Math.round((a - b) / b * 100); return r > 0 ? `<span class="up">▲${r}%</span>` : r < 0 ? `<span class="dn">▼${-r}%</span>` : ''; };
-  const md = s => s.slice(5).replace('-', '/');
-  const per = [['week', '이번 주'], ['month', '이번 달'], ['last', '지난달'], ['3m', '최근 3개월'], ['custom', '직접']];
-  let h = `<div class="mh"><h2>쇼핑몰 비교</h2><button class="btn sm" id="mallre" type="button" ${mallBusy ? 'disabled' : ''}>카페24에서 새로 받기</button></div>
+  const pct = (a, b) => b ? Math.round(a / b * 100) : 0, fmt = n => n.toLocaleString('ko-KR'), hasP = !!rg.pfrom;
+  const chg = (a, b) => { if (!hasP || (!b && !a)) return ''; if (!b) return '<span class="up">새로</span>'; const r = Math.round((a - b) / b * 100); return r > 0 ? `<span class="up">▲${r}%</span>` : r < 0 ? `<span class="dn">▼${-r}%</span>` : ''; };
+  const md = s => (rg.days > 300 ? s.slice(2, 4) + '.' : '') + s.slice(5).replace('-', '/');
+  const have = [...mallMem.keys()].filter(k => k >= mallFirstYm()).length, want = (() => { const t = new Date(); return MALL_YEARS * 12 + 1; })();
+  const per = [['week', '이번 주'], ['month', '이번 달'], ['last', '지난달'], ['3m', '최근 3개월'], ['year', '올해'], ['lastyear', '작년'], ['all', '전체(5년)'], ['custom', '직접']];
+  let h = `<div class="mh"><h2>쇼핑몰 비교</h2>${mallBusy ? '<button class="btn sm" id="mallstop" type="button">멈추기</button>' : `<button class="btn sm" id="mallall" type="button" title="받아 둔 달: ${have}/${want}개월">${have >= want ? '5년치 다시 받기' : '5년치 모두 받기'}</button><button class="btn sm" id="mallre" type="button">새로 받기</button>`}</div>
     <div class="mper">${per.map(([k, l]) => `<button type="button" data-mallper="${k}" class="${mallPer === k ? 'on' : ''}">${l}</button>`).join('')}
-    ${mallPer === 'custom' ? `<input type="date" id="mallf" value="${rg.from}"> ~ <input type="date" id="mallt" value="${rg.to}">` : ''}</div>
-    <p class="mnote">결제일 기준 ${md(rg.from)} ~ ${md(rg.to)} · 비교: ${md(rg.pfrom)} ~ ${md(rg.pto)} · 취소된 주문은 빼고 수량만 세요${mallMsg ? ' · <b>' + esc(mallMsg) + '</b>' : ''}</p>`;
-  if (!sum && !mallBusy) { el.innerHTML = h + '<p class="mempty">이 기간에 결제된 주문이 없어요</p>'; return; }
+    ${mallPer === 'custom' ? `<input type="date" id="mallf" value="${rg.from}" min="${mallFirstYm()}-01"> ~ <input type="date" id="mallt" value="${rg.to}">` : ''}</div>
+    <p class="mnote">결제일 기준 ${md(rg.from)} ~ ${md(rg.to)}${hasP ? ' · 비교: ' + md(rg.pfrom) + ' ~ ' + md(rg.pto) : ''} · 취소된 주문은 빼고 수량만 세요 · 받아 둔 달 ${have}/${want}개월${mallMsg ? ' · <b>' + esc(mallMsg) + '</b>' : ''}</p>`;
+  if (!sum) { el.innerHTML = h + `<p class="mempty">${mallBusy ? '카페24에서 받는 중이에요…' : '이 기간에 결제된 주문이 없어요' + (mallPer === 'all' && have < want ? '<br>[5년치 모두 받기]를 누르면 지난 주문까지 받아 와요' : '')}</p>`; return; }
   h += `<div class="mkpi">${chs.map(([k, l, c]) => `<div style="--c:${c}"><span>${l}</span><b>${fmt(A.tot[k])}</b><small>${pct(A.tot[k], sum)}%</small>${chg(A.tot[k], P.tot[k])}</div>`).join('')}<div style="--c:#2b2f2a"><span>합계</span><b>${fmt(sum)}</b>${chg(sum, psum)}</div></div>
     <div class="mbar">${chs.map(([k, , c]) => A.tot[k] ? `<i style="--c:${c};width:${A.tot[k] / sum * 100}%" title="${fmt(A.tot[k])}"></i>` : '').join('')}</div>
-    <div class="mlg">${chs.map(([, l, c]) => `<span style="--c:${c}">${l}</span>`).join('')}</div>`;
+    <div class="mlg">${chs.map(([, l, c]) => `<span style="--c:${c}">${l}</span>`).join('')}</div>` + mallChart(A, rg, chs);
   const list = [...A.items.values()].sort((a, b) => b.t - a.t);
   const cells = (o, prev) => chs.map(([k]) => `<td class="${o.c[k] ? '' : 'z'}">${o.c[k] ? fmt(o.c[k]) : '–'}</td>`).join('') + `<td><b>${fmt(o.t)}</b>${prev !== undefined ? chg(o.t, prev) : ''}</td>` +
     `<td class="sb"><div class="sbar">${chs.map(([k, , c]) => o.c[k] ? `<i style="--c:${c};width:${o.c[k] / o.t * 100}%"></i>` : '').join('')}</div></td>`;
   h += `<div class="tblwrap"><table><thead><tr><th>품목 · 옵션</th>${chs.map(([, l]) => `<th>${l}</th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
     list.map(it => { const op = mallOpen.has(it.n), pv = P.items.get(it.n);
-      return `<tr class="mi ${op ? 'open' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}개 옵션</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
+      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td><b>${esc(it.n)}</b> <small class="mu">${it.ops.size}개 옵션</small></td>${cells(it, pv ? pv.t : 0)}</tr>` +
         (op ? [...it.ops.entries()].sort((a, b) => b[1].t - a[1].t).map(([o, v]) => `<tr class="mo"><td>${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? pv.ops.get(o).t : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
   h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값과 수량이에요. 쿠팡·네이버가 '기타'로 잡히면 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
   el.innerHTML = h;
 }
 document.addEventListener('click', e => {
   const p = e.target.closest('[data-mallper]'); if (p) { mallPer = p.dataset.mallper; mallOpen.clear(); renderMall(); mallLoad(); return; }
-  const it = e.target.closest('[data-mallitem]'); if (it) { const n = it.dataset.mallitem; mallOpen.has(n) ? mallOpen.delete(n) : mallOpen.add(n); renderMall(); return; }
-  if (e.target.closest('#mallre')) { mallLoad(true); return; }
-  const sg = e.target.closest('[data-subgo="mall"]'); if (sg) { renderMall(); mallLoad(); }
+  const it = e.target.closest('[data-mallitem]'); if (it) { const n = it.dataset.mallitem; if (mallOpen.has(n)) { mallOpen.delete(n); if (mallFocus === n) mallFocus = ''; } else { mallOpen.add(n); mallFocus = n; } renderMall(); return; }
+  if (e.target.closest('#mallallc')) { mallFocus = ''; renderMall(); return; }
+  if (e.target.closest('#mallre')) { mallLoad({ force: true }); return; }
+  if (e.target.closest('#mallall')) { mallLoad({ all: true, force: e.target.closest('#mallall').textContent.includes('다시') }); return; }
+  if (e.target.closest('#mallstop')) { mallStop = true; mallMsg = '멈추는 중…'; renderMall(); return; }
+  const sg = e.target.closest('[data-subgo="mall"]'); if (sg) { mallInit().then(() => { renderMall(); mallLoad(); }); }
 });
 document.addEventListener('change', e => { if (e.target.id === 'mallf' || e.target.id === 'mallt') { mallFrom = $('mallf').value; mallTo = $('mallt').value; renderMall(); mallLoad(); } });
-document.addEventListener('click', e => { const t = e.target.closest('.tab[data-t=hist]'); if (t && $('v-hist').dataset.cur === 'mall') setTimeout(() => { renderMall(); mallLoad(); }, 0); });
-window.addEventListener('h5ready', () => setTimeout(() => { if ($('v-hist').dataset.cur === 'mall') { renderMall(); mallLoad(); } }, 1500));
+document.addEventListener('click', e => { const t = e.target.closest('.tab[data-t=hist]'); if (t && $('v-hist').dataset.cur === 'mall') setTimeout(() => mallInit().then(() => { renderMall(); mallLoad(); }), 0); });
+window.addEventListener('h5ready', () => setTimeout(() => { if ($('v-hist').dataset.cur === 'mall') mallInit().then(() => { renderMall(); mallLoad(); }); }, 1500));
 
 // ---------- 송장번호를 카페24에 바로 등록 (웹 버전 · 중계 서버) ----------
 const C24_SENT = 'herb5_c24sent';
