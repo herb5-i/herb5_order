@@ -5235,7 +5235,10 @@ function c24Bind() {
       const d = await c24Call('/auth-url?state=' + st); location.href = d.url;
     } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; }
   };
-  const go = () => { c24FillSet(); c24ShowWin(); c24Status(); c24Callback(); };
+  const go = async () => {   // 규칙(중계 서버 주소)이 공유 저장소에서 다 불러와질 때까지 잠깐 기다려요
+    for (let i = 0; i < 60 && !c24Cfg().worker; i++) await new Promise(r => setTimeout(r, 250));
+    c24FillSet(); c24ShowWin(); c24Status(); c24Callback();
+  };
   if (window.h5Fb && window.h5Fb.ready) go(); else window.addEventListener('h5ready', go, { once: true });
 }
 c24Bind();
