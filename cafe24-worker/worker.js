@@ -1,5 +1,5 @@
 // Herb5 · 허브아이 — 카페24 중계 서버 (Cloudflare Worker)
-// 하는 일: 카페24 Client Secret을 숨겨 두고, 토큰을 대신 갱신하고, 사이트가 요청하면 주문을 가져와 줘요.
+// 하는 일: 카페24 Client Secret을 숨겨 두고, 토큰을 대신 갱신하고, 사이트가 요청하면 주문을 가져오고 송장번호를 등록해 줘요.
 // 사이트에 로그인한 사람(Firebase 계정 목록에 있는 사람)만 쓸 수 있어요.
 //
 // Cloudflare 설정 (대시보드 → 이 Worker → Settings)
@@ -21,6 +21,7 @@ export default {
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
+      if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
       return json({ error: 'not_found' }, cors, 404);
     } catch (e) {
@@ -117,4 +118,30 @@ async function orders(env, q) {
     if (list.length < 1000) break;
   }
   return { orders: out, count: out.length, from: from.toISOString(), to: to.toISOString() };
+}
+
+// ---------- 송장번호 등록: 100건씩 묶어서 보내고, 묶음이 실패하면 한 건씩 다시 보내서 어느 주문이 문제인지 알려 줘요 ----------
+async function shipments(env, body, who) {
+  const list = Array.isArray(body && body.items) ? body.items : [], status = body && body.status === 'standby' ? 'standby' : 'shipping';
+  if (!list.length) throw fail(400, 'empty', '등록할 송장이 없어요');
+  if (list.length > 2000) throw fail(400, 'too_many', '한 번에 2000건까지만 등록할 수 있어요');
+  const token = await accessToken(env), ok = [], bad = [];
+  const reqOf = x => { const r = { order_id: String(x.order_id), tracking_no: String(x.tracking_no).replace(/[^0-9A-Za-z]/g, ''), shipping_company_code: String(x.shipping_company_code || ''), status };
+    if (Array.isArray(x.order_item_code) && x.order_item_code.length) r.order_item_code = x.order_item_code.map(String); return r; };
+  const send = async reqs => {
+    const r = await fetch(base(env) + '/admin/shipments', { method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION }, body: JSON.stringify({ shop_no: 1, requests: reqs }) });
+    const d = await r.json().catch(() => ({})); return { okr: r.ok, status: r.status, d };
+  };
+  const msgOf = d => (d && d.error && (d.error.message || d.error.code)) || '';
+  for (let i = 0; i < list.length; i += 100) {
+    const chunk = list.slice(i, i + 100).map(reqOf), r = await send(chunk);
+    if (r.okr) { chunk.forEach(x => ok.push(x.order_id)); continue; }
+    if (r.status === 401 || r.status === 403) throw fail(r.status, 'cafe24', '카페24가 송장 등록을 거절했어요: ' + (msgOf(r.d) || r.status) + ' (앱 권한에 주문 쓰기가 있는지 확인해 주세요)');
+    for (const x of chunk) {   // 묶음 실패 → 한 건씩
+      const one = await send([x]);
+      if (one.okr) ok.push(x.order_id); else bad.push({ order_id: x.order_id, tracking_no: x.tracking_no, message: msgOf(one.d) || ('오류 ' + one.status) });
+      await new Promise(res => setTimeout(res, 60));
+    }
+  }
+  return { ok: ok.length, fail: bad, status, by: who.email };
 }

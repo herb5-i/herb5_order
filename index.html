@@ -1426,6 +1426,14 @@ html.dark .iss-phbtn{background:rgba(255,255,255,.05);border-color:rgba(255,255,
 .inv-tbl{max-height:340px}.inv-tbl td{white-space:nowrap;font-variant-numeric:tabular-nums}.inv-tbl td.mu{color:var(--mute)}
 .inv-det{margin:8px 0;font-size:13px}.inv-det summary{cursor:pointer;font-weight:600}.inv-det ul{margin:6px 0;padding-left:18px;max-height:180px;overflow:auto}
 .inv-act{justify-content:flex-end;margin-top:10px}
+.inv-api{display:none;margin-top:14px;padding:12px 14px;border-radius:14px;border:1px solid var(--line,#e4e7e1);background:linear-gradient(135deg,rgba(64,120,80,.07),rgba(64,120,80,.02))}
+body.fbmode .inv-api{display:block}
+.inv-apih{display:flex;flex-direction:column;gap:2px}.inv-apih span{font-size:12.5px;color:var(--mut,#667)}
+.inv-st{display:inline-flex;align-items:center;gap:6px;font-size:13px;margin-right:auto}.inv-st select{height:36px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 8px;font:inherit;background:var(--card,#fff);color:inherit}
+#invapi.sure{background:#c4503a;border-color:#c4503a}
+.inv-res{margin-top:8px;font-size:13.5px}.inv-res ul{margin:6px 0 0;padding-left:18px}.inv-res li{margin:2px 0}
+html.dark .inv-api{background:rgba(255,255,255,.03)}
+
 html.dark .invset .msg code{background:rgba(255,255,255,.08)}html.dark .inv-warn{background:rgba(233,169,58,.1)}
 /* ---------- 월간 보고서 ---------- */
 .mrep{padding:24px 26px!important;background:linear-gradient(180deg,#fffdf8,#faf7ef)!important}
@@ -5085,7 +5093,11 @@ function renderInv() {
     ${R.multi.length ? `<details class="inv-det"><summary>한 주문에 송장이 여러 개 ${R.multi.length}건</summary><ul>${R.multi.map(([o, t]) => `<li>${esc(o)} · ${t.map(esc).join(', ')}</li>`).join('')}</ul><p class="msg">파일에는 첫 번째 송장만 넣었어요. 나머지 송장(${R.extra.map(x => esc(x.track)).join(', ')})은 카페24 주문 화면에서 직접 더해 주세요.</p></details>` : ''}
     ${R.missing.length ? `<details class="inv-det"><summary>지금 올린 주문 중 송장이 없는 주문 ${R.missing.length}건</summary><ul>${R.missing.map(o => `<li>${esc(o)}${R.S.orders.get(o) && R.S.orders.get(o).name ? ' · ' + esc(R.S.orders.get(o).name) : ''}</li>`).join('')}</ul></details>` : ''}
     <p class="inv-warn">받은 CSV는 <b>엑셀로 열어서 저장하지 말고 그대로</b> 카페24에 올려 주세요. 엑셀이 송장번호를 4.63E+11처럼 바꿔 버려서, 저장하면 번호가 망가져요. 내용은 위 표에서 확인하면 돼요.</p>
-    <div class="row inv-act"><span class="msg" id="invmsg"></span><button class="btn pri" id="invdl" type="button" ${R.out.length ? '' : 'disabled'}>카페24 송장 등록 파일 내려받기</button></div>`;
+    <div class="row inv-act"><span class="msg" id="invmsg"></span><button class="btn${document.body.classList.contains('fbmode') ? '' : ' pri'}" id="invdl" type="button" ${R.out.length ? '' : 'disabled'}>카페24 송장 등록 파일 내려받기</button></div>
+    <div class="inv-api c24only"><div class="inv-apih"><b>카페24에 바로 등록</b><span>파일 없이 이 화면에서 바로 송장번호를 넣어요</span></div>
+      <div class="row inv-act"><label class="inv-st">등록 후 상태 <select id="invapist"><option value="shipping">배송중</option><option value="standby">배송대기</option></select></label>
+      <button class="btn pri" id="invapi" type="button" ${R.out.length ? '' : 'disabled'}>카페24에 ${R.out.length}건 바로 등록</button></div>
+      <div id="invapimsg"></div></div>`;
 }
 async function invHandle(file) {
   const m = $('invmsg0'); m.className = 'msg'; m.textContent = file.name + ' 읽는 중…';
@@ -5137,6 +5149,35 @@ document.addEventListener('click', async e => {
   } catch (er) { if (er && er.code === 'declined') return; m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); }
 });
 invBind(); renderInv();
+
+// ---------- 송장번호를 카페24에 바로 등록 (웹 버전 · 중계 서버) ----------
+const C24_SENT = 'herb5_c24sent';
+const c24SentGet = () => { try { return JSON.parse(localStorage.getItem(C24_SENT) || '{}'); } catch (e) { return {}; } };
+function c24SentAdd(keys) { const m = c24SentGet(), now = Date.now(); keys.forEach(k => m[k] = now); for (const k in m) if (now - m[k] > 14 * 864e5) delete m[k]; try { localStorage.setItem(C24_SENT, JSON.stringify(m)); } catch (e) {} }
+function c24ShipItems() {
+  const cfg = invCfg(), sent = c24SentGet(), g = new Map();
+  invLast.out.forEach(x => { const k = x.order + '|' + x.track; if (!g.has(k)) g.set(k, { order_id: x.order, tracking_no: x.track, shipping_company_code: String(cfg.carrier || ''), order_item_code: [], who: x.who }); if (x.item) g.get(k).order_item_code.push(x.item); });
+  const all = [...g.values()]; return { todo: all.filter(x => !sent[x.order_id + '|' + x.tracking_no]), done: all.filter(x => sent[x.order_id + '|' + x.tracking_no]) };
+}
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('#invapi'); if (!btn || !invLast) return;
+  const box = $('invapimsg'), cfg = invCfg();
+  if (!String(cfg.carrier || '').trim()) { box.innerHTML = '<p class="msg err">위 [배송 업체 번호]를 먼저 넣어 주세요 (예: CJ대한통운은 카페24에서 확인한 번호)</p>'; return; }
+  const { todo, done } = c24ShipItems();
+  if (!todo.length) { box.innerHTML = `<p class="msg">${done.length}건 모두 이 기기에서 이미 등록했어요</p>`; return; }
+  const stTxt = $('invapist').value === 'standby' ? '배송대기' : '배송중';
+  if (!btn.dataset.sure) { btn.dataset.sure = '1'; btn.classList.add('sure'); btn.textContent = `정말 ${todo.length}건을 ${stTxt}(으)로 등록할까요? 한 번 더 누르세요`; box.innerHTML = done.length ? `<p class="msg">이미 등록한 ${done.length}건은 빼고 보내요</p>` : ''; setTimeout(() => { if (btn.isConnected && btn.dataset.sure) { delete btn.dataset.sure; btn.classList.remove('sure'); btn.textContent = `카페24에 ${invLast.out.length}건 바로 등록`; } }, 6000); return; }
+  delete btn.dataset.sure; btn.classList.remove('sure'); btn.disabled = true; btn.textContent = '카페24에 등록하는 중…';
+  try {
+    const d = await c24Call('/shipments', { method: 'POST', body: JSON.stringify({ status: $('invapist').value, items: todo.map(({ who, ...x }) => x) }) });
+    const badK = new Set((d.fail || []).map(f => f.order_id + '|' + f.tracking_no));
+    c24SentAdd(todo.map(x => x.order_id + '|' + x.tracking_no).filter(k => !badK.has(k)));
+    const whoOf = o => (todo.find(x => x.order_id === o) || {}).who || '';
+    box.innerHTML = `<div class="inv-res">${d.ok ? `<p class="msg ok">${d.ok}건을 카페24에 ${stTxt}(으)로 등록했어요</p>` : ''}` + (d.fail && d.fail.length ? `<p class="msg err">${d.fail.length}건은 등록하지 못했어요</p><ul>${d.fail.map(f => `<li>${esc(f.order_id)}${whoOf(f.order_id) ? ' · ' + esc(whoOf(f.order_id)) : ''} · ${esc(f.tracking_no)} — ${esc(f.message)}</li>`).join('')}</ul>` : '') + '</div>';
+  } catch (er) {
+    box.innerHTML = `<p class="msg err">${esc(er.code === 'not_found' ? '중계 서버 코드가 예전 것이에요. Cloudflare에서 새 worker.js로 바꿔 붙여넣고 Deploy해 주세요' : er.message)}</p>`;
+  } finally { btn.disabled = false; btn.textContent = `카페24에 ${invLast.out.length}건 바로 등록`; }
+});
 
 // ---------- 카페24에서 바로 불러오기 (웹 버전 전용 · 중계 서버를 거쳐요) ----------
 const C24_DEF = { worker: '', amCut: '08:00', pmCut: '13:10', days: [1, 2, 3, 4, 5], off: [] };
