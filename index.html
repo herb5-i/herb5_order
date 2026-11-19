@@ -1495,7 +1495,7 @@ html.dark .mr-isslist span{background:rgba(208,122,82,.16)}html.dark .mr-rank .r
 @media(max-width:560px){.mrep{padding:18px 16px!important}.mr-head h2{font-size:22px!important}.mr-hact{width:100%;justify-content:space-between}.mr-kpis b{font-size:24px}.mr-rank .mv{width:34px}.mr-tbl{font-size:12.5px}.mr-tbl th,.mr-tbl td{padding:7px 6px}}
 .mr-tbl td:first-child{min-width:110px;word-break:keep-all}
 .mrep .tblwrap{overflow-x:auto}
-.mall .mh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.mall .mh h2{margin:0 auto 0 0;font-size:18px}
+.mall .mh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}.mall .mh h2{margin:0;font-size:18px}.mall .mh .mhsp{flex:1}.mall #malltsv svg{width:18px;height:18px}
 .mall .mper{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .mall .mper button{height:34px;padding:0 12px;border-radius:99px;border:1px solid var(--line,#dcdfd8);background:var(--card,#fff);color:inherit;font:inherit;font-size:13px;cursor:pointer}
 .mall .mper button.on{background:#2f6b3e;border-color:#2f6b3e;color:#fff}
@@ -5378,7 +5378,7 @@ function renderMall() {
   const sumT = filtered ? hit.reduce((a, it) => { chs.forEach(([k]) => a[k] += it.c[k]); return a; }, mallZ()) : A.tot;
   const sumP = filtered ? hit.reduce((a, it) => { const pv = P.items.get(it.n); if (pv) chs.forEach(([k]) => a[k] += pv.c[k]); return a; }, mallZ()) : P.tot;
   const sum = totOf(sumT), psum = totOf(sumP);
-  let h = `<div class="mh"><h2>쇼핑몰 비교</h2>${mallBusy ? '<button class="btn sm" id="mallstop" type="button">멈추기</button>' : `<button class="btn sm" id="mallall" type="button" title="받아 둔 달: ${have}/${want}개월">${have >= want ? '5년치 다시 받기' : '5년치 모두 받기'}</button><button class="btn sm" id="mallre" type="button">새로 받기</button>`}</div>
+  let h = `<div class="mh"><h2>쇼핑몰 비교</h2>${shareBtns('mall')}<button class="ibtn" id="malltsv" type="button" title="표 복사 (엑셀·구글 시트에 붙여넣기)" aria-label="엑셀용 표 복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15" stroke="currentColor" stroke-width="1.6"/></svg></button><span class="mhsp"></span>${mallBusy ? '<button class="btn sm" id="mallstop" type="button">멈추기</button>' : `<button class="btn sm" id="mallall" type="button" title="받아 둔 달: ${have}/${want}개월">${have >= want ? '5년치 다시 받기' : '5년치 모두 받기'}</button><button class="btn sm" id="mallre" type="button">새로 받기</button>`}</div>
     <div class="msearch">
       <label class="msq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="mallq" type="search" placeholder="품목 · 옵션 검색 (예: 비올라, 애플민트 100g)" value="${esc(mallQ)}" autocomplete="off">${mallQ ? '<button type="button" id="mallqx" aria-label="지우기">×</button>' : ''}</label>
       <div class="msd"><span>기간</span><input type="date" id="mallf" value="${rg.from}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"> ~ <input type="date" id="mallt" value="${rg.to}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"></div>
@@ -5459,6 +5459,34 @@ function mallDragEnd(e) {
   mallSort = 'my'; renderMall(); mallSaveOrder();
 }
 document.addEventListener('pointerup', mallDragEnd); document.addEventListener('pointercancel', mallDragEnd);
+
+// 쇼핑몰 비교 복사: 지금 보이는 그대로(기간·쇼핑몰·검색·내 순서) 표 이미지 / 엑셀용 표
+function mallView() {
+  const rg = mallRange(), A = mallAgg(rg.from, rg.to), shown = MALL_CH.filter(c => c[0] === 'self' || A.tot[c[0]]), chs = shown.filter(c => mallChSel.has(c[0])), totOf = o => chs.reduce((a, c) => a + o[c[0]], 0);
+  const hit = [...A.items.values()].filter(it => totOf(it.c) > 0 && mallMatch(it)), list = mallSortList(hit, x => x.n, x => totOf(x.c), mallOrd().items);
+  const rows = list.map(it => ({ n: it.n, c: it.c, t: totOf(it.c), ops: mallSortList([...it.ops.entries()].filter(([, v]) => totOf(v.c) > 0), x => x[0], x => totOf(x[1].c), (mallOrd().ops || {})[it.n]).map(([o, v]) => ({ o: o || '(옵션 없음)', c: v.c, t: totOf(v.c) })) }));
+  const sumC = mallZ(); rows.forEach(r => chs.forEach(([k]) => sumC[k] += r.c[k]));
+  return { rg, chs, rows, sumC, sum: totOf(sumC) };
+}
+const mallPeriodTxt = rg => rg.from.replace(/-/g, '.') + ' ~ ' + rg.to.replace(/-/g, '.');
+function tblMall() {
+  const V = mallView(), fmt = n => n ? n.toLocaleString('ko-KR') : '–';
+  const rows = []; V.rows.forEach(r => { rows.push({ group: true, cells: [r.n].concat(V.chs.map(([k]) => fmt(r.c[k])), [fmt(r.t)]) }); if (r.ops.length > 1 || (r.ops[0] && r.ops[0].o !== '(옵션 없음)')) r.ops.forEach(o => rows.push({ cells: ['   ' + o.o].concat(V.chs.map(([k]) => fmt(o.c[k])), [fmt(o.t)]) })); });
+  rows.push({ group: true, tint: true, cells: ['합계'].concat(V.chs.map(([k]) => fmt(V.sumC[k])), [fmt(V.sum)]) });
+  return { title: '허브아이 쇼핑몰 비교', sub: '결제일 ' + mallPeriodTxt(V.rg) + (mallQ.trim() ? '   ·   검색 "' + mallQ.trim() + '"' : '') + '   ·   ' + V.chs.map(([k, l]) => l + ' ' + Math.round((V.sumC[k] / (V.sum || 1)) * 100) + '%').join(' · '),
+    sections: [{ title: '', cols: [['품목 · 옵션', 'l']].concat(V.chs.map(([, l]) => [l, 'r']), [['합계', 'r']]), rows }] };
+}
+SHARE_TBL.mall = tblMall;
+async function mallCopyTsv(btn) {
+  const V = mallView(), L = [['결제일', mallPeriodTxt(V.rg)].join('\t'), '', ['품목', '옵션'].concat(V.chs.map(c => c[1]), ['합계']).join('\t')];
+  V.rows.forEach(r => { L.push([r.n, '(전체)'].concat(V.chs.map(([k]) => r.c[k]), [r.t]).join('\t')); r.ops.forEach(o => L.push(['', o.o].concat(V.chs.map(([k]) => o.c[k]), [o.t]).join('\t'))); });
+  L.push(['합계', ''].concat(V.chs.map(([k]) => V.sumC[k]), [V.sum]).join('\t'));
+  const txt = L.join('\n'); let ok = false;
+  try { await navigator.clipboard.writeText(txt); ok = true; } catch (e) { try { const ta = document.createElement('textarea'); ta.value = txt; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (e2) {} }
+  shareToast(ok ? '표를 복사했어요 · 엑셀이나 구글 시트에 붙여넣기 하세요' : '복사하지 못했어요');
+  if (ok && btn) { btn.classList.add('done'); setTimeout(() => btn.classList.remove('done'), 1600); }
+}
+document.addEventListener('click', e => { const b = e.target.closest('#malltsv'); if (b) mallCopyTsv(b); });
 let mallQT = null;
 document.addEventListener('input', e => { if (e.target.id === 'mallq') { mallQ = e.target.value; clearTimeout(mallQT); mallQT = setTimeout(() => { mallFocus = ''; renderMall(); }, 250); } });
 document.addEventListener('click', e => {
