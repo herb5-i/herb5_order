@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 아이디 · 비밀번호로 로그인한 계정 중 members 목록에 있는 계정만 써요.
+    // 아이디 계정은 '아이디@<프로젝트>.firebaseapp.com' 이메일이라 인증 메일 없이도 돼요.
+    function anyUser() { return request.auth != null; }
+    function hasEmail() {
+      return anyUser()
+        && ('email' in request.auth.token)
+        && request.auth.token.email is string
+        && (request.auth.token.email_verified == true
+            || request.auth.token.email.lower().matches('^[a-z0-9._-]+@[a-z0-9-]+[.]firebaseapp[.]com$'));
+    }
+    function me() { return request.auth.token.email.lower(); }
+    function memberDoc() { return /databases/$(database)/documents/members/$(me()); }
+    function isMember() { return hasEmail() && exists(memberDoc()); }
+    function isAdmin() { return isMember() && get(memberDoc()).data.role == 'admin'; }
+    function canUse() { return isMember(); }
+    function isDateId(id) { return id.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+
+    // 계정 목록 (관리자 / 게스트)
+    match /members/{email} {
+      allow read: if hasEmail() && (email == me() || isAdmin());
+      allow create, update: if isAdmin()
+        && email == email.lower()
+        && request.resource.data.role in ['admin', 'guest', 'staff'];
+      allow delete: if isAdmin() && email != me();
+    }
+
+    // 규칙: 게스트도 읽고 저장할 수 있어요 (지우기는 관리자만). 엉뚱한 내용은 막아요.
+    match /config/rules {
+      allow read: if canUse();
+      allow create, update: if canUse()
+        && request.resource.data.rules is map
+        && request.resource.data.rules.names is list;
+      allow delete: if isAdmin();
+    }
+    // 날씨 · 확인 필요 지역
+    match /config/weather {
+      allow read, write: if canUse();
+    }
+    match /config/needed {
+      allow read, write: if canUse();
+    }
+
+    // 기록·통계와 집계 보기: 올리기는 모두, 지우기는 관리자만
+    match /history/{day} {
+      allow read: if canUse();
+      allow create, update: if canUse() && isDateId(day);
+      allow delete: if isAdmin();
+    }
+    match /uploads/{day} {
+      allow read: if canUse();
+      allow create, update: if canUse() && isDateId(day);
+      allow delete: if isAdmin();
+    }
+    // 이슈 사진: 줄인 JPEG 한 장씩 (1MB 안)
+    match /photos/{id} {
+      allow read: if canUse();
+      allow create, update: if canUse()
+        && id.matches('^p[a-z0-9]{6,30}$')
+        && request.resource.data.d is string
+        && request.resource.data.d.size() < 1000000;
+      allow delete: if canUse();
+    }
+    // 재고 관리: 모두 보고 고칠 수 있어요 (지우기는 '품목 지우기'로 숨김 처리, 완전히 지우기는 관리자만)
+    match /stock/{id} {
+      allow read: if canUse();
+      allow create, update: if canUse()
+        && id.matches('^[a-z0-9]{4,40}$')
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 100;
+      allow delete: if isAdmin();
+    }
+  }
+}
