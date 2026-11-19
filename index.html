@@ -1540,6 +1540,12 @@ html.dark .mall .mch{background:rgba(255,255,255,.03)}
 .mall .mmv button:hover{background:#2f6b3e;color:#fff;border-color:#2f6b3e}
 html.dark .mall .msearch{background:rgba(255,255,255,.03)}html.dark .mall .msc button.on{background:rgba(255,255,255,.08)}
 @media(min-width:900px){.mall .msearch{grid-template-columns:1.3fr auto;align-items:center}.mall .msq{grid-column:1 / -1}}
+.mall .mgrip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:30px;margin:-6px 4px -6px -4px;vertical-align:middle;border-radius:8px;cursor:grab;color:#9aa096;touch-action:none;user-select:none;-webkit-user-select:none}
+.mall .mgrip svg{width:10px;height:15px;fill:currentColor}.mall .mgrip:hover{background:rgba(47,107,62,.1);color:#2f6b3e}
+body.mdragging,body.mdragging *{cursor:grabbing!important;user-select:none!important}
+.mall tr.mdrag td{background:#fff!important;box-shadow:0 8px 20px -8px rgba(30,50,30,.35);position:relative;z-index:3}
+.mall tr.mdrop-b td{box-shadow:inset 0 3px 0 #2f6b3e}.mall tr.mdrop-a td{box-shadow:inset 0 -3px 0 #2f6b3e}
+html.dark .mall tr.mdrag td{background:#26302a!important}
 .mall .mraw{margin-top:12px;font-size:12.5px;color:var(--mut,#667)}
 .mall .mempty{padding:26px 10px;text-align:center;color:var(--mut,#778)}
 .mall .ls{display:none}
@@ -5388,19 +5394,71 @@ function renderMall() {
     <div class="mlg">${chs.map(([, l, c]) => `<span style="--c:${c}">${l}</span>`).join('')}</div>` + mallChart(A, rg, chs, filtered ? hit.map(x => x.n) : null);
   const cells = (o, prev) => { const t = totOf(o.c); return chs.map(([k]) => `<td class="${o.c[k] ? '' : 'z'}">${o.c[k] ? fmt(o.c[k]) : '–'}</td>`).join('') + `<td><b>${fmt(t)}</b>${prev !== undefined ? chg(t, prev) : ''}</td>` +
     `<td class="sb"><div class="sbar">${chs.map(([k, , c]) => o.c[k] ? `<i style="--c:${c};width:${o.c[k] / (t || 1) * 100}%"></i>` : '').join('')}</div></td>`; };
-  const mv = (kind, key, item) => mallEdit ? `<span class="mmv"><button type="button" data-mallmv="${kind}" data-k="${esc(key)}" ${item !== undefined ? `data-it="${esc(item)}"` : ''} data-d="-1" aria-label="위로">▲</button><button type="button" data-mallmv="${kind}" data-k="${esc(key)}" ${item !== undefined ? `data-it="${esc(item)}"` : ''} data-d="1" aria-label="아래로">▼</button></span>` : '';
+  const mv = (kind, key, item) => mallEdit ? `<span class="mgrip" data-mallgrip="${kind}" data-k="${esc(key)}" ${item !== undefined ? `data-it="${esc(item)}"` : ''} title="끌어서 순서 바꾸기" aria-label="끌어서 순서 바꾸기"><svg viewBox="0 0 12 18" aria-hidden="true"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/><circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg></span>` : '';
   h += `<div class="mtbar"><span class="mu">${filtered ? `검색 결과 ${list.length}개 품목` : `${list.length}개 품목`}</span><div class="seg sm" role="group" aria-label="순서"><button type="button" data-mallsort="my" class="${mallSort === 'my' ? 'on' : ''}">내 순서</button><button type="button" data-mallsort="qty" class="${mallSort === 'qty' ? 'on' : ''}">많이 팔린 순</button></div>
     <button class="btn sm ${mallEdit ? 'pri' : ''}" type="button" id="malledit">${mallEdit ? '순서 다 바꿨어요' : '순서 바꾸기'}</button></div>`;
-  if (mallEdit) h += '<p class="mnote">▲▼로 품목 순서를, 품목을 펼쳐서 옵션 순서를 바꿔요. 바꾼 순서는 <b>내 순서</b>로 저장돼서 다른 기기에서도 그대로 보여요.</p>';
+  if (mallEdit) h += '<p class="mnote">왼쪽 <b>⠿</b> 손잡이를 끌어서 품목 순서를, 품목을 펼쳐서 옵션 순서를 바꿔요. 바꾼 순서는 <b>내 순서</b>로 저장돼서 다른 기기에서도 그대로 보여요.</p>';
   h += `<div class="tblwrap"><table><thead><tr><th>품목 · 옵션</th>${chs.map(([, l, , sl]) => `<th><span class="lf">${l}</span><span class="ls">${sl}</span></th>`).join('')}<th>합계</th><th class="sb">쇼핑몰 비율</th></tr></thead><tbody>` +
     list.map(it => { const op = mallOpen.has(it.n) || (filtered && list.length <= 3), pv = P.items.get(it.n);
       const ops = mallSortList([...it.ops.entries()].filter(([, v]) => totOf(v.c) > 0), x => x[0], x => totOf(x[1].c), mallOrd().ops[it.n]);
-      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}"><td>${mv('item', it.n)}<b>${esc(it.n)}</b> <small class="mu">옵션 ${ops.length}개${it.src.size > 1 ? ' · 상품명 ' + it.src.size + '개 묶음' : ''}</small></td>${cells(it, pv ? totOf(pv.c) : 0)}</tr>` +
+      return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}" data-itk="${esc(it.n)}"><td>${mv('item', it.n)}<b>${esc(it.n)}</b> <small class="mu">옵션 ${ops.length}개${it.src.size > 1 ? ' · 상품명 ' + it.src.size + '개 묶음' : ''}</small></td>${cells(it, pv ? totOf(pv.c) : 0)}</tr>` +
         (op ? (it.src.size > 1 ? `<tr class="mo msrc"><td colspan="${chs.length + 3}">묶인 상품명: ${[...it.src.entries()].sort((a, b) => b[1] - a[1]).map(([k, q]) => esc(k) + ' <small>' + fmt(q) + '</small>').join(' · ')}</td></tr>` : '') +
-          ops.map(([o, v]) => `<tr class="mo"><td>${mv('op', o, it.n)}${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? totOf(pv.ops.get(o).c) : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
+          ops.map(([o, v]) => `<tr class="mo" data-opit="${esc(it.n)}" data-opk="${esc(o)}"><td>${mv('op', o, it.n)}${esc(o || '(옵션 없음)')}</td>${cells(v, pv && pv.ops.get(o) ? totOf(pv.ops.get(o).c) : 0)}</tr>`).join('') : ''); }).join('') + '</tbody></table></div>';
   h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값(마켓 / 주문경로)과 수량이에요. 다르게 잡힌 게 있으면 이 목록을 캡처해서 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m.split(' / ')[0], order_place_id: m.split(' / ').slice(1).join(' ') }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
   done();
 }
+
+// 순서 끌어서 바꾸기 (마우스 · 손가락 모두)
+let mallDrag = null, mallDragJust = false;
+function mallCurOrder(kind, itName) {
+  const o = mallOrd(), rg = mallRange(), A = mallAgg(rg.from, rg.to), chs = MALL_CH.filter(c => mallChSel.has(c[0])), totOf = c => chs.reduce((a, x) => a + c[x[0]], 0);
+  if (kind === 'item') return mallSortList([...A.items.values()].filter(it => totOf(it.c) > 0 && mallMatch(it)), x => x.n, x => totOf(x.c), o.items).map(x => x.n);
+  const it = A.items.get(itName); if (!it) return [];
+  return mallSortList([...it.ops.entries()].filter(([, v]) => totOf(v.c) > 0), x => x[0], x => totOf(x[1].c), (o.ops || {})[itName]).map(x => x[0]);
+}
+function mallRowsOf(kind, k, it) { const tb = document.querySelector('#hmall tbody'); if (!tb) return [];
+  if (kind === 'op') return [...tb.querySelectorAll('tr.mo[data-opit]')].filter(r => r.dataset.opit === it && r.dataset.opk === k);
+  const rows = [...tb.children], i = rows.findIndex(r => r.dataset.itk === k); if (i < 0) return []; const out = [rows[i]]; for (let j = i + 1; j < rows.length && !rows[j].dataset.itk; j++) out.push(rows[j]); return out; }
+document.addEventListener('pointerdown', e => {
+  const g = e.target.closest('.mgrip'); if (!g) return;
+  e.preventDefault(); try { g.setPointerCapture(e.pointerId); } catch (er) {}
+  mallDrag = { kind: g.dataset.mallgrip, k: g.dataset.k, it: g.dataset.it, id: e.pointerId, target: null, after: false, rows: mallRowsOf(g.dataset.mallgrip, g.dataset.k, g.dataset.it), y0: e.clientY };
+  mallDrag.rows.forEach(r => r.classList.add('mdrag')); document.body.classList.add('mdragging');
+});
+document.addEventListener('pointermove', e => {
+  if (!mallDrag || e.pointerId !== mallDrag.id) return; e.preventDefault();
+  const dy = e.clientY - mallDrag.y0; mallDrag.rows.forEach(r => r.style.transform = `translateY(${dy}px)`);
+  mallDrag.lastY = e.clientY; if (!mallDrag.raf) { const tick = () => { if (!mallDrag) return; const y = mallDrag.lastY, v = y < 80 ? -14 : y > innerHeight - 120 ? 14 : 0; if (v) { window.scrollBy(0, v); mallDrag.y0 -= v; mallDrag.rows.forEach(r => r.style.transform = `translateY(${y - mallDrag.y0}px)`); mallHit(y); } mallDrag.raf = requestAnimationFrame(tick); }; mallDrag.raf = requestAnimationFrame(tick); }
+  mallDrag.rows.forEach(r => r.style.pointerEvents = 'none'); mallHit(e.clientY);
+});
+function mallHit(y) {   // 손가락이 옆으로 흔들려도 되게 표 안쪽 x 위치로 찾아요
+  const tb = document.querySelector('#hmall tbody'); if (!tb || !mallDrag) return; const tr0 = tb.getBoundingClientRect();
+  const cand = [...tb.children].filter(r => !mallDrag.rows.includes(r)), tr = cand.find(r => { const rc = r.getBoundingClientRect(); return y >= rc.top && y < rc.bottom; })
+    || (cand.length && y >= cand[cand.length - 1].getBoundingClientRect().bottom ? cand[cand.length - 1] : null);   // 아래 메뉴에 가려져도 줄 위치로 찾아요
+  document.querySelectorAll('#hmall .mdrop-b,#hmall .mdrop-a').forEach(x => x.classList.remove('mdrop-b', 'mdrop-a'));
+  let tgt = null;
+  if (tr) { if (mallDrag.kind === 'item') { let r = tr; while (r && !r.dataset.itk) r = r.previousElementSibling; tgt = r; }
+    else if (tr.dataset.opit === mallDrag.it) tgt = tr; }
+  if (tgt && !mallDrag.rows.includes(tgt)) { const rc = tgt.getBoundingClientRect(), after = y > rc.top + rc.height / 2; tgt.classList.add(after ? 'mdrop-a' : 'mdrop-b'); mallDrag.target = mallDrag.kind === 'item' ? tgt.dataset.itk : tgt.dataset.opk; mallDrag.after = after; }
+  else mallDrag.target = null;
+}
+function mallDragEnd(e) {
+  if (!mallDrag || (e && e.pointerId !== mallDrag.id)) return;
+  if (e && e.type === 'pointerup') mallHit(e.clientY);
+  if (mallDrag.raf) cancelAnimationFrame(mallDrag.raf);
+  const d = mallDrag; mallDrag = null; document.body.classList.remove('mdragging');
+  document.querySelectorAll('#hmall .mdrag').forEach(r => { r.classList.remove('mdrag'); r.style.transform = ''; r.style.pointerEvents = ''; });
+  document.querySelectorAll('#hmall .mdrop-b,#hmall .mdrop-a').forEach(x => x.classList.remove('mdrop-b', 'mdrop-a'));
+  mallDragJust = true; setTimeout(() => { mallDragJust = false; }, 50);
+  if (!d.target || d.target === d.k) return;
+  const cur = mallCurOrder(d.kind, d.it).filter(x => x !== d.k), ti = cur.indexOf(d.target); if (ti < 0) return;
+  cur.splice(ti + (d.after ? 1 : 0), 0, d.k);
+  const o = mallOrd();
+  if (d.kind === 'item') { const rest = (o.items || []).filter(x => !cur.includes(x)); o.items = cur.concat(rest); }
+  else { o.ops = o.ops || {}; const rest = (o.ops[d.it] || []).filter(x => !cur.includes(x)); o.ops[d.it] = cur.concat(rest); }
+  mallSort = 'my'; renderMall(); mallSaveOrder();
+}
+document.addEventListener('pointerup', mallDragEnd); document.addEventListener('pointercancel', mallDragEnd);
 let mallQT = null;
 document.addEventListener('input', e => { if (e.target.id === 'mallq') { mallQ = e.target.value; clearTimeout(mallQT); mallQT = setTimeout(() => { mallFocus = ''; renderMall(); }, 250); } });
 document.addEventListener('click', e => {
@@ -5417,7 +5475,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('#malledit')) { mallEdit = !mallEdit; if (mallEdit) mallSort = 'my'; renderMall(); return; }
   if (e.target.closest('#mallqx')) { mallQ = ''; mallFocus = ''; renderMall(); return; }
   const p = e.target.closest('[data-mallper]'); if (p) { mallPer = p.dataset.mallper; mallOpen.clear(); renderMall(); mallLoad(); return; }
-  const it = e.target.closest('[data-mallitem]'); if (it) { if (mallEdit && e.target.closest('.mmv')) return; const n = it.dataset.mallitem; if (mallOpen.has(n)) { mallOpen.delete(n); if (mallFocus === n) mallFocus = ''; } else { mallOpen.add(n); mallFocus = n; } renderMall(); return; }
+  const it = e.target.closest('[data-mallitem]'); if (it) { if (e.target.closest('.mgrip') || mallDragJust) return; const n = it.dataset.mallitem; if (mallOpen.has(n)) { mallOpen.delete(n); if (mallFocus === n) mallFocus = ''; } else { mallOpen.add(n); mallFocus = n; } renderMall(); return; }
   if (e.target.closest('#mallallc')) { mallFocus = ''; renderMall(); return; }
   if (e.target.closest('#mallre')) { mallLoad({ force: true }); return; }
   if (e.target.closest('#mallall')) { mallLoad({ all: true, force: e.target.closest('#mallall').textContent.includes('다시') }); return; }
