@@ -5039,6 +5039,9 @@ function invSrcIndex() { // 송장과 맞출 주문 후보: 정리하기에 지�
   const d0 = (() => { const d = new Date(); d.setDate(d.getDate() - 3); return isoDate(d); })();
   Object.keys(upl).filter(d => d >= d0).forEach(d => ['am', 'pm'].forEach(sl => ((upl[d][sl] && upl[d][sl].rows) || []).forEach(r => { if (r.del || !r.o) return; const x = get(r.o);
     if (r.rn && !x.nh) x.nh = r.rn; String(r.rp || '').split(',').filter(Boolean).forEach(p => x.phones.add(p)); if (r.a && !x.addr) x.addr = r.a; if (r.p) x.prods.add(invNorm(r.p)); })));
+  (window.c24Recent || []).forEach(o => { if (!o.order_id) return; const known = orders.has(o.order_id), x = get(o.order_id), rc = o.receiver || {};   // 카페24에서 직접 찾아 온 최근 주문
+    if (!x.nh && rc.name) { x.nh = nameHash(rc.name); x.name = rc.name; } [rc.phone, rc.cellphone].forEach(v => { const p = last4(v); if (p) x.phones.add(p); });
+    if (!x.addr && rc.address1) x.addr = addr2(rc.address1); (o.items || []).forEach(i => { if (i.product_name) x.prods.add(invNorm(i.product_name)); if (!known && i.order_item_code) x.items.push(i.order_item_code); }); });
   const byName = new Map(); orders.forEach(x => { if (!x.nh) return; if (!byName.has(x.nh)) byName.set(x.nh, []); byName.get(x.nh).push(x); });
   return orders.size ? { orders, byName, fromSrc: !!(srcRows && srcRows.length) } : null;
 }
@@ -5104,6 +5107,17 @@ async function invHandle(file) {
   try { invLast = invBuild(await invRead(file)); invLast.name = file.name; m.className = 'msg ok'; m.textContent = file.name + ' · 송장 ' + invLast.out.length + '건을 찾았어요'; }
   catch (e) { invLast = null; m.className = 'msg err'; m.textContent = '읽지 못했어요: ' + (e.message || e); }
   renderInv();
+  if (invLast && invLast.bad.length && document.body.classList.contains('fbmode') && typeof c24Cfg === 'function' && c24Cfg().worker) {   // 못 찾은 송장은 카페24에서 최근 5일 주문을 직접 받아 와서 다시 맞춰 봐요
+    try {
+      m.textContent += ' · 못 찾은 ' + invLast.bad.length + '건은 카페24에서 찾아보는 중…';
+      const to = new Date(), from = new Date(to.getTime() - 5 * 864e5);
+      const d = await c24Call('/orders?from=' + encodeURIComponent(from.toISOString()) + '&to=' + encodeURIComponent(to.toISOString()));
+      window.c24Recent = d.orders || [];
+      const before = invLast.bad.length, nm = invLast.name; invLast = invBuild(await invRead(file)); invLast.name = nm;
+      m.className = 'msg ok'; m.textContent = file.name + ' · 송장 ' + invLast.out.length + '건을 찾았어요' + (before > invLast.bad.length ? ' (' + (before - invLast.bad.length) + '건은 카페24 주문에서 찾았어요)' : '');
+      renderInv();
+    } catch (e) { m.textContent = m.textContent.replace(/ · 못 찾은 .*$/, '') + ' · 카페24에서 찾지 못했어요: ' + (e.message || e); }
+  }
 }
 function invBind() {
   const drop = $('invdrop'), fi = $('invfile'); if (!drop) return;
