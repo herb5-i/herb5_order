@@ -1345,7 +1345,7 @@ body.is-guest .adm-only{display:none}
 .c24 .c24seg button.on{background:#2f6b3e;color:#fff}
 html.dark .c24 .c24seg{background:rgba(255,255,255,.04)}
 .c24 details{margin-top:10px;font-size:13.5px}.c24 summary{cursor:pointer;color:var(--mut,#667)}
-.c24 .c24days{display:flex;gap:4px}.c24 .c24days label{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);cursor:pointer;font-size:13px}
+.c24 .c24days{display:flex;gap:4px;flex-wrap:wrap}.c24 .c24days label{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);cursor:pointer;font-size:13px}
 .c24 .c24days input{display:none}.c24 .c24days label:has(input:checked){background:#2f6b3e;color:#fff;border-color:#2f6b3e}
 .c24 .c24or{margin:12px 0 0;text-align:center;font-size:12px;color:var(--mut,#889)}
 html.dark .c24{background:rgba(255,255,255,.03)}html.dark .c24 .c24st{background:rgba(255,255,255,.08);color:#bbb}
@@ -1545,11 +1545,11 @@ html.dark .mr-isslist span{background:rgba(208,122,82,.16)}html.dark .mr-rank .r
 .mall tr.msrc td{font-size:12px;color:var(--mut,#778);white-space:normal;text-align:left!important;padding-left:24px}
 .mall tr.mi.focus td{background:rgba(47,107,62,.06)}
 html.dark .mall .mch{background:rgba(255,255,255,.03)}
-.mall .msearch{display:grid;grid-template-columns:1fr;gap:8px;padding:12px;border-radius:16px;border:1px solid var(--line,#e4e7e1);background:rgba(255,255,255,.55);margin-bottom:10px}
+.mall .msearch{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:12px;border-radius:16px;border:1px solid var(--line,#e4e7e1);background:rgba(255,255,255,.55);margin-bottom:10px}
 .mall .msq{display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border-radius:12px;border:1px solid var(--line,#dcdfd8);background:var(--card,#fff)}
 .mall .msq svg{width:18px;height:18px;color:var(--mut,#889);flex:none}.mall .msq input{flex:1;border:0!important;outline:0;box-shadow:none!important;-webkit-appearance:none;appearance:none;height:auto;padding:0;background:none!important;font:inherit;font-size:14px;color:inherit;min-width:0}
 .mall .msq button{border:0;background:#eceee9;border-radius:99px;width:22px;height:22px;cursor:pointer;color:#666;font-size:14px;line-height:1}
-.mall .msd,.mall .msc{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}.mall .msd>span,.mall .msc>span{color:var(--mut,#667);min-width:42px;font-size:12.5px}
+.mall .msd,.mall .msc{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}.mall .msd>span,.mall .msc>span{color:var(--mut,#667);min-width:42px;font-size:12.5px}.mall .msd .til{min-width:0;text-align:center}
 .mall .msd input{width:auto;max-width:160px;min-width:0;height:34px;border-radius:10px;border:1px solid var(--line,#dcdfd8);padding:0 8px;font:inherit;font-size:13px;background:var(--card,#fff);color:inherit}
 .mall .msc button{height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--line,#dcdfd8);background:var(--card,#fff);font:inherit;font-size:13px;cursor:pointer;color:inherit;display:inline-flex;align-items:center;gap:6px}
 .mall .msc button::before{content:"";width:8px;height:8px;border-radius:3px;background:var(--c);opacity:.35}.mall .msc button.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff)}.mall .msc button.on::before{opacity:1}
@@ -1558,7 +1558,7 @@ html.dark .mall .mch{background:rgba(255,255,255,.03)}
 .mall .mmv{display:inline-flex;gap:2px;margin-right:6px;vertical-align:middle}.mall .mmv button{width:24px;height:24px;border-radius:7px;border:1px solid var(--line,#dcdfd8);background:var(--card,#fff);cursor:pointer;font-size:10px;line-height:1;color:#556;padding:0}
 .mall .mmv button:hover{background:#2f6b3e;color:#fff;border-color:#2f6b3e}
 html.dark .mall .msearch{background:rgba(255,255,255,.03)}html.dark .mall .msc button.on{background:rgba(255,255,255,.08)}
-@media(min-width:900px){.mall .msearch{grid-template-columns:1.3fr auto;align-items:center}.mall .msq{grid-column:1 / -1}}
+@media(min-width:900px){.mall .msearch{grid-template-columns:minmax(0,1.3fr) auto;align-items:center}.mall .msq{grid-column:1 / -1}}
 .mall .mgrip{display:inline-flex;align-items:center;justify-content:center;width:26px;height:30px;margin:-6px 4px -6px -4px;vertical-align:middle;border-radius:8px;cursor:grab;color:#9aa096;touch-action:none;user-select:none;-webkit-user-select:none}
 .mall .mgrip svg{width:10px;height:15px;fill:currentColor}.mall .mgrip:hover{background:rgba(47,107,62,.1);color:#2f6b3e}
 body.mdragging,body.mdragging *{cursor:grabbing!important;user-select:none!important}
@@ -1581,6 +1581,11 @@ html.dark .mall tr.mdrag td{background:#26302a!important}
 }
 .mall .mchb .mbc.nd .mstk{height:100%!important;background:repeating-linear-gradient(135deg,rgba(0,0,0,.04) 0 4px,transparent 4px 8px);border-radius:3px}
 @media(max-width:520px){#hello .hy{display:none}}
+input,select,textarea{max-width:100%}
+.mall .msearch>*{min-width:0;max-width:100%}.mall .msq{width:100%;min-width:0;overflow:hidden}.mall .msq input{width:100%;min-width:0}
+.mall .msd input[type=date]{min-width:0;box-sizing:border-box}
+@media(max-width:620px){.mall .msd input[type=date]{width:100%;padding:0 4px;font-size:13px;-webkit-appearance:none;appearance:none;text-align:left}.mall .msearch{padding:10px}}
+@media(max-width:380px){.mall .msd{grid-template-columns:auto minmax(0,1fr)}.mall .msd .til{display:none}.mall .msd #mallt{grid-column:2}}
 .mall .mraw{margin-top:12px;font-size:12.5px;color:var(--mut,#667)}
 .mall .mempty{padding:26px 10px;text-align:center;color:var(--mut,#778)}
 .mall .ls{display:none}
@@ -5531,8 +5536,8 @@ function renderMall() {
   const sum = totOf(sumT), psum = totOf(sumP);
   let h = `<div class="mh"><h2>쇼핑몰 비교</h2>${shareBtns('mall')}<button class="ibtn" id="malltsv" type="button" title="표 복사 (엑셀·구글 시트에 붙여넣기)" aria-label="엑셀용 표 복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15" stroke="currentColor" stroke-width="1.6"/></svg></button><span class="mhsp"></span>${mallBusy ? '<button class="btn sm" id="mallstop" type="button">멈추기</button>' : `<button class="btn sm" id="mallall" type="button" title="받아 둔 달: ${have}/${want}개월">${have >= want ? '5년치 다시 받기' : '5년치 모두 받기'}</button><button class="btn sm" id="mallre" type="button">새로 받기</button>`}</div>
     <div class="msearch">
-      <label class="msq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="mallq" type="search" placeholder="품목 · 옵션 검색 (예: 비올라)" value="${esc(mallQ)}" autocomplete="off">${mallQ ? '<button type="button" id="mallqx" aria-label="지우기">×</button>' : ''}</label>
-      <div class="msd"><span>기간</span><input type="date" id="mallf" value="${rg.from}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"> ~ <input type="date" id="mallt" value="${rg.to}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"></div>
+      <label class="msq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="mallq" type="search" placeholder="품목 · 옵션 검색" value="${esc(mallQ)}" autocomplete="off">${mallQ ? '<button type="button" id="mallqx" aria-label="지우기">×</button>' : ''}</label>
+      <div class="msd"><span>기간</span><input type="date" id="mallf" value="${rg.from}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"><span class="til">~</span><input type="date" id="mallt" value="${rg.to}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}"></div>
       <div class="msc"><span>쇼핑몰</span>${shown.map(([k, l, c]) => `<button type="button" data-mallch="${k}" class="${mallChSel.has(k) ? 'on' : ''}" style="--c:${c}">${l}</button>`).join('')}</div>
     </div>
     <div class="mper">${per.map(([k, l]) => `<button type="button" data-mallper="${k}" class="${mallPer === k ? 'on' : ''}">${l}</button>`).join('')}</div>
