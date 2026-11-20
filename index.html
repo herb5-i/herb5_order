@@ -1810,6 +1810,7 @@ html.dark .sp-st.cut{background:rgba(227,178,90,.14)}html.dark .sp-st.off{backgr
 .ship-nwrap{margin-bottom:14px}.ship-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-nl{display:flex!important;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}.ship-nl label{display:flex;flex-direction:column;gap:4px}.ship-nl input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink)}.ship-nbtn{width:100%;justify-content:center;font-weight:700;padding:12px!important;border-radius:14px!important}.ship-nbtn i{font-style:normal;transition:transform .2s;display:inline-block;margin-left:4px}.ship-nbtn[aria-expanded=true] i{transform:rotate(180deg)}
 .ship-nbox{margin-top:10px}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
 .ntbox.inline{max-width:none!important;max-height:none!important;overflow:visible!important;padding:0!important;box-shadow:none!important;background:none!important;border:0!important}.ntbox.inline .hmf-h b{display:none}
+.inv-badact{margin:8px 0 2px}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
 .hmf-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .hmf-h b{flex:1;font-size:17px}
@@ -7325,7 +7326,7 @@ function invColumns(rows) { // 머리글 줄과 열 찾기 (이름 + 값 모양)
 }
 const invNorm = v => String(v ?? '').replace(/[\s★()\[\]·,./_-]+/g, '').toLowerCase();
 const addr2 = v => String(v ?? '').trim().split(/\s+/).slice(0, 2).join(' ');
-function invSrcIndex() { // 송장과 맞출 주문 후보: 정리하기에 지금 올린 원본 + 최근 3일 동안 올린 기록
+function invSrcIndex() { // 송장과 맞출 주문 후보: 정리 탭에 지금 올린 원본 + 최근 3일 동안 올린 기록
   const orders = new Map(); // o → { o, nh, phones:Set, addr, prods:Set, name, items:[] }
   const get = o => { if (!orders.has(o)) orders.set(o, { o, nh: '', phones: new Set(), addr: '', prods: new Set(), name: '', items: [] }); return orders.get(o); };
   if (srcRows && srcRows.length) {
@@ -7368,7 +7369,7 @@ function invBuild(rows) {
     if (RX_ITEM.test(order) && !item) { item = order; order = order.replace(/-\d{1,3}$/, ''); }
     if (!order && item) order = item.replace(/-\d{1,3}$/, '');
     if (!order && S) { const x = invPick(S, C, r, usedO); if (x) { order = x.o; how = 'name'; if (!item && x.items.length === 1) item = x.items[0]; } }
-    if (!order) { bad.push({ line: C.hr + i + 2, track, who: C.name >= 0 ? String(r[C.name] ?? '') : '', why: C.order < 0 && !S ? '주문번호 칸이 없어서, 정리하기에 그날 원본을 먼저 올려야 맞출 수 있어요' : C.order < 0 ? '이름 · 전화로 맞는 주문을 못 찾았어요' : '맞는 주문을 못 찾았어요' }); return; }
+    if (!order) { bad.push({ line: C.hr + i + 2, track, who: C.name >= 0 ? String(r[C.name] ?? '') : '', why: C.order < 0 && !S ? '주문번호 칸이 없어서, 정리 탭에 그날 원본을 먼저 올려야 맞출 수 있어요' : C.order < 0 ? '이름 · 전화로 맞는 주문을 못 찾았어요' : '맞는 주문을 못 찾았어요' }); return; }
     const key = order + '|' + item + '|' + track; if (seen.has(key)) return; seen.add(key);
     usedO.add(order); if (!perOrder.has(order)) perOrder.set(order, []); perOrder.get(order).push(track);
     out.push({ order, item, track, how, who: C.name >= 0 ? String(r[C.name] ?? '') : (S && S.orders.get(order) && S.orders.get(order).name) || '' });
@@ -7393,7 +7394,7 @@ function renderInv() {
     ${!cfg.carrier && R.tpl.some(h => invRole(h) === 'carrier') ? '<p class="inv-warn">배송 업체 번호를 넣어 주세요. 카페24 배송준비중 → 엑셀 일괄배송 처리의 [배송 업체 번호] 버튼에서 확인할 수 있어요.</p>' : ''}
     <div class="tblwrap inv-tbl"><table class="ed"><thead><tr>${R.tpl.map(h => `<th>${esc(h)}</th>`).join('')}<th>받는 분</th></tr></thead><tbody>${R.out.slice(0, 200).map((x, i) => `<tr>${R.aoa[i + 1].map(v => `<td>${esc(v)}</td>`).join('')}<td class="mu">${esc(x.who)}${x.how === 'name' ? ' <small>(이름으로 찾음)</small>' : ''}</td></tr>`).join('')}</tbody></table></div>
     ${R.out.length > 200 ? `<p class="msg">처음 200줄만 보여요 · 파일에는 ${R.out.length}줄 모두 들어가요</p>` : ''}
-    ${R.bad.length ? `<details class="inv-det" open><summary>못 찾은 송장 ${R.bad.length}건</summary><ul>${R.bad.map(b => `<li>${b.line}번째 줄 · ${esc(b.track)}${b.who ? ' · ' + esc(b.who) : ''} — ${esc(b.why)}</li>`).join('')}</ul></details>` : ''}
+    ${R.bad.length ? `<details class="inv-det" open><summary>못 찾은 송장 ${R.bad.length}건</summary><ul>${R.bad.map(b => `<li>${b.line}번째 줄 · ${esc(b.track)}${b.who ? ' · ' + esc(b.who) : ''} — ${esc(b.why)}</li>`).join('')}</ul><div class="row inv-badact"><button class="btn sm" type="button" id="invbaddl">못 찾은 송장 ${R.bad.length}건만 내려받기 (엑셀)</button></div></details>` : ''}
     ${R.multi.length ? `<details class="inv-det"><summary>한 주문에 송장이 여러 개 ${R.multi.length}건</summary><ul>${R.multi.map(([o, t]) => `<li>${esc(o)} · ${t.map(esc).join(', ')}</li>`).join('')}</ul><p class="msg">파일에는 첫 번째 송장만 넣었어요. 나머지 송장(${R.extra.map(x => esc(x.track)).join(', ')})은 카페24 주문 화면에서 직접 더해 주세요.</p></details>` : ''}
     ${R.missing.length ? `<details class="inv-det"><summary>지금 올린 주문 중 송장이 없는 주문 ${R.missing.length}건</summary><ul>${R.missing.map(o => `<li>${esc(o)}${R.S.orders.get(o) && R.S.orders.get(o).name ? ' · ' + esc(R.S.orders.get(o).name) : ''}</li>`).join('')}</ul></details>` : ''}
     <p class="inv-warn">받은 CSV는 <b>엑셀로 열어서 저장하지 말고 그대로</b> 카페24에 올려 주세요. 엑셀이 송장번호를 4.63E+11처럼 바꿔 버려서, 저장하면 번호가 망가져요. 내용은 위 표에서 확인하면 돼요.</p>
@@ -7462,6 +7463,25 @@ document.addEventListener('click', async e => {
     await saveFile(nm, new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     m.className = 'msg ok'; m.textContent = nm + ' 로 내려받았어요 · 카페24 배송준비중 → 엑셀 일괄배송 처리에 올리세요';
   } catch (er) { if (er && er.code === 'declined') return; m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); }
+});
+
+document.addEventListener('click', async e => {
+  if (!e.target.closest('#invbaddl') || !invLast || !invLast.bad.length) return;
+  const m = $('invmsg');
+  try {
+    const raw = invRaw && invRaw.rows, hr = invLast.C && invLast.C.hr >= 0 ? invLast.C.hr : 0;
+    let aoa;
+    if (raw && raw[hr]) { const head = raw[hr].map(v => String(v ?? '')), w = Math.max(head.length, ...invLast.bad.map(b => (raw[b.line - 1] || []).length));
+      aoa = [Array.from({ length: w }, (_, i) => head[i] || '').concat('못 찾은 이유')].concat(invLast.bad.map(b => { const r = raw[b.line - 1] || []; return Array.from({ length: w }, (_, i) => String(r[i] ?? '')).concat(b.why || ''); })); }
+    else aoa = [['줄', '운송장번호', '받는 분', '못 찾은 이유']].concat(invLast.bad.map(b => [String(b.line), String(b.track || ''), String(b.who || ''), b.why || '']));
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const rg = XLSX.utils.decode_range(ws['!ref']); for (let R = 0; R <= rg.e.r; R++) for (let C = 0; C <= rg.e.c; C++) { const c = ws[XLSX.utils.encode_cell({ r: R, c: C })]; if (c) { c.t = 's'; c.z = '@'; } }
+    ws['!cols'] = aoa[0].map((h, i) => ({ wch: i === aoa[0].length - 1 ? 46 : Math.max(12, String(h).length * 2 + 2) }));
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '못 찾은 송장');
+    const nm = '못찾은송장_' + isoDate(new Date()) + '.xlsx';
+    await saveFile(nm, new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    if (m) { m.className = 'msg ok'; m.textContent = nm + ' 로 못 찾은 송장 ' + invLast.bad.length + '건을 내려받았어요'; }
+  } catch (er) { if (er && er.code === 'declined') return; if (m) { m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); } }
 });
 invBind(); renderInv();
 
