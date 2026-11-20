@@ -23,6 +23,8 @@ export default {
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
+      if (url.pathname === '/crm') { needAdmin(who); return json(await crm(env, url.searchParams), cors); }
+      if (url.pathname === '/who') { needAdmin(who); return json(await whoIs(env, url.searchParams), cors); }
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
       return json({ error: 'not_found' }, cors, 404);
@@ -125,6 +127,49 @@ async function orders(env, q) {
     if (list.length < lim) break;
   }
   return { orders: out, count: out.length, from: from.toISOString(), to: to.toISOString() };
+}
+
+// ---------- 고객 관리: 주문을 고객별로 묶을 수 있게 (이름 · 연락처 · 상세 주소는 해시로만 보내요) ----------
+async function h16(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('herb5-crm|' + t)); return [...new Uint8Array(b)].slice(0, 8).map(x => x.toString(16).padStart(2, '0')).join(''); }
+const crmNorm = t => String(t || '').replace(/\s+/g, '').replace(/[()\-,.]/g, '').toLowerCase();
+const SIDO = { '서울특별시': '서울', '부산광역시': '부산', '대구광역시': '대구', '인천광역시': '인천', '광주광역시': '광주', '대전광역시': '대전', '울산광역시': '울산', '세종특별자치시': '세종', '경기도': '경기', '강원도': '강원', '강원특별자치도': '강원', '충청북도': '충북', '충청남도': '충남', '전라북도': '전북', '전북특별자치도': '전북', '전라남도': '전남', '경상북도': '경북', '경상남도': '경남', '제주특별자치도': '제주' };
+function crmRegion(a) { const t = String(a || '').trim().split(/\s+/); if (!t[0]) return ''; const s = SIDO[t[0]] || t[0].replace(/(특별시|광역시|특별자치시|특별자치도|도)$/, ''); return s === '세종' ? '세종' : (s + ' ' + (t[1] || '')).trim(); }
+async function crm(env, q) {
+  const from = new Date(q.get('from')), to = new Date(q.get('to'));
+  if (isNaN(from) || isNaN(to) || to <= from) throw fail(400, 'range', '기간이 맞지 않아요');
+  const day = d => new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10);
+  const token = await accessToken(env), lim = 200, offset = Math.max(0, Number(q.get('offset')) || 0), out = [];
+  const u = new URL(base(env) + '/admin/orders');
+  u.searchParams.set('date_type', 'pay_date'); u.searchParams.set('start_date', day(from)); u.searchParams.set('end_date', day(to));
+  u.searchParams.set('embed', 'items,receivers,buyer'); u.searchParams.set('limit', String(lim)); u.searchParams.set('offset', String(offset));
+  const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 주문을 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
+  const list = d.orders || [];
+  for (const o of list) {
+    if (o.paid !== 'T' || o.canceled === 'T' || !o.payment_date) continue;
+    const t = kst(o.payment_date); if (t < from || t >= to) continue;
+    const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
+    const its = (o.items || []).filter(i => !/^[CR]/.test(i.order_status || ''));
+    if (!its.length) continue;
+    const mem = String(o.member_id || '').trim();
+    const cid = mem ? 'm' + await h16('m|' + mem) : 'g' + await h16(crmNorm(rc.address1) + '|' + crmNorm(rc.name || by.name));
+    const ph = String(rc.cellphone || rc.phone || '').replace(/\D/g, '');
+    out.push({ i: o.order_id, d: day(t), c: cid, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '', r: crmRegion(rc.address1), l4: ph.length >= 8 && !/^050/.test(ph) ? ph.slice(-4) : '',
+      a: its.reduce((s, i) => s + ((Number(i.product_price) || 0) + (Number(i.option_price) || 0)) * (Number(i.quantity) || 0), 0),
+      it: its.map(i => [i.product_name || '', i.option_value || '', Number(i.quantity) || 0]) });
+  }
+  return { orders: out, next: list.length < lim || offset + lim > 15000 ? null : offset + lim };
+}
+// 고객 카드에서 [이름 · 연락처 보기]를 누를 때만: 그 주문의 주문자 · 수령인을 보여주고 어디에도 저장하지 않아요
+async function whoIs(env, q) {
+  const id = String(q.get('order_id') || '').replace(/[^0-9A-Za-z\-]/g, ''); if (!id) throw fail(400, 'order', '주문번호가 없어요');
+  const token = await accessToken(env);
+  const r = await fetch(base(env) + '/admin/orders/' + id + '?embed=receivers,buyer', { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 주문을 찾지 못했어요');
+  const o = d.order || {}, rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
+  return { buyer: by.name || '', receiver: rc.name || '', phone: rc.cellphone || rc.phone || by.cellphone || '', address: [rc.address1, rc.address2].filter(Boolean).join(' '), member: o.member_id || '' };
 }
 
 // ---------- 송장번호 등록: 100건씩 묶어서 보내고, 묶음이 실패하면 한 건씩 다시 보내서 어느 주문이 문제인지 알려 줘요 ----------
