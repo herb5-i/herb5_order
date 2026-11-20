@@ -825,7 +825,7 @@ html.dark .stkunits{background:rgba(255,255,240,.03)}html.dark .su-chip{backgrou
 .stkhistrow>*,.stkdaybox,#stkday,.wrap>*,section>.card{min-width:0}
 .sd-tbl{table-layout:fixed}.sd-tbl th:first-child{width:38%}.sd-tbl td,.sd-tbl th{overflow-wrap:anywhere;word-break:keep-all}
 .sd-memo,.sd-memo p{overflow-wrap:anywhere;min-width:0;box-sizing:border-box;max-width:100%}
-#v-stock .card,#v-hist .card,#v-sum .card{max-width:100%;box-sizing:border-box}
+#v-stock .card,#v-hist .card,#v-market .card,#v-sum .card{max-width:100%;box-sizing:border-box}
 .sd-tbl small{white-space:normal}
 @media(max-width:560px){
   .sd-tbl,.sd-tbl tbody{display:block;width:100%}.sd-tbl thead{display:none}
@@ -1652,7 +1652,7 @@ html.dark .mall .mkpi div{background:rgba(255,255,255,.04)}html.dark .mall .mbar
 .subtabs button.alert .sdot{display:block}
 section[data-cur] > [data-sub]{animation:subIn .28s ease both}
 #v-run[data-cur="order"] > [data-sub]:not([data-sub="order"]),#v-run[data-cur="wx"] > [data-sub]:not([data-sub="wx"]),#v-run[data-cur="inv"] > [data-sub]:not([data-sub="inv"]),
-#v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]),#v-hist[data-cur="mall"] > [data-sub]:not([data-sub="mall"]),#v-hist[data-cur="market"] > [data-sub]:not([data-sub="market"]),#v-hist[data-cur="comp"] > [data-sub]:not([data-sub="comp"]),#v-stock[data-cur="cur"] > [data-sub]:not([data-sub="cur"]),#v-stock[data-cur="chg"] > [data-sub]:not([data-sub="chg"]),#v-stock[data-cur="ret"] > [data-sub]:not([data-sub="ret"]),#v-rules[data-cur="order"] [data-sub]:not([data-sub="order"]),#v-rules[data-cur="sum"] [data-sub]:not([data-sub="sum"]),#v-rules[data-cur="wx"] [data-sub]:not([data-sub="wx"]),#v-rules[data-cur="stock"] [data-sub]:not([data-sub="stock"]),#v-rules[data-cur="set"] [data-sub]:not([data-sub="set"]){display:none!important}
+#v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]),#v-hist[data-cur="mall"] > [data-sub]:not([data-sub="mall"]),#v-market[data-cur="market"] > [data-sub]:not([data-sub="market"]),#v-market[data-cur="comp"] > [data-sub]:not([data-sub="comp"]),#v-stock[data-cur="cur"] > [data-sub]:not([data-sub="cur"]),#v-stock[data-cur="chg"] > [data-sub]:not([data-sub="chg"]),#v-stock[data-cur="ret"] > [data-sub]:not([data-sub="ret"]),#v-rules[data-cur="order"] [data-sub]:not([data-sub="order"]),#v-rules[data-cur="sum"] [data-sub]:not([data-sub="sum"]),#v-rules[data-cur="wx"] [data-sub]:not([data-sub="wx"]),#v-rules[data-cur="stock"] [data-sub]:not([data-sub="stock"]),#v-rules[data-cur="set"] [data-sub]:not([data-sub="set"]){display:none!important}
 body.is-guest #v-hist .subtabs{display:none!important}
 @keyframes subIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.06)}html.dark .subtabs .sdot{box-shadow:0 0 0 2px #1c241e}
@@ -1957,6 +1957,9 @@ html.dark .ret-issbtn{background:rgba(214,96,120,.12)!important;border-color:rgb
 .navs .tab[data-t=crm]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='9' cy='8' r='3.6'/%3E%3Cpath d='M2.5 20a6.5 6.5 0 0 1 13 0z'/%3E%3Ccircle cx='17.2' cy='9' r='2.8'/%3E%3Cpath d='M16.6 13.6a5.6 5.6 0 0 1 5 6.4h-4.4a8.4 8.4 0 0 0-1.6-6.3z'/%3E%3C/svg%3E")}
 header.top .tabs .tab[data-t=crm]::before{color:#5a8fb0}
 body.is-guest .tab[data-t=crm]{display:none!important}
+.navs .tab[data-t=market]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20h18'/%3E%3Cpath d='M4 16l5-6 4 3 7-8'/%3E%3Cpath d='M15 5h5v5'/%3E%3C/svg%3E")}
+header.top .tabs .tab[data-t=market]::before{color:#c4893b}
+body.is-guest .tab[data-t=market],body.is-guest #v-market{display:none!important}
 .crm-sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px!important}.crm-sync .sp{flex:1}
 .crm-empty{text-align:center;color:var(--mute);padding:40px 20px!important}
 .crm-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
@@ -2024,7 +2027,7 @@ html.dark .g-biz{background:rgba(90,143,176,.18);color:#9cc6dd}html.dark .g-cl{b
 html.dark .cc-av{background:rgba(63,154,108,.16)}html.dark .cc-tagset button.on{background:rgba(90,143,176,.18);border-color:rgba(90,143,176,.4);color:#9cc6dd}
 @media(max-width:899px){.crm-split,.crm-g2{grid-template-columns:1fr}.crm-cc{position:static;max-height:none}.crm-kpis{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.crm-hm{display:none}.cc-mini{grid-template-columns:1fr 1fr}.crm-kpis b{font-size:24px}}
-@media(max-width:999px){header.top .navs .tabs{grid-template-columns:repeat(7,minmax(0,1fr))!important;width:min(500px,calc(100% - 16px))!important}body.is-guest header.top .navs .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
+@media(max-width:999px){header.top .navs .tabs{grid-template-columns:repeat(8,minmax(0,1fr))!important;width:min(540px,calc(100% - 16px))!important}body.is-guest header.top .navs .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
 .crm-tbl td:first-child{white-space:normal;min-width:130px}.crm-tbl td.crm-hm:last-child{white-space:normal;min-width:110px}
 
 /* 고객 관리 (간단) */
@@ -2362,6 +2365,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         <button class="tab" data-t="crm" aria-label="고객 관리" title="고객 관리">고객 관리</button>
         <button class="tab" data-t="issue" aria-label="이슈 관리" title="이슈 관리">이슈 관리</button>
         <button class="tab" data-t="hist" aria-label="기록·통계" title="기록·통계">기록·통계</button>
+        <button class="tab" data-t="market" aria-label="시장" title="시장">시장</button>
       </nav>
       <button class="tab admin" data-t="rules" aria-label="규칙 관리" title="비밀번호가 필요해요"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>규칙 관리</span></button>
     </div>
@@ -2602,7 +2606,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
 
   <section id="v-hist" class="hidden" data-cur="report">
     <div class="histlock"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="currentColor"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></i><h2>관리자만 볼 수 있어요</h2><p>기록·통계(매출)는 관리자 아이디로 로그인했을 때만 열려요.</p><button class="btn" type="button" data-go="home">홈으로</button></div>
-    <nav class="subtabs" data-subfor="hist" role="tablist"><button type="button" role="tab" data-subgo="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 16v-3M12 16v-6M15.5 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>월간 보고서</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="days"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>날짜별 기록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="mall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5 5.5 4h13L20 9.5M4 9.5h16M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0M5.5 12v8h13v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>쇼핑몰 비교</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="market"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 16l4-5 3 3 5-7 2 2"/><circle cx="19" cy="5" r="1.2"/></svg><span>시장 비교</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="comp"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg><span>경쟁사 가격</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="hist" role="tablist"><button type="button" role="tab" data-subgo="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 16v-3M12 16v-6M15.5 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>월간 보고서</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="days"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>날짜별 기록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="mall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5 5.5 4h13L20 9.5M4 9.5h16M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0M5.5 12v8h13v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>쇼핑몰 비교</span><i class="sdot"></i></button></nav>
     <div class="card mrep" id="mrep" data-sub="report"></div>
     <div class="histrow" data-sub="days">
       <div class="card">
@@ -2621,6 +2625,10 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
     <div class="card" id="hstat" data-sub="days"></div>
     <div class="card mall" id="hmall" data-sub="mall"></div>
+  </section>
+
+  <section id="v-market" class="hidden" data-cur="market">
+    <nav class="subtabs" data-subfor="market" role="tablist"><button type="button" role="tab" data-subgo="market"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 16l4-5 3 3 5-7 2 2"/><circle cx="19" cy="5" r="1.2"/></svg><span>시장 비교</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="comp"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.3"/></svg><span>경쟁사 가격</span><i class="sdot"></i></button></nav>
     <div class="card mkt" id="hmarket" data-sub="market"></div>
     <div class="card mkt" id="hcomp" data-sub="comp"></div>
   </section>
@@ -3043,7 +3051,7 @@ const fmt = v => v instanceof Date ? ymd(v) : (v ?? '');
 const ymd = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 
 // tabs
-const PAGE_TITLE = { crm: '고객 관리', issue: '이슈 관리', home: '홈', run: '정리하기', sum: '집계 보기', stock: '재고 관리', hist: '기록·통계', rules: '규칙 관리' };
+const PAGE_TITLE = { crm: '고객 관리', issue: '이슈 관리', home: '홈', run: '정리하기', sum: '집계 보기', stock: '재고 관리', hist: '기록·통계', market: '시장', rules: '규칙 관리' };
 const helloTxt = () => { const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토']; return '허브아이 · ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + W[d.getDay()] + '요일'; };
 function tabbarTick() {
   const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토'], h = d.getHours();
@@ -3072,6 +3080,7 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'rules') showLock();
   $('v-sum').classList.toggle('hidden', b.dataset.t !== 'sum');
   $('v-hist').classList.toggle('hidden', b.dataset.t !== 'hist');
+  $('v-market').classList.toggle('hidden', b.dataset.t !== 'market');
   $('v-stock').classList.toggle('hidden', b.dataset.t !== 'stock');
   $('v-issue').classList.toggle('hidden', b.dataset.t !== 'issue');
   $('v-crm').classList.toggle('hidden', b.dataset.t !== 'crm');
@@ -3080,6 +3089,7 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'stock') renderStock();
   if (b.dataset.t === 'sum') renderSum();
   if (b.dataset.t === 'hist') renderHist();
+  if (b.dataset.t === 'market') { if ($('v-market').dataset.cur === 'comp') renderComp(); else renderMarket(); }
 });
 
 // ---------- 규칙 편집기 ----------
@@ -4372,7 +4382,7 @@ function subSet(tab, key, noScroll) {
   if (!noScroll) { const t = sec.querySelector('.subtabs'); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView({ block: 'start' }); }
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-subgo]'); if (!b) return; subSet(b.closest('.subtabs').dataset.subfor, b.dataset.subgo); });
-['run', 'hist', 'stock', 'rules'].forEach(t => { let k = null; try { k = sessionStorage.getItem('herb5_sub_' + t); } catch (e) {} if (k && !$('v-' + t).querySelector('[data-subgo="' + k + '"]')) k = null; subSet(t, k || $('v-' + t).dataset.cur, true); });
+['run', 'hist', 'market', 'stock', 'rules'].forEach(t => { let k = null; try { k = sessionStorage.getItem('herb5_sub_' + t); } catch (e) {} if (k && !$('v-' + t).querySelector('[data-subgo="' + k + '"]')) k = null; subSet(t, k || $('v-' + t).dataset.cur, true); });
 // 배송일 · 날씨에 확인할 게 있으면 작은 점으로 알려줘요
 (() => { const w = $('wneed'), dot = () => { const b = document.querySelector('[data-subgo="wx"]'); if (b && w) b.classList.toggle('alert', !w.classList.contains('hidden')); };
   if (w) { try { new MutationObserver(dot).observe(w, { attributes: true, attributeFilter: ['class'] }); } catch (e) {} dot(); } })();
@@ -4463,6 +4473,8 @@ const HM_APPS = {
   report: ['월간 보고서', "<path d='M6.5 2.5H14l5 5v13a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 20.5V4a1.5 1.5 0 0 1 1.5-1.5zM8.2 12a1 1 0 0 0 0 2h7.6a1 1 0 0 0 0-2zm0 4a1 1 0 0 0 0 2h4.8a1 1 0 0 0 0-2z'/>", '#9fd0b3', '#4f9473'],
   days: ['날짜별 기록', "<rect x='3' y='5' width='18' height='16' rx='3'/><rect x='7' y='2' width='2.5' height='5' rx='1'/><rect x='14.5' y='2' width='2.5' height='5' rx='1'/>", '#8db6ea', '#4a76b8'],
   mall: ['쇼핑몰 비교', "<path d='M4.2 3.5h15.6l1.7 5.2a3 3 0 0 1-5.3 2.5 3 3 0 0 1-4.2.4 3 3 0 0 1-4.2-.4 3 3 0 0 1-5.3-2.5z'/><path d='M4.6 13.3c.8.3 1.6.3 2.4.1V19h3.2v-3.6h3.6V19H17v-5.6c.8.2 1.6.2 2.4-.1V19a2.5 2.5 0 0 1-2.5 2.5H7.1A2.5 2.5 0 0 1 4.6 19z'/>", '#8fd8cc', '#3b9688'],
+  market: ['시장 비교', "<path d='M3 19.5h18' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' fill='none'/><path d='M4 15.5l5-6 4 3 7-8' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' fill='none'/><path d='M14.5 4.5h5.5V10' stroke='currentColor' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round' fill='none'/>", '#f3cf8f', '#c4893b'],
+  comp: ['경쟁사 가격', "<path d='M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z'/><circle cx='7.5' cy='7.5' r='1.6' fill='#fff'/>", '#f2b7a6', '#c2614a'],
   ret: ['입고 · 반송', "<path d='M9.7 3.8a1.3 1.3 0 0 1 0 1.8L7.6 7.7h7.2a6.2 6.2 0 0 1 0 12.4H8.6a1.3 1.3 0 1 1 0-2.6h6.2a3.6 3.6 0 0 0 0-7.2H7.6l2.1 2.1a1.3 1.3 0 0 1-1.8 1.8L3.6 9.9a1.3 1.3 0 0 1 0-1.8l4.3-4.3a1.3 1.3 0 0 1 1.8 0z'/>", '#c9b07a', '#8a6d33'],
   crm: ['고객 관리', "<circle cx='9' cy='8' r='3.6'/><path d='M2.5 20a6.5 6.5 0 0 1 13 0z'/><circle cx='17.2' cy='9' r='2.8'/><path d='M16.6 13.6a5.6 5.6 0 0 1 5 6.4h-4.4a8.4 8.4 0 0 0-1.6-6.3z'/>", '#8db9d4', '#3f7891'],
   rules: ['규칙 관리', "<path d='M12 2.5a4.5 4.5 0 0 1 4.5 4.5v3h.5a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2h.5V7A4.5 4.5 0 0 1 12 2.5zm0 2.4A2.1 2.1 0 0 0 9.9 7v3h4.2V7A2.1 2.1 0 0 0 12 4.9z'/>", '#aab3aa', '#6b746b']
@@ -4524,6 +4536,7 @@ function hmOpenApp(a) {
   if (a === 'sum' || a === 'oldup') { go('sum'); if (a === 'oldup') setTimeout(() => { const o = $('oldup'); if (o) { o.open = true; o.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 80); return; }
   if (a === 'issue' || a === 'claim') { try { issCat = a === 'claim' ? 'claim' : 'item'; } catch (e) {} go('issue'); try { renderIssue(); } catch (e) {} return; }
   if (['report', 'days', 'mall'].includes(a)) { subSet('hist', a, true); go('hist'); return; }
+  if (a === 'market' || a === 'comp') { subSet('market', a, true); go('market'); return; }
   if (a === 'ret') { subSet('stock', 'ret', true); go('stock'); return; }
   go(a);
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5861,8 +5874,8 @@ document.addEventListener('change', async e => {
   const d = e.target.closest && e.target.closest('[data-mkd]'); if (d && d.value) { if (d.dataset.mkd === 'from') mkDF = d.value; else mkDT = d.value; if (mkDF > mkDT) [mkDF, mkDT] = [mkDT, mkDF]; renderMarket(); return; }
   if (e.target.id === 'mk-cat') { if (await mkSave({ cat: e.target.value })) { mkTrKey = ''; renderMarket(); } }
 });
-let mkRz = 0; addEventListener('resize', () => { clearTimeout(mkRz); mkRz = setTimeout(() => { if (mkSel && $('v-hist') && $('v-hist').dataset.cur === 'market') renderMarket(); }, 200); });
-document.addEventListener('click', e => { if (e.target.closest('[data-subfor=hist] [data-subgo="market"]')) setTimeout(renderMarket, 0); if (e.target.closest('[data-subfor=hist] [data-subgo="comp"]')) setTimeout(renderComp, 0); const t = e.target.closest('.tab[data-t=hist]'); if (t) setTimeout(() => { const c = $('v-hist').dataset.cur; if (c === 'market') renderMarket(); if (c === 'comp') renderComp(); }, 0); });
+let mkRz = 0; addEventListener('resize', () => { clearTimeout(mkRz); mkRz = setTimeout(() => { const v = $('v-market'); if (mkSel && v && !v.classList.contains('hidden') && v.dataset.cur === 'market') renderMarket(); }, 200); });
+document.addEventListener('click', e => { if (e.target.closest('[data-subfor=market] [data-subgo="market"]')) setTimeout(renderMarket, 0); if (e.target.closest('[data-subfor=market] [data-subgo="comp"]')) setTimeout(renderComp, 0); });
 
 // ---------- 품목 검색창 자동 완성: 집계 보기에 나온 모든 품목 이름 (옵션 제외) ----------
 let acCache = { sig: '', names: [] };
