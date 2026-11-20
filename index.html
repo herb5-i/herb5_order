@@ -1807,7 +1807,7 @@ html.dark .sp-st.cut{background:rgba(227,178,90,.14)}html.dark .sp-st.off{backgr
 .sp-past{margin-top:12px}.sp-past summary{cursor:pointer;font-size:13px;color:var(--mute)}
 .sp-set{display:grid;gap:12px}.sp-times{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}.sp-times label{display:flex;flex-direction:column;gap:4px}.sp-times input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink)}
 @media(max-width:900px){.ship-top{grid-template-columns:1fr}.ship-top .ship-cal{height:470px}.ship-side{grid-template-rows:auto 320px}.ship-side #ship-next{height:200px}}
-.ship-nwrap{margin-bottom:14px}.ship-nbtn{width:100%;justify-content:center;font-weight:700;padding:12px!important;border-radius:14px!important}.ship-nbtn i{font-style:normal;transition:transform .2s;display:inline-block;margin-left:4px}.ship-nbtn[aria-expanded=true] i{transform:rotate(180deg)}
+.ship-nwrap{margin-bottom:14px}.ship-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-nl{display:flex!important;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}.ship-nl label{display:flex;flex-direction:column;gap:4px}.ship-nl input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink)}.ship-nbtn{width:100%;justify-content:center;font-weight:700;padding:12px!important;border-radius:14px!important}.ship-nbtn i{font-style:normal;transition:transform .2s;display:inline-block;margin-left:4px}.ship-nbtn[aria-expanded=true] i{transform:rotate(180deg)}
 .ship-nbox{margin-top:10px}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
 .ntbox.inline{max-width:none!important;max-height:none!important;overflow:visible!important;padding:0!important;box-shadow:none!important;background:none!important;border:0!important}.ntbox.inline .hmf-h b{display:none}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
@@ -2548,7 +2548,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div id="wneed" class="warnbox hidden"></div>
     </div>
     <div class="ship-top" data-sub="ship"><div class="hmi ship-cal" data-s="L" id="ship-cal"></div><div class="ship-side"><div class="hmi" data-s="M" id="ship-next"></div><div class="hmi ship-hol" data-s="M" id="ship-hol"></div></div></div>
-    <div class="ship-nwrap" data-sub="ship"><button class="btn ship-nbtn" type="button" id="ship-nbtn" aria-expanded="false">📢 공지 설정 <i>▾</i></button>
+    <div class="ship-nwrap" data-sub="ship"><div class="ship-acts"><button class="btn ship-nbtn" type="button" id="ship-cbtn">⏰ 마감 · 휴무 설정</button><button class="btn ship-nbtn" type="button" id="ship-nbtn" aria-expanded="false">📢 공지 설정 <i>▾</i></button></div>
       <div class="card ship-nbox hidden" id="ship-nbox"><div class="ship-nsel" id="ship-nsel"></div><div id="ship-nhost"></div></div></div>
     <div class="card step invcard" data-sub="inv">
       <div class="sh"><span class="num">5</span><div><h2>송장번호 등록 파일 만들기</h2><p>택배사에서 받은 송장 엑셀을 올리면 카페24 엑셀 일괄배송에 바로 올릴 파일로 바꿔요</p></div></div>
@@ -4695,7 +4695,7 @@ function hcInfo(id, d) {
   const wbtn = cut && hcCanEdit() && document.body.classList.contains('fbmode') && (() => { try { return !!c24Cfg().worker; } catch (e) { return false; } })() ? `<button type="button" class="hm-more hw-wish" data-hmcalwish="${d}">마감 뒤 주문에 ${esc(hcResume(d).slice(5).replace('-', '/').replace(/^0/, ''))} 기록</button>` : '';
   const nr = cut && (() => { try { return (c24Cfg().notice || {})[d]; } catch (e) { return null; } })();
   const nbtn = cut && hcCanEdit() ? `<button type="button" class="hm-more hw-wish" data-hmcalnot="${d}">공지 이미지 만들기</button>` + (nr && wbtn ? `<button type="button" class="hm-more hw-wish" data-hmcalnotdel="${d}">공지 올림 ✓ · 내리기</button>` : '') : '';
-  const btn = wbtn + nbtn + (hcCanEdit() ? (off || cut ? `<button type="button" class="hm-more" data-hmcalundo="${d}">${off ? '휴무 풀기' : '마감 되돌리기'}</button>` : '') + `<button type="button" class="hm-more" data-hmcalset="${d}">휴무 설정</button>` : '');
+  const btn = wbtn + nbtn + (hcCanEdit() ? (off || cut ? `<button type="button" class="hm-more" data-hmcalundo="${d}">${off ? '휴무 풀기' : '마감 되돌리기'}</button>` : '') + `<button type="button" class="hm-more" data-hmcalset="${d}">마감 · 휴무 설정</button>` : '');
   return `<b>${hcD(d)}</b>${h ? `<em class="hol">${esc(h)}</em>` : ''}${st}<span class="sp"></span>${btn}`;
 }
 Object.assign(HW, {
@@ -4743,8 +4743,8 @@ async function hcSaveCfg(c) { const keep = rules.cafe24; rules.cafe24 = c; try {
 function hcOpen(d) {
   const c = c24Cfg(); let last = hcAdd(d, -1); for (let i = 0; i < 30 && !hcShip(last); i++) last = hcAdd(last, -1);
   let resume = hcAdd(d, 1); for (let i = 0; i < 30 && !hcShip(resume); i++) resume = hcAdd(resume, 1);
-  let m = $('hcModal'); if (!m) { m = document.createElement('div'); m.className = 'modal hidden'; m.id = 'hcModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '배송 휴무 설정'); document.body.appendChild(m); }
-  m.innerHTML = `<div class="mbox hcbox"><div class="hmf-h"><b>배송 휴무 설정</b><button class="ibtn" type="button" id="hc-x" aria-label="닫기">✕</button></div>
+  let m = $('hcModal'); if (!m) { m = document.createElement('div'); m.className = 'modal hidden'; m.id = 'hcModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '마감 · 휴무 설정'); document.body.appendChild(m); }
+  m.innerHTML = `<div class="mbox hcbox"><div class="hmf-h"><b>마감 · 휴무 설정</b><button class="ibtn" type="button" id="hc-x" aria-label="닫기">✕</button></div>
     <div class="hc-f"><label><span>마지막으로 보내는 날</span><input type="date" id="hc-last" value="${last}"></label><label><span>그날 주문 마감</span><input type="time" id="hc-cut" step="60" value="${c24PmCut(c, last)}"></label></div>
     <div class="hc-f"><label><span>다시 보내는 날</span><input type="date" id="hc-res" value="${resume}"></label><label><span>&nbsp;</span><em class="msg">사이 날짜는 모두 배송 쉬는 날이 돼요</em></label></div>
     <div class="hc-sum" id="hc-sum"></div><p class="msg err" id="hc-err"></p>
@@ -4975,8 +4975,8 @@ const ntBox = wrapEl.querySelector('.ntbox');
 const ntMount = host => { if (ntBox.parentNode !== host) host.appendChild(ntBox); ntBox.classList.toggle('inline', host !== wrapEl); };
 window.ntInline = (host, cutDay) => { ntMount(host); ntSetup(cutDay); };
 window.ntOpen = cutDay => { ntMount(wrapEl); ntSetup(cutDay); wrapEl.classList.remove('hidden'); };
-function ntSetup(cutDay) {
-  const c = c24Cfg(); ntCut = cutDay; S = { cut: cutDay, time: c24PmCut(c, cutDay), resume: hcResume(cutDay) }; HOL = {};
+function ntSetup(arg) {
+  const c = c24Cfg(), cutDay = typeof arg === 'string' ? arg : arg.cut; ntCut = cutDay; S = typeof arg === 'string' ? { cut: cutDay, time: c24PmCut(c, cutDay), resume: hcResume(cutDay) } : { cut: arg.cut, time: arg.time, resume: arg.resume }; HOL = {};
   for (let d = hcAdd(cutDay, -10); d <= hcAdd(S.resume, 10); d = hcAdd(d, 1)) if (KR_HOL[d]) HOL[d] = KR_HOL[d];
   const names = Object.keys(HOL).filter(d => d > cutDay && d < S.resume).map(d => HOL[d]), y = cutDay.slice(0, 4), t = pickTheme(names, cutDay);
   THEMES.chuseok.sub = '• ' + y + ' 秋夕 •'; THEMES.seol.sub = '• ' + (+y + (cutDay.slice(5, 7) > '06' ? 1 : 0)) + ' 新年 •';
@@ -5032,19 +5032,24 @@ function renderShip() {
   put('ship-cal', HW.cal({ id: 'ship' })); put('ship-next', HW.calship({})); put('ship-hol', HW.calhol({ noTag: 1 }));
   if (!$('ship-nbox').classList.contains('hidden')) shipNoticeSel();
 }
-let shipNCut = '';
+let shipNCut = '', shipMan = null;
+function shipDefMan() { const c = c24Cfg(), t = isoDate(new Date()); let cut = t; for (let i = 0; i < 30 && !hcShip(cut); i++) cut = hcAdd(cut, 1); return { cut, time: c24PmCut(c, cut), resume: hcResume(cut) }; }
 function shipNoticeSel() {
-  const t = isoDate(new Date()), L = hcPeriods().filter(p => p.cut && !p.past), f = d => { const x = dOf(d); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + WDK[x.getDay()] + ')'; }, el = $('ship-nsel');
-  if (!L.length) { el.innerHTML = `<p class="crm-none">공지를 만들 휴무가 없어요. 달력에서 날짜를 눌러 <b>휴무 설정</b>을 먼저 해 주세요.${hcCanEdit() ? ' <button class="btn sm" type="button" data-hmcalset="' + hcAdd(t, 7) + '">휴무 설정</button>' : ''}</p>`; $('ship-nhost').innerHTML = ''; shipNCut = ''; return; }
-  if (!L.some(p => p.cut === shipNCut)) shipNCut = L[0].cut;
-  const h = `<label class="ship-nl"><span>어느 휴무 공지인가요</span><select id="ship-ncut">${L.map(p => `<option value="${p.cut}" ${p.cut === shipNCut ? 'selected' : ''}>${f(p.cut)} ${esc(p.time)} 마감 → ${f(p.resume)} 재개</option>`).join('')}</select></label>`;
+  const L = hcPeriods().filter(p => p.cut && !p.past), f = d => { const x = dOf(d); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + WDK[x.getDay()] + ')'; }, el = $('ship-nsel');
+  if (shipNCut !== 'man' && !L.some(p => p.cut === shipNCut)) shipNCut = L.length ? L[0].cut : 'man';
+  if (shipNCut === 'man' && !shipMan) shipMan = shipDefMan();
+  const h = `<div class="ship-nl"><label><span>어느 공지인가요</span><select id="ship-ncut">${L.map(p => `<option value="${p.cut}" ${p.cut === shipNCut ? 'selected' : ''}>${f(p.cut)} ${esc(p.time)} 마감 → ${f(p.resume)} 재개</option>`).join('')}<option value="man" ${shipNCut === 'man' ? 'selected' : ''}>휴무 설정 없이 날짜 직접 넣기</option></select></label>
+    ${shipNCut === 'man' ? `<label><span>마감일</span><input type="date" data-shipman="cut" value="${shipMan.cut}"></label><label><span>마감 시간</span><input type="time" step="60" data-shipman="time" value="${shipMan.time}"></label><label><span>다시 보내는 날</span><input type="date" data-shipman="resume" value="${shipMan.resume}"></label>` : ''}</div>`;
   if (el._h !== h) { el.innerHTML = h; el._h = h; }
-  if (!$('ship-nhost').querySelector('.ntbox') || $('ship-nhost')._cut !== shipNCut) { window.ntInline($('ship-nhost'), shipNCut); $('ship-nhost')._cut = shipNCut; }
+  const key = shipNCut === 'man' ? 'man:' + shipMan.cut + shipMan.time + shipMan.resume : shipNCut;
+  if (!$('ship-nhost').querySelector('.ntbox') || $('ship-nhost')._cut !== key) { window.ntInline($('ship-nhost'), shipNCut === 'man' ? shipMan : shipNCut); $('ship-nhost')._cut = key; }
 }
+document.addEventListener('change', e => { const m = e.target.closest && e.target.closest('[data-shipman]'); if (!m || !m.value) return; shipMan[m.dataset.shipman] = m.value; if (shipMan.resume <= shipMan.cut) { shipMan.resume = hcResume(shipMan.cut); } $('ship-nsel')._h = ''; shipNoticeSel(); });
 function shipNoticeOpen(cut) { const b = $('ship-nbox'); if (cut) shipNCut = cut; $('ship-nhost')._cut = ''; b.classList.remove('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'true'); shipNoticeSel(); setTimeout(() => b.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); }
 document.addEventListener('click', async e => {
   if (e.target.closest('[data-subfor=run] [data-subgo="ship"]')) { setTimeout(renderShip, 0); return; }
   if (e.target.closest('.tab[data-t=run]')) { setTimeout(renderShip, 0); return; }
+  if (e.target.closest('#ship-cbtn')) { if (!hcCanEdit()) { alert('관리자 아이디로 로그인해야 바꿀 수 있어요'); return; } const sel = hmCalSel.ship, t = isoDate(new Date()); hcOpen(sel && sel > t ? sel : hcAdd(t, 7)); return; }
   if (e.target.closest('#ship-nbtn')) { const b = $('ship-nbox'); if (b.classList.contains('hidden')) shipNoticeOpen(); else { b.classList.add('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'false'); } return; }
 });
 function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
