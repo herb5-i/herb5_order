@@ -4850,6 +4850,10 @@ document.body.appendChild(wrapEl);
 
 let S={cut:'',time:'13:00',resume:''},HOL={};
 const THEMES={
+ c_chuseok:{n:'추석 · 단아',style:'classic',name:'추석',bg:'#eeedeb',moon:'#f2c14e',band:'#a3171e',cut:'#2b2b2b',res:'#2b2b2b',ink:'#2b2b2b',deco:['moonc','roof']},
+ c_seol:{n:'설날 · 단아',style:'classic',name:'설날',bg:'#f3eee8',moon:'#e8a0a0',band:'#b0322b',cut:'#2b2b2b',res:'#2b2b2b',ink:'#2b2422',deco:['plumc','roof']},
+ c_year:{n:'연말 · 단아',style:'classic',name:'연말연시',bg:'#f1f1ef',moon:'#d8b45a',band:'#1f3f7a',cut:'#23262f',res:'#23262f',ink:'#23262f',deco:['starc','moonc']},
+ c_herb:{n:'기본 · 단아',style:'classic',name:'휴무',bg:'#f1f3ef',moon:'#cfe3c4',band:'#2f7d55',cut:'#22302a',res:'#22302a',ink:'#22302a',deco:['leafc']},
  chuseok:{n:'추석',bg:'#f3eee6',moon:'#fbd94e',band:'#f4e1da',cut:'#cf4b37',res:'#2a9bb5',ink:'#1f1a16',sub:'• 2026 秋夕 •',t1:'추석',deco:['persimmon','cloud','maple','hills']},
  seol:{n:'설날',bg:'#f6ece6',moon:'#f6b7b0',band:'#f7dcd5',cut:'#c8433a',res:'#2f8a6a',ink:'#2a1d1a',sub:'• 2027 新年 •',t1:'설날',deco:['plum','cloud','pouch','hills']},
  xmas:{n:'크리스마스',bg:'#eaf3ec',moon:'#bfe3c6',band:'#f6dcd8',cut:'#d64541',res:'#2f8a5a',ink:'#1c2a22',sub:'• Merry Christmas •',t1:'성탄절',deco:['snow','tree','gift']},
@@ -4860,16 +4864,19 @@ const THEMES={
  herb:{n:'허브 (기본)',bg:'#f1f6ee',moon:'#cfe8c4',band:'#f4e1da',cut:'#cf4b37',res:'#2f7d55',ink:'#1d3a2a',sub:'• herb5 허브아이 •',t1:'휴무',deco:['leaf','cloud','sprout']}};
 const md=d=>{const x=new Date(d+'T00:00');return (x.getMonth()+1)+'월 '+x.getDate()+'일'};
 const tt=t=>{const [h,m]=t.split(':').map(Number);return (h<12?'오전':'오후')+((h%12)||12)+'시'+(m?' '+m+'분':'')};
-const BASE=[['sub','작은 글',30],['t1','큰 제목',170],['t2','제목 아래 글',76],['lab1','마감 날 글씨',36],['lab2','재개 날 글씨',36],['note','안내글',30],['noteB','강조 안내글 (굵게 · 밑줄)',32]];
+const BASE=[['sub','작은 글',30],['t1','큰 제목',170],['t2','제목 아래 글',76],['lab1','마감 날 글씨',36],['lab2','재개 날 글씨',36],['note','안내글 (**글자**로 감싸면 강조색)',30],['noteB','강조 안내글 (굵게 · 밑줄)',32]];
 let th='chuseok',W=1080,H=1350,V={},C={},POS={},BOX={},extra=0;
 const ROUND='"Jua","Gowun Dodum","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif',SOFT='"Gowun Dodum","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif';
 function setTheme(k){th=k;const t=THEMES[k];C={bg:t.bg,moon:t.moon,band:t.band,cut:t.cut,res:t.res,ink:t.ink};
  const keepExtra=Object.keys(V).filter(x=>x.startsWith('box'));const old=V;V={};
+ if(t.style==='classic'){const nm=t.name;V.sub={t:'',s:30,c:t.ink};V.t1={t:nm==='휴무'?'배송 휴무 공지':nm+' 배송 공지',s:102,c:t.ink};V.t2={t:'',s:76,c:t.ink};V.lab1={t:'배송 마감',s:29,c:t.ink};V.lab2={t:'배송 재개',s:29,c:t.ink};
+  V.note={t:(nm==='휴무'?'휴무 기간':nm+' 연휴')+' 배송 일정은 다음과 같습니다.\n**'+md(S.cut)+' '+tt(S.time)+'**까지 주문하시면 **연휴 전**에 받아 보실 수 있으며,\n**'+md(S.resume)+'부터** 순서대로 정상 출고됩니다.',s:30,c:t.ink};V.noteB={t:'',s:32,c:t.ink};
+  keepExtra.forEach(x=>V[x]=old[x]);['bg','moon','band','cut','res'].forEach(x=>$n('c-'+x).value=C[x]);fieldsUi();themesUi();draw();return;}
  V.sub={t:t.sub,s:30,c:t.tink||t.ink};V.t1={t:t.t1,s:t.t1.length>3?120:170,c:t.tink||t.ink};V.t2={t:'배송안내',s:76,c:t.tink||t.ink};
  V.lab1={t:tt(S.time)+' 주문마감',s:36,c:t.cut};V.lab2={t:'순차출고 시작',s:36,c:t.res};
  V.note={t:'* 연휴 전 · 후 택배사 물량 증가로 배송이 늦어질 수 있으니\n원활한 받으심을 위해',s:30,c:t.ink};V.noteB={t:'미리 여유 있게 주문해 주시길 바랍니다.',s:32,c:t.ink};
  keepExtra.forEach(x=>V[x]=old[x]);['bg','moon','band','cut','res'].forEach(x=>$n('c-'+x).value=C[x]);fieldsUi();themesUi();draw();}
-function themesUi(){$n('themes').innerHTML=Object.entries(THEMES).map(([k,t])=>`<button class="th ${k===th?'on':''}" data-ntt="${k}"><i style="background:radial-gradient(circle at 50% 60%,${t.moon} 0 34%,${t.bg} 36%)"></i>${t.n}</button>`).join('');}
+function themesUi(){$n('themes').innerHTML=Object.entries(THEMES).map(([k,t])=>`<button class="th ${k===th?'on':''}" data-ntt="${k}"><i style="background:${t.style==='classic'?`linear-gradient(${t.bg} 0 55%,${t.band} 55% 75%,${t.bg} 75%)`:`radial-gradient(circle at 50% 60%,${t.moon} 0 34%,${t.bg} 36%)`}"></i>${t.n}</button>`).join('');}
 function fieldsUi(){const L=BASE.map(b=>[b[0],b[1]]).concat(Object.keys(V).filter(x=>x.startsWith('box')).map((x,i)=>[x,'글 상자 '+(i+1)]));
  $n('fields').innerHTML=L.map(([k,n])=>`<div class="fld"><div class="h">${n}<span class="sp"></span><input type="color" data-ntc="${k}" value="${V[k].c}" aria-label="${n} 색"><select data-nts="${k}" aria-label="${n} 크기">${[.6,.8,1,1.2,1.4,1.7].map(m=>{const base=(BASE.find(b=>b[0]===k)||[0,0,34])[2]*(k==='t1'&&V.t1.t.length>3?.7:1);const v=Math.round(base*m);return `<option value="${v}" ${Math.abs(v-V[k].s)<2?'selected':''}>${Math.round(m*100)}%</option>`}).join('')}</select>${k.startsWith('box')?`<button class="x" data-ntdel="${k}" aria-label="지우기">×</button>`:''}</div><textarea data-ntk="${k}" rows="${Math.max(1,V[k].t.split('\n').length)}" aria-label="${n}">${V[k].t.replace(/</g,'&lt;')}</textarea></div>`).join('');
  $n('fields').querySelectorAll('textarea').forEach(grow);}
@@ -4911,7 +4918,62 @@ function deco(x,k){const T=THEMES[th],d=T.deco,m=Math.min(W,H)/1080;
 // ---------- 그리기 ----------
 const add=(d,n)=>{const x=new Date(d+'T00:00');x.setDate(x.getDate()+n);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
 function lines(x,v,font,maxW){x.font=font;const out=[];String(v.t).split('\n').forEach(line=>{let cur='';[...line].forEach(ch=>{if(x.measureText(cur+ch).width>maxW&&cur){const sp=cur.lastIndexOf(' ');if(sp>0){out.push(cur.slice(0,sp));cur=cur.slice(sp+1)+ch}else{out.push(cur);cur=ch}}else cur+=ch});out.push(cur)});return out;}
-function draw(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getContext('2d'),land=W/H>1.1;BOX={};let m=Math.min(W,H)/1080*(H/W>1.5?1.25:1);
+
+const SERIF2='"Gowun Batang","Nanum Myeongjo","AppleMyungjo","Batang",serif';
+function richLines(x,txt,font,bfont,maxW){const out=[];String(txt).split('\n').forEach(line=>{const segs=[];line.split('**').forEach((t,i)=>{if(t)segs.push([t,i%2===1])});out.push(segs)});return out;}
+function drawRich(x,segs,cx,y,font,bfont,col,acc){let w=0;segs.forEach(([t,b])=>{x.font=b?bfont:font;w+=x.measureText(t).width});let X=cx-w/2;x.textAlign='left';segs.forEach(([t,b])=>{x.font=b?bfont:font;x.fillStyle=b?acc:col;x.fillText(t,X,y);X+=x.measureText(t).width});x.textAlign='center';return w;}
+function cdeco(x,m){const d=THEMES[th].deco;
+ if(d.includes('moonc')){const cx=150*m,cy=120*m,r=74*m,g=x.createRadialGradient(cx-20*m,cy-20*m,10*m,cx,cy,r);g.addColorStop(0,'#fbe08a');g.addColorStop(1,C.moon);x.save();x.shadowColor='rgba(242,193,78,.55)';x.shadowBlur=60*m;x.fillStyle=g;x.beginPath();x.arc(cx,cy,r,0,7);x.fill();x.restore();
+  x.save();x.fillStyle='rgba(255,255,255,.92)';x.shadowColor='rgba(0,0,0,.08)';x.shadowBlur=24*m;[[80,190,80,30],[150,184,62,26],[214,196,70,24],[30,204,60,20],[290,160,50,18],[330,168,40,15]].forEach(([a,b,rx,ry])=>{x.beginPath();x.ellipse(a*m,b*m,rx*m,ry*m,0,0,7);x.fill();});x.restore();}
+ if(d.includes('starc')){x.save();x.fillStyle=C.moon;[[W/m-140,140,22],[W/m-220,90,12],[W/m-90,240,10],[W/m-260,190,8]].forEach(([a,b,r])=>{x.beginPath();for(let i=0;i<8;i++){const an=i*Math.PI/4,rr=i%2?r*.35*m:r*m;x.lineTo(a*m+Math.cos(an)*rr,b*m+Math.sin(an)*rr);}x.fill();});x.restore();}
+ if(d.includes('plumc')){x.save();x.translate(-10*m,60*m);x.strokeStyle='#5a4440';x.lineWidth=10*m;x.lineCap='round';x.beginPath();x.moveTo(0,0);x.quadraticCurveTo(120*m,30*m,260*m,-10*m);x.stroke();x.lineWidth=6*m;x.beginPath();x.moveTo(140*m,20*m);x.lineTo(180*m,90*m);x.stroke();[[60,10,18],[150,0,22],[230,-14,16],[180,90,18],[100,40,13]].forEach(([a,b,r])=>{x.fillStyle=C.moon;for(let p=0;p<5;p++){x.beginPath();x.arc(a*m+Math.cos(p*1.256)*r*.6*m,b*m+Math.sin(p*1.256)*r*.6*m,r*.5*m,0,7);x.fill();}x.fillStyle='#f3d27a';x.beginPath();x.arc(a*m,b*m,r*.22*m,0,7);x.fill();});x.restore();}
+ if(d.includes('leafc')){x.save();[[90,110,60,-.6,'#9cc7a3'],[160,70,40,.5,'#c3dfbe'],[W/m-110,H/m-140,70,.7,'#9cc7a3'],[W/m-190,H/m-90,46,-.4,'#c3dfbe']].forEach(([a,b,r,an,c])=>{x.save();x.translate(a*m,b*m);x.rotate(an);x.fillStyle=c;x.beginPath();x.moveTo(0,-r*m);x.quadraticCurveTo(r*.75*m,0,0,r*m);x.quadraticCurveTo(-r*.75*m,0,0,-r*m);x.fill();x.restore();});x.restore();}
+ if(d.includes('roof')){x.save();const x0=W-520*m,yb=H-40*m;
+  // 서까래
+  x.fillStyle='#b98e5c';for(let i=0;i<12;i++){const X=x0+90*m+i*40*m;x.beginPath();x.roundRect(X,yb-120*m+i*1.5*m,12*m,70*m,4*m);x.fill();}
+  // 붉은 도리
+  x.fillStyle='#8f2a26';x.fillRect(x0+80*m,yb-58*m,W-x0,16*m);x.fillStyle='#3f6b5a';x.fillRect(x0+80*m,yb-42*m,W-x0,12*m);
+  // 지붕
+  x.fillStyle='#3b3e44';x.beginPath();x.moveTo(x0-20*m,yb-200*m);x.quadraticCurveTo(x0+20*m,yb-150*m,x0+120*m,yb-140*m);x.quadraticCurveTo(x0+330*m,yb-128*m,W+10*m,yb-160*m);x.lineTo(W+10*m,yb-250*m);x.quadraticCurveTo(x0+330*m,yb-214*m,x0+110*m,yb-196*m);x.quadraticCurveTo(x0+30*m,yb-190*m,x0-20*m,yb-200*m);x.closePath();x.fill();
+  x.strokeStyle='rgba(255,255,255,.14)';x.lineWidth=3*m;for(let k=1;k<4;k++){x.beginPath();x.moveTo(x0+30*m,yb-190*m+k*12*m);x.quadraticCurveTo(x0+330*m,yb-200*m+k*14*m,W,yb-236*m+k*16*m);x.stroke();}
+  // 막새 (기와 끝)
+  for(let i=0;i<11;i++){const t=i/10,X=x0+100*m+t*(W-x0-80*m),Y=yb-138*m-t*t*20*m+(t<.15?(.15-t)*40*m:0);x.fillStyle='#50545b';x.beginPath();x.arc(X,Y,13*m,0,7);x.fill();x.strokeStyle='#767b83';x.lineWidth=2.5*m;x.stroke();}
+  x.restore();}}
+function drawClassic(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getContext('2d'),land=W/H>1.1;BOX={};let m=Math.min(W,H)/1080*(H/W>1.5?1.2:1);
+ x.fillStyle=C.bg;x.fillRect(0,0,W,H);
+ const sun=d=>add(d,-new Date(d+'T00:00').getDay()),weeks=[];for(let d=sun(S.cut);d<=sun(S.resume)&&weeks.length<4;d=add(d,7))weeks.push(Array.from({length:7},(_,i)=>add(d,i)));
+ const tf=()=>`700 ${V.t1.s*m}px ${SERIF2}`,nf=()=>`500 ${V.note.s*m}px ${SERIF2}`,nbf=()=>`800 ${V.note.s*m}px ${SERIF2}`;
+ let cw,cellW,rowH,calH,tl,nl,headH,footH,hy,cy,fy,cx0;
+ for(let pass=0;pass<2;pass++){cw=land?W*.5:Math.min(W*.84,940*m);cellW=cw/7;rowH=128*m;calH=78*m+weeks.length*rowH;
+  x.font=tf();tl=V.t1.t.split('\n');nl=richLines(x,V.note.t);const sl=V.sub.t.trim()?V.sub.t.split('\n'):[];
+  headH=sl.length*V.sub.s*m*1.5+tl.length*V.t1.s*m*1.2+28*m+nl.length*V.note.s*m*1.75;footH=V.noteB.t.trim()?V.noteB.t.split('\n').length*V.noteB.s*m*1.6:0;
+  if(land){hy=(H-headH)/2;cx0=W*.47;cy=(H-calH-footH-30*m)/2;fy=cy+calH+30*m;break;}
+  const top=(THEMES[th].deco.includes('moonc')?250:150)*m,bot=(THEMES[th].deco.includes('roof')?300:80)*m,avail=H-top-bot,base=headH+calH+footH;if(base+90*m>avail&&pass===0){m*=avail/(base+90*m);continue;}
+  const gap=Math.min(110*m,(avail-base)/2);const rest=Math.max(0,avail-base-gap*(footH?2:1));hy=top+rest*.45;cy=hy+headH+gap;fy=cy+calH+gap*.8;cx0=(W-cw)/2;break;}
+ cdeco(x,m);
+ const P=k=>POS[k]||[0,0];let [dx,dy]=P('head'),hx=land?W*.25:W/2;x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';let y=hy;
+ {const lim=land?W*.4:W*.92;let mw=0;x.font=tf();tl.forEach(l=>mw=Math.max(mw,x.measureText(l).width));nl.forEach(seg=>{let w=0;seg.forEach(([t,b])=>{x.font=b?nbf():nf();w+=x.measureText(t).width});mw=Math.max(mw,w)});if(mw>lim){const f=lim/mw;x.translate(hx,hy);x.scale(f,f);x.translate(-hx,-hy);if(land)y=hy+headH*(1-f)/2/f;}}
+ if(V.sub.t.trim()){x.fillStyle=V.sub.c;x.font=`500 ${V.sub.s*m}px ${SERIF2}`;V.sub.t.split('\n').forEach(l=>{x.fillText(l,hx,y+V.sub.s*m*.75);y+=V.sub.s*m*1.5});}
+ x.fillStyle=V.t1.c;x.font=tf();tl.forEach(l=>{x.fillText(l,hx,y+V.t1.s*m*.6);y+=V.t1.s*m*1.2});y+=28*m;
+ nl.forEach(seg=>{drawRich(x,seg,hx,y+V.note.s*m*.85,nf(),nbf(),V.note.c,C.band);y+=V.note.s*m*1.75});x.restore();
+ const hw=land?W*.44:cw;BOX.head=[hx-hw/2+dx,hy+dy,hw,headH];
+ [dx,dy]=P('cal');x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';const c0=land?cx0:cx0,y0=cy;
+ x.fillStyle=C.ink;x.globalAlpha=.55;x.fillRect(c0,y0,cw,2*m);x.globalAlpha=1;x.font=`600 ${30*m}px ${SERIF2}`;['일','월','화','수','목','금','토'].forEach((w,i)=>{x.fillStyle=i===0?C.band:C.ink;x.fillText(w,c0+cellW*(i+.5),y0+39*m);});
+ x.globalAlpha=.55;x.fillStyle=C.ink;x.fillRect(c0,y0+76*m,cw,2*m);x.globalAlpha=1;
+ const off=d=>d>S.cut&&d<S.resume;
+ weeks.forEach((wk,r)=>{const ry=y0+78*m+r*rowH+rowH*.36;if(r){x.globalAlpha=.18;x.fillStyle=C.ink;x.fillRect(c0,y0+78*m+r*rowH,cw,1.5*m);x.globalAlpha=1;}
+  let i=0;while(i<7){if(off(wk[i])){let j=i;while(j<6&&off(wk[j+1]))j++;x.fillStyle=C.band;x.beginPath();x.roundRect(c0+cellW*i+8*m,ry-30*m,cellW*(j-i+1)-16*m,60*m,30*m);x.fill();
+    const names=wk.slice(i,j+1).map(d=>KR_HOL[d]||HOL[d]).filter(Boolean).map(n=>n.replace(/ 연휴$/,''));const nm=names[0]?names[0]+' 연휴 휴무':'배송 휴무';x.fillStyle=C.band;x.font=`700 ${22*m}px ${SERIF2}`;x.fillText(nm,c0+cellW*(i+j+1)/2,ry+52*m);i=j+1;}else i++;}
+  wk.forEach((d,c)=>{const X=c0+cellW*(c+.5),o=off(d);x.font=`500 ${36*m}px ${SERIF2}`;
+   if(d===S.cut||d===S.resume){x.strokeStyle=C.ink;x.lineWidth=2.5*m;x.beginPath();x.arc(X,ry,30*m,0,7);x.stroke();const lv=d===S.cut?V.lab1:V.lab2;x.fillStyle=lv.c;x.font=`600 ${lv.s*m*.8}px ${SERIF2}`;lv.t.split('\n').forEach((l,li)=>x.fillText(l,X,ry+(52+li*lv.s*.9)*m));x.font=`500 ${36*m}px ${SERIF2}`;}
+   x.fillStyle=o?'#fff':(c===0||KR_HOL[d])?C.band:C.ink;x.fillText(String(+d.slice(8)),X,ry+1*m);});});
+ x.restore();BOX.cal=[c0+dx,y0+dy,cw,calH];
+ if(V.noteB.t.trim()){[dx,dy]=P('note');x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';x.fillStyle=V.noteB.c;x.font=`700 ${V.noteB.s*m}px ${SERIF2}`;const nx=land?cx0+cw/2:W/2;V.noteB.t.split('\n').forEach((l,i)=>x.fillText(l,nx,fy+V.noteB.s*m*(.8+i*1.6)));x.restore();BOX.note=[nx-cw/2+dx,fy+dy,cw,footH];}
+ x.textAlign='center';x.textBaseline='middle';Object.keys(V).filter(k=>k.startsWith('box')).forEach((k,i)=>{const [bx,by]=P(k),v=V[k],f=`700 ${v.s*m}px ${SERIF2}`;x.font=f;const L=v.t.split('\n');const X=W/2+bx,Y=H*.5+i*80*m+by;x.fillStyle=v.c;L.forEach((l,li)=>x.fillText(l,X,Y+li*v.s*m*1.3+v.s*m*.6));const w=Math.max(...L.map(l=>x.measureText(l).width));BOX[k]=[X-w/2,Y,w,L.length*v.s*m*1.3];});
+ x.textAlign='left';x.textBaseline='alphabetic';}
+
+function draw(){if(THEMES[th].style==='classic')drawClassic();else drawCute();}
+function drawCute(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getContext('2d'),land=W/H>1.1;BOX={};let m=Math.min(W,H)/1080*(H/W>1.5?1.25:1);
  x.fillStyle=C.bg;x.fillRect(0,0,W,H);
  const sun=d=>add(d,-new Date(d+'T00:00').getDay());const first=add(S.cut,-1),wk0=sun(first),wkN=sun(S.resume);const weeks=[];for(let d=wk0;d<=wkN&&weeks.length<4;d=add(d,7))weeks.push(Array.from({length:7},(_,i)=>add(d,i)));
  const dd=THEMES[th].deco,bot=['hills','wave','sprout','tree','gift','pouch'].some(z=>dd.includes(z))?170:60,topP=50;
@@ -4937,7 +4999,7 @@ function draw(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getContext('
  // 달력
  [dx,dy]=P('cal');x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';const c0=cx0,y0=cy0;x.font=`500 ${32*m}px ${SOFT}`;['일','월','화','수','목','금','토'].forEach((w,i)=>{x.fillStyle=i===0?C.cut:C.ink;x.fillText(w,c0+cellW*(i+.5),y0+26*m);});
  x.fillStyle=C.ink;x.globalAlpha=.35;x.fillRect(c0,y0+62*m,cw,2*m);x.globalAlpha=1;
- const inBand=d=>d>=S.cut&&d<S.resume;
+ const inBand=d=>d>S.cut&&d<S.resume;
  weeks.forEach((wk,r)=>{const ry=y0+70*m+r*rowH+rowH*.32;
   let i=0;while(i<7){if(inBand(wk[i])){let j=i;while(j<6&&inBand(wk[j+1]))j++;x.fillStyle=C.band;x.fillRect(c0+cellW*i,ry-26*m,cellW*(j-i+1),52*m);i=j+1;}else i++;}
   wk.forEach((d,c)=>{const X=c0+cellW*(c+.5);if(d<first||d>S.resume)return;const off=d>S.cut&&d<S.resume,red=c===0||HOL[d]||off;
@@ -4969,7 +5031,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.ntbox'))return;cons
 });
 const ymd = d => { const x = new Date(d + 'T00:00'); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + '일월화수목금토'[x.getDay()] + ')'; };
 function pickTheme(names, cut) { const s = names.join(' '), mo = +cut.slice(5, 7);
-  return /추석/.test(s) ? 'chuseok' : /설날/.test(s) ? 'seol' : /크리스마스/.test(s) ? 'xmas' : /신정/.test(s) ? 'newyear' : /어린이날|부처님|노동절/.test(s) ? 'may' : /삼일절|광복절|개천절|한글날|제헌절|현충일|선거/.test(s) ? 'national' : mo >= 7 && mo <= 8 ? 'summer' : 'herb'; }
+  return /추석/.test(s) ? 'c_chuseok' : /설날/.test(s) ? 'c_seol' : /크리스마스/.test(s) ? 'xmas' : /신정/.test(s) ? 'c_year' : /어린이날|부처님|노동절/.test(s) ? 'may' : /삼일절|광복절|개천절|한글날|제헌절|현충일|선거/.test(s) ? 'national' : mo >= 7 && mo <= 8 ? 'summer' : 'c_herb'; }
 let ntCut = '';
 const ntBox = wrapEl.querySelector('.ntbox');
 const ntMount = host => { if (ntBox.parentNode !== host) host.appendChild(ntBox); ntBox.classList.toggle('inline', host !== wrapEl); };
@@ -5035,17 +5097,15 @@ function renderShip() {
 let shipNCut = '', shipMan = null;
 function shipDefMan() { const c = c24Cfg(), t = isoDate(new Date()); let cut = t; for (let i = 0; i < 30 && !hcShip(cut); i++) cut = hcAdd(cut, 1); return { cut, time: c24PmCut(c, cut), resume: hcResume(cut) }; }
 function shipNoticeSel() {
-  const L = hcPeriods().filter(p => p.cut && !p.past), f = d => { const x = dOf(d); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + WDK[x.getDay()] + ')'; }, el = $('ship-nsel');
-  if (shipNCut !== 'man' && !L.some(p => p.cut === shipNCut)) shipNCut = L.length ? L[0].cut : 'man';
-  if (shipNCut === 'man' && !shipMan) shipMan = shipDefMan();
-  const h = `<div class="ship-nl"><label><span>어느 공지인가요</span><select id="ship-ncut">${L.map(p => `<option value="${p.cut}" ${p.cut === shipNCut ? 'selected' : ''}>${f(p.cut)} ${esc(p.time)} 마감 → ${f(p.resume)} 재개</option>`).join('')}<option value="man" ${shipNCut === 'man' ? 'selected' : ''}>휴무 설정 없이 날짜 직접 넣기</option></select></label>
-    ${shipNCut === 'man' ? `<label><span>마감일</span><input type="date" data-shipman="cut" value="${shipMan.cut}"></label><label><span>마감 시간</span><input type="time" step="60" data-shipman="time" value="${shipMan.time}"></label><label><span>다시 보내는 날</span><input type="date" data-shipman="resume" value="${shipMan.resume}"></label>` : ''}</div>`;
+  const L = hcPeriods().filter(p => p.cut && !p.past), el = $('ship-nsel');
+  if (!shipMan) { const p0 = L[0]; shipMan = p0 ? { cut: p0.cut, time: p0.time, resume: p0.resume } : shipDefMan(); }
+  const h = `<div class="ship-nl"><label><span>마감일</span><input type="date" data-shipman="cut" value="${shipMan.cut}"></label><label><span>마감 시간</span><input type="time" step="60" data-shipman="time" value="${shipMan.time}"></label><label><span>다시 보내는 날</span><input type="date" data-shipman="resume" value="${shipMan.resume}"></label></div>`;
   if (el._h !== h) { el.innerHTML = h; el._h = h; }
-  const key = shipNCut === 'man' ? 'man:' + shipMan.cut + shipMan.time + shipMan.resume : shipNCut;
-  if (!$('ship-nhost').querySelector('.ntbox') || $('ship-nhost')._cut !== key) { window.ntInline($('ship-nhost'), shipNCut === 'man' ? shipMan : shipNCut); $('ship-nhost')._cut = key; }
+  const key = shipMan.cut + shipMan.time + shipMan.resume;
+  if (!$('ship-nhost').querySelector('.ntbox') || $('ship-nhost')._cut !== key) { window.ntInline($('ship-nhost'), Object.assign({}, shipMan)); $('ship-nhost')._cut = key; }
 }
 document.addEventListener('change', e => { const m = e.target.closest && e.target.closest('[data-shipman]'); if (!m || !m.value) return; shipMan[m.dataset.shipman] = m.value; if (shipMan.resume <= shipMan.cut) { shipMan.resume = hcResume(shipMan.cut); } $('ship-nsel')._h = ''; shipNoticeSel(); });
-function shipNoticeOpen(cut) { const b = $('ship-nbox'); if (cut) shipNCut = cut; $('ship-nhost')._cut = ''; b.classList.remove('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'true'); shipNoticeSel(); setTimeout(() => b.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); }
+function shipNoticeOpen(cut) { const b = $('ship-nbox'); if (cut) { const c = c24Cfg(); shipMan = { cut, time: c24PmCut(c, cut), resume: hcResume(cut) }; } $('ship-nhost')._cut = ''; b.classList.remove('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'true'); shipNoticeSel(); setTimeout(() => b.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); }
 document.addEventListener('click', async e => {
   if (e.target.closest('[data-subfor=run] [data-subgo="ship"]')) { setTimeout(renderShip, 0); return; }
   if (e.target.closest('.tab[data-t=run]')) { setTimeout(renderShip, 0); return; }
