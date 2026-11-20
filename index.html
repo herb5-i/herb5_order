@@ -1792,8 +1792,8 @@ html.dark .hw-tg.off{background:rgba(232,121,138,.15);color:#e8798a}
 .nt-seg{display:flex;flex-wrap:wrap;gap:2px}.nt-seg button{padding:6px 9px!important;font-size:12.5px!important}
 #nt-fields .fld{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px}#nt-fields .h{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--mute);margin-bottom:6px}#nt-fields .h .sp{flex:1}
 #nt-fields textarea{font:inherit;font-size:14px;line-height:1.55;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;width:100%;box-sizing:border-box;background:var(--card);color:var(--ink);resize:vertical;min-height:42px;overflow:hidden}
-#nt-fields input[type=color],.nt-cols input{height:28px;border:1px solid var(--line2,#dadde1);border-radius:7px;padding:2px;background:var(--card)}#nt-fields input[type=color]{width:28px}#nt-fields select{font:inherit;font-size:12px;padding:3px 5px;border:1px solid var(--line2,#dadde1);border-radius:7px;background:var(--card);color:var(--ink)}#nt-fields .x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
-.nt-cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.nt-cols label{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--mute)}.nt-cols input{width:100%}
+#nt-fields input[type=color],.nt-cols input{height:28px;border:1px solid var(--line2,#dadde1);border-radius:7px;padding:2px;background:var(--card)}#nt-fields input[type=color]{width:28px}#nt-fields select{font:inherit;font-size:12px;padding:3px 5px;border:1px solid var(--line2,#dadde1);border-radius:7px;background:var(--card);color:var(--ink)}#nt-fields .h{flex-wrap:wrap}.nt-bd{font:inherit;font-size:12px;font-weight:800;padding:3px 8px;border:1px solid var(--line2,#dadde1);border-radius:7px;background:var(--card);color:var(--mute);cursor:pointer}.nt-bd.on{background:var(--acc);border-color:var(--acc);color:#fff}.nt-sz{display:flex;align-items:center;gap:8px;flex-basis:100%;order:9;margin-top:2px}.nt-sz::before{content:'크기';font-weight:600}.nt-sz input{flex:1;min-width:0;accent-color:var(--acc)}.nt-sz output{font-size:11.5px;font-weight:600;min-width:36px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}#nt-fields .x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
+.nt-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}.nt-cols label{text-align:center;line-height:1.25}.nt-cols label{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--mute)}.nt-cols input{width:100%}
 @media(max-width:900px){.nt-wrap{grid-template-columns:1fr}.nt-stage{position:static}.nt-cv{max-height:52vh}#ntEd .ntbox{padding:14px}}
 .ship-top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin-bottom:14px}.ship-top .hmi{position:relative;grid-column:auto!important;grid-row:auto!important}
 .ship-top .ship-cal{height:520px}.ship-side{display:grid;grid-template-rows:190px 316px;gap:14px}.ship-side .hmi{height:100%}
@@ -4845,8 +4845,8 @@ wrapEl.innerHTML = `<div class="mbox ntbox"><div class="hmf-h"><b>공지 이미�
    <p class="msg" id="nt-msg"></p></div></div>
  <div class="nt-panel"><div class="nt-lb">테마</div><div class="nt-themes" id="nt-themes"></div>
   <div class="nt-lb">크기 비율</div><div class="seg nt-seg" id="nt-size"><button type="button" data-ntz="1080x1350" class="on">4:5</button><button type="button" data-ntz="1080x1080">1:1</button><button type="button" data-ntz="1440x1080">4:3</button><button type="button" data-ntz="1080x1440">3:4</button><button type="button" data-ntz="1080x1920">9:16</button><button type="button" data-ntz="860x1200">상세</button></div>
-  <div class="nt-lb">글 <span>· Enter로 줄 나누기</span><span class="sp"></span><button class="btn sm" id="nt-addbox" type="button">＋ 글 상자</button></div><div id="nt-fields"></div>
-  <div class="nt-lb">색</div><div class="nt-cols"><label><input type="color" id="nt-c-bg">배경</label><label><input type="color" id="nt-c-moon">큰 원</label><label><input type="color" id="nt-c-band">쉬는 날</label><label><input type="color" id="nt-c-cut">마감</label><label><input type="color" id="nt-c-res">재개</label></div></div></div></div>`;
+  <div class="nt-lb">글 <span>· Enter로 줄 나누기 · **글자**는 강조색</span><span class="sp"></span><button class="btn sm" id="nt-addbox" type="button">＋ 글 상자</button></div><div id="nt-fields"></div>
+  <div class="nt-lb">색</div><div class="nt-cols"><label><input type="color" id="nt-c-bg">배경</label><label><input type="color" id="nt-c-moon">장식</label><label><input type="color" id="nt-c-band">쉬는 날 · 강조</label><label><input type="color" id="nt-c-cut">마감 날</label><label><input type="color" id="nt-c-res">재개 날</label><label><input type="color" id="nt-c-ink">달력 글씨</label></div></div></div></div>`;
 document.body.appendChild(wrapEl);
 
 let S={cut:'',time:'13:00',resume:''},HOL={};
@@ -4859,21 +4859,24 @@ const THEMES={
  c_herb:{n:'기본',style:'classic',name:'휴무',bg:'#f1f3ef',moon:'#cfe3c4',band:'#2f7d55',cut:'#22302a',res:'#22302a',ink:'#22302a',deco:['leafc']}};
 const md=d=>{const x=new Date(d+'T00:00');return (x.getMonth()+1)+'월 '+x.getDate()+'일'};
 const tt=t=>{const [h,m]=t.split(':').map(Number);return (h<12?'오전':'오후')+((h%12)||12)+'시'+(m?' '+m+'분':'')};
-const BASE=[['sub','작은 글',30],['t1','큰 제목',170],['t2','제목 아래 글',76],['lab1','마감 날 글씨',36],['lab2','재개 날 글씨',36],['note','안내글 (**글자**로 감싸면 강조색)',30],['noteB','강조 안내글 (굵게 · 밑줄)',32]];
+const BASE=[['sub','작은 글',30],['t1','큰 제목',170],['t2','제목 아래 글',76],['lab1','마감 날 글씨',36],['lab2','재개 날 글씨',36],['note','안내글',30],['noteB','아래 강조 안내글',32]];
 let th='c_chuseok',W=1080,H=1350,V={},C={},POS={},BOX={},extra=0;
 const ROUND='"Jua","Gowun Dodum","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif',SOFT='"Gowun Dodum","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif';
 function setTheme(k){th=k;const t=THEMES[k];C={bg:t.bg,moon:t.moon,band:t.band,cut:t.cut,res:t.res,ink:t.ink};
  const keepExtra=Object.keys(V).filter(x=>x.startsWith('box'));const old=V;V={};
  if(t.style==='classic'){const nm=t.name;V.sub={t:'',s:30,c:t.ink};V.t1={t:nm==='휴무'?'배송 휴무 공지':nm+' 배송 공지',s:102,c:t.ink};V.t2={t:'',s:76,c:t.ink};V.lab1={t:'배송 마감',s:29,c:t.ink};V.lab2={t:'배송 재개',s:29,c:t.ink};
   V.note={t:(nm==='휴무'?'휴무 기간':/연휴$|연말연시|크리스마스/.test(nm)?nm:nm+' 연휴')+' 배송 일정은 다음과 같습니다.\n**'+md(S.cut)+' '+tt(S.time)+'**까지 주문하시면 **연휴 전**에 받아 보실 수 있으며,\n**'+md(S.resume)+'부터** 순서대로 정상 출고됩니다.',s:30,c:t.ink};V.noteB={t:'',s:32,c:t.ink};
-  keepExtra.forEach(x=>V[x]=old[x]);['bg','moon','band','cut','res'].forEach(x=>$n('c-'+x).value=C[x]);fieldsUi();themesUi();draw();return;}
+  keepExtra.forEach(x=>V[x]=old[x]);prep();['bg','moon','band','cut','res','ink'].forEach(x=>$n('c-'+x).value=C[x]);fieldsUi();themesUi();draw();return;}
  V.sub={t:t.sub,s:30,c:t.tink||t.ink};V.t1={t:t.t1,s:t.t1.length>3?120:170,c:t.tink||t.ink};V.t2={t:'배송안내',s:76,c:t.tink||t.ink};
  V.lab1={t:tt(S.time)+' 주문마감',s:36,c:t.cut};V.lab2={t:'순차출고 시작',s:36,c:t.res};
  V.note={t:'* 연휴 전 · 후 택배사 물량 증가로 배송이 늦어질 수 있으니\n원활한 받으심을 위해',s:30,c:t.ink};V.noteB={t:'미리 여유 있게 주문해 주시길 바랍니다.',s:32,c:t.ink};
- keepExtra.forEach(x=>V[x]=old[x]);['bg','moon','band','cut','res'].forEach(x=>$n('c-'+x).value=C[x]);fieldsUi();themesUi();draw();}
+ keepExtra.forEach(x=>V[x]=old[x]);prep();['bg','moon','band','cut','res','ink'].forEach(x=>$n('c-'+x).value=C[x]);fieldsUi();themesUi();draw();}
+const BOLD0={t1:1,noteB:1,lab1:1,lab2:1};
+function prep(){Object.keys(V).forEach(k=>{const v=V[k];if(v.b==null)v.b=v.s;if(v.p==null)v.p=100;if(v.w==null)v.w=!!(BOLD0[k]||k.startsWith('box'));});}
+const wt=(k,on,off)=>V[k]&&V[k].w?(on||800):(off||400);
 function themesUi(){$n('themes').innerHTML=Object.entries(THEMES).map(([k,t])=>`<button class="th ${k===th?'on':''}" data-ntt="${k}"><i style="background:${t.style==='classic'?`linear-gradient(${t.bg} 0 55%,${t.band} 55% 75%,${t.bg} 75%)`:`radial-gradient(circle at 50% 60%,${t.moon} 0 34%,${t.bg} 36%)`}"></i>${t.n}</button>`).join('');}
 function fieldsUi(){const L=BASE.map(b=>[b[0],b[1]]).concat(Object.keys(V).filter(x=>x.startsWith('box')).map((x,i)=>[x,'글 상자 '+(i+1)]));
- $n('fields').innerHTML=L.map(([k,n])=>`<div class="fld"><div class="h">${n}<span class="sp"></span><input type="color" data-ntc="${k}" value="${V[k].c}" aria-label="${n} 색"><select data-nts="${k}" aria-label="${n} 크기">${[.6,.8,1,1.2,1.4,1.7].map(m=>{const base=(BASE.find(b=>b[0]===k)||[0,0,34])[2]*(k==='t1'&&V.t1.t.length>3?.7:1);const v=Math.round(base*m);return `<option value="${v}" ${Math.abs(v-V[k].s)<2?'selected':''}>${Math.round(m*100)}%</option>`}).join('')}</select>${k.startsWith('box')?`<button class="x" data-ntdel="${k}" aria-label="지우기">×</button>`:''}</div><textarea data-ntk="${k}" rows="${Math.max(1,V[k].t.split('\n').length)}" aria-label="${n}">${V[k].t.replace(/</g,'&lt;')}</textarea></div>`).join('');
+ $n('fields').innerHTML=L.map(([k,n])=>`<div class="fld"><div class="h">${n}<span class="sp"></span><input type="color" data-ntc="${k}" value="${V[k].c}" aria-label="${n} 색"><button type="button" class="nt-bd ${V[k].w?'on':''}" data-ntw="${k}" aria-pressed="${V[k].w?'true':'false'}" aria-label="${n} 굵게">굵게</button><span class="nt-sz"><input type="range" min="0" max="200" step="5" data-nts="${k}" value="${V[k].p}" aria-label="${n} 글자 크기"><output>${V[k].p}%</output></span>${k.startsWith('box')?`<button class="x" data-ntdel="${k}" aria-label="지우기">×</button>`:''}</div><textarea data-ntk="${k}" rows="${Math.max(1,V[k].t.split('\n').length)}" aria-label="${n}">${V[k].t.replace(/</g,'&lt;')}</textarea></div>`).join('');
  $n('fields').querySelectorAll('textarea').forEach(grow);}
 const grow=t=>{t.style.height='auto';t.style.height=t.scrollHeight+2+'px'};
 // ---------- 아기자기한 그림 ----------
@@ -4954,19 +4957,19 @@ function cdeco(x,m){const d=THEMES[th].deco;
 function drawClassic(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getContext('2d'),land=W/H>1.1;BOX={};let m=Math.min(W,H)/1080*(H/W>1.5?1.2:1);
  x.fillStyle=C.bg;x.fillRect(0,0,W,H);
  const sun=d=>add(d,-new Date(d+'T00:00').getDay()),weeks=[];for(let d=sun(S.cut);d<=sun(S.resume)&&weeks.length<4;d=add(d,7))weeks.push(Array.from({length:7},(_,i)=>add(d,i)));
- const tf=()=>`700 ${V.t1.s*m}px ${SERIF2}`,nf=()=>`500 ${V.note.s*m}px ${SERIF2}`,nbf=()=>`800 ${V.note.s*m}px ${SERIF2}`;
+ const tf=()=>`${wt('t1')} ${V.t1.s*m}px ${SERIF2}`,t2f=()=>`${wt('t2')} ${V.t2.s*m}px ${SERIF2}`,nf=()=>`${wt('note')} ${V.note.s*m}px ${SERIF2}`,nbf=()=>`800 ${V.note.s*m}px ${SERIF2}`;
  let cw,cellW,rowH,calH,tl,nl,headH,footH,hy,cy,fy,cx0;
  for(let pass=0;pass<2;pass++){cw=land?W*.5:Math.min(W*.84,940*m);cellW=cw/7;rowH=128*m;calH=78*m+weeks.length*rowH;
-  x.font=tf();tl=V.t1.t.split('\n');nl=richLines(x,V.note.t);const sl=V.sub.t.trim()?V.sub.t.split('\n'):[];
-  headH=sl.length*V.sub.s*m*1.5+tl.length*V.t1.s*m*1.2+28*m+nl.length*V.note.s*m*1.75;footH=V.noteB.t.trim()?V.noteB.t.split('\n').length*V.noteB.s*m*1.6:0;
+  x.font=tf();tl=V.t1.t.split('\n');nl=richLines(x,V.note.t);const sl=V.sub.t.trim()?V.sub.t.split('\n'):[];const t2l=V.t2.t.trim()?V.t2.t.split('\n'):[];
+  headH=sl.length*V.sub.s*m*1.5+tl.length*V.t1.s*m*1.2+t2l.length*V.t2.s*m*1.35+28*m+nl.length*V.note.s*m*1.75;footH=V.noteB.t.trim()?V.noteB.t.split('\n').length*V.noteB.s*m*1.6:0;
   if(land){hy=(H-headH)/2;cx0=W*.47;cy=(H-calH-footH-30*m)/2;fy=cy+calH+30*m;break;}
   const top=(['moonc','pine','carnation','garland'].some(z=>THEMES[th].deco.includes(z))?250:150)*m,bot=(['roof','trees'].some(z=>THEMES[th].deco.includes(z))?300:THEMES[th].deco.includes('firework')?280:THEMES[th].deco.includes('carnation')?200:80)*m,avail=H-top-bot,base=headH+calH+footH;if(base+90*m>avail&&pass===0){m*=avail/(base+90*m);continue;}
   const gap=Math.min(110*m,(avail-base)/2);const rest=Math.max(0,avail-base-gap*(footH?2:1));hy=top+rest*.45;cy=hy+headH+gap;fy=cy+calH+gap*.8;cx0=(W-cw)/2;break;}
- cdeco(x,m);
+ {const T=THEMES[th];if(C.moon&&T.moon&&C.moon.toLowerCase()!==T.moon.toLowerCase()){const oc=document.createElement('canvas');oc.width=W;oc.height=H;const ox=oc.getContext('2d');cdeco(ox,m);ox.globalCompositeOperation='source-atop';ox.globalAlpha=.62;ox.fillStyle=C.moon;ox.fillRect(0,0,W,H);x.drawImage(oc,0,0);}else cdeco(x,m);}
  const P=k=>POS[k]||[0,0];let [dx,dy]=P('head'),hx=land?W*.25:W/2;x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';let y=hy;
- {const lim=land?W*.4:W*.92;let mw=0;x.font=tf();tl.forEach(l=>mw=Math.max(mw,x.measureText(l).width));nl.forEach(seg=>{let w=0;seg.forEach(([t,b])=>{x.font=b?nbf():nf();w+=x.measureText(t).width});mw=Math.max(mw,w)});if(mw>lim){const f=lim/mw;x.translate(hx,hy);x.scale(f,f);x.translate(-hx,-hy);if(land)y=hy+headH*(1-f)/2/f;}}
- if(V.sub.t.trim()){x.fillStyle=V.sub.c;x.font=`500 ${V.sub.s*m}px ${SERIF2}`;V.sub.t.split('\n').forEach(l=>{x.fillText(l,hx,y+V.sub.s*m*.75);y+=V.sub.s*m*1.5});}
- x.fillStyle=V.t1.c;x.font=tf();tl.forEach(l=>{x.fillText(l,hx,y+V.t1.s*m*.6);y+=V.t1.s*m*1.2});y+=28*m;
+ {const lim=land?W*.4:W*.92;let mw=0;x.font=tf();tl.forEach(l=>mw=Math.max(mw,x.measureText(l).width));if(V.t2.t.trim()){x.font=t2f();V.t2.t.split('\n').forEach(l=>mw=Math.max(mw,x.measureText(l).width));}nl.forEach(seg=>{let w=0;seg.forEach(([t,b])=>{x.font=b?nbf():nf();w+=x.measureText(t).width});mw=Math.max(mw,w)});if(mw>lim){const f=lim/mw;x.translate(hx,hy);x.scale(f,f);x.translate(-hx,-hy);if(land)y=hy+headH*(1-f)/2/f;}}
+ if(V.sub.t.trim()){x.fillStyle=V.sub.c;x.font=`${wt('sub')} ${V.sub.s*m}px ${SERIF2}`;V.sub.t.split('\n').forEach(l=>{x.fillText(l,hx,y+V.sub.s*m*.75);y+=V.sub.s*m*1.5});}
+ x.fillStyle=V.t1.c;x.font=tf();tl.forEach(l=>{x.fillText(l,hx,y+V.t1.s*m*.6);y+=V.t1.s*m*1.2});if(V.t2.t.trim()){x.fillStyle=V.t2.c;x.font=t2f();V.t2.t.split('\n').forEach(l=>{x.fillText(l,hx,y+V.t2.s*m*.7);y+=V.t2.s*m*1.35});}y+=28*m;
  nl.forEach(seg=>{drawRich(x,seg,hx,y+V.note.s*m*.85,nf(),nbf(),V.note.c,C.band);y+=V.note.s*m*1.75});x.restore();
  const hw=land?W*.44:cw;BOX.head=[hx-hw/2+dx,hy+dy,hw,headH];
  [dx,dy]=P('cal');x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';const c0=land?cx0:cx0,y0=cy;
@@ -4977,14 +4980,14 @@ function drawClassic(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getCo
   let i=0;while(i<7){if(off(wk[i])){let j=i;while(j<6&&off(wk[j+1]))j++;x.fillStyle=C.band;x.beginPath();x.roundRect(c0+cellW*i+8*m,ry-30*m,cellW*(j-i+1)-16*m,60*m,30*m);x.fill();
     const names=wk.slice(i,j+1).map(d=>KR_HOL[d]||HOL[d]).filter(Boolean).map(n=>n.replace(/ 연휴$/,''));const nm=names[0]?names[0]+' 연휴 휴무':'배송 휴무';x.fillStyle=C.band;x.font=`700 ${22*m}px ${SERIF2}`;x.fillText(nm,c0+cellW*(i+j+1)/2,ry+52*m);i=j+1;}else i++;}
   wk.forEach((d,c)=>{const X=c0+cellW*(c+.5),o=off(d);x.font=`500 ${36*m}px ${SERIF2}`;
-   if(d===S.cut||d===S.resume){x.strokeStyle=C.ink;x.lineWidth=2.5*m;x.beginPath();x.arc(X,ry,30*m,0,7);x.stroke();const lv=d===S.cut?V.lab1:V.lab2;x.fillStyle=lv.c;x.font=`600 ${lv.s*m*.8}px ${SERIF2}`;lv.t.split('\n').forEach((l,li)=>x.fillText(l,X,ry+(52+li*lv.s*.9)*m));x.font=`500 ${36*m}px ${SERIF2}`;}
-   x.fillStyle=o?'#fff':(c===0||KR_HOL[d])?C.band:C.ink;x.fillText(String(+d.slice(8)),X,ry+1*m);});});
+   if(d===S.cut||d===S.resume){x.strokeStyle=d===S.cut?C.cut:C.res;x.lineWidth=3*m;x.beginPath();x.arc(X,ry,30*m,0,7);x.stroke();const lv=d===S.cut?V.lab1:V.lab2;x.fillStyle=lv.c;x.font=`${wt(d===S.cut?'lab1':'lab2',700)} ${lv.s*m*.8}px ${SERIF2}`;lv.t.split('\n').forEach((l,li)=>x.fillText(l,X,ry+(52+li*lv.s*.9)*m));x.font=`500 ${36*m}px ${SERIF2}`;}
+   x.fillStyle=o?'#fff':d===S.cut?C.cut:d===S.resume?C.res:(c===0||KR_HOL[d])?C.band:C.ink;x.fillText(String(+d.slice(8)),X,ry+1*m);});});
  x.restore();BOX.cal=[c0+dx,y0+dy,cw,calH];
- if(V.noteB.t.trim()){[dx,dy]=P('note');x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';x.fillStyle=V.noteB.c;x.font=`700 ${V.noteB.s*m}px ${SERIF2}`;const nx=land?cx0+cw/2:W/2;V.noteB.t.split('\n').forEach((l,i)=>x.fillText(l,nx,fy+V.noteB.s*m*(.8+i*1.6)));x.restore();BOX.note=[nx-cw/2+dx,fy+dy,cw,footH];}
- x.textAlign='center';x.textBaseline='middle';Object.keys(V).filter(k=>k.startsWith('box')).forEach((k,i)=>{const [bx,by]=P(k),v=V[k],f=`700 ${v.s*m}px ${SERIF2}`;x.font=f;const L=v.t.split('\n');const X=W/2+bx,Y=H*.5+i*80*m+by;x.fillStyle=v.c;L.forEach((l,li)=>x.fillText(l,X,Y+li*v.s*m*1.3+v.s*m*.6));const w=Math.max(...L.map(l=>x.measureText(l).width));BOX[k]=[X-w/2,Y,w,L.length*v.s*m*1.3];});
+ if(V.noteB.t.trim()){[dx,dy]=P('note');x.save();x.translate(dx,dy);x.textAlign='center';x.textBaseline='middle';x.fillStyle=V.noteB.c;x.font=`${wt('noteB',700)} ${V.noteB.s*m}px ${SERIF2}`;const nx=land?cx0+cw/2:W/2;V.noteB.t.split('\n').forEach((l,i)=>x.fillText(l,nx,fy+V.noteB.s*m*(.8+i*1.6)));x.restore();BOX.note=[nx-cw/2+dx,fy+dy,cw,footH];}
+ x.textAlign='center';x.textBaseline='middle';Object.keys(V).filter(k=>k.startsWith('box')).forEach((k,i)=>{const [bx,by]=P(k),v=V[k],f=`${wt(k,700)} ${v.s*m}px ${SERIF2}`;x.font=f;const L=v.t.split('\n');const X=W/2+bx,Y=H*.5+i*80*m+by;x.fillStyle=v.c;L.forEach((l,li)=>x.fillText(l,X,Y+li*v.s*m*1.3+v.s*m*.6));const w=Math.max(...L.map(l=>x.measureText(l).width));BOX[k]=[X-w/2,Y,w,L.length*v.s*m*1.3];});
  x.textAlign='left';x.textBaseline='alphabetic';}
 
-function draw(){if(THEMES[th].style==='classic')drawClassic();else drawCute();}
+function draw(){const V0=V;V={};Object.keys(V0).forEach(k=>{const v=V0[k];V[k]=v.p===0?Object.assign({},v,{t:'',s:Math.max(1,v.b||1)}):v;});try{if(THEMES[th].style==='classic')drawClassic();else drawCute();}finally{V=V0;}}
 function drawCute(){const cv=$n('cv');cv.width=W;cv.height=H;const x=cv.getContext('2d'),land=W/H>1.1;BOX={};let m=Math.min(W,H)/1080*(H/W>1.5?1.25:1);
  x.fillStyle=C.bg;x.fillRect(0,0,W,H);
  const sun=d=>add(d,-new Date(d+'T00:00').getDay());const first=add(S.cut,-1),wk0=sun(first),wkN=sun(S.resume);const weeks=[];for(let d=wk0;d<=wkN&&weeks.length<4;d=add(d,7))weeks.push(Array.from({length:7},(_,i)=>add(d,i)));
@@ -5034,11 +5037,12 @@ const pt=e=>{const r=cvEl.getBoundingClientRect();return [(e.clientX-r.left)*W/r
 cvEl.addEventListener('pointerdown',e=>{const [px,py]=pt(e);const hit=Object.keys(BOX).reverse().find(k=>{const [a,b,w,h]=BOX[k];return px>=a&&px<=a+w&&py>=b&&py<=b+h});if(!hit)return;drag={k:hit,sx:px,sy:py,o:(POS[hit]||[0,0]).slice()};cvEl.setPointerCapture(e.pointerId);cvEl.classList.add('drag');});
 cvEl.addEventListener('pointermove',e=>{if(!drag)return;const [px,py]=pt(e);POS[drag.k]=[drag.o[0]+px-drag.sx,drag.o[1]+py-drag.sy];draw();});
 const up=()=>{drag=null;cvEl.classList.remove('drag')};cvEl.addEventListener('pointerup',up);cvEl.addEventListener('pointercancel',up);
-document.addEventListener('input',e=>{if(!e.target.closest||!e.target.closest('.ntbox'))return;const k=e.target.dataset.ntk,c=e.target.dataset.ntc;if(k){V[k].t=e.target.value;grow(e.target);}if(c)V[c].c=e.target.value;if(e.target.id&&e.target.id.startsWith('nt-c-'))C[e.target.id.slice(5)]=e.target.value;draw();});
-document.addEventListener('change',e=>{if(!e.target.closest||!e.target.closest('.ntbox'))return;const s=e.target.dataset.nts;if(s){V[s].s=+e.target.value;draw();}});
+document.addEventListener('input',e=>{if(!e.target.closest||!e.target.closest('.ntbox'))return;const k=e.target.dataset.ntk,c=e.target.dataset.ntc;if(k){V[k].t=e.target.value;grow(e.target);}if(c)V[c].c=e.target.value;const sz=e.target.dataset.nts;if(sz){const v=V[sz];v.p=+e.target.value;v.s=v.b*v.p/100;const o=e.target.nextElementSibling;if(o)o.textContent=v.p+'%';}if(e.target.id&&e.target.id.startsWith('nt-c-'))C[e.target.id.slice(5)]=e.target.value;draw();});
+document.addEventListener('change',e=>{if(!e.target.closest||!e.target.closest('.ntbox'))return;});
 document.addEventListener('click',e=>{if(!e.target.closest('.ntbox'))return;const t=e.target.closest('[data-ntt]');if(t){setTheme(t.dataset.ntt);return}const z=e.target.closest('#nt-size [data-ntz]');if(z){$n('size').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===z));[W,H]=z.dataset.ntz.split('x').map(Number);POS={};draw();return}
  if(e.target.id==='nt-rpos'){POS={};draw();}
- if(e.target.id==='nt-addbox'){extra++;V['box'+extra]={t:'여기에 글을 써 주세요',s:44,c:C.ink};fieldsUi();draw();}
+ const bw=e.target.closest('[data-ntw]');if(bw){const v=V[bw.dataset.ntw];v.w=!v.w;bw.classList.toggle('on',v.w);bw.setAttribute('aria-pressed',v.w?'true':'false');draw();return}
+ if(e.target.id==='nt-addbox'){extra++;V['box'+extra]={t:'여기에 글을 써 주세요',s:44,c:C.ink};prep();fieldsUi();draw();}
  const d=e.target.closest('[data-ntdel]');if(d){delete V[d.dataset.ntdel];delete POS[d.dataset.ntdel];fieldsUi();draw();}
 });
 const ymd = d => { const x = new Date(d + 'T00:00'); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + '일월화수목금토'[x.getDay()] + ')'; };
