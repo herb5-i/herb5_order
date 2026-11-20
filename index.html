@@ -1807,6 +1807,9 @@ html.dark .sp-st.cut{background:rgba(227,178,90,.14)}html.dark .sp-st.off{backgr
 .sp-past{margin-top:12px}.sp-past summary{cursor:pointer;font-size:13px;color:var(--mute)}
 .sp-set{display:grid;gap:12px}.sp-times{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}.sp-times label{display:flex;flex-direction:column;gap:4px}.sp-times input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink)}
 @media(max-width:900px){.ship-top{grid-template-columns:1fr}.ship-top .ship-cal{height:470px}.ship-side{grid-template-rows:auto 320px}.ship-side #ship-next{height:200px}}
+.ship-nwrap{margin-bottom:14px}.ship-nbtn{width:100%;justify-content:center;font-weight:700;padding:12px!important;border-radius:14px!important}.ship-nbtn i{font-style:normal;transition:transform .2s;display:inline-block;margin-left:4px}.ship-nbtn[aria-expanded=true] i{transform:rotate(180deg)}
+.ship-nbox{margin-top:10px}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
+.ntbox.inline{max-width:none!important;max-height:none!important;overflow:visible!important;padding:0!important;box-shadow:none!important;background:none!important;border:0!important}.ntbox.inline .hmf-h b{display:none}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
 .hmf-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .hmf-h b{flex:1;font-size:17px}
@@ -2465,7 +2468,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-run" class="hidden" data-cur="order">
-    <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="wx"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2.5v1.4M9 14.1v1.4M2.5 9h1.4M14.1 9h1.4M4.4 4.4l1 1M12.6 12.6l1 1M4.4 13.6l1-1M12.6 5.4l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 20h8a3 3 0 0 0 .4-6 4.5 4.5 0 0 0-8.6-.6A3.3 3.3 0 0 0 10.5 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>날씨</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ship"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 9h3.2l3.3 3.6V16H15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2" fill="currentColor"/></svg><span>배송</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>송장 등록</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>송장 등록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="wx"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2.5v1.4M9 14.1v1.4M2.5 9h1.4M14.1 9h1.4M4.4 4.4l1 1M12.6 12.6l1 1M4.4 13.6l1-1M12.6 5.4l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 20h8a3 3 0 0 0 .4-6 4.5 4.5 0 0 0-8.6-.6A3.3 3.3 0 0 0 10.5 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>날씨</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ship"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 9h3.2l3.3 3.6V16H15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2" fill="currentColor"/></svg><span>배송</span><i class="sdot"></i></button></nav>
     <div class="card step upcard" data-sub="order">
       <div class="sh"><span class="num">1</span><div><h2>원본 엑셀 올리기</h2><p>Cafe24에서 내려받은 주문 파일 (.xlsx · .csv)</p></div></div>
       <div class="c24" id="c24">
@@ -2545,8 +2548,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div id="wneed" class="warnbox hidden"></div>
     </div>
     <div class="ship-top" data-sub="ship"><div class="hmi ship-cal" data-s="L" id="ship-cal"></div><div class="ship-side"><div class="hmi" data-s="M" id="ship-next"></div><div class="hmi ship-hol" data-s="M" id="ship-hol"></div></div></div>
-    <div class="card shipc" data-sub="ship" id="ship-list"></div>
-    <div class="card shipc" data-sub="ship" id="ship-set"></div>
+    <div class="ship-nwrap" data-sub="ship"><button class="btn ship-nbtn" type="button" id="ship-nbtn" aria-expanded="false">📢 공지 설정 <i>▾</i></button>
+      <div class="card ship-nbox hidden" id="ship-nbox"><div class="ship-nsel" id="ship-nsel"></div><div id="ship-nhost"></div></div></div>
     <div class="card step invcard" data-sub="inv">
       <div class="sh"><span class="num">5</span><div><h2>송장번호 등록 파일 만들기</h2><p>택배사에서 받은 송장 엑셀을 올리면 카페24 엑셀 일괄배송에 바로 올릴 파일로 바꿔요</p></div></div>
       <div class="drop invdrop" id="invdrop">
@@ -4706,8 +4709,8 @@ Object.assign(HW, {
       <div class="hw-cg">${WDK.map((w, i) => `<s class="${i === 0 ? 'red' : i === 6 ? 'blue' : ''}">${w}</s>`).join('')}${'<span></span>'.repeat(first)}${cells.join('')}</div>
       <div class="hw-cinfo">${hcInfo(x.id, sel)}</div></div>`;
   },
-  calhol() { const t = isoDate(new Date()), L = Object.keys(KR_HOL).filter(d => d >= t).sort().slice(0, 10);
-    return `<div class="hm-w">${hwHead('다가오는 공휴일')}${L.length ? `<ul class="hm-list hw-hol">${L.map(d => { const o = hcOff(d), s = hcShip(d); return `<li><span class="hw-hd">${esc(hcD(d))}</span><span class="nm">${esc(KR_HOL[d])}<small>${hcAgo(d)}</small></span><span class="hw-tg ${o ? 'off' : s ? 'on' : ''}">${o ? '배송 쉼' : s ? '보내는 날' : '안 보내는 요일'}</span></li>`; }).join('')}</ul>` : hwEmpty('등록된 공휴일이 없어요')}</div>`; },
+  calhol(x) { const t = isoDate(new Date()), nt = x && x.noTag, L = Object.keys(KR_HOL).filter(d => d >= t).sort().slice(0, 10);
+    return `<div class="hm-w">${hwHead('다가오는 공휴일')}${L.length ? `<ul class="hm-list hw-hol">${L.map(d => { const o = hcOff(d), s = hcShip(d); return `<li><span class="hw-hd">${esc(hcD(d))}</span><span class="nm">${esc(KR_HOL[d])}<small>${hcAgo(d)}</small></span>${nt ? (o ? '<span class="hw-tg off">배송 쉼</span>' : '') : `<span class="hw-tg ${o ? 'off' : s ? 'on' : ''}">${o ? '배송 쉼' : s ? '보내는 날' : '안 보내는 요일'}</span>`}</li>`; }).join('')}</ul>` : hwEmpty('등록된 공휴일이 없어요')}</div>`; },
   calship() { const t = isoDate(new Date()); let nx = null; for (let i = 1; i <= 30 && !nx; i++) { const d = isoDate(new Date(Date.now() + i * 864e5)); if (hcShip(d)) nx = d; }
     const warn = []; for (let i = 0; i <= 14; i++) { const d = isoDate(new Date(Date.now() + i * 864e5)); if (hcHol(d) && hcShip(d)) warn.push(d); }
     const cc = (() => { try { return c24Cfg(); } catch (e) { return {}; } })(), cl = Object.keys(cc.cut || {}).filter(d => hcResume(d) >= t).sort()[0];
@@ -4726,7 +4729,7 @@ document.addEventListener('click', async e => {
   if (e.target.closest('#hmAdd') || hmEditing) return;
   const nv = e.target.closest('[data-hmcalnav]'); if (nv) { const id = nv.dataset.hmcalnav, v = +nv.dataset.v; hmCalOff[id] = v ? (hmCalOff[id] || 0) + v : 0; if (!v) delete hmCalSel[id]; hcRefresh(); return; }
   const cd = e.target.closest('[data-hmcald]'); if (cd) { hmCalSel[cd.dataset.hmcald] = cd.dataset.d; hcRefresh(); return; }
-  const no = e.target.closest('[data-hmcalnot]'); if (no) { window.ntOpen(no.dataset.hmcalnot); return; }
+  const no = e.target.closest('[data-hmcalnot]'); if (no) { if (no.closest('#ship-cal')) shipNoticeOpen(no.dataset.hmcalnot); else window.ntOpen(no.dataset.hmcalnot); return; }
   const nd = e.target.closest('[data-hmcalnotdel]'); if (nd) { hcNoticeDel(nd.dataset.hmcalnotdel, nd); return; }
   const wi = e.target.closest('[data-hmcalwish]'); if (wi) { hcWish(wi.dataset.hmcalwish, wi); return; }
   const st = e.target.closest('[data-hmcalset]'); if (st) { if (hcCanEdit()) hcOpen(st.dataset.hmcalset); return; }
@@ -4957,9 +4960,9 @@ const pt=e=>{const r=cvEl.getBoundingClientRect();return [(e.clientX-r.left)*W/r
 cvEl.addEventListener('pointerdown',e=>{const [px,py]=pt(e);const hit=Object.keys(BOX).reverse().find(k=>{const [a,b,w,h]=BOX[k];return px>=a&&px<=a+w&&py>=b&&py<=b+h});if(!hit)return;drag={k:hit,sx:px,sy:py,o:(POS[hit]||[0,0]).slice()};cvEl.setPointerCapture(e.pointerId);cvEl.classList.add('drag');});
 cvEl.addEventListener('pointermove',e=>{if(!drag)return;const [px,py]=pt(e);POS[drag.k]=[drag.o[0]+px-drag.sx,drag.o[1]+py-drag.sy];draw();});
 const up=()=>{drag=null;cvEl.classList.remove('drag')};cvEl.addEventListener('pointerup',up);cvEl.addEventListener('pointercancel',up);
-document.addEventListener('input',e=>{if(!e.target.closest||!e.target.closest('#ntEd'))return;const k=e.target.dataset.ntk,c=e.target.dataset.ntc;if(k){V[k].t=e.target.value;grow(e.target);}if(c)V[c].c=e.target.value;if(e.target.id&&e.target.id.startsWith('nt-c-'))C[e.target.id.slice(5)]=e.target.value;draw();});
-document.addEventListener('change',e=>{if(!e.target.closest||!e.target.closest('#ntEd'))return;const s=e.target.dataset.nts;if(s){V[s].s=+e.target.value;draw();}});
-document.addEventListener('click',e=>{if(!e.target.closest('#ntEd'))return;const t=e.target.closest('[data-ntt]');if(t){setTheme(t.dataset.ntt);return}const z=e.target.closest('#nt-size [data-ntz]');if(z){$n('size').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===z));[W,H]=z.dataset.ntz.split('x').map(Number);POS={};draw();return}
+document.addEventListener('input',e=>{if(!e.target.closest||!e.target.closest('.ntbox'))return;const k=e.target.dataset.ntk,c=e.target.dataset.ntc;if(k){V[k].t=e.target.value;grow(e.target);}if(c)V[c].c=e.target.value;if(e.target.id&&e.target.id.startsWith('nt-c-'))C[e.target.id.slice(5)]=e.target.value;draw();});
+document.addEventListener('change',e=>{if(!e.target.closest||!e.target.closest('.ntbox'))return;const s=e.target.dataset.nts;if(s){V[s].s=+e.target.value;draw();}});
+document.addEventListener('click',e=>{if(!e.target.closest('.ntbox'))return;const t=e.target.closest('[data-ntt]');if(t){setTheme(t.dataset.ntt);return}const z=e.target.closest('#nt-size [data-ntz]');if(z){$n('size').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===z));[W,H]=z.dataset.ntz.split('x').map(Number);POS={};draw();return}
  if(e.target.id==='nt-rpos'){POS={};draw();}
  if(e.target.id==='nt-addbox'){extra++;V['box'+extra]={t:'여기에 글을 써 주세요',s:44,c:C.ink};fieldsUi();draw();}
  const d=e.target.closest('[data-ntdel]');if(d){delete V[d.dataset.ntdel];delete POS[d.dataset.ntdel];fieldsUi();draw();}
@@ -4968,7 +4971,11 @@ const ymd = d => { const x = new Date(d + 'T00:00'); return (x.getMonth() + 1) +
 function pickTheme(names, cut) { const s = names.join(' '), mo = +cut.slice(5, 7);
   return /추석/.test(s) ? 'chuseok' : /설날/.test(s) ? 'seol' : /크리스마스/.test(s) ? 'xmas' : /신정/.test(s) ? 'newyear' : /어린이날|부처님|노동절/.test(s) ? 'may' : /삼일절|광복절|개천절|한글날|제헌절|현충일|선거/.test(s) ? 'national' : mo >= 7 && mo <= 8 ? 'summer' : 'herb'; }
 let ntCut = '';
-window.ntOpen = cutDay => {
+const ntBox = wrapEl.querySelector('.ntbox');
+const ntMount = host => { if (ntBox.parentNode !== host) host.appendChild(ntBox); ntBox.classList.toggle('inline', host !== wrapEl); };
+window.ntInline = (host, cutDay) => { ntMount(host); ntSetup(cutDay); };
+window.ntOpen = cutDay => { ntMount(wrapEl); ntSetup(cutDay); wrapEl.classList.remove('hidden'); };
+function ntSetup(cutDay) {
   const c = c24Cfg(); ntCut = cutDay; S = { cut: cutDay, time: c24PmCut(c, cutDay), resume: hcResume(cutDay) }; HOL = {};
   for (let d = hcAdd(cutDay, -10); d <= hcAdd(S.resume, 10); d = hcAdd(d, 1)) if (KR_HOL[d]) HOL[d] = KR_HOL[d];
   const names = Object.keys(HOL).filter(d => d > cutDay && d < S.resume).map(d => HOL[d]), y = cutDay.slice(0, 4), t = pickTheme(names, cutDay);
@@ -4980,13 +4987,14 @@ window.ntOpen = cutDay => {
   else (async () => { try { if (!hcBoards) hcBoards = (await c24Call('/boards')).boards || []; const L = hcBoards.filter(b => b.use !== 'F'); const pick = (L.find(b => /공지/.test(b.name)) || L.find(b => +b.no === 1) || L[0] || {}).no;
       $n('b').innerHTML = L.map(b => `<option value="${b.no}" ${+b.no === +pick ? 'selected' : ''}>${esc(b.name)} (${b.no}번)</option>`).join('') || '<option value="">게시판이 없어요</option>'; }
     catch (er) { $n('b').innerHTML = '<option value="">불러오지 못했어요</option>'; $n('msg').className = 'msg err'; $n('msg').textContent = er.code === 'not_found' ? 'Cloudflare 중계 서버 코드를 최신으로 바꿔 주세요' : (er.message || er.code); } })();
-  wrapEl.classList.remove('hidden'); setTheme(t);
+  setTheme(t);
   try { Promise.all([document.fonts.load('900 40px Jua'), document.fonts.load('40px "Gowun Dodum"')]).then(draw, () => {}); } catch (e) {}
-};
+}
 const ntText = () => [V.t1.t.replace(/\n/g, ' ') + ' ' + V.t2.t.replace(/\n/g, ' '), '', md(S.cut) + ' ' + V.lab1.t.replace(/\n/g, ' '), md(S.resume) + ' ' + V.lab2.t.replace(/\n/g, ' '), '', V.note.t, V.noteB.t].concat(Object.keys(V).filter(k => k.startsWith('box')).map(k => V[k].t)).join('\n').replace(/\n{3,}/g, '\n\n').trim();
 document.addEventListener('click', async e => {
-  if (!e.target.closest('#ntEd')) return;
-  if (e.target.id === 'ntEd' || e.target.closest('#nt-x')) { wrapEl.classList.add('hidden'); return; }
+  if (e.target.id === 'ntEd') { wrapEl.classList.add('hidden'); return; }
+  if (!e.target.closest('.ntbox')) return;
+  if (e.target.closest('#nt-x')) { if (wrapEl.contains(e.target)) wrapEl.classList.add('hidden'); else { const sn = $('ship-nbox'); if (sn) { sn.classList.add('hidden'); const b = $('ship-nbtn'); if (b) b.setAttribute('aria-expanded', 'false'); } } return; }
   if (e.target.closest('#nt-dl')) { $n('cv').toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = '배송휴무공지_' + S.cut + '.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }, 'image/png'); return; }
   if (e.target.closest('#nt-cp')) { const b = e.target.closest('#nt-cp'); try { await navigator.clipboard.writeText(ntText()); b.textContent = '복사했어요'; } catch (er) { b.textContent = '복사하지 못했어요'; } setTimeout(() => b.textContent = '문구 복사', 1500); return; }
   const upB = e.target.closest('#nt-up'); if (!upB) return;
@@ -5020,31 +5028,24 @@ function hcPeriods() {
 }
 function renderShip() {
   if (!$('ship-cal') || !shipOpen()) return;
-  const can = hcCanEdit(), c = c24Cfg(), fb = document.body.classList.contains('fbmode') && !!c.worker, f = d => { const x = dOf(d); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + WDK[x.getDay()] + ')'; };
   const put = (id, h) => { const el = $(id); if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
-  put('ship-cal', HW.cal({ id: 'ship' })); put('ship-next', HW.calship({})); put('ship-hol', HW.calhol({}));
-  const P = hcPeriods(), now = P.filter(p => !p.past), past = P.filter(p => p.past).slice(-3).reverse();
-  const row = p => { const hol = [...new Set(p.offs.map(hcHol).filter(Boolean).map(n => n.replace(/ 연휴$/, '')))], nr = p.cut && (c.notice || {})[p.cut];
-    const rng = p.offs.length ? f(p.offs[0]) + (p.offs.length > 1 ? ' ~ ' + f(p.offs[p.offs.length - 1]) : '') : '';
-    return `<div class="sp-row ${p.past ? 'past' : ''}"><div class="sp-flow">${p.cut ? `<span class="sp-st cut"><b>${f(p.cut)} ${esc(p.time)}</b>마감</span><i>→</i>` : ''}${rng ? `<span class="sp-st off"><b>${rng}</b>휴무${p.offs.length > 1 ? ' ' + p.offs.length + '일' : ''}</span><i>→</i>` : ''}<span class="sp-st res"><b>${f(p.resume)}</b>재개</span></div>
-      <div class="sp-meta">${hol.map(h => `<span class="hw-tg off">${esc(h)}</span>`).join('')}${nr ? '<span class="hw-tg on">공지 올림 ✓</span>' : ''}${p.past ? '<span class="hw-tg">지난 휴무</span>' : ''}</div>
-      ${can && !p.past ? `<div class="sp-act">${p.cut ? `<button type="button" class="btn sm" data-hmcalnot="${p.cut}">공지 이미지 만들기</button>` + (fb ? `<button type="button" class="btn sm" data-hmcalwish="${p.cut}">마감 뒤 주문에 ${f(p.resume)} 기록</button>` : '') + (nr && fb ? `<button type="button" class="btn sm" data-hmcalnotdel="${p.cut}">공지 내리기</button>` : '') : ''}<button type="button" class="btn sm" data-hmcalset="${p.cut || p.offs[0]}">고치기</button><button type="button" class="btn sm danger" data-shipdel="${p.key}">휴무 풀기</button></div>` : ''}</div>`; };
-  put('ship-list', `<div class="hh"><h2>휴무 일정</h2><span class="msg">달력에서 날짜를 눌러도 정할 수 있어요</span><span class="sp"></span>${can ? '<button class="btn sm pri" type="button" id="ship-add">＋ 휴무 추가</button>' : ''}</div>
-    ${now.length ? now.map(row).join('') : '<p class="crm-none">앞으로 정해 둔 휴무가 없어요</p>'}${past.length ? `<details class="sp-past"><summary>지난 휴무 ${past.length}개</summary>${past.map(row).join('')}</details>` : ''}`);
-  if (!$('ship-set').contains(document.activeElement)) put('ship-set', `<div class="hh"><h2>기본 배송 설정</h2><span class="msg">카페24 주문을 불러올 때 오전 · 오후 범위를 이 기준으로 잡아요</span></div>
-    <div class="sp-set"><div><span class="mk-lb">보내는 요일</span><span class="c24days">${[1, 2, 3, 4, 5, 6, 0].map(n => `<label><input type="checkbox" data-shipday="${n}" ${c.days.includes(n) ? 'checked' : ''} ${can ? '' : 'disabled'}>${'일월화수목금토'[n]}</label>`).join('')}</span></div>
-    <div class="sp-times"><label><span class="mk-lb">오전 마감</span><input type="time" id="ship-am" step="60" value="${esc(c.amCut)}" ${can ? '' : 'disabled'}></label><label><span class="mk-lb">오후 마감 (평소)</span><input type="time" id="ship-pm" step="60" value="${esc(c.pmCut)}" ${can ? '' : 'disabled'}></label>${can ? '<button class="btn" type="button" id="ship-save">저장</button>' : ''}</div></div><p class="msg" id="ship-msg"></p>`);
+  put('ship-cal', HW.cal({ id: 'ship' })); put('ship-next', HW.calship({})); put('ship-hol', HW.calhol({ noTag: 1 }));
+  if (!$('ship-nbox').classList.contains('hidden')) shipNoticeSel();
 }
+let shipNCut = '';
+function shipNoticeSel() {
+  const t = isoDate(new Date()), L = hcPeriods().filter(p => p.cut && !p.past), f = d => { const x = dOf(d); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + WDK[x.getDay()] + ')'; }, el = $('ship-nsel');
+  if (!L.length) { el.innerHTML = `<p class="crm-none">공지를 만들 휴무가 없어요. 달력에서 날짜를 눌러 <b>휴무 설정</b>을 먼저 해 주세요.${hcCanEdit() ? ' <button class="btn sm" type="button" data-hmcalset="' + hcAdd(t, 7) + '">휴무 설정</button>' : ''}</p>`; $('ship-nhost').innerHTML = ''; shipNCut = ''; return; }
+  if (!L.some(p => p.cut === shipNCut)) shipNCut = L[0].cut;
+  const h = `<label class="ship-nl"><span>어느 휴무 공지인가요</span><select id="ship-ncut">${L.map(p => `<option value="${p.cut}" ${p.cut === shipNCut ? 'selected' : ''}>${f(p.cut)} ${esc(p.time)} 마감 → ${f(p.resume)} 재개</option>`).join('')}</select></label>`;
+  if (el._h !== h) { el.innerHTML = h; el._h = h; }
+  if (!$('ship-nhost').querySelector('.ntbox') || $('ship-nhost')._cut !== shipNCut) { window.ntInline($('ship-nhost'), shipNCut); $('ship-nhost')._cut = shipNCut; }
+}
+function shipNoticeOpen(cut) { const b = $('ship-nbox'); if (cut) shipNCut = cut; $('ship-nhost')._cut = ''; b.classList.remove('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'true'); shipNoticeSel(); setTimeout(() => b.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60); }
 document.addEventListener('click', async e => {
   if (e.target.closest('[data-subfor=run] [data-subgo="ship"]')) { setTimeout(renderShip, 0); return; }
   if (e.target.closest('.tab[data-t=run]')) { setTimeout(renderShip, 0); return; }
-  if (!e.target.closest('#ship-list,#ship-set')) return;
-  if (e.target.closest('#ship-add')) { hcOpen(hcAdd(isoDate(new Date()), 7)); return; }
-  const dl = e.target.closest('[data-shipdel]'); if (dl) { const p = hcPeriods().find(x => x.key === dl.dataset.shipdel); if (!p || !confirm('이 휴무를 풀까요? 쉬는 날과 마감 시간이 원래대로 돌아가요.')) return;
-    const c = c24Cfg(), cut = Object.assign({}, c.cut || {}); if (p.cut) delete cut[p.cut]; await hcSaveCfg(Object.assign({}, c, { off: (c.off || []).filter(d => !p.offs.includes(d)), cut })); return; }
-  if (e.target.closest('#ship-save')) { const days = [...document.querySelectorAll('[data-shipday]:checked')].map(x => +x.dataset.shipday), m = $('ship-msg');
-    if (!days.length) { m.className = 'msg err'; m.textContent = '보내는 요일을 하나 이상 골라 주세요'; return; }
-    if (await hcSaveCfg(Object.assign({}, c24Cfg(), { days, amCut: $('ship-am').value || C24_DEF.amCut, pmCut: $('ship-pm').value || C24_DEF.pmCut }))) { $('ship-set')._h = ''; renderShip(); const m2 = $('ship-msg'); if (m2) { m2.className = 'msg ok'; m2.textContent = '저장했어요'; } } }
+  if (e.target.closest('#ship-nbtn')) { const b = $('ship-nbox'); if (b.classList.contains('hidden')) shipNoticeOpen(); else { b.classList.add('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'false'); } return; }
 });
 function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
 const hmDefault = () => ({ v: 1, items: [
@@ -6430,6 +6431,7 @@ document.addEventListener('keydown', async e => {
   if (e.key !== 'Enter') return;
   if (e.target.id === 'mk-addk') { const v = e.target.value.trim(); if (v && !mkCfgV.kw.includes(v) && await mkSave({ kw: mkCfgV.kw.concat(v) })) renderMarket(); }
 });
+document.addEventListener('change', e => { if (e.target.id === 'ship-ncut') { shipNCut = e.target.value; $('ship-nhost')._cut = ''; shipNoticeSel(); } });
 document.addEventListener('change', async e => {
   const d = e.target.closest && e.target.closest('[data-mkd]'); if (d && d.value) { if (d.dataset.mkd === 'from') mkDF = d.value; else mkDT = d.value; if (mkDF > mkDT) [mkDF, mkDT] = [mkDT, mkDF]; renderMarket(); return; }
   if (e.target.id === 'mk-cat') { if (await mkSave({ cat: e.target.value })) { mkTrKey = ''; renderMarket(); } }
