@@ -25,6 +25,9 @@ export default {
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/crm') { needAdmin(who); return json(await crm(env, url.searchParams), cors); }
       if (url.pathname === '/who') { needAdmin(who); return json(await whoIs(env, url.searchParams), cors); }
+      if (url.pathname === '/boards') { needAdmin(who); return json(await boards(env), cors); }
+      if (url.pathname === '/notice' && req.method === 'POST') { needAdmin(who); return json(await noticePost(env, await req.json()), cors); }
+      if (url.pathname === '/notice/del' && req.method === 'POST') { needAdmin(who); return json(await noticeDel(env, await req.json()), cors); }
       if (url.pathname === '/wish' && req.method === 'POST') { needAdmin(who); return json(await wish(env, await req.json()), cors); }
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/market/cfg') { if (req.method === 'POST') { needAdmin(who); return json(await mkSetCfg(env, await req.json()), cors); } return json(await mkCfgOut(env), cors); }
@@ -64,7 +67,7 @@ function authUrl(env, state) {
   const u = new URL(base(env) + '/oauth/authorize');
   u.searchParams.set('response_type', 'code'); u.searchParams.set('client_id', env.CAFE24_CLIENT_ID);
   u.searchParams.set('state', state); u.searchParams.set('redirect_uri', env.REDIRECT_URI);
-  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping mall.read_community mall.read_product');
+  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping mall.read_community mall.write_community mall.read_product');
   u.searchParams.set('prompt', 'consent');   // 권한을 새로 더했을 때도 동의 화면을 다시 띄워서 새 권한을 받아요
   return u.toString();
 }
@@ -360,3 +363,22 @@ async function wish(env, b) {
   }
   return { date, orders: seen, done: ok.length, already, fail: bad, left: Math.max(0, todo.length - max) };
 }
+
+// ---------- 배송 휴무 공지: 카페24 게시판에 글 올리기 · 내리기 (게시판 쓰기 권한 필요) ----------
+async function c24Req(env, method, path, body) {
+  const token = await accessToken(env);
+  const r = await fetch(base(env) + path, { method, headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION }, body: body ? JSON.stringify(body) : undefined });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401 || r.status === 403) throw fail(403, 'scope_board', '카페24 앱에 [게시판 쓰기] 권한이 없어요. 개발자센터 → 앱 → 권한에서 게시판(쓰기)을 추가하고, 사이트에서 [카페24 연결]을 다시 눌러 주세요');
+  if (!r.ok) throw fail(r.status, 'cafe24', '카페24 게시판 작업에 실패했어요: ' + ((d.error && d.error.message) || r.status));
+  return d;
+}
+async function boards(env) { const d = await c24Req(env, 'GET', '/admin/boards?shop_no=1'); return { boards: (d.boards || []).map(b => ({ no: b.board_no, name: b.board_name, type: b.board_type, use: b.use_board })) }; }
+async function noticePost(env, b) {
+  const no = Number(b && b.board_no), title = String(b && b.title || '').trim().slice(0, 250), content = String(b && b.content || '').trim().slice(0, 20000);
+  if (!no || !title || !content) throw fail(400, 'notice', '게시판 · 제목 · 내용을 모두 넣어 주세요');
+  const d = await c24Req(env, 'POST', '/admin/boards/' + no + '/articles', { shop_no: 1, requests: [{ writer: String(b.writer || '관리자').slice(0, 100), title, content, notice: b.notice ? 'T' : 'F' }] });
+  const a = (d.articles || [])[0] || d.article || {};
+  return { ok: true, board_no: no, article_no: a.article_no || null };
+}
+async function noticeDel(env, b) { const no = Number(b && b.board_no), art = Number(b && b.article_no); if (!no || !art) throw fail(400, 'notice', '지울 공지를 찾지 못했어요'); await c24Req(env, 'DELETE', '/admin/boards/' + no + '/articles/' + art + '?shop_no=1'); return { ok: true }; }
