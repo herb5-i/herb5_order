@@ -27,7 +27,6 @@ export default {
       if (url.pathname === '/who') { needAdmin(who); return json(await whoIs(env, url.searchParams), cors); }
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/market/cfg') { if (req.method === 'POST') { needAdmin(who); return json(await mkSetCfg(env, await req.json()), cors); } return json(await mkCfgOut(env), cors); }
-      if (url.pathname === '/market/px' && req.method === 'POST') { needAdmin(who); return json(await mkPxGo(env, await req.json()), cors); }
       if (url.pathname === '/market/trend' && req.method === 'POST') return json(await mkTrend(env, await req.json()), cors);
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
       return json({ error: 'not_found' }, cors, 404);
@@ -292,7 +291,7 @@ async function reviews(env, q) {
 }
 
 
-// ---------- 시장 비교: NAVER API HUB 데이터랩 (검색어 트렌드 · 쇼핑 인사이트) + 경쟁사 가격 기록 ----------
+// ---------- 시장 비교: NAVER API HUB 데이터랩 (검색어 트렌드 · 쇼핑 인사이트) ----------
 // 필요: 변수 NAVER_CLIENT_ID, 비밀 값 NAVER_CLIENT_SECRET (네이버 클라우드 콘솔 → NAVER API HUB → Application → 인증 정보)
 const HUB = 'https://naverapihub.apigw.ntruss.com';
 const MK_CFG0 = { kw: ['식용꽃', '로즈마리', '애플민트', '허브 모종', '바질'], cat: '50000006' };
@@ -300,21 +299,11 @@ const nvOk = env => !!(env.NAVER_CLIENT_ID && env.NAVER_CLIENT_SECRET);
 const nvH = env => ({ 'X-NCP-APIGW-API-KEY-ID': env.NAVER_CLIENT_ID, 'X-NCP-APIGW-API-KEY': env.NAVER_CLIENT_SECRET, 'Content-Type': 'application/json' });
 const kstDay = (t = Date.now()) => new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
 async function mkCfg(env) { try { const v = JSON.parse(await env.TOKENS.get('mk:cfg') || 'null'); if (v && Array.isArray(v.kw)) return { kw: v.kw, cat: v.cat || MK_CFG0.cat }; } catch (e) {} return Object.assign({}, MK_CFG0); }
-async function mkComp(env) { try { return JSON.parse(await env.TOKENS.get('mk:comp') || '[]') || []; } catch (e) { return []; } }
-async function mkCfgOut(env) { const c = await mkCfg(env); return Object.assign({ naver: nvOk(env), comp: await mkComp(env) }, c); }
+async function mkCfgOut(env) { const c = await mkCfg(env); return Object.assign({ naver: nvOk(env) }, c); }
 async function mkSetCfg(env, b) {
   const clean = (a, n, m) => [...new Set((Array.isArray(a) ? a : []).map(x => String(x || '').trim().slice(0, m)).filter(Boolean))].slice(0, n);
   const c = await mkCfg(env); if (b.kw) c.kw = clean(b.kw, 20, 30); if (b.cat !== undefined) c.cat = String(b.cat).replace(/\D/g, '').slice(0, 12) || MK_CFG0.cat;
   await env.TOKENS.put('mk:cfg', JSON.stringify(c));
-  if (b.comp) {
-    let L = await mkComp(env); const o = b.comp, t = s => String(s || '').trim();
-    if (o.op === 'add' && t(o.name)) L.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), mall: t(o.mall).slice(0, 30) || '?', name: t(o.name).slice(0, 60), kw: t(o.kw).slice(0, 30), url: /^https?:\/\//.test(t(o.url)) ? t(o.url).slice(0, 300) : '', rec: Number(o.price) > 0 ? [[kstDay(), Math.round(Number(o.price))]] : [] });
-    if (o.op === 'del') L = L.filter(x => x.id !== o.id);
-    if (o.op === 'price') { const x = L.find(x => x.id === o.id), v = Math.round(Number(o.price)); if (x && v > 0) { const d = /^\d{4}-\d\d-\d\d$/.test(o.d || '') ? o.d : kstDay(); x.rec = x.rec.filter(r => r[0] !== d).concat([[d, v]]).sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-200); } }
-    if (o.op === 'seturl') { const x = L.find(x => x.id === o.id); if (x) { x.url = /^https?:\/\//.test(t(o.url)) ? t(o.url).slice(0, 300) : ''; x.st = ''; x.err = ''; } }
-    if (o.op === 'delrec') { const x = L.find(x => x.id === o.id); if (x) x.rec = x.rec.filter(r => r[0] !== o.d); }
-    await env.TOKENS.put('mk:comp', JSON.stringify(L.slice(0, 60)));
-  }
   return mkCfgOut(env);
 }
 async function hubPost(env, path, body) {
@@ -339,65 +328,3 @@ async function mkTrend(env, b) {
   return out;
 }
 
-// ---------- 경쟁사 주소에서 품목 · 가격 불러오기 (누를 때만 · robots.txt 지킴 · 저장은 이름과 가격만) ----------
-const PX_UA = 'Herb5PriceCheck/1.0 (+https://herb5-i.github.io; 버튼을 누를 때만 한 번 조회)';
-const pxNum = v => { const n = Math.round(Number(String(v == null ? '' : v).replace(/[^\d.]/g, ''))); return n > 0 && n < 1e8 ? n : 0; };
-const pxTxt = s => String(s || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, "'").replace(/\s+/g, ' ').trim();
-const pxMeta = (h, k) => { const m = h.match(new RegExp('<meta[^>]+(?:property|name)=["\']' + k.replace(/[:.]/g, '\\$&') + '["\'][^>]*>', 'i')); if (!m) return ''; const c = m[0].match(/content=["']([^"']*)["']/i); return c ? pxTxt(c[1]) : ''; };
-function pxParse(html, base) {
-  const out = [], seen = new Set(), push = (n, p) => { n = pxTxt(n).slice(0, 80); p = pxNum(p); if (!n || !p) return; const k = n + '|' + p; if (seen.has(k)) return; seen.add(k); out.push([n, p]); };
-  // 1) JSON-LD (Product · ItemList)
-  const walk = o => { if (!o || typeof o !== 'object') return; if (Array.isArray(o)) return o.forEach(walk);
-    const t = [].concat(o['@type'] || []).join(' ');
-    if (/Product/i.test(t) && o.name) { const of = [].concat(o.offers || []); let p = 0; of.forEach(x => { p = p || pxNum(x.price) || pxNum(x.lowPrice); }); if (p) push(o.name, p); }
-    ['@graph', 'itemListElement', 'item', 'mainEntity', 'hasVariant'].forEach(k => o[k] && walk(o[k])); };
-  for (const m of html.matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)) { try { walk(JSON.parse(m[1].trim())); } catch (e) {} }
-  // 2) 카페24 상품 목록 (ec-data-price · 상품명 칸)
-  if (!out.length) for (const m of html.matchAll(/<li[^>]+id=["']anchorBoxId_\d+["'][\s\S]*?(?=<li[^>]+id=["']anchorBoxId_|<\/ul>)/gi)) {
-    const b = m[0], nm = b.match(/class=["'][^"']*\bname\b[^"']*["'][^>]*>([\s\S]*?)<\/(?:strong|div|p)>/i), pr = b.match(/ec-data-price=["'](\d+)["']/i) || b.match(/([\d,]{3,})\s*원/);
-    if (nm && pr) push(pxTxt(nm[1]).replace(/^상품명\s*:\s*/, ''), pr[1]); }
-  // 3) 상품 상세 메타 (카페24 · 고도몰 · 일반 쇼핑몰)
-  if (!out.length) { const p = pxMeta(html, 'product:price:amount') || pxMeta(html, 'og:price:amount') || pxMeta(html, 'product:sale_price:amount'); const n = pxMeta(html, 'og:title') || pxTxt((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1]); if (p && n) push(n, p); }
-  // 4) microdata
-  if (!out.length) { const n = html.match(/itemprop=["']name["'][^>]*?(?:content=["']([^"']+)["'][^>]*>|>([\s\S]*?)<)/i), p = html.match(/itemprop=["']price["'][^>]*?(?:content=["']([^"']+)["']|>([^<]+)<)/i); if (n && p) push(n[1] || n[2], p[1] || p[2]); }
-  const site = pxMeta(html, 'og:site_name') || (() => { try { return new URL(base).hostname.replace(/^www\.|^m\./, ''); } catch (e) { return ''; } })();
-  const title = pxMeta(html, 'og:title') || pxTxt((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1]);
-  return { items: out.slice(0, 80), site: site.slice(0, 30), title: title.slice(0, 60) };
-}
-function pxRobotsOk(txt, path) {
-  let on = false, any = false; const rules = [];
-  String(txt || '').split(/\r?\n/).forEach(l => { const s = l.replace(/#.*/, '').trim(); if (!s) return; const [k, ...r] = s.split(':'), v = r.join(':').trim(), key = k.trim().toLowerCase();
-    if (key === 'user-agent') { if (any) { on = false; any = false; } on = on || v === '*' || /herb5/i.test(v); return; } any = true; if (!on) return;
-    if (key === 'disallow' && v) rules.push([v, false]); if (key === 'allow' && v) rules.push([v, true]); });
-  const match = (pat, p) => new RegExp('^' + pat.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\\\$$/, '$')).test(p);
-  let best = null; rules.forEach(r => { if (match(r[0], path) && (!best || r[0].length >= best[0].length)) best = r; });
-  return !best || best[1];
-}
-async function pxFetch(u) {
-  let url; try { url = new URL(String(u || '').trim()); } catch (e) { throw fail(400, 'px_url', '주소 모양이 올바르지 않아요'); }
-  if (!/^https?:$/.test(url.protocol) || /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|0\.|\[)/i.test(url.hostname) || !url.hostname.includes('.')) throw fail(400, 'px_url', '인터넷 쇼핑몰 주소만 넣을 수 있어요');
-  const get = (x, ms) => fetch(x, { headers: { 'User-Agent': PX_UA, 'Accept': 'text/html,application/xhtml+xml', 'Accept-Language': 'ko-KR,ko' }, redirect: 'follow', signal: AbortSignal.timeout(ms) });
-  try { const rb = await get(url.origin + '/robots.txt', 5000); if (rb.ok && !pxRobotsOk(await rb.text(), url.pathname + url.search)) return { ok: false, err: '이 사이트는 자동 조회를 허용하지 않아요' }; } catch (e) {}
-  let r; try { r = await get(url.href, 10000); } catch (e) { return { ok: false, err: '사이트에 연결하지 못했어요' }; }
-  if (r.status === 404 || r.status === 410) return { ok: false, err: '주소에 상품이 없어요 (주소가 바뀌었을 수 있어요)' };
-  if ([401, 403, 429, 503].includes(r.status)) return { ok: false, err: '사이트가 자동 조회를 막았어요' };
-  if (!r.ok) return { ok: false, err: '사이트가 응답하지 않아요 (' + r.status + ')' };
-  try { const fin = new URL(r.url); if (fin.hostname.replace(/^www\.|^m\./, '') !== url.hostname.replace(/^www\.|^m\./, '')) return { ok: false, err: '다른 주소로 넘어가요 (주소가 바뀌었을 수 있어요)' }; } catch (e) {}
-  if (!/html/i.test(r.headers.get('content-type') || '')) return { ok: false, err: '쇼핑몰 화면 주소가 아니에요' };
-  const html = (await r.text()).slice(0, 3e6), p = pxParse(html, url.href);
-  if (!p.items.length) return { ok: false, err: '주소에서 상품과 가격을 찾지 못했어요', site: p.site, title: p.title };
-  return Object.assign({ ok: true }, p);
-}
-async function mkPxGo(env, b) {
-  let L = await mkComp(env); const day = kstDay(), at = new Date().toISOString();
-  const apply = (x, r) => { x.fat = at; if (!r.ok) { x.st = 'fail'; x.err = r.err; return; }
-    x.st = 'ok'; x.err = ''; if (x.snap && x.snap.items) x.prev = x.snap.items; x.snap = { at, items: r.items };
-    if (r.items.length === 1) { const v = r.items[0][1]; x.rec = (x.rec || []).filter(q => q[0] !== day).concat([[day, v]]).slice(-200); } };
-  let res;
-  if (b.id) { const x = L.find(q => q.id === b.id); if (!x) throw fail(404, 'px_none', '항목을 찾지 못했어요'); if (b.url !== undefined) x.url = String(b.url).trim().slice(0, 300); if (!x.url) throw fail(400, 'px_url', '주소가 없어요'); res = await pxFetch(x.url); apply(x, res); }
-  else { res = await pxFetch(b.url); if (!res.ok) return Object.assign(await mkCfgOut(env), { px: res });
-    const x = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), mall: String(b.mall || '').trim().slice(0, 30) || res.site || '?', name: res.items.length === 1 ? res.items[0][0] : (res.title || res.site || '상품 목록'), kw: String(b.kw || '').trim().slice(0, 30), url: String(b.url).trim().slice(0, 300), rec: [] };
-    apply(x, res); L.push(x); }
-  await env.TOKENS.put('mk:comp', JSON.stringify(L.slice(-60)));
-  return Object.assign(await mkCfgOut(env), { px: { ok: res.ok, err: res.err || '' } });
-}
