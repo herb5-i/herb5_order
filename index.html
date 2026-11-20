@@ -1456,6 +1456,11 @@ html.dark .sg-tile.st-low{background:rgba(216,97,60,.14)!important}html.dark .sg
 .hm-bakt b{font-size:15px}.hm-bakt span{font-size:12.5px;color:var(--mute)}
 .hm-bakbtn{flex:none;height:42px;padding:0 16px;border:0;border-radius:14px;font:700 14px var(--body);color:#fff;cursor:pointer;background:linear-gradient(180deg,#7bb3c9,#4a87a0);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 10px 18px -10px rgba(70,135,160,.8)}
 .hm-share svg{width:17px;height:17px}
+.ph-cta .hidden{display:none!important}
+.hm-bakcta svg{width:17px;height:17px}
+.hm-bakcta .bk-s{font-size:11.5px;font-weight:600;color:var(--mute);background:rgba(60,70,40,.07);border-radius:99px;padding:3px 8px;margin-left:2px}
+.hm-bakcta.due .bk-s{color:#b44a64;background:#fbe5e9}
+.hm-bakcta.due{box-shadow:0 0 0 1px rgba(214,96,120,.28),0 6px 14px -8px rgba(180,74,100,.4)}
 html.dark .hm-alert{background:linear-gradient(160deg,#2b211d,#241c18)!important}html.dark .hm-al{background:rgba(255,255,255,.04);border-color:rgba(216,97,60,.25)}
 html.dark .hm-bak{background:linear-gradient(160deg,#1c262b,#182024)!important}
 @media(max-width:560px){.hm-bak{flex-wrap:wrap}.hm-bakbtn{width:100%}.hm-alist{grid-template-columns:1fr}}
@@ -1893,7 +1898,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <div class="ph-cta" id="phcta">
       <button class="hm-up" type="button" data-go="run" data-pick="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>주문 엑셀 올리기</button>
       <button class="hm-ghost" type="button" data-go="sum">오늘 집계</button>
-      <button class="hm-ghost hm-share" type="button" data-share="today" data-sharevia="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>오늘 요약 보내기</button>
+      <button class="hm-ghost hm-share hidden" id="ph-share" type="button" data-share="today" data-sharevia="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>오늘 요약 보내기</button>
+      <button class="hm-ghost hm-bakcta hidden" type="button" id="hm-bakgo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bk-t">지금 백업</span><small class="bk-s"></small></button>
     </div>
   </div>
 
@@ -3840,14 +3846,19 @@ function renderBakNote() {
   const box = $('hm-bak'); if (!box) return;
   const last = stock[BAK_ID] && stock[BAK_ID].at, ageD = last ? Math.floor((Date.now() - new Date(last)) / 864e5) : null;
   const need = bakCanSee() && Object.keys(hist).length && (ageD === null || ageD >= 7);
-  box.classList.toggle('hidden', !need);
+  box.classList.add('hidden'); box.innerHTML = '';
+  const cta = $('hm-bakgo'), sh = $('ph-share'), can = bakCanSee();
+  if (sh) sh.classList.toggle('hidden', can);
+  if (cta && !cta.disabled) { cta.classList.toggle('hidden', !can); cta.classList.toggle('due', !!need); cta.title = '주문 기록 · 재고 · 이슈 · 규칙을 파일 하나로 내려받아요 (일주일에 한 번)';
+    cta.querySelector('.bk-t').textContent = '지금 백업'; cta.querySelector('.bk-s').textContent = ageD === null ? '아직 안 함' : ageD === 0 ? '오늘 함' : ageD + '일 전'; }
+  return;
   box.innerHTML = need ? `<i class="hm-bakic"></i><div class="hm-bakt"><b>${ageD === null ? '아직 백업한 적이 없어요' : '마지막 백업 ' + ageD + '일 전'}</b><span>주문 기록 · 재고 · 이슈 · 규칙을 파일 하나로 내려받아 두면 안심이에요 (일주일에 한 번)</span></div><button class="hm-bakbtn" type="button" id="hm-bakgo">지금 백업</button>` : '';
 }
 document.addEventListener('click', async e => {
   const b = e.target.closest('#hm-bakgo'); if (!b) return;
-  b.disabled = true; b.textContent = '만드는 중…';
-  try { await fullBackup(); shareToast('백업 파일을 내려받았어요'); renderBakNote(); }
-  catch (er) { b.disabled = false; b.textContent = '지금 백업'; if (!(er && er.code === 'declined')) shareToast('백업하지 못했어요: ' + (er.message || er.code)); }
+  b.disabled = true; b.querySelector('.bk-t').textContent = '만드는 중…'; b.querySelector('.bk-s').textContent = '';
+  try { await fullBackup(); shareToast('백업 파일을 내려받았어요'); b.disabled = false; renderBakNote(); }
+  catch (er) { b.disabled = false; renderBakNote(); if (!(er && er.code === 'declined')) shareToast('백업하지 못했어요: ' + (er.message || er.code)); }
 });
 
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
