@@ -1808,7 +1808,7 @@ html.dark .sp-st.cut{background:rgba(227,178,90,.14)}html.dark .sp-st.off{backgr
 .sp-set{display:grid;gap:12px}.sp-times{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}.sp-times label{display:flex;flex-direction:column;gap:4px}.sp-times input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink)}
 @media(max-width:900px){.ship-top{grid-template-columns:1fr}.ship-top .ship-cal{height:470px}.ship-side{grid-template-rows:auto 320px}.ship-side #ship-next{height:200px}}
 .ship-nwrap{margin-bottom:14px}.ship-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-nl{display:flex!important;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}.ship-nl label{display:flex;flex-direction:column;gap:4px}.ship-nl input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink)}.ship-nbtn{width:100%;justify-content:center;font-weight:700;padding:12px!important;border-radius:14px!important}.ship-nbtn i{font-style:normal;transition:transform .2s;display:inline-block;margin-left:4px}.ship-nbtn[aria-expanded=true] i{transform:rotate(180deg)}
-.ship-nbox{margin-top:10px}.ship-nl.multi{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border:1px solid var(--line);border-radius:14px;padding:8px 12px 12px}.ship-nl.multi input{width:100%;box-sizing:border-box;min-width:0}.ship-nhd{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;color:var(--acc);font-size:13px}.ship-nhd .ibtn{width:30px;height:30px}.ship-nadd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 12px}.ship-nadd .msg{flex-basis:100%}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
+.ship-nbox{margin-top:10px}.nt-save{margin-left:auto}.nt-save.done{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}.nt-save+.ibtn{margin-left:6px}.ship-nl.multi{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border:1px solid var(--line);border-radius:14px;padding:8px 12px 12px}.ship-nl.multi input{width:100%;box-sizing:border-box;min-width:0}.ship-nhd{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;color:var(--acc);font-size:13px}.ship-nhd .ibtn{width:30px;height:30px}.ship-nadd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 12px}.ship-nadd .msg{flex-basis:100%}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
 .ntbox.inline{max-width:none!important;max-height:none!important;overflow:visible!important;padding:0!important;box-shadow:none!important;background:none!important;border:0!important}.ntbox.inline .hmf-h b{display:none}
 .inv-badact{margin:8px 0 2px}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
@@ -4837,7 +4837,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('hcNot')
 (() => {
 const $n = id => document.getElementById('nt-' + id);
 const wrapEl = document.createElement('div'); wrapEl.className = 'modal hidden'; wrapEl.id = 'ntEd'; wrapEl.setAttribute('role', 'dialog'); wrapEl.setAttribute('aria-modal', 'true'); wrapEl.setAttribute('aria-label', '공지 이미지 만들기');
-wrapEl.innerHTML = `<div class="mbox ntbox"><div class="hmf-h"><b>공지 이미지 만들기</b><span class="msg" id="nt-when"></span><button class="ibtn" type="button" id="nt-x" aria-label="닫기">✕</button></div>
+wrapEl.innerHTML = `<div class="mbox ntbox"><div class="hmf-h"><b>공지 이미지 만들기</b><span class="msg" id="nt-when"></span><button class="ibtn ibtn-acc nt-save" type="button" id="nt-save" aria-label="공지 설정 저장" title="설정 저장"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3"/><rect x="7" y="13" width="10" height="7" rx="1"/></svg></button><button class="ibtn" type="button" id="nt-x" aria-label="닫기">✕</button></div>
  <div class="nt-wrap"><div class="nt-stage"><div class="nt-cvw"><canvas id="nt-cv" class="nt-cv" width="1080" height="1350"></canvas></div><p class="nt-hint">제목 · 달력 · 안내글 · 글 상자는 끌어서 옮길 수 있어요 · <button class="btn sm" id="nt-rpos" type="button">위치 처음대로</button></p>
   <div class="nt-post"><div class="nt-row"><label>카페24 게시판 <select id="nt-b"><option value="">불러오는 중…</option></select></label><label class="nt-chk"><input type="checkbox" id="nt-fix" checked> 공지로 고정</label></div>
    <div class="nt-row"><button class="btn pri" type="button" id="nt-up">카페24 공지로 올리기</button><button class="btn" type="button" id="nt-dl">이미지 내려받기</button><button class="btn" type="button" id="nt-cp">문구 복사</button></div>
@@ -5068,13 +5068,27 @@ function ntSetup(arg) {
       $n('b').innerHTML = L.map(b => `<option value="${b.no}" ${+b.no === +pick ? 'selected' : ''}>${esc(b.name)} (${b.no}번)</option>`).join('') || '<option value="">게시판이 없어요</option>'; }
     catch (er) { $n('b').innerHTML = '<option value="">불러오지 못했어요</option>'; $n('msg').className = 'msg err'; $n('msg').textContent = er.code === 'not_found' ? 'Cloudflare 중계 서버 코드를 최신으로 바꿔 주세요' : (er.message || er.code); } })();
   setTheme(t);
+  const dr = (c.ntDraft || {})[ntKey()]; if (dr) { try { ntApply(dr); $n('msg').className = 'msg ok'; $n('msg').textContent = '저장해 둔 공지 설정을 불러왔어요'; } catch (er) { setTheme(t); } }
   try { Promise.all([document.fonts.load('900 40px Jua'), document.fonts.load('40px "Gowun Dodum"')]).then(draw, () => {}); } catch (e) {}
 }
+const ntKey = () => S.ps.map(p => p.cut + '_' + p.time + '_' + p.resume).join('|');
+const ntCopy = o => JSON.parse(JSON.stringify(o));
+function ntApply(d) { th = THEMES[d.th] ? d.th : th; C = Object.assign({}, C, d.C); V = ntCopy(d.V); POS = ntCopy(d.POS || {}); [W, H] = [d.W || 1080, d.H || 1350];
+  extra = Object.keys(V).filter(k => k.startsWith('box')).reduce((m, k) => Math.max(m, +k.slice(3) || 0), 0); prep();
+  $n('size').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.ntz === W + 'x' + H));
+  ['bg', 'moon', 'band', 'cut', 'res', 'ink'].forEach(x => { if (C[x]) $n('c-' + x).value = C[x]; }); fieldsUi(); themesUi(); draw(); }
+async function ntSave(btn) { const c = c24Cfg(), all = Object.assign({}, c.ntDraft || {}), t = isoDate(new Date());
+  Object.keys(all).forEach(k => { const last = k.split('|').map(x => x.split('_')[2] || '').sort().pop(); if (last && last < t) delete all[k]; });
+  all[ntKey()] = { th, W, H, C: ntCopy(C), V: ntCopy(V), POS: ntCopy(POS), at: new Date().toISOString() };
+  const ks = Object.keys(all).sort((a, b) => (all[b].at || '').localeCompare(all[a].at || '')); ks.slice(20).forEach(k => delete all[k]);
+  btn.disabled = true; const ok = await hcSaveCfg(Object.assign({}, c, { ntDraft: all })); btn.disabled = false;
+  const msg = $n('msg'); if (ok) { msg.className = 'msg ok'; msg.textContent = '공지 설정을 저장했어요. 다음에 이 휴무 공지를 열면 그대로 불러와요.'; btn.classList.add('done'); setTimeout(() => btn.classList.remove('done'), 1600); } }
 const ntText = () => [V.t1.t.replace(/\n/g, ' ') + ' ' + V.t2.t.replace(/\n/g, ' '), ''].concat(S.ps.length > 1 ? [] : [md(S.cut) + ' ' + V.lab1.t.replace(/\n/g, ' '), md(S.resume) + ' ' + V.lab2.t.replace(/\n/g, ' '), '']).concat([V.note.t.replace(/\*\*/g, ''), V.noteB.t]).concat(Object.keys(V).filter(k => k.startsWith('box')).map(k => V[k].t)).join('\n').replace(/\n{3,}/g, '\n\n').trim();
 document.addEventListener('click', async e => {
   if (e.target.id === 'ntEd') { wrapEl.classList.add('hidden'); return; }
   if (!e.target.closest('.ntbox')) return;
   if (e.target.closest('#nt-x')) { if (wrapEl.contains(e.target)) wrapEl.classList.add('hidden'); else { const sn = $('ship-nbox'); if (sn) { sn.classList.add('hidden'); const b = $('ship-nbtn'); if (b) b.setAttribute('aria-expanded', 'false'); } } return; }
+  const sv = e.target.closest('#nt-save'); if (sv) { ntSave(sv); return; }
   if (e.target.closest('#nt-dl')) { $n('cv').toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = '배송휴무공지_' + S.cut + '.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }, 'image/png'); return; }
   if (e.target.closest('#nt-cp')) { const b = e.target.closest('#nt-cp'); try { await navigator.clipboard.writeText(ntText()); b.textContent = '복사했어요'; } catch (er) { b.textContent = '복사하지 못했어요'; } setTimeout(() => b.textContent = '문구 복사', 1500); return; }
   const upB = e.target.closest('#nt-up'); if (!upB) return;
@@ -8086,7 +8100,7 @@ function c24Bind() {
   $('c24save').onclick = async () => {
     const off = $('c24off').value.split(/[\s,]+/).map(x => x.trim()).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
     const days = [...$('c24dw').querySelectorAll('input:checked')].map(x => Number(x.value));
-    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off, cut: c24Cfg().cut || {}, notice: c24Cfg().notice || {} };
+    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off, cut: c24Cfg().cut || {}, notice: c24Cfg().notice || {}, ntDraft: c24Cfg().ntDraft || {} };
     await saveRules(); c24FillSet(); $('c24day').value = ''; c24ShowWin(); c24Status();
     $('c24msg').className = 'msg ok'; $('c24msg').textContent = '연결 설정을 저장했어요';
   };
