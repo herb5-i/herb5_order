@@ -1387,6 +1387,17 @@ html.dark .c24{background:rgba(255,255,255,.03)}html.dark .c24 .c24st{background
 .uf{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:#fffdf8;cursor:pointer;min-width:0;transition:border-color .12s,background .12s}
 .uf input{width:18px;height:18px;accent-color:#c4503a;flex:none;margin:0}
 .uf.on{border-color:#e3a58a;background:#fdf1ea}
+.oldup{margin-top:10px;border:1px dashed var(--line,#d9dccf);border-radius:14px;padding:8px 12px;background:rgba(255,255,255,.5)}
+.oldup summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;list-style:none}
+.oldup summary::-webkit-details-marker{display:none}
+.oldup summary b{font-size:14px}.oldup summary b::before{content:'＋ ';color:var(--moss2,#3f7f50)}
+.oldup[open] summary b::before{content:'－ '}
+.oldup summary span{font-size:12.5px;color:var(--mute)}
+.oldup-in{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 4px}
+.oldup-in label{display:flex;gap:6px;align-items:center;font-size:13px}
+.oldup-in input[type=date]{min-width:0}
+.oldup .help{font-size:12px;color:var(--mute);margin:4px 0}
+.uf-slot.old{background:#efe7d6;color:#7a5b23}
 .uf-slot{flex:none;font-size:11.5px;font-weight:800;border-radius:9px;padding:5px 8px}
 .uf-slot.am{background:#fdf2d6;color:#a8721a}.uf-slot.pm{background:#e3eff5;color:#3f7891}
 .uf-nm{display:flex;flex-direction:column;min-width:0}
@@ -1927,6 +1938,11 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <div class="card sumtop">
       <div class="hcal scal" id="scal"></div>
       <div class="sslot" id="sslot"></div>
+      <details class="oldup" id="oldup"><summary><b>예전 파일 올리기</b><span>사이트 만들기 전에 정리한 엑셀 · 기록·통계에만 들어가고 재고에는 안 빠져요</span></summary>
+        <div class="oldup-in"><label>날짜<input type="date" id="oldday"></label><button class="btn sm" type="button" id="oldpick">파일 고르기</button><input type="file" id="oldfile" accept=".xlsx,.xls,.csv" multiple hidden></div>
+        <p class="help">파일 이름에 날짜가 있으면(예: 2024-03-15, 240315) 그 날짜로, 없으면 위 날짜로 들어가요. 여러 개를 한 번에 골라도 돼요.</p>
+        <div class="msg" id="oldmsg"></div>
+      </details>
       <div class="ufiles hidden" id="ufiles"></div>
       <div class="utrash hidden" id="utrash"></div>
       <div class="sdel"><span id="sumshare"></span><button class="ibtn ibtn-bad hidden" id="sdel" title="이 날 기록 지우기" aria-label="이 날 기록 지우기"></button><span class="msg" id="sdelmsg"></span></div>
@@ -3319,13 +3335,13 @@ async function histWrite(d, entry) {
   if (histDb) { if (entry) await histDb.doc('history/' + d).set(entry); else await histDb.doc('history/' + d).delete(); }
   else if (!histPersistLocal()) throw new Error('이 브라우저 저장 공간이 꽉 찼어요. 기록 백업(⬇) 후 오래된 날짜를 지워 주세요.');
 }
-function dateKeyOf(row, idx) {
+function dateKeyOf(row, idx, fb) {
   const v = '발주일' in idx ? row[idx['발주일']] : null;
   if (v instanceof Date && !isNaN(v)) return isoDate(v);
   if (typeof v === 'number' && v > 30000 && v < 80000) { const d = new Date(Math.round((v - 25569) * 864e5)); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate()); }
   let m = String(v ?? '').match(/(\d{4})[-./](\d{1,2})[-./](\d{1,2})/); if (m) return m[1] + '-' + pad2(m[2]) + '-' + pad2(m[3]);
   m = String(row[idx['주문번호']] ?? '').match(/^(\d{4})(\d{2})(\d{2})-/); if (m) return m[1] + '-' + m[2] + '-' + m[3];
-  return isoDate(new Date());
+  return fb || isoDate(new Date());
 }
 const shortAddr = a => String(a ?? '').trim().split(/\s+/).slice(0, 2).join(' ');
 const str = v => String(v ?? '').trim();
@@ -3436,7 +3452,7 @@ const last4 = v => String(v ?? '').replace(/\D/g, '').slice(-4);
 function nameHash(v) { const t = String(v ?? '').replace(/\s+/g, ''); if (!t) return ''; let h = 2166136261; for (const c of t) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36); }
 async function histSaveUpload(rows, fname, opt) {
   opt = opt || {};
-  const msg = $('histsave');
+  const msg = opt.msg || $('histsave'), old = !!opt.old;
   try {
     if (!rows || !rows.length) return;
     const head = rows[0].map(str), idx = Object.fromEntries(head.map((h, i) => [h, i]));
@@ -3445,15 +3461,15 @@ async function histSaveUpload(rows, fname, opt) {
     const byDate = {}, occ = new Map(), keysOf = [];
     rows.slice(1).forEach((r, ri) => {
       if (!r || !r.some(v => str(v))) return;
-      const d = dateKeyOf(r, idx), base = [g(r, '주문번호'), g(r, '주문상품명'), g(r, '옵션')].map(str).join('|');
+      const d = dateKeyOf(r, idx, old ? opt.day : null), base = [g(r, '주문번호'), g(r, '주문상품명'), g(r, '옵션')].map(str).join('|');
       const n = (occ.get(base) || 0) + 1; occ.set(base, n); keysOf[ri + 1] = { k: base + '|' + n, d };
-      (byDate[d] = byDate[d] || []).push({ k: base + '|' + n, o: str(g(r, '주문번호')), p: str(g(r, '주문상품명')), op: str(g(r, '옵션')), q: Number(g(r, '수량')) || 0, a: shortAddr(g(r, '주소')), n: str(g(r, '비고')), pr: Number(String(g(r, '판매가') ?? '').replace(/,/g, '')) || 0, ad: Number(String(g(r, '옵션추가 가격') ?? '').replace(/,/g, '')) || 0, rn: nameHash(g(r, '수령인')), rp: [...new Set(['핸드폰', '전화번호', '수령지전화'].map(k => last4(g(r, k))).filter(Boolean))].join(',') });
+      (byDate[d] = byDate[d] || []).push({ k: base + '|' + n, o: str(g(r, '주문번호')), p: str(g(r, '주문상품명')), op: str(g(r, '옵션')), q: Number(g(r, '수량')) || 0, a: shortAddr(g(r, '주소')), n: str(g(r, '비고')), pr: Number(String(g(r, '판매가') ?? '').replace(/,/g, '')) || 0, ad: Number(String(g(r, '옵션추가 가격') ?? '').replace(/,/g, '')) || 0, rn: nameHash(g(r, '수령인')), rp: [...new Set(['핸드폰', '전화번호', '수령지전화'].map(k => last4(g(r, k))).filter(Boolean))].join(','), ...(old ? { ns: 1 } : {}) });
     });
     const nowD = new Date(), now = nowD.toISOString(), slot = opt.slot || (nowD.getHours() < 12 ? 'am' : 'pm'), saved = [], fid = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
     for (const d of Object.keys(byDate).sort()) {
       const prev = hist[d] || { rows: [], files: [] }, map = new Map((prev.rows || []).map(x => [x.k, x]));
       let added = 0; byDate[d].forEach(x => { const old = map.get(x.k); if (!old) added++; else { if (old.del) x.del = true; if (old.ov) x.ov = old.ov; } x.f = [...new Set(((old && old.f) || []).concat(fid))]; map.set(x.k, x); });
-      const files = (prev.files || []).filter(f => f.name !== fname).concat([{ id: fid, name: fname, at: now, lines: byDate[d].length }]).slice(-20);
+      const files = (prev.files || []).filter(f => f.name !== fname).concat([{ id: fid, name: fname, at: now, lines: byDate[d].length, ...(old ? { old: 1 } : {}) }]).slice(-20);
       const pb = (prev.batches || {})[slot], bkeys = [...new Set(((pb && pb.keys) || []).concat(byDate[d].map(x => x.k)))];
       const batches = Object.assign({}, prev.batches || {}, { [slot]: { keys: bkeys, name: fname, at: now } });
       await histWrite(d, { rows: [...map.values()], files, batches, updatedAt: now });
@@ -3462,15 +3478,17 @@ async function histSaveUpload(rows, fname, opt) {
     if (!histSel || !hist[histSel]) histSel = Object.keys(byDate).sort().pop();
     const upDay = opt.day || isoDate(nowD), prevU = upl[upDay] || {};
     const allRows = []; Object.keys(byDate).forEach(d => byDate[d].forEach(x => allRows.push(Object.assign({ d }, x))));
-    srcKeys = keysOf; lastUp = { day: upDay, slot };
-    await uplWrite(upDay, Object.assign({}, prevU, { [slot]: uplMerge(prevU[slot], slot, fid, fname, now, allRows), updatedAt: now }));
+    if (!old) { srcKeys = keysOf; lastUp = { day: upDay, slot }; }
+    const mb = uplMerge(prevU[slot], slot, fid, fname, now, allRows); if (old) mb.files = mb.files.map(f => f.id === fid ? Object.assign({}, f, { old: 1 }) : f);
+    await uplWrite(upDay, Object.assign({}, prevU, { [slot]: mb, updatedAt: now }));
+    if (old) { try { stkRowCache.clear(); stkEvSig = ''; histCache.clear(); } catch (e) {} renderHist(); return { days: Object.keys(byDate).sort(), orders: new Set(allRows.map(x => x.o)).size, lines: allRows.length }; }
     lastFid = fid;
     sumSel = upDay; sumSlot = slot; sumMonth = new Date(Number(upDay.slice(0, 4)), Number(upDay.slice(5, 7)) - 1, 1);
     msg.className = 'msg ok'; msg.textContent = '기록에 자동 저장했어요 (' + (slot === 'am' ? '오전' : '오후') + ' 업로드) · ' + saved.join(', ');
     if ($('undoup')) { const u = $('undoup'); u.classList.remove('hidden'); u.dataset.ufile = upDay + '|' + slot + '|' + fid; u.title = fname + ' 올린 것 되돌리기'; delete u.dataset.sure; u.classList.remove('sure'); u.querySelector('span').textContent = '방금 올린 것 되돌리기'; }
     if (edRestoreFromStore()) { runProcess(); msg.textContent += ' · 예전에 직접 고친 것도 다시 적용했어요'; }
     renderHist();
-  } catch (e) { msg.className = 'msg err'; msg.textContent = '기록 저장 실패: ' + (e.message || e.code); }
+  } catch (e) { if (old) throw e; msg.className = 'msg err'; msg.textContent = '기록 저장 실패: ' + (e.message || e.code); }
 }
 
 // 정리하기에서 직접 고친 값(ov) · 지운 줄(del)을 기록에 저장해서 집계 보기 · 재고 · 기록·통계에도 반영해요
@@ -4044,7 +4062,7 @@ function renderUFiles() {
   box.classList.remove('hidden');
   box.innerHTML = `<div class="uf-h"><b>올린 파일</b><span>${list.length}개 · 지울 파일을 골라요</span></div><div class="uf-list">` + list.map(f => {
     const k = f.slot + '|' + f.id;
-    return `<label class="uf ${ufPick.has(k) ? 'on' : ''}"><input type="checkbox" data-ufile="${esc(k)}" ${ufPick.has(k) ? 'checked' : ''}><span class="uf-slot ${f.slot}">${f.slot === 'am' ? '오전' : '오후'}</span><span class="uf-nm"><b>${esc(f.name || '파일')}</b><small>${esc(tm(f.at))}${f.n ? ' · 주문 ' + f.n + '건' : ''}${f.lines ? ' · ' + f.lines + '줄' : ''}</small></span></label>`;
+    return `<label class="uf ${ufPick.has(k) ? 'on' : ''}"><input type="checkbox" data-ufile="${esc(k)}" ${ufPick.has(k) ? 'checked' : ''}><span class="uf-slot ${f.old ? 'old' : f.slot}">${f.old ? '예전' : f.slot === 'am' ? '오전' : '오후'}</span><span class="uf-nm"><b>${esc(f.name || '파일')}</b><small>${esc(tm(f.at))}${f.n ? ' · 주문 ' + f.n + '건' : ''}${f.lines ? ' · ' + f.lines + '줄' : ''}</small></span></label>`;
   }).join('') + `</div><div class="uf-act"><span class="msg" id="ufmsg"></span><button class="btn uf-del" id="ufdel" type="button" ${ufPick.size ? '' : 'disabled'}>${IC.trash}<span>${ufPick.size ? '고른 파일 ' + ufPick.size + '개 지우기' : '지울 파일을 골라 주세요'}</span></button></div>`;
 }
 document.addEventListener('change', e => { const c = e.target.closest('[data-ufile]'); if (!c) return; if (c.checked) ufPick.add(c.dataset.ufile); else ufPick.delete(c.dataset.ufile); renderUFiles(); });
@@ -4076,6 +4094,54 @@ document.addEventListener('click', async e => {
     } catch (er) { $('histsave').className = 'msg err'; $('histsave').textContent = '되돌리지 못했어요: ' + (er.message || er.code); }
   }
 });
+// ---------- 예전에 손으로 정리한 파일 올리기 (기록·통계에만, 재고 X) ----------
+function oldDayOfName(n) {
+  n = String(n || '');
+  let m = n.match(/(20\d{2})[-._년\s]*(\d{1,2})[-._월\s]*(\d{1,2})/); if (m) return m[1] + '-' + pad2(m[2]) + '-' + pad2(m[3]);
+  m = n.match(/(?:^|\D)(\d{2})(\d{2})(\d{2})(?:\D|$)/); if (m && +m[2] >= 1 && +m[2] <= 12 && +m[3] >= 1 && +m[3] <= 31) return '20' + m[1] + '-' + m[2] + '-' + m[3];
+  return null;
+}
+const OLD_ALIAS = { '주문상품명': ['주문상품명', '상품명', '품목명', '품목', '품명', '상품'], '옵션': ['옵션', '옵션명', '옵션정보', '상품옵션', '세부옵션'], '수량': ['수량', '주문수량', '개수', '수 량'], '주문번호': ['주문번호', '주문 번호'], '발주일': ['발주일', '주문일', '주문일시', '결제일', '결제일시', '날짜'], '주소': ['주소', '수령인주소', '수령인 주소', '배송지'], '비고': ['비고', '메모', '배송메시지'] };
+function oldNormRows(rows, day) { // 제목 줄이 있어도 머리줄을 찾아서 카페24 모양으로 바꿔요
+  const t = v => String(v ?? '').replace(/\s+/g, '');
+  let hi = -1, map = null;
+  for (let i = 0; i < Math.min(15, rows.length); i++) {
+    const h = (rows[i] || []).map(t), m = {};
+    Object.entries(OLD_ALIAS).forEach(([k, al]) => { const j = h.findIndex(x => al.some(a => x === t(a))); if (j >= 0) m[k] = j; });
+    if ('주문상품명' in m && '수량' in m) { hi = i; map = m; break; }
+  }
+  if (hi < 0) return null;
+  const keep = Object.keys(map), out = [keep.concat('주문번호' in map ? [] : ['주문번호'])];
+  rows.slice(hi + 1).forEach((r, i) => { if (!r || !str(r[map['주문상품명']]) || !(Number(String(r[map['수량']] ?? '').replace(/,/g, '')) > 0)) return;
+    out.push(keep.map(k => k === '수량' ? Number(String(r[map[k]]).replace(/,/g, '')) : r[map[k]]).concat('주문번호' in map ? [] : ['예전-' + day.replace(/-/g, '') + '-' + (i + 1)])); });
+  return out.length > 1 ? out : null;
+}
+function oldReadFile(f) {
+  return new Promise((ok, no) => { const rd = new FileReader(); rd.onerror = () => no(new Error('파일을 읽지 못했어요'));
+    rd.onload = () => { try { const isCsv = /\.(csv|txt)$/i.test(f.name);
+      const wb = isCsv ? XLSX.read(decodeText(new Uint8Array(rd.result)), { type: 'string', cellDates: true }) : XLSX.read(new Uint8Array(rd.result), { type: 'array', cellDates: true });
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: null, raw: true }).map(r => r.map(v => v instanceof Date ? new Date(v.getFullYear(), v.getMonth(), v.getDate() + (v.getHours() >= 12 ? 1 : 0)) : v));
+      ok(rows); } catch (e) { no(e); } };
+    rd.readAsArrayBuffer(f); });
+}
+async function oldUpload(files) {
+  const msg = $('oldmsg'), pick = $('oldday').value, out = []; let lastDay = null;
+  msg.className = 'msg'; msg.textContent = '올리는 중…';
+  for (const f of files) {
+    const day = oldDayOfName(f.name) || pick;
+    if (!day) { out.push('✗ ' + f.name + ': 날짜를 골라 주세요'); continue; }
+    try {
+      const raw = await oldReadFile(f), rows = oldNormRows(raw, day);
+      if (!rows) { out.push('✗ ' + f.name + ': 상품명 · 수량 칸을 찾지 못했어요'); continue; }
+      const r = await histSaveUpload(rows, f.name, { old: true, day, slot: 'am', msg });
+      out.push('✓ ' + day.replace(/-/g, '.') + ' ← ' + f.name + ' · ' + r.lines + '줄'); lastDay = day;
+    } catch (e) { out.push('✗ ' + f.name + ': ' + (e.message || e.code)); }
+  }
+  if (lastDay) { sumSel = lastDay; sumSlot = null; const d = dOf(lastDay); sumMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderSum(); }
+  const m2 = $('oldmsg'); m2.className = 'msg ' + (out.some(x => x[0] === '✗') ? 'err' : 'ok'); m2.innerHTML = out.map(esc).join('<br>') + (lastDay ? '<br>기록·통계에 들어갔고 재고에서는 빠지지 않아요' : '');
+}
+document.addEventListener('click', e => { if (e.target.closest('#oldpick')) { if (!$('oldday').value) $('oldday').value = sumSel || isoDate(new Date()); $('oldfile').click(); } });
+document.addEventListener('change', e => { if (e.target.id === 'oldfile') { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) oldUpload(fs); } });
 function renderSumCal() {
   const el = $('scal'); if (!el || !sumMonth) return;
   const y = sumMonth.getFullYear(), m = sumMonth.getMonth(), first = new Date(y, m, 1), n = new Date(y, m + 1, 0).getDate(), today = isoDate(new Date());
@@ -4292,7 +4358,7 @@ function stkEvents() {
     const e = upl[day] || {}, seen = new Set();
     ['am', 'pm'].forEach(slot => {
       const b = e[slot]; if (!b || !Array.isArray(b.rows)) return;
-      b.rows.forEach(x => { if (x.del || seen.has(x.k)) return; seen.add(x.k); evs.push({ day, slot, at: b.at || '', k: x.k, uses: stkRowUse(x, day).map(([n, o, q]) => ({ key: stkK(stkBase(n, o)), n, o, g: gramOf(o), q })) }); });
+      b.rows.forEach(x => { if (x.del || x.ns || seen.has(x.k)) return; seen.add(x.k); evs.push({ day, slot, at: b.at || '', k: x.k, uses: stkRowUse(x, day).map(([n, o, q]) => ({ key: stkK(stkBase(n, o)), n, o, g: gramOf(o), q })) }); });
     });
   });
   stkEvSig = sig; stkEvList = evs; return evs;
