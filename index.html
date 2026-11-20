@@ -2208,6 +2208,14 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
 .mk-cc .in{display:flex;gap:6px;margin-top:10px}.mk-cc input,.mk-cc select{flex:1;min-width:0;font:inherit;font-size:13px;padding:6px 9px;border:1px solid var(--line2,#dadde1);border-radius:8px;background:var(--card);color:var(--ink)}
 .mk-addf{display:flex;flex-direction:column;gap:6px}.mk-addf>input,.mk-addf>select{width:100%!important;flex:0 0 auto!important}.mk-addf .in{justify-content:flex-end;margin-top:2px}.mk-addf .in .btn{flex:0 0 auto}
 .mk-add{border:1.5px dashed var(--line2,#dadde1);display:flex;align-items:center;justify-content:center;color:var(--mute);min-height:150px;cursor:pointer;font:inherit;font-size:13.5px;width:100%}
+.mk-cc.wide{grid-column:span 2}.mk-cc .m>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mk-kwt{white-space:nowrap;flex:0 0 auto}.mk-pxgo{margin-left:auto}.mk-cc .m .btn{flex:0 0 auto}
+.mk-pxl{margin-top:4px}.mk-pxh{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;font-size:13px}.mk-pxl ol{list-style:none;margin:0;padding:0;max-height:260px;overflow:auto;border-top:1px solid var(--line)}
+.mk-pxl li{display:grid;grid-template-columns:minmax(0,1fr) auto 64px;gap:8px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--line);font-size:13px}.mk-pxl li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mk-pxl li em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}.mk-pxl li small{text-align:right}
+.mk-chg.new{background:var(--soft,#f1f2f3);color:var(--acc)}
+.mk-pxfail{background:var(--mkrb);border-radius:9px;padding:8px 10px;margin:4px 0 8px;font-size:12.5px;line-height:1.5}.mk-pxfail b{display:block;color:var(--mkr)}.mk-pxfail span{color:var(--ink)}
+.mkt .lnk{border:0;background:none;padding:0;font:inherit;color:var(--acc);text-decoration:underline;cursor:pointer}
+.mk-addf>b{font-size:13.5px}.mk-addf .in{align-items:center}.mk-addf .in .sp{flex:1}.mk-pxnote{margin:12px 0 0}
+@media(max-width:760px){.mk-cc.wide{grid-column:auto}}
 @media(max-width:400px){.mk-grid{grid-template-columns:1fr!important}}
 @media(max-width:760px){.mk-news{grid-template-columns:1fr}.mk-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mk-kc{padding:10px}.mk-vs{grid-template-columns:26px minmax(0,1fr) 38px}.mk-cp{grid-template-columns:1fr}
   .mk-season .row{grid-template-columns:30px repeat(12,minmax(0,1fr));gap:2px}.mk-season .c{height:22px}.mk-drow .msg{flex-basis:100%}.mk-det{padding:12px}}
@@ -5823,7 +5831,9 @@ function renderMarket() {
   }
   el.innerHTML = mkHead('시장 비교') + (mkErr ? `<p class="msg err">${esc(mkErr)}</p>` : '') + (mkMsg ? `<p class="msg err">${esc(mkMsg)}</p>` : '') + body;
 }
-// ---------- 경쟁사 가격 (하위 메뉴) ----------
+// ---------- 경쟁사 가격 (주소를 넣으면 품목 · 가격을 불러와요) ----------
+let mkPxBusy = {}, mkPxMsg = '', mkCpManual = false;
+const mkAt = s => { if (!s) return ''; const d = new Date(s); return crmDot(isoDate(d)).slice(5) + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
 function renderComp() {
   const el = $('hcomp'); if (!el) return;
   const fb = document.body.classList.contains('fbmode') && c24Cfg().worker;
@@ -5832,18 +5842,33 @@ function renderComp() {
   const L = C.comp || [], kws = [...new Set(L.map(x => x.kw).filter(Boolean))], today = isoDate(new Date());
   if (mkCpF && !kws.includes(mkCpF)) mkCpF = '';
   const show = L.filter(x => !mkCpF || x.kw === mkCpF);
-  const card = x => { const R = x.rec || [], a = R[R.length - 1], b = R[R.length - 2], ch = a && b ? a[1] - b[1] : 0, ago = a ? Math.round((dOf(today) - dOf(a[0])) / 864e5) : null;
-    return `<div class="mk-cc"><div class="m"><span>${esc(x.mall)}</span>${x.kw ? `<span class="mk-kwt">${esc(x.kw)}</span>` : ''}<span class="sp"></span><button class="ibtn mk-del" type="button" data-mkcdel="${x.id}" aria-label="${esc(x.name)} 지우기">×</button></div>
-      <div class="n">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.name)}</a>` : esc(x.name)}</div>
-      <div class="p">${a ? `<b>${mkWon(a[1])}</b>${ch ? `<span class="mk-chg ${ch > 0 ? 'up' : 'dn'}">${ch > 0 ? '▲' : '▼'} ${mkWon(Math.abs(ch))}</span>` : R.length > 1 ? '<span class="mk-chg">변화 없음</span>' : ''}` : '<span class="msg">아직 가격이 없어요</span>'}</div>
-      <div class="w" title="${esc(R.map(r => crmDot(r[0]) + ' ' + mkWon(r[1])).join('\n'))}">${a ? (ago > 30 ? `<span class="old">${ago}일 전 기록 · 다시 확인해 볼 때예요</span>` : ago === 0 ? '오늘 기록' : ago + '일 전 기록') : '&nbsp;'}${R.length > 1 ? ' · 기록 ' + R.length + '번' : ''}</div>
-      <div class="in"><input type="number" inputmode="numeric" min="1" placeholder="오늘 본 가격" data-mkpx="${x.id}" aria-label="${esc(x.name)} 오늘 본 가격"><button class="btn sm" type="button" data-mkpxgo="${x.id}">기록</button></div></div>`; };
-  const add = mkCpAdd ? `<div class="mk-cc mk-addf"><input id="mkc-mall" placeholder="판매처" maxlength="30"><input id="mkc-name" placeholder="상품명" maxlength="60"><select id="mkc-kw" aria-label="키워드"><option value="">키워드 없음</option>${C.kw.map(k => `<option ${k === mkCpF ? 'selected' : ''}>${esc(k)}</option>`).join('')}</select><input id="mkc-price" type="number" inputmode="numeric" min="1" placeholder="가격"><input id="mkc-url" placeholder="상품 주소 (선택)" maxlength="300"><div class="in"><button class="btn sm" type="button" id="mkc-x">취소</button><button class="btn sm pri" type="button" id="mkc-go">추가</button></div></div>`
-    : `<button type="button" class="mk-cc mk-add" id="mkc-open">+ 경쟁 상품 추가</button>`;
-  el.innerHTML = `<div class="hh"><h2>경쟁사 가격</h2><span class="msg">들러서 본 가격을 적어 두면 변화가 쌓여요</span><span class="sp"></span>${kws.length ? `<div class="seg mk-cpf" role="group" aria-label="키워드"><button type="button" data-mkcpf="" class="${mkCpF ? '' : 'on'}">전체</button>${kws.map(k => `<button type="button" data-mkcpf="${esc(k)}" class="${mkCpF === k ? 'on' : ''}">${esc(k)}</button>`).join('')}</div>` : ''}</div>
-    ${mkMsg ? `<p class="msg err">${esc(mkMsg)}</p>` : ''}<div class="mk-cp">${show.map(card).join('')}${add}</div>`;
+  const card = x => { const R = x.rec || [], a = R[R.length - 1], b = R[R.length - 2], ch = a && b ? a[1] - b[1] : 0, ago = a ? Math.round((dOf(today) - dOf(a[0])) / 864e5) : null, S = x.snap && x.snap.items || [], many = S.length > 1, busy = mkPxBusy[x.id];
+    const prev = new Map((x.prev || []).map(q => [q[0], q[1]]));
+    const list = many ? `<div class="mk-pxl"><div class="mk-pxh"><b>상품 ${S.length}개</b><span class="msg">${mkAt(x.snap.at)} 불러옴</span></div><ol>${S.map(q => { const pv = prev.get(q[0]), d = pv ? q[1] - pv : 0;
+        return `<li><span>${esc(q[0])}</span><em>${mkWon(q[1])}</em>${d ? `<small class="mk-chg ${d > 0 ? 'up' : 'dn'}">${d > 0 ? '▲' : '▼'}${Math.abs(d).toLocaleString('ko-KR')}</small>` : x.prev && !prev.has(q[0]) ? '<small class="mk-chg new">새로</small>' : '<small></small>'}</li>`; }).join('')}</ol></div>` : '';
+    const price = many ? '' : `<div class="p">${a ? `<b>${mkWon(a[1])}</b>${ch ? `<span class="mk-chg ${ch > 0 ? 'up' : 'dn'}">${ch > 0 ? '▲' : '▼'} ${mkWon(Math.abs(ch))}</span>` : R.length > 1 ? '<span class="mk-chg">변화 없음</span>' : ''}` : '<span class="msg">아직 가격이 없어요</span>'}</div>
+      <div class="w" title="${esc(R.map(r => crmDot(r[0]) + ' ' + mkWon(r[1])).join('\n'))}">${a ? (ago > 30 ? `<span class="old">${ago}일 전 기록 · 다시 확인해 볼 때예요</span>` : ago === 0 ? '오늘 기록' : ago + '일 전 기록') : '&nbsp;'}${R.length > 1 ? ' · 기록 ' + R.length + '번' : ''}</div>`;
+    const fail = x.st === 'fail' ? `<div class="mk-pxfail"><b>이 주소는 지금 조회할 수 없어요</b><span>${esc(x.err || '')} · 주소가 바뀌었으면 <button type="button" class="lnk" data-mkurl="${x.id}">주소 바꾸기</button>, 아니면 아래에 가격을 직접 넣어 주세요</span></div>` : '';
+    return `<div class="mk-cc ${many ? 'wide' : ''}"><div class="m"><span>${esc(x.mall)}</span>${x.kw ? `<span class="mk-kwt">${esc(x.kw)}</span>` : ''}<span class="sp"></span>${x.url ? `<button class="btn sm mk-pxgo" type="button" data-mkpxf="${x.id}" ${busy ? 'disabled' : ''}>${busy ? '불러오는 중…' : '↻ 불러오기'}</button>` : ''}<button class="ibtn mk-del" type="button" data-mkcdel="${x.id}" aria-label="${esc(x.name)} 지우기">×</button></div>
+      <div class="n">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.name)}</a>` : esc(x.name)}</div>${fail}${price}${list}
+      ${x.url && x.st !== 'fail' && x.fat && !many ? `<div class="w">${mkAt(x.fat)} 주소에서 불러옴</div>` : ''}${!x.url ? `<div class="w"><button type="button" class="lnk" data-mkurl="${x.id}">+ 주소 연결하기</button></div>` : ''}
+      ${many ? '' : `<div class="in"><input type="number" inputmode="numeric" min="1" placeholder="직접 본 가격" data-mkpx="${x.id}" aria-label="${esc(x.name)} 직접 본 가격"><button class="btn sm" type="button" data-mkpxgo="${x.id}">기록</button></div>`}</div>`; };
+  const kwSel = `<select id="mkc-kw" aria-label="키워드"><option value="">키워드 없음</option>${C.kw.map(k => `<option ${k === mkCpF ? 'selected' : ''}>${esc(k)}</option>`).join('')}</select>`;
+  const add = !mkCpAdd ? `<button type="button" class="mk-cc mk-add" id="mkc-open">+ 경쟁 상품 · 가게 추가</button>`
+    : `<div class="mk-cc mk-addf"><b>상품이나 가게 목록 주소를 넣어 주세요</b><input id="mkc-url" placeholder="https://…" maxlength="300" inputmode="url">${kwSel}
+      ${mkPxMsg ? `<p class="msg err">${esc(mkPxMsg)}</p>` : ''}
+      ${mkCpManual ? `<input id="mkc-mall" placeholder="판매처" maxlength="30"><input id="mkc-name" placeholder="상품명" maxlength="60"><input id="mkc-price" type="number" inputmode="numeric" min="1" placeholder="가격">` : ''}
+      <div class="in"><button type="button" class="lnk" id="mkc-man">${mkCpManual ? '주소로 불러오기' : '주소 없이 직접 넣기'}</button><span class="sp"></span><button class="btn sm" type="button" id="mkc-x">취소</button>${mkCpManual ? '<button class="btn sm pri" type="button" id="mkc-go">추가</button>' : `<button class="btn sm pri" type="button" id="mkc-fetch" ${mkPxBusy.new ? 'disabled' : ''}>${mkPxBusy.new ? '불러오는 중…' : '불러오기'}</button>`}</div></div>`;
+  el.innerHTML = `<div class="hh"><h2>경쟁사 가격</h2><span class="msg">주소를 넣으면 품목과 가격을 불러와요 · 불러오기를 누를 때만 조회해요</span><span class="sp"></span>${kws.length ? `<div class="seg mk-cpf" role="group" aria-label="키워드"><button type="button" data-mkcpf="" class="${mkCpF ? '' : 'on'}">전체</button>${kws.map(k => `<button type="button" data-mkcpf="${esc(k)}" class="${mkCpF === k ? 'on' : ''}">${esc(k)}</button>`).join('')}</div>` : ''}</div>
+    ${mkMsg ? `<p class="msg err">${esc(mkMsg)}</p>` : ''}<div class="mk-cp">${show.map(card).join('')}${add}</div>
+    <p class="msg mk-pxnote">네이버 스마트스토어 · 쿠팡처럼 자동 조회를 막아 둔 곳은 불러올 수 없어요. 그때는 가격을 직접 넣어 주세요.</p>`;
 }
-async function mkSave(patch) { mkMsg = ''; try { mkCfgV = await c24Call('/market/cfg', { method: 'POST', body: JSON.stringify(patch) }); return true; } catch (e) { mkMsg = e.code === 'forbidden' ? '관리자만 바꿀 수 있어요' : (e.message || e.code); renderMarket(); renderComp(); return false; } }
+async function mkPx(body, key) {
+  mkPxBusy[key] = true; mkMsg = ''; renderComp();
+  try { const r = await c24Call('/market/px', { method: 'POST', body: JSON.stringify(body) }); mkCfgV = r; mkPxBusy[key] = false; return r.px || { ok: true }; }
+  catch (e) { mkPxBusy[key] = false; const m = e.code === 'admin' ? '관리자만 할 수 있어요' : e.code === 'not_found' ? 'Cloudflare 중계 서버 코드를 최신으로 바꿔 주세요' : (e.message || e.code); return { ok: false, err: m, hard: true }; }
+}
+async function mkSave(patch) { mkMsg = ''; try { mkCfgV = await c24Call('/market/cfg', { method: 'POST', body: JSON.stringify(patch) }); return true; } catch (e) { mkMsg = e.code === 'forbidden' || e.code === 'admin' ? '관리자만 바꿀 수 있어요' : (e.message || e.code); renderMarket(); renderComp(); return false; } }
 document.addEventListener('click', async e => {
   const t = e.target; if (!t.closest('#hmarket,#hcomp')) return;
   const gd = t.closest('.geo-date'); if (gd && t.tagName !== 'INPUT') { const i = gd.querySelector('input'); try { i.showPicker(); } catch (er) { i.focus(); } return; }
@@ -5853,10 +5878,18 @@ document.addEventListener('click', async e => {
   const s = t.closest('[data-mksrc]'); if (s) { mkSrc = s.dataset.mksrc; renderMarket(); return; }
   const dk = t.closest('[data-mkdelk]'); if (dk) { await mkSave({ kw: mkCfgV.kw.filter(x => x !== dk.dataset.mkdelk) }); renderMarket(); return; }
   const f = t.closest('[data-mkcpf]'); if (f) { mkCpF = f.dataset.mkcpf; renderComp(); return; }
-  if (t.closest('#mkc-open')) { mkCpAdd = true; renderComp(); $('mkc-mall') && $('mkc-mall').focus(); return; }
+  if (t.closest('#mkc-open')) { mkCpAdd = true; mkCpManual = false; mkPxMsg = ''; renderComp(); $('mkc-url') && $('mkc-url').focus(); return; }
+  if (t.closest('#mkc-man')) { const u = ($('mkc-url') || {}).value || ''; mkCpManual = !mkCpManual; mkPxMsg = ''; renderComp(); if ($('mkc-url')) $('mkc-url').value = u; return; }
+  if (t.closest('#mkc-fetch')) { const u = ($('mkc-url').value || '').trim(), kw = $('mkc-kw').value; if (!u) { $('mkc-url').focus(); return; }
+    const r = await mkPx({ url: u, kw }, 'new'); if (r.ok) { mkCpAdd = false; mkPxMsg = ''; } else { mkPxMsg = r.hard ? r.err : '이 주소는 조회할 수 없어요: ' + r.err + ' · 판매처 · 상품명 · 가격을 직접 넣어 주세요'; if (!r.hard) mkCpManual = true; }
+    renderComp(); if (!r.ok && $('mkc-url')) { $('mkc-url').value = u; $('mkc-kw').value = kw; } return; }
+  const pf = t.closest('[data-mkpxf]'); if (pf) { const r = await mkPx({ id: pf.dataset.mkpxf }, pf.dataset.mkpxf); if (r.hard) mkMsg = r.err; renderComp(); return; }
+  const mu = t.closest('[data-mkurl]'); if (mu) { const x = (mkCfgV.comp || []).find(q => q.id === mu.dataset.mkurl); const v = prompt('새 주소를 넣어 주세요 (비우면 주소 연결을 빼요)', x && x.url || ''); if (v === null) return; if (v.trim() && !/^https?:\/\//.test(v.trim())) { alert('https:// 로 시작하는 주소를 넣어 주세요'); return; }
+    if (!v.trim()) { if (await mkSave({ comp: { op: 'seturl', id: mu.dataset.mkurl, url: '' } })) renderComp(); return; }
+    const r = await mkPx({ id: mu.dataset.mkurl, url: v.trim() }, mu.dataset.mkurl); if (r.hard) mkMsg = r.err; renderComp(); return; }
   if (t.closest('#mkc-x')) { mkCpAdd = false; renderComp(); return; }
   if (t.closest('#mkc-go')) { const v = id => ($(id).value || '').trim(); if (!v('mkc-name')) { $('mkc-name').focus(); return; }
-    if (await mkSave({ comp: { op: 'add', mall: v('mkc-mall'), name: v('mkc-name'), kw: v('mkc-kw'), price: v('mkc-price'), url: v('mkc-url') } })) { mkCpAdd = false; renderComp(); } return; }
+    if (await mkSave({ comp: { op: 'add', mall: v('mkc-mall'), name: v('mkc-name'), kw: v('mkc-kw'), price: v('mkc-price'), url: v('mkc-url') } })) { mkCpAdd = false; mkPxMsg = ''; renderComp(); } return; }
   const pg = t.closest('[data-mkpxgo]'); if (pg) { const i = document.querySelector(`[data-mkpx="${pg.dataset.mkpxgo}"]`), p = Number(i && i.value); if (!(p > 0)) { i && i.focus(); return; } if (await mkSave({ comp: { op: 'price', id: pg.dataset.mkpxgo, price: p } })) renderComp(); return; }
   const cd = t.closest('[data-mkcdel]'); if (cd) { if (!confirm('이 상품과 가격 기록을 지울까요?')) return; if (await mkSave({ comp: { op: 'del', id: cd.dataset.mkcdel } })) renderComp(); return; }
 });
