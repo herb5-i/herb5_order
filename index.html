@@ -1757,6 +1757,22 @@ body.hm-dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 .hw-dd{cursor:pointer;text-align:left}.hw-dd .hm-big{font-size:30px;margin:auto 0 2px}
 .hm-editing .hw-todo,.hm-editing .hw-todo *,.hm-editing .hw-dd{pointer-events:none!important}
 .hw-calm{margin:auto 0;color:var(--mute);font-size:13.5px;text-align:center}
+.hw-calw{padding:16px 16px 12px!important}
+.hw-cnav{display:flex;align-items:center;gap:4px}.hw-cnav b{font-size:15px;margin:0 4px}.hw-cnav button{border:0;background:var(--soft,#f1f2f3);color:var(--ink);width:28px;height:28px;border-radius:9px;cursor:pointer;font-size:16px;line-height:1}.hw-cnav .hw-ctoday{width:auto;padding:0 9px;font-size:12px;font-weight:700;color:var(--acc)}
+.hw-cg{flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:1fr;gap:2px;min-height:0}.hw-cg s{text-decoration:none;font-size:11px;color:var(--mute);text-align:center;align-self:center}.hw-cg s.red{color:#d0505f}.hw-cg s.blue{color:#3f74b8}
+.hw-cd{border:0;background:none;font:inherit;color:var(--ink);border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:3px 0 0;min-width:0;min-height:0;overflow:hidden;position:relative}
+.hw-cd b{font-size:13px;font-weight:600;line-height:1.3;font-variant-numeric:tabular-nums}.hw-cd small{font-size:9.5px;line-height:1.15;color:#d0505f;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 1px}
+.hw-cd.red b{color:#d0505f}.hw-cd.blue b{color:#3f74b8}.hw-cd:hover{background:var(--soft,#f1f2f3)}
+.hw-cd.off{background:repeating-linear-gradient(135deg,rgba(150,150,150,.13) 0 4px,transparent 4px 8px)}.hw-cd.off small{color:var(--mute)}
+.hw-cd.now b{background:var(--acc);color:#fff!important;border-radius:99px;min-width:22px;padding:0 4px}
+.hw-cd.sel{box-shadow:inset 0 0 0 1.5px var(--acc)}
+.hw-cinfo{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;border-top:1px solid var(--line);padding-top:8px;margin-top:6px;font-size:12.5px;min-height:34px}.hw-cinfo .sp{flex:1}.hw-cinfo .hol{font-style:normal;color:#d0505f;font-weight:700}
+.hw-tg{font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;background:var(--soft,#f1f2f3);color:var(--mute);white-space:nowrap;flex:none}.hw-tg.on{background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}.hw-tg.off{background:#fbe6e9;color:#c94b5d}
+html.dark .hw-tg.off{background:rgba(232,121,138,.15);color:#e8798a}
+.hm-list.hw-hol li{padding:8px 2px;gap:10px}.hw-hd{font-size:12px;color:#d0505f;font-weight:700;width:86px;flex:none}
+.hw-sh1{margin:2px 0 6px;font-size:15px}.hmi .hw-sm .hw-foot{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.hw-sh1 .red{color:#d0505f}.hw-sh2{margin:0;font-size:13px;color:var(--mute)}.hw-sh2 b{color:var(--ink)}.hw-foot.warn{color:#b7791f;white-space:normal;font-weight:600}
+.hmi[data-s=S] .hw-sh1{font-size:14px}
+@media(max-width:420px){.hw-cd small{font-size:8.5px}.hw-hd{width:76px}}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
 .hmf-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .hmf-h b{flex:1;font-size:17px}
@@ -4616,6 +4632,57 @@ const HW = {
   dday(x) { const has = x.date && /^\d{4}-\d\d-\d\d$/.test(x.date), n = has ? Math.round((dOf(x.date) - dOf(isoDate(new Date()))) / 864e5) : null;
     return `<button type="button" class="hm-w hm-memo hw-dd" data-hmdday="${esc(x.id)}"><div class="hm-wt"><span class="hm-lb">${esc(x.title || 'D-day')}</span></div><b class="hm-big">${n == null ? '눌러서 정하기' : n === 0 ? 'D-DAY' : n > 0 ? 'D-' + n : 'D+' + (-n)}</b><p class="hw-foot">${has ? esc(crmDot(x.date)) : '날짜와 이름을 넣어요'}</p></button>`; }
 };
+// ----- 달력 위젯: 공휴일 (우주항공청 월력요항 · 인사혁신처 기준) · 배송 쉬는 날 -----
+const KR_HOL = {
+  '2025-01-01': '신정', '2025-01-27': '임시공휴일', '2025-01-28': '설날 연휴', '2025-01-29': '설날', '2025-01-30': '설날 연휴', '2025-03-01': '삼일절', '2025-03-03': '대체공휴일', '2025-05-05': '어린이날 · 부처님오신날', '2025-05-06': '대체공휴일', '2025-06-03': '대통령 선거', '2025-06-06': '현충일', '2025-08-15': '광복절', '2025-10-03': '개천절', '2025-10-05': '추석 연휴', '2025-10-06': '추석', '2025-10-07': '추석 연휴', '2025-10-08': '대체공휴일', '2025-10-09': '한글날', '2025-12-25': '크리스마스',
+  '2026-01-01': '신정', '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴', '2026-03-01': '삼일절', '2026-03-02': '대체공휴일', '2026-05-01': '노동절', '2026-05-05': '어린이날', '2026-05-24': '부처님오신날', '2026-05-25': '대체공휴일', '2026-06-03': '지방선거', '2026-06-06': '현충일', '2026-07-17': '제헌절', '2026-08-15': '광복절', '2026-08-17': '대체공휴일', '2026-09-24': '추석 연휴', '2026-09-25': '추석', '2026-09-26': '추석 연휴', '2026-10-03': '개천절', '2026-10-05': '대체공휴일', '2026-10-09': '한글날', '2026-12-25': '크리스마스',
+  '2027-01-01': '신정', '2027-02-06': '설날 연휴', '2027-02-07': '설날', '2027-02-08': '설날 연휴', '2027-02-09': '대체공휴일', '2027-03-01': '삼일절', '2027-05-01': '노동절', '2027-05-03': '대체공휴일', '2027-05-05': '어린이날', '2027-05-13': '부처님오신날', '2027-06-06': '현충일', '2027-07-17': '제헌절', '2027-07-19': '대체공휴일', '2027-08-15': '광복절', '2027-08-16': '대체공휴일', '2027-09-14': '추석 연휴', '2027-09-15': '추석', '2027-09-16': '추석 연휴', '2027-10-03': '개천절', '2027-10-04': '대체공휴일', '2027-10-09': '한글날', '2027-10-11': '대체공휴일', '2027-12-25': '크리스마스', '2027-12-27': '대체공휴일'
+};
+const hcHol = d => KR_HOL[d] || '';
+const hcOff = d => { try { return c24Off(c24Cfg()).has(d); } catch (e) { return false; } };
+const hcShip = d => { try { return c24IsShip(dOf(d), c24Cfg()); } catch (e) { return true; } };
+const hcCanEdit = () => !document.body.classList.contains('is-guest');
+const hcD = iso => { const d = dOf(iso); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 (' + WDK[d.getDay()] + ')'; };
+const hcAgo = iso => { const n = Math.round((dOf(iso) - dOf(isoDate(new Date()))) / 864e5); return n === 0 ? '오늘' : n === 1 ? '내일' : n + '일 뒤'; };
+let hmCalOff = {}, hmCalSel = {};
+function hcInfo(id, d) {
+  const h = hcHol(d), off = hcOff(d), ship = hcShip(d), wk = dOf(d).getDay();
+  const st = off ? '<span class="hw-tg off">배송 쉬는 날</span>' : ship ? '<span class="hw-tg on">보내는 날</span>' : '<span class="hw-tg">보내지 않는 요일</span>';
+  const btn = hcCanEdit() && (ship || off) ? `<button type="button" class="hm-more" data-hmcaloff="${esc(id)}" data-d="${d}">${off ? '보내는 날로 되돌리기' : '이 날 배송 쉬기'}</button>` : '';
+  return `<b>${hcD(d)}</b>${h ? `<em class="hol">${esc(h)}</em>` : ''}${st}<span class="sp"></span>${btn}`;
+}
+Object.assign(HW, {
+  cal(x) {
+    const off = hmCalOff[x.id] || 0, n = new Date(), b = new Date(n.getFullYear(), n.getMonth() + off, 1), y = b.getFullYear(), m = b.getMonth(), first = b.getDay(), N = new Date(y, m + 1, 0).getDate(), t = isoDate(n);
+    const sel = hmCalSel[x.id] || t, cells = [];
+    for (let i = 1; i <= N; i++) { const d = isoDate(new Date(y, m, i)), h = hcHol(d), o = hcOff(d), wd = (first + i - 1) % 7;
+      cells.push(`<button type="button" class="hw-cd ${wd === 0 || h ? 'red' : wd === 6 ? 'blue' : ''} ${o ? 'off' : ''} ${d === t ? 'now' : ''} ${d === sel ? 'sel' : ''}" data-hmcald="${esc(x.id)}" data-d="${d}" title="${esc(h || '')}${o ? ' · 배송 쉬는 날' : ''}"><b>${i}</b><small>${esc(h ? h.replace(/ 연휴$/, '').replace('대체공휴일', '대체').replace('어린이날 · 부처님오신날', '어린이날') : o ? '휴무' : '')}</small></button>`); }
+    const hs = Object.keys(KR_HOL).filter(d => d.startsWith(y + '-' + String(m + 1).padStart(2, '0')));
+    return `<div class="hm-w hw-calw"><div class="hm-wt"><span class="hw-cnav"><button type="button" data-hmcalnav="${esc(x.id)}" data-v="-1" aria-label="이전 달">‹</button><b>${y}년 ${m + 1}월</b><button type="button" data-hmcalnav="${esc(x.id)}" data-v="1" aria-label="다음 달">›</button>${off ? `<button type="button" class="hw-ctoday" data-hmcalnav="${esc(x.id)}" data-v="0">오늘</button>` : ''}</span><span class="hm-lb">공휴일 ${hs.length}일</span></div>
+      <div class="hw-cg">${WDK.map((w, i) => `<s class="${i === 0 ? 'red' : i === 6 ? 'blue' : ''}">${w}</s>`).join('')}${'<span></span>'.repeat(first)}${cells.join('')}</div>
+      <div class="hw-cinfo">${hcInfo(x.id, sel)}</div></div>`;
+  },
+  calhol() { const t = isoDate(new Date()), L = Object.keys(KR_HOL).filter(d => d >= t).sort().slice(0, 10);
+    return `<div class="hm-w">${hwHead('다가오는 공휴일')}${L.length ? `<ul class="hm-list hw-hol">${L.map(d => { const o = hcOff(d), s = hcShip(d); return `<li><span class="hw-hd">${esc(hcD(d))}</span><span class="nm">${esc(KR_HOL[d])}<small>${hcAgo(d)}</small></span><span class="hw-tg ${o ? 'off' : s ? 'on' : ''}">${o ? '배송 쉼' : s ? '보내는 날' : '안 보내는 요일'}</span></li>`; }).join('')}</ul>` : hwEmpty('등록된 공휴일이 없어요')}</div>`; },
+  calship() { const t = isoDate(new Date()); let nx = null; for (let i = 1; i <= 30 && !nx; i++) { const d = isoDate(new Date(Date.now() + i * 864e5)); if (hcShip(d)) nx = d; }
+    const warn = []; for (let i = 0; i <= 14; i++) { const d = isoDate(new Date(Date.now() + i * 864e5)); if (hcHol(d) && hcShip(d)) warn.push(d); }
+    return `<div class="hm-w hw-sm">${hwHead('배송')}<p class="hw-sh1">${hcShip(t) ? '오늘은 <b>보내는 날</b>' : '오늘은 <b class="red">보내지 않아요</b>'}</p><p class="hw-sh2">다음 보내는 날 <b>${nx ? esc(hcD(nx)) : '–'}</b></p>${warn.length ? `<p class="hw-foot warn">⚠ ${esc(hcD(warn[0]))} ${esc(KR_HOL[warn[0]])}인데 보내는 날이에요${warn.length > 1 ? ' 외 ' + (warn.length - 1) + '일' : ''}</p>` : '<p class="hw-foot">2주 안에 걸리는 공휴일이 없어요</p>'}</div>`; }
+});
+Object.assign(HM_W, {
+  cal: { app: 'cal', n: '달력', d: '공휴일 · 배송 쉬는 날 표시 · 날짜를 눌러 쉬는 날 지정', s: ['L'], def: 'L', multi: 1 },
+  calhol: { app: 'cal', n: '다가오는 공휴일', d: '남은 날과 그날 배송하는지', s: ['M', 'L', 'W'], def: 'M' },
+  calship: { app: 'cal', n: '배송하는 날', d: '오늘 · 다음 보내는 날 · 공휴일 경고', s: ['S', 'M'], def: 'S' }
+});
+HM_WAPPS.unshift('cal');
+HM_XICON.cal = ['달력', "<rect x='3' y='5' width='18' height='16' rx='3'/><rect x='7' y='2' width='2.5' height='5' rx='1'/><rect x='14.5' y='2' width='2.5' height='5' rx='1'/><rect x='6.5' y='12' width='3' height='3' rx='.8' fill='#e66'/>", '#9bc7a6', '#4f8a62'];
+document.addEventListener('click', async e => {
+  if (e.target.closest('#hmAdd') || hmEditing) return;
+  const nv = e.target.closest('[data-hmcalnav]'); if (nv) { const id = nv.dataset.hmcalnav, v = +nv.dataset.v; hmCalOff[id] = v ? (hmCalOff[id] || 0) + v : 0; if (!v) delete hmCalSel[id]; renderHome(); return; }
+  const cd = e.target.closest('[data-hmcald]'); if (cd) { hmCalSel[cd.dataset.hmcald] = cd.dataset.d; renderHome(); return; }
+  const ob = e.target.closest('[data-hmcaloff]'); if (ob) { if (!hcCanEdit()) return; const d = ob.dataset.d, c = c24Cfg(), s = new Set((c.off || []).map(String)); s.has(d) ? s.delete(d) : s.add(d);
+    const keep = rules.cafe24; rules.cafe24 = Object.assign({}, c, { off: [...s].sort() }); ob.disabled = true;
+    try { await saveRules(); try { c24FillSet(); c24ShowWin(); } catch (er) {} renderHome(); } catch (er) { rules.cafe24 = keep; ob.disabled = false; alert('저장하지 못했어요: ' + (er.message || er.code || er)); } return; }
+});
 function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
 const hmDefault = () => ({ v: 1, items: [
   { id: 'w-today', t: 'w', w: 'today', s: 'W' }, { id: 'w-alert', t: 'w', w: 'alert', s: 'W' },
