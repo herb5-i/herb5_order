@@ -1399,6 +1399,10 @@ html.dark .c24{background:rgba(255,255,255,.03)}html.dark .c24 .c24st{background
 .oldslot{display:inline-flex;border:1px solid var(--line,#d9dccf);border-radius:999px;overflow:hidden;background:#fff}
 .oldslot button{border:0;background:none;padding:6px 12px;font:inherit;font-size:13px;color:var(--mute);cursor:pointer}
 .oldslot button.on{background:var(--moss2,#3f7f50);color:#fff;font-weight:600}
+.olddrop{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 12px;margin:6px 0 4px;border:2px dashed #c9d6c4;border-radius:14px;background:rgba(246,244,236,.7);cursor:pointer;text-align:center;transition:background .15s,border-color .15s}
+.olddrop svg{width:26px;height:26px;color:var(--moss2,#3f7f50)}
+.olddrop b{font-size:14px}.olddrop span{font-size:12px;color:var(--mute)}
+.olddrop:hover,.olddrop.over{border-color:var(--moss2,#3f7f50);background:rgba(220,236,214,.8)}
 .oldup .help{font-size:12px;color:var(--mute);margin:4px 0}
 .uf-slot.old{background:#efe7d6;color:#7a5b23}
 .uf-slot{flex:none;font-size:11.5px;font-weight:800;border-radius:9px;padding:5px 8px}
@@ -1942,7 +1946,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="hcal scal" id="scal"></div>
       <div class="sslot" id="sslot"></div>
       <details class="oldup" id="oldup"><summary><b>예전 파일 올리기</b><span>사이트 만들기 전에 정리한 엑셀 · 기록·통계에만 들어가고 재고에는 안 빠져요</span></summary>
-        <div class="oldup-in"><label>날짜<input type="date" id="oldday"></label><div class="oldslot" id="oldslot"><button type="button" data-oldslot="auto" class="on">자동</button><button type="button" data-oldslot="am">오전</button><button type="button" data-oldslot="pm">오후</button></div><button class="btn sm" type="button" id="oldpick">파일 고르기</button><input type="file" id="oldfile" accept=".xlsx,.xls,.csv" multiple hidden></div>
+        <div class="oldup-in"><label>날짜<input type="date" id="oldday"></label><div class="oldslot" id="oldslot"><button type="button" data-oldslot="auto" class="on">자동</button><button type="button" data-oldslot="am">오전</button><button type="button" data-oldslot="pm">오후</button></div><input type="file" id="oldfile" accept=".xlsx,.xls,.csv" multiple hidden></div>
+        <div class="olddrop" id="olddrop" role="button" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0-4 4m4-4 4 4M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><b>파일을 여기에 끌어다 놓기</b><span>또는 눌러서 고르기 · 여러 개 한 번에</span></div>
         <p class="help">파일 이름에 날짜가 있으면(예: 2024-03-15, 240315) 그 날짜로, 없으면 위 날짜로 들어가요. <b>자동</b>은 파일 이름의 시각(예: T083658 → 오전 8시 36분)으로 낮 12시 전이면 오전, 뒤면 오후로 넣고, 시각이 없거나 이름에 '오전'·'오후'가 있으면 그대로 따라요. 여러 개를 한 번에 골라도 돼요.</p>
         <div class="msg" id="oldmsg"></div>
       </details>
@@ -4151,7 +4156,16 @@ async function oldUpload(files) {
   if (lastDay) { sumSel = lastDay; sumSlot = null; const d = dOf(lastDay); sumMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderSum(); }
   const m2 = $('oldmsg'); m2.className = 'msg ' + (out.some(x => x[0] === '✗') ? 'err' : 'ok'); m2.innerHTML = out.map(esc).join('<br>') + (lastDay ? '<br>기록·통계에 들어갔고 재고에서는 빠지지 않아요' : '');
 }
-document.addEventListener('click', e => { if (e.target.closest('#oldpick')) { if (!$('oldday').value) $('oldday').value = sumSel || isoDate(new Date()); $('oldfile').click(); } });
+function oldDefDay() { if (!$('oldday').value) $('oldday').value = sumSel || isoDate(new Date()); }
+(() => { const box = $('oldup'), dz = $('olddrop'); if (!box || !dz) return;
+  let n = 0; const on = v => dz.classList.toggle('over', v);
+  box.addEventListener('dragenter', e => { if (!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return; e.preventDefault(); n++; box.open = true; on(true); });
+  box.addEventListener('dragover', e => { if (!e.dataTransfer || ![...e.dataTransfer.types].includes('Files')) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
+  box.addEventListener('dragleave', () => { if (--n <= 0) { n = 0; on(false); } });
+  box.addEventListener('drop', e => { e.preventDefault(); n = 0; on(false); const fs = [...(e.dataTransfer.files || [])].filter(f => /\.(xlsx|xls|csv)$/i.test(f.name)); if (!fs.length) { $('oldmsg').className = 'msg err'; $('oldmsg').textContent = '엑셀(.xlsx · .xls) 또는 .csv 파일만 올릴 수 있어요'; return; } oldDefDay(); oldUpload(fs); });
+  dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dz.click(); } });
+})();
+document.addEventListener('click', e => { if (e.target.closest('#olddrop')) { if (!$('oldday').value) $('oldday').value = sumSel || isoDate(new Date()); $('oldfile').click(); } });
 document.addEventListener('change', e => { if (e.target.id === 'oldfile') { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) oldUpload(fs); } });
 function renderSumCal() {
   const el = $('scal'); if (!el || !sumMonth) return;
