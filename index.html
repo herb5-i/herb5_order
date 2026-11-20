@@ -1715,6 +1715,48 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hmdg .hmx,.hmdg .hmsz{display:none!important}
 body.hm-dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 .hm-none{grid-column:1/-1;text-align:center;color:var(--mute);padding:30px 10px}
+.hmabox{max-width:560px!important}
+.hmabox h4 .msg{font-weight:400;margin-left:4px}
+.hma-wapps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.hma-wapp{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);font:inherit;color:var(--ink);cursor:pointer;text-align:left}.hma-wapp:hover{border-color:var(--acc)}
+.hma-wapp .hmic{width:40px;height:40px;border-radius:12px;grid-row:span 2}.hma-wapp .hmic svg{width:21px;height:21px}
+.hma-wapp span{font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hma-wapp em{font-style:normal;font-size:11.5px;color:var(--mute)}
+.hma-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}.hma-top b{font-size:16px}.hma-top .ibtn{font-size:20px}
+.hmic.sm{width:34px;height:34px;border-radius:11px}.hmic.sm svg{width:18px;height:18px}
+.hma-pvs{display:grid;gap:14px}
+.hma-pv{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card)}
+.hma-pvstage{background:var(--bg);padding:16px;display:flex;justify-content:center}
+.hmpv{pointer-events:none;position:relative;flex:none}.hmpv *{pointer-events:none!important}
+.hma-pvi{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:12px 14px}.hma-pvi>div:first-child{flex:1 1 170px;min-width:0}.hma-pvi b{display:block;font-size:14px}.hma-pvi small{display:block;font-size:12px;color:var(--mute)}
+.hma-szs button{padding:5px 10px!important;font-size:12.5px!important}
+.hw-inl{color:var(--ink);font-weight:700}
+.hw-bars{flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;min-height:0}
+.hw-bars>div{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:0}.hw-bars p{flex:1;width:100%;margin:0;display:flex;justify-content:center;align-items:flex-end;min-height:0}
+.hw-bars i{display:block;width:70%;max-width:30px;border-radius:6px 6px 3px 3px;background:color-mix(in srgb,var(--acc) 35%,transparent)}.hw-bars .on i{background:var(--acc)}
+.hw-bars em{font-style:normal;font-size:11px;color:var(--mute);font-weight:700;min-height:13px;line-height:13px}.hw-bars span{font-size:11px;color:var(--mute)}
+.hm-list.hw-bl li{padding:7px 2px}.hw-bl .hw-bar{flex:0 0 30%;height:7px;background:var(--soft,#f1f2f3);border-radius:99px;overflow:hidden}.hw-bl .hw-bar i{display:block;height:100%;background:var(--acc);border-radius:99px}
+.hw-ch{font-style:normal;font-size:12px;font-weight:700;margin-left:6px;white-space:nowrap}.hw-ch.up{color:#2f9e63}.hw-ch.dn{color:#c94b5d}
+.hw-foot{margin:auto 0 0;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hw-sm .hm-big{margin:2px 0 4px}
+.hw-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex:1;align-items:center}.hw-nums>div{text-align:center;min-width:0}.hw-nums b{display:block;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}.hw-nums span{font-size:11.5px;color:var(--mute);white-space:nowrap}
+.hw-nums .bad b{color:#c94b5d}.hw-nums .warn b{color:#c48a1a}.hw-nums .good b{color:var(--acc)}.hmi[data-s=S] .hw-nums b{font-size:22px}
+.hm-list.hw-wx li{padding:7px 2px;gap:8px}.hw-tp{display:flex;gap:6px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;flex:none}.hw-tp i{font-style:normal}.hw-tp .lo{color:#3f7891}.hw-tp .hi{color:#c2614a}
+.hw-chips{display:flex;gap:4px;flex:none}.hw-wx .chip,.hw-packs .chip{font-size:11px;padding:2px 7px;border-radius:99px;color:#1d2329;white-space:nowrap;display:inline-block}
+.hw-packs{display:grid;gap:6px;flex:1;align-content:start;min-height:0;overflow:hidden}.hw-packs>div{display:flex;align-items:center;justify-content:space-between;gap:6px}.hw-packs b{font-size:17px}.hw-packs small{font-size:12px;color:var(--mute);margin-left:2px}
+.hw-two{display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap}.hw-two>div{display:flex;align-items:baseline}.hw-rev b{font-size:20px;font-weight:800}.hmi[data-s=S] .hw-two .hm-big{font-size:28px}.hmi[data-s=S] .hw-rev b{font-size:16px}
+.hw-cal{flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;min-height:0;align-content:start}.hw-cal s{text-decoration:none;font-size:10px;color:var(--mute);text-align:center}
+.hw-cal span{font-size:10.5px;line-height:1.3;text-align:center;border-radius:5px;color:var(--mute);font-variant-numeric:tabular-nums}.hmi[data-s=L] .hw-cal{gap:5px}.hmi[data-s=L] .hw-cal span{font-size:13px;line-height:2.1;border-radius:8px}
+.hw-cal span.l1{background:color-mix(in srgb,var(--acc) 15%,transparent);color:var(--ink)}.hw-cal span.l2{background:color-mix(in srgb,var(--acc) 32%,transparent);color:var(--ink)}.hw-cal span.l3{background:color-mix(in srgb,var(--acc) 55%,transparent);color:#fff}.hw-cal span.l4{background:var(--acc);color:#fff}.hw-cal span.now{outline:1.5px solid var(--ink);outline-offset:-1.5px;font-weight:800}
+.hm-list.hw-mk li{padding:8px 2px}.hw-mk li i{font-style:normal;font-size:16px;flex:none}
+.hm-list.hw-kw li{display:grid;grid-template-columns:minmax(0,1fr) 58px 58px;padding:7px 2px}.hw-kw li>span:not(.nm){text-align:right}.hw-kw li.h{font-size:11px;color:var(--mute);padding:0 2px 4px}.hw-kw .hw-ch{margin:0}
+.hm-list.hw-pk li{padding:8px 2px}.hw-mo{display:grid;grid-template-columns:repeat(12,8px);gap:2px;flex:none}.hw-mo i{height:12px;border-radius:2px;background:var(--line)}.hw-mo i.pk{background:#e9b04f}.hw-mo i.now{outline:1.5px solid var(--ink)}
+.hw-tl{list-style:none;margin:0;padding:0;flex:1;min-height:0;overflow:auto}.hw-tl li{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:14px}.hw-tl li.done span{text-decoration:line-through;color:var(--mute)}
+.hw-ck{width:20px;height:20px;border-radius:6px;border:1.5px solid #c9a43a;background:none;flex:none;font-size:12px;color:#fff;padding:0;cursor:pointer;line-height:1}.done .hw-ck{background:#c9a43a}
+.hw-tl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hw-tx{border:0;background:none;color:var(--mute);cursor:pointer;font-size:15px;padding:0 2px;opacity:.6}
+.hw-tin{border:0;border-top:1px dashed rgba(60,70,40,.2);background:none;font:inherit;font-size:13.5px;padding:7px 0 0;margin-top:4px;color:var(--ink);outline:0;width:100%}
+.hw-dd{cursor:pointer;text-align:left}.hw-dd .hm-big{font-size:30px;margin:auto 0 2px}
+.hm-editing .hw-todo,.hm-editing .hw-todo *,.hm-editing .hw-dd{pointer-events:none!important}
+.hw-calm{margin:auto 0;color:var(--mute);font-size:13.5px;text-align:center}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
 .hmf-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .hmf-h b{flex:1;font-size:17px}
@@ -4380,14 +4422,6 @@ function renderHome() {
   if (!$('v-home')) return;
   if (!hmBuilt) hmBuild();
   const now = new Date(), today = isoDate(now), U = upl[today] || {};
-  // 오늘 주문
-  const am = U.am ? uplOrders(today, 'am') : 0, pm = U.pm ? uplOrders(today, 'pm') : 0, all = uplOrders(today);
-  hq('hm-orders').innerHTML = all.toLocaleString('ko-KR') + '<small>건</small>';
-  const slot = (k, n, lb) => { const e = hq(k === 'am' ? 'hm-am' : 'hm-pm'); e.className = 'hm-slot ' + (U[k] ? 'done' : 'wait'); e.innerHTML = '<i></i>' + lb + ' ' + (U[k] ? n + '건 · ' + esc(hhmm(U[k].at).replace(/^오[전후] /, '')) : '대기'); };
-  slot('am', am, '오전'); slot('pm', pm, '오후');
-  const tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
-  hq('hm-ring').style.setProperty('--p', tot ? p : 0); hq('hm-ring').classList.toggle('empty', !tot);
-  hq('hm-ringtxt').innerHTML = tot ? '<b>' + p + '%</b><small>오전</small>' : '<small>아직<br>없음</small>';
   const rev = salesDayRev();
   // 바로 가기 아래 한 줄
   const last = ['pm', 'am'].map(k => U[k]).filter(Boolean).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
@@ -4397,24 +4431,12 @@ function renderHome() {
   const inp = items.filter(x => x.rec), out = inp.filter(x => x.cur <= 0);
   const low = inp.filter(x => x.low), soon = inp.filter(x => !x.low && x.cur > 0 && x.days !== null && x.days < 3);
   (($('hm-s-stock')||{}).textContent) = inp.length ? [out.length ? '품절 ' + out.length : '', low.length ? '부족 ' + low.length : '', inp.length + '품목 관리 중'].filter(Boolean).join(' · ') : '재고를 넣어 주세요';
-  const al = hq('hm-alert'), alist = out.map(x => ({ x, t: 'out' })).concat(low.map(x => ({ x, t: 'low' })), soon.map(x => ({ x, t: 'soon' })));
-  al.classList.toggle('calm', !alist.length);
-  al.innerHTML = alist.length ? `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span><button class="hm-more" type="button" data-go="stock">재고 관리</button></div><div class="hm-alist">` + alist.slice(0, 8).map(({ x, t }) =>
-    `<button type="button" class="hm-al ${t}" data-go="stock"><b>${esc(x.key)}</b><span>${t === 'out' ? '남은 재고 없음' : esc(stkShow(x.unit, x.cur))}${t === 'low' ? ' · 최소 ' + esc(stkShow(x.unit, x.min)) : ''}${x.days !== null ? ' · 약 ' + (x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치') : ''}</span><em>${t === 'out' ? '품절' : t === 'low' ? '부족' : '곧 부족'}</em></button>`).join('') + (alist.length > 8 ? `<span class="hm-almore">외 ${alist.length - 8}품목</span>` : '') + '</div>' : `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span><button class="hm-more" type="button" data-go="stock">재고 관리</button></div><p class="hm-calm">${inp.length ? '부족하거나 곧 떨어질 품목이 없어요' : '재고 관리에서 품목을 넣으면 부족할 때 여기서 알려줘요'}</p>`;
   renderBakNote();
   const ym = today.slice(0, 7); let mrev = 0; rev.forEach((v, d) => { if (d.startsWith(ym)) mrev += v; });
   (($('hm-s-hist')||{}).textContent) = mrev ? (now.getMonth() + 1) + '월 ' + won(mrev) : '이번 달 기록 없음';
-  // 최근 품목별 이슈: 품목마다 가장 최근 것 하나씩, 최근 순으로 5개
-  const seen = new Set(), recent = [];
-  issItems().forEach(x => { if (!seen.has(x.item) && recent.length < 5) { seen.add(x.item); recent.push(x); } });
-  const cnt = new Map(); issItems().forEach(x => cnt.set(x.item, (cnt.get(x.item) || 0) + 1));
-  hq('hm-isslist').innerHTML = recent.length ? recent.map(x => `<li><button type="button" class="hm-issbtn" data-issjump="${x.day}" data-issjumpitem="${esc(x.item)}"><span class="hm-isd">${esc(fmtDay(x.day).replace(/ \(.\)$/, ''))}</span><span class="nm">${esc(x.item)}<small>${esc(x.text.split('\n')[0])}</small></span>${cnt.get(x.item) > 1 ? `<b class="hm-isc">${cnt.get(x.item)}건</b>` : ''}</button></li>`).join('')
-    : '<li class="hm-empty">이슈 관리에서 품목별 이슈를 적으면 여기에 보여요</li>';
-  // 최근 올린 파일
-  const ups = []; Object.keys(upl).forEach(d => ['am', 'pm'].forEach(k => { const e = upl[d] && upl[d][k]; if (e) ups.push({ d, k, at: e.at || '', name: e.name || '', n: new Set((e.rows || []).filter(x => !x.del).map(x => x.o)).size }); }));
-  ups.sort((a, b) => String(b.at).localeCompare(String(a.at)) || b.d.localeCompare(a.d));
-  hq('hm-recentlist').innerHTML = ups.length ? ups.slice(0, 5).map(u => `<li><span class="hm-tag ${u.k}">${u.k === 'am' ? '오전' : '오후'}</span><span class="nm">${esc(fmtDay(u.d))}<small>${esc(u.name)}</small></span><b>${u.n}건</b></li>`).join('')
-    : '<li class="hm-empty">아직 올린 파일이 없어요</li>';
+  // 위젯 새로 그리기 (글을 쓰는 중인 위젯은 건드리지 않아요)
+  (hmL ? hmL.items : []).forEach(x => { if (x.t !== 'w' || x.w === 'memo') return; const el = document.querySelector('#hmg .hmi[data-id="' + CSS.escape(x.id) + '"]'); if (!el) return;
+    const a = document.activeElement; if (a && el.contains(a) && /INPUT|TEXTAREA/.test(a.tagName)) return; const h = hmWidget(x); if (el._h === h) return; const w = el.querySelector('.hm-w'); if (w) { w.outerHTML = h; el._h = h; } });
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-go]'); if (!b) return;
@@ -4434,14 +4456,6 @@ document.addEventListener('click', e => {
 }, true);
 // ---------- 홈 꾸미기 (휴대폰 홈 화면처럼: 위치 · 크기 · 폴더) ----------
 const HM_KEY = 'herb5_home_v1';
-const HM_SZ = { S: '작게', M: '중간', L: '크게', W: '가로 꽉' };
-const HM_W = {
-  today: { n: '오늘 들어온 주문', d: '오늘 주문 수와 오전 · 오후 비율', s: ['S', 'M', 'L', 'W'], def: 'W' },
-  alert: { n: '재고 알림', d: '품절 · 부족 · 곧 부족한 품목', s: ['M', 'L', 'W'], def: 'W' },
-  iss: { n: '최근 품목별 이슈', d: '품목마다 가장 최근 이슈', s: ['S', 'M', 'L', 'W'], def: 'M' },
-  recent: { n: '최근 올린 파일', d: '정리하기 · 집계에 올린 파일', s: ['S', 'M', 'L', 'W'], def: 'M' },
-  memo: { n: '메모', d: '자유롭게 적어 두는 메모 (여러 개 가능)', s: ['S', 'M', 'L', 'W'], def: 'S', multi: 1 }
-};
 const HM_APPS = {
   c24: ['주문 불러오기', "<path d='M12 3a1.3 1.3 0 0 1 1.3 1.3v7.6l2.4-2.4a1.3 1.3 0 1 1 1.8 1.8l-4.6 4.6a1.3 1.3 0 0 1-1.8 0l-4.6-4.6a1.3 1.3 0 1 1 1.8-1.8l2.4 2.4V4.3A1.3 1.3 0 0 1 12 3zM4 15.5a1.3 1.3 0 0 1 1.3 1.3v1.4c0 .4.3.7.7.7h12c.4 0 .7-.3.7-.7v-1.4a1.3 1.3 0 1 1 2.6 0v1.4a3.3 3.3 0 0 1-3.3 3.3H6a3.3 3.3 0 0 1-3.3-3.3v-1.4A1.3 1.3 0 0 1 4 15.5z'/>", '#6fb3d6', '#2f6f96'],
   run: ['주문 정리', "<rect x='3' y='3' width='7.5' height='7.5' rx='2'/><rect x='13.5' y='3' width='7.5' height='7.5' rx='2'/><rect x='3' y='13.5' width='7.5' height='7.5' rx='2'/><rect x='13.5' y='13.5' width='7.5' height='7.5' rx='2'/>", '#7dbb86', '#3f7f50'],
@@ -4461,6 +4475,148 @@ const HM_APPS = {
   crm: ['고객 관리', "<circle cx='9' cy='8' r='3.6'/><path d='M2.5 20a6.5 6.5 0 0 1 13 0z'/><circle cx='17.2' cy='9' r='2.8'/><path d='M16.6 13.6a5.6 5.6 0 0 1 5 6.4h-4.4a8.4 8.4 0 0 0-1.6-6.3z'/>", '#8db9d4', '#3f7891'],
   rules: ['규칙 관리', "<path d='M12 2.5a4.5 4.5 0 0 1 4.5 4.5v3h.5a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2h.5V7A4.5 4.5 0 0 1 12 2.5zm0 2.4A2.1 2.1 0 0 0 9.9 7v3h4.2V7A2.1 2.1 0 0 0 12 4.9z'/>", '#aab3aa', '#6b746b']
 };
+const HM_SZ = { S: '작게', M: '중간', L: '크게', W: '가로 꽉' };
+// 위젯: app = 어느 아이콘의 위젯인지 (홈에 추가 → 아이콘을 누르면 그 아이콘 위젯 3~4개가 나와요)
+const HM_W = {
+  today: { app: 'run', n: '오늘 들어온 주문', d: '오늘 주문 수와 오전 · 오후 비율', s: ['S', 'M', 'L', 'W'], def: 'W' },
+  wk7: { app: 'run', n: '최근 7일 주문', d: '날마다 들어온 주문 수 막대', s: ['M', 'L', 'W'], def: 'M' },
+  top: { app: 'run', n: '오늘 많이 나간 상품', d: '오늘 주문에서 수량 많은 순서', s: ['M', 'L', 'W'], def: 'M' },
+  recent: { app: 'run', n: '최근 올린 파일', d: '정리하기 · 집계에 올린 파일', s: ['S', 'M', 'L', 'W'], def: 'M' },
+  wxtemp: { app: 'wx', n: '배송일 지역 기온', d: '권역마다 최저 · 최고 기온과 포장', s: ['M', 'L', 'W'], def: 'M' },
+  wxpack: { app: 'wx', n: '포장 요약', d: '보온 · 아이스팩이 필요한 지역 수', s: ['S', 'M'], def: 'S' },
+  wxdays: { app: 'wx', n: '앞으로 날씨', d: '날마다 전국에서 가장 추운 · 더운 값', s: ['M', 'L', 'W'], def: 'M' },
+  alert: { app: 'stock', n: '재고 알림', d: '품절 · 부족 · 곧 부족한 품목', s: ['M', 'L', 'W'], def: 'W' },
+  stkcnt: { app: 'stock', n: '재고 한눈에', d: '품절 · 부족 · 곧 부족 개수', s: ['S', 'M'], def: 'S' },
+  stkdays: { app: 'stock', n: '남은 일수', d: '곧 떨어지는 품목부터', s: ['M', 'L', 'W'], def: 'M' },
+  retwait: { app: 'ret', n: '처리 전 입고 · 반송', d: '아직 처리 완료를 안 누른 목록', s: ['M', 'L', 'W'], def: 'M' },
+  retcnt: { app: 'ret', n: '입고 · 반송 대기', d: '처리 전 입고 · 반송 건수', s: ['S'], def: 'S' },
+  retdone: { app: 'ret', n: '최근 처리한 입고 · 반송', d: '처리 완료한 기록', s: ['M', 'L'], def: 'M' },
+  iss: { app: 'issue', n: '최근 품목별 이슈', d: '품목마다 가장 최근 이슈', s: ['S', 'M', 'L', 'W'], def: 'M' },
+  isscnt: { app: 'issue', n: '이번 달 이슈', d: '이슈 수 · 품목 수 · 지난달과 비교', s: ['S', 'M'], def: 'S' },
+  isstop: { app: 'issue', n: '이슈 많은 품목', d: '최근 3개월 동안 이슈가 많은 순서', s: ['M', 'L'], def: 'M' },
+  clmrecent: { app: 'claim', n: '최근 취소 · 반품', d: '카페24에서 들어온 취소 · 교환 · 반품', s: ['M', 'L', 'W'], def: 'M' },
+  clmcnt: { app: 'claim', n: '이번 달 취소 · 반품', d: '건수와 지난달 비교', s: ['S', 'M'], def: 'S' },
+  clmtop: { app: 'claim', n: '취소 · 반품 많은 품목', d: '최근 3개월', s: ['M', 'L'], def: 'M' },
+  hmonth: { app: 'hist', n: '이번 달 주문 · 매출', d: '지난달 같은 날까지와 비교', s: ['S', 'M', 'W'], def: 'M' },
+  hcal: { app: 'hist', n: '이번 달 달력', d: '날마다 주문 수를 색으로', s: ['M', 'L'], def: 'M' },
+  htop: { app: 'hist', n: '이번 달 많이 팔린 품목', d: '품목별 수량 순서', s: ['M', 'L', 'W'], def: 'M' },
+  hreg: { app: 'hist', n: '이번 달 지역', d: '주문이 많은 지역 순서', s: ['M', 'L'], def: 'M' },
+  crmcall: { app: 'crm', n: '연락 필요 고객', d: '평소 주기보다 오래 주문이 없는 단골', s: ['M', 'L', 'W'], def: 'M' },
+  crmweek: { app: 'crm', n: '이번 주 주문 예정', d: '주기로 보면 이번 주에 주문할 고객', s: ['M', 'L', 'W'], def: 'M' },
+  crmcnt: { app: 'crm', n: '고객 한눈에', d: '단골 · 새 고객 · 잠든 고객 수', s: ['S', 'M'], def: 'S' },
+  mkalert: { app: 'market', n: '시장 알림', d: '확인할 키워드 · 다가오는 성수기', s: ['M', 'W'], def: 'M' },
+  mkkw: { app: 'market', n: '키워드 시장 · 우리', d: '키워드마다 시장과 우리 판매 변화', s: ['M', 'L', 'W'], def: 'M' },
+  mkpeak: { app: 'market', n: '성수기 달력', d: '키워드마다 다음 성수기까지', s: ['M', 'L'], def: 'M' },
+  memo: { app: 'memo', n: '메모', d: '자유롭게 적어 두는 메모 (여러 개 가능)', s: ['S', 'M', 'L', 'W'], def: 'S', multi: 1 },
+  todo: { app: 'memo', n: '할 일', d: '체크하며 지우는 할 일 목록 (여러 개 가능)', s: ['S', 'M', 'L'], def: 'M', multi: 1 },
+  dday: { app: 'memo', n: 'D-day', d: '중요한 날까지 남은 날 (여러 개 가능)', s: ['S'], def: 'S', multi: 1 }
+};
+const HM_WAPPS = ['run', 'wx', 'stock', 'ret', 'issue', 'claim', 'hist', 'crm', 'market', 'memo'];
+const HM_XICON = { memo: ['메모 · 할 일', "<path d='M5 3h10l4 4v12.5A1.5 1.5 0 0 1 17.5 21h-12A1.5 1.5 0 0 1 4 19.5v-15A1.5 1.5 0 0 1 5 3zm2.5 7a1 1 0 0 0 0 2h9a1 1 0 0 0 0-2zm0 4a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2z'/>", '#f5d77a', '#d3a52a'] };
+const hmAppInfo = a => HM_APPS[a] || HM_XICON[a];
+// ----- 위젯 그리기 (홈과 미리보기 둘 다 같은 함수) -----
+const hwHead = (lb, go, gt) => `<div class="hm-wt"><span class="hm-lb">${lb}</span>${go ? `<button class="hm-more" type="button" data-hmgo="${go}">${gt || '열기'}</button>` : ''}</div>`;
+const hwEmpty = t => `<ul class="hm-list"><li class="hm-empty">${t}</li></ul>`;
+const hwPct = (a, b) => b > 0 ? Math.round((a - b) / b * 100) : null;
+const hwCh = (p, unit) => p == null || (unit && !p) ? '' : `<em class="hw-ch ${p > 0 ? 'up' : p < 0 ? 'dn' : ''}">${p > 0 ? '▲' : p < 0 ? '▼' : ''}${Math.abs(p)}${unit || '%'}</em>`;
+const hwYm = (off) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (off || 0)); return isoDate(d).slice(0, 7); };
+function hwStk() { let items = []; try { items = stkCompute().items; } catch (e) {} const inp = items.filter(x => x.rec), out = inp.filter(x => x.cur <= 0), low = inp.filter(x => x.low && x.cur > 0), soon = inp.filter(x => !x.low && x.cur > 0 && x.days !== null && x.days < 3); return { inp, out, low, soon }; }
+function hwDayCnt(d) { const t = isoDate(new Date()); let n = 0; try { n = dayOrders(d); } catch (e) {} if (d === t) { try { n = Math.max(n, uplOrders(t)); } catch (e) {} } return n; }
+function hwMonthStat() { const t = isoDate(new Date()), ym = t.slice(0, 7), dd = +t.slice(8), pym = hwYm(-1); let rev = new Map(); try { rev = salesDayRev(); } catch (e) {}
+  const cnt = (pre, lim) => { let o = 0, r = 0; Object.keys(hist).forEach(d => { if (d.startsWith(pre) && +d.slice(8) <= lim) o += hwDayCnt(d); }); rev.forEach((v, d) => { if (d.startsWith(pre) && +d.slice(8) <= lim) r += v; }); return [o, r]; };
+  const [o, r] = cnt(ym, 31), [po, pr] = cnt(pym, dd); return { o, r, po, pr, m: +ym.slice(5) }; }
+function hwClaims() { try { return issAllRaw().filter(x => x.cat === 'claim'); } catch (e) { return []; } }
+function hwCountTop(arr, f, n) { const m = new Map(); arr.forEach(x => { const k = f(x); if (k) m.set(k, (m.get(k) || 0) + 1); }); return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, n || 6); }
+function hwBarsList(rows, unit) { const mx = Math.max(1, ...rows.map(r => r[1])); return `<ul class="hm-list hw-bl">${rows.map(r => `<li><span class="nm">${esc(r[0])}</span><span class="hw-bar"><i style="width:${Math.round(r[1] / mx * 100)}%"></i></span><b>${typeof r[1] === 'number' ? r[1].toLocaleString('ko-KR') : r[1]}${unit || ''}</b></li>`).join('')}</ul>`; }
+function hmMkEnsure() { if (!document.body.classList.contains('fbmode') || !c24Cfg().worker) return false; if (!mkCfgV && !mkBusy && !mkErr) mkLoad(); else if (mkCfgV && mkCfgV.naver && !mkTr && !mkTrBusy) renderMarket(); return true; }
+function hmMkRows() { if (!mkTr || !mkTr.results) return null; try { return mkTr.results.map(mkKw); } catch (e) { return null; } }
+let hmCrmAsk = false;
+function hmCrm() { if (!crmReady) { if (!hmCrmAsk) { hmCrmAsk = true; crmInit().then(homeSoon).catch(() => {}); } return null; } try { const D = crmData(); return D.list && D.list.length ? D : null; } catch (e) { return null; } }
+const hmMkMsg = () => !document.body.classList.contains('fbmode') || !c24Cfg().worker ? '로그인하는 웹 버전에서 쓸 수 있어요' : mkErr ? esc(mkErr) : mkCfgV && !mkCfgV.naver ? '시장 탭에서 네이버 데이터랩을 연결해 주세요' : mkTr && mkTr.err ? esc(mkTr.err) : '시장 자료를 불러오는 중…';
+const HW = {
+  today() { const t = isoDate(new Date()), U = upl[t] || {}, am = U.am ? uplOrders(t, 'am') : 0, pm = U.pm ? uplOrders(t, 'pm') : 0, all = uplOrders(t), tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
+    const sl = (k, n, lb) => `<span class="hm-slot ${U[k] ? 'done' : 'wait'}"><i></i>${lb} ${U[k] ? n + '건 · ' + esc(hhmm(U[k].at).replace(/^오[전후] /, '')) : '대기'}</span>`;
+    return `<button class="hm-w hm-today" type="button" data-go="sum"><div class="hm-wt"><span class="hm-lb">오늘 들어온 주문</span><span class="hm-arrow" aria-hidden="true"></span></div><div class="hm-tbody"><div><b class="hm-big">${all.toLocaleString('ko-KR')}<small>건</small></b><div class="hm-slots">${sl('am', am, '오전')}${sl('pm', pm, '오후')}</div></div><div class="hm-ring ${tot ? '' : 'empty'}" style="--p:${tot ? p : 0}"><span>${tot ? '<b>' + p + '%</b><small>오전</small>' : '<small>아직<br>없음</small>'}</span></div></div></button>`; },
+  wk7() { const days = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); days.push(isoDate(d)); } const v = days.map(hwDayCnt), mx = Math.max(1, ...v), tot = v.reduce((a, b) => a + b, 0);
+    return `<div class="hm-w">${hwHead('최근 7일 주문 · <b class="hw-inl">' + tot + '건</b>', 'hist', '기록')}<div class="hw-bars">${days.map((d, i) => `<div class="${i === 6 ? 'on' : ''}"><em>${v[i] || ''}</em><p><i style="height:${Math.max(v[i] ? 6 : 2, Math.round(v[i] / mx * 100))}%"></i></p><span>${i === 6 ? '오늘' : WDK[dOf(d).getDay()]}</span></div>`).join('')}</div></div>`; },
+  top() { const t = isoDate(new Date()), m = new Map(); try { uplRows(t).forEach(x => m.set(x.p, (m.get(x.p) || 0) + (Number(x.q) || 0))); } catch (e) {} const rows = [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+    return `<div class="hm-w">${hwHead('오늘 많이 나간 상품', 'sum', '집계')}${rows.length ? hwBarsList(rows, '개') : hwEmpty('오늘 올린 주문이 없어요')}</div>`; },
+  recent() { const ups = []; Object.keys(upl).forEach(d => ['am', 'pm'].forEach(k => { const e = upl[d] && upl[d][k]; if (e) ups.push({ d, k, at: e.at || '', name: e.name || '', n: new Set((e.rows || []).filter(x => !x.del).map(x => x.o)).size }); }));
+    ups.sort((a, b) => String(b.at).localeCompare(String(a.at)) || b.d.localeCompare(a.d));
+    return `<div class="hm-w hm-recent">${hwHead('최근 올린 파일', 'run', '올리기')}<ul class="hm-list">${ups.length ? ups.slice(0, 6).map(u => `<li><span class="hm-tag ${u.k}">${u.k === 'am' ? '오전' : '오후'}</span><span class="nm">${esc(fmtDay(u.d))}<small>${esc(u.name)}</small></span><b>${u.n}건</b></li>`).join('') : '<li class="hm-empty">아직 올린 파일이 없어요</li>'}</ul></div>`; },
+  wxtemp() { const day = isoOf(dayOff), regs = regionList().filter(r => temps[r] && temps[r].min !== undefined);
+    return `<div class="hm-w">${hwHead('배송일 기온 · ' + esc(fmtDay(day)), 'wx', '날씨')}${!regs.length ? hwEmpty(wdata ? '이 날짜 예보가 아직 없어요' : '날씨를 불러오는 중…') : `<ul class="hm-list hw-wx">${regs.map(r => { const t = temps[r], bs = bandsFor(t); return `<li><span class="nm">${esc(r)}</span><span class="hw-tp"><i class="lo">${t.min}°</i><i class="hi">${t.max}°</i></span><span class="hw-chips">${bs.map(b => `<span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span>`).join('')}</span></li>`; }).join('')}</ul>`}</div>`; },
+  wxpack() { const regs = regionList().filter(r => temps[r] && temps[r].min !== undefined), m = new Map(); regs.forEach(r => bandsFor(temps[r]).forEach(b => { const e = m.get(b.label) || { b, n: 0 }; e.n++; m.set(b.label, e); }));
+    const L = [...m.values()].sort((a, b) => b.n - a.n);
+    return `<div class="hm-w hw-sm">${hwHead('포장 · ' + esc(fmtDay(isoOf(dayOff)).replace(/ \(.\)$/, '')), 'wx', '날씨')}${!regs.length ? hwEmpty(wdata ? '예보가 아직 없어요' : '불러오는 중…') : `<div class="hw-packs">${L.map(e => `<div><span class="chip" style="background:#${esc(e.b.color)}">${esc(e.b.label)}</span><b>${e.n}<small>곳</small></b></div>`).join('') || '<p class="msg">포장 기준에 걸리는 지역이 없어요</p>'}</div>`}</div>`; },
+  wxdays() { const D = (wdata && wdata.days) || {}, t = isoDate(new Date()), ks = Object.keys(D).filter(d => d >= t).sort().slice(0, 7);
+    const row = d => { let lo = null, hi = null; Object.values(D[d] || {}).forEach(v => { if (v && Array.isArray(v.min)) lo = Math.min(lo == null ? 1e9 : lo, ...v.min); if (v && Array.isArray(v.max)) hi = Math.max(hi == null ? -1e9 : hi, ...v.max); }); return [d, lo, hi]; };
+    const R = ks.map(row).filter(r => r[1] != null);
+    return `<div class="hm-w">${hwHead('앞으로 날씨 · 전국', 'wx', '날씨')}${R.length ? `<ul class="hm-list hw-wx">${R.map(r => `<li><span class="nm">${r[0] === t ? '오늘' : esc(fmtDay(r[0]))}</span><span class="hw-tp"><i class="lo">${r[1]}°</i><i class="hi">${r[2]}°</i></span>${bandsFor({ min: r[1], max: r[2] }).map(b => `<span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span>`).join('')}</li>`).join('')}</ul>` : hwEmpty(wdata ? '예보가 없어요' : '날씨를 불러오는 중…')}</div>`; },
+  alert() { const { out, low, soon } = hwStk(), alist = out.map(x => ({ x, t: 'out' })).concat(low.map(x => ({ x, t: 'low' })), soon.map(x => ({ x, t: 'soon' })));
+    return `<div class="hm-w hm-alert ${alist.length ? '' : 'calm'}">` + (alist.length ? `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span><button class="hm-more" type="button" data-go="stock">재고 관리</button></div><div class="hm-alist">` + alist.slice(0, 8).map(({ x, t }) =>
+      `<button type="button" class="hm-al ${t}" data-go="stock"><b>${esc(x.key)}</b><span>${t === 'out' ? '남은 재고 없음' : esc(stkShow(x.unit, x.cur))}${t === 'low' ? ' · 최소 ' + esc(stkShow(x.unit, x.min)) : ''}${x.days !== null ? ' · 약 ' + (x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치') : ''}</span><em>${t === 'out' ? '품절' : t === 'low' ? '부족' : '곧 부족'}</em></button>`).join('') + '</div>'
+      : `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span></div><p class="hw-calm">품절 · 부족한 품목이 없어요</p>`) + '</div>'; },
+  stkcnt() { const { inp, out, low, soon } = hwStk();
+    return `<div class="hm-w hw-sm">${hwHead('재고', 'stock', '열기')}${inp.length ? `<div class="hw-nums"><div class="bad"><b>${out.length}</b><span>품절</span></div><div class="warn"><b>${low.length}</b><span>부족</span></div><div><b>${soon.length}</b><span>곧 부족</span></div></div><p class="hw-foot">${inp.length}품목 관리 중</p>` : hwEmpty('재고를 넣어 주세요')}</div>`; },
+  stkdays() { const { inp } = hwStk(), L = inp.filter(x => x.days !== null || x.cur <= 0).sort((a, b) => (a.cur <= 0 ? -1 : a.days) - (b.cur <= 0 ? -1 : b.days)).slice(0, 8);
+    return `<div class="hm-w">${hwHead('남은 일수', 'stock', '재고')}${L.length ? `<ul class="hm-list">${L.map(x => `<li class="${x.cur <= 0 || x.days < 1 ? 'bad' : ''}"><span class="nm">${esc(x.key)}<small>${esc(stkShow(x.unit, x.cur))}</small></span><b>${x.cur <= 0 ? '품절' : x.days < 1 ? '1일 안' : Math.floor(x.days) + '일'}</b></li>`).join('')}</ul>` : hwEmpty('남은 일수를 계산할 품목이 없어요')}</div>`; },
+  retwait() { const it = (retDoc().items || []);
+    return `<div class="hm-w">${hwHead('처리 전 입고 · 반송 · <b class="hw-inl">' + it.length + '건</b>', 'ret', '열기')}${it.length ? `<ul class="hm-list">${it.slice().reverse().slice(0, 8).map(x => `<li><span class="hm-tag ${retTy(x) === 'in' ? 'am' : 'pm'}">${retTy(x) === 'in' ? '입고' : '반송'}</span><span class="nm">${esc(x.key)}<small>${esc(x.why || '')}</small></span><b>${esc(stkShow(x.unit, x.v))}</b></li>`).join('')}</ul>` : hwEmpty('처리할 입고 · 반송이 없어요')}</div>`; },
+  retcnt() { const it = retDoc().items || [], i = it.filter(x => retTy(x) === 'in').length;
+    return `<div class="hm-w hw-sm">${hwHead('입고 · 반송', 'ret', '열기')}<b class="hm-big">${it.length}<small>건</small></b><p class="hw-foot">${it.length ? '입고 ' + i + ' · 반송 ' + (it.length - i) + ' 처리 전' : '처리할 게 없어요'}</p></div>`; },
+  retdone() { const S = (retDoc().sent || []).slice(-8).reverse();
+    return `<div class="hm-w">${hwHead('최근 처리한 입고 · 반송', 'ret', '열기')}${S.length ? `<ul class="hm-list">${S.map(h => `<li><span class="nm">${esc(fmtDay(h.day || String(h.at).slice(0, 10)))}<small>${esc((h.items || []).slice(0, 3).map(x => x.key).join(', '))}${(h.items || []).length > 3 ? ' 외' : ''}</small></span><b>${(h.items || []).length}건</b></li>`).join('')}</ul>` : hwEmpty('아직 처리한 기록이 없어요')}</div>`; },
+  iss() { let L = []; try { L = issItems(); } catch (e) {} const seen = new Set(), recent = []; L.forEach(x => { if (!seen.has(x.item) && recent.length < 6) { seen.add(x.item); recent.push(x); } }); const cnt = new Map(); L.forEach(x => cnt.set(x.item, (cnt.get(x.item) || 0) + 1));
+    return `<div class="hm-w hm-stock hm-iss">${hwHead('최근 품목별 이슈', 'issue', '전체 보기')}<ul class="hm-list">${recent.length ? recent.map(x => `<li><button type="button" class="hm-issbtn" data-issjump="${x.day}" data-issjumpitem="${esc(x.item)}"><span class="hm-isd">${esc(fmtDay(x.day).replace(/ \(.\)$/, ''))}</span><span class="nm">${esc(x.item)}<small>${esc(String(x.text || '').split('\n')[0])}</small></span>${cnt.get(x.item) > 1 ? `<b class="hm-isc">${cnt.get(x.item)}건</b>` : ''}</button></li>`).join('') : '<li class="hm-empty">이슈 관리에서 품목별 이슈를 적으면 여기에 보여요</li>'}</ul></div>`; },
+  isscnt() { let L = []; try { L = issItems(); } catch (e) {} const ym = hwYm(0), pym = hwYm(-1), a = L.filter(x => x.day.startsWith(ym)), b = L.filter(x => x.day.startsWith(pym)).length;
+    return `<div class="hm-w hw-sm">${hwHead(+ym.slice(5) + '월 이슈', 'issue', '열기')}<b class="hm-big">${a.length}<small>건</small></b><p class="hw-foot">${new Set(a.map(x => x.item)).size}품목 · 지난달 ${b}건 ${hwCh(a.length - b, '건')}</p></div>`; },
+  isstop() { let L = []; try { L = issItems(); } catch (e) {} const from = isoDate(new Date(Date.now() - 90 * 864e5)), rows = hwCountTop(L.filter(x => x.day >= from), x => x.item, 6);
+    return `<div class="hm-w">${hwHead('이슈 많은 품목 · 3개월', 'issue', '열기')}${rows.length ? hwBarsList(rows, '건') : hwEmpty('최근 3개월 이슈가 없어요')}</div>`; },
+  clmrecent() { const L = hwClaims().slice(0, 8);
+    return `<div class="hm-w">${hwHead('최근 취소 · 반품', 'claim', '열기')}${L.length ? `<ul class="hm-list">${L.map(x => `<li><span class="hm-tag pm">${esc(x.ctype || '취소')}</span><span class="nm">${esc(x.item || '')}<small>${esc(fmtDay(x.day))} · ${esc(String(x.text || '').split('\n')[0])}</small></span></li>`).join('')}</ul>` : hwEmpty('들어온 취소 · 반품이 없어요')}</div>`; },
+  clmcnt() { const L = hwClaims(), ym = hwYm(0), a = L.filter(x => x.day.startsWith(ym)), b = L.filter(x => x.day.startsWith(hwYm(-1))).length, ty = hwCountTop(a, x => x.ctype || '취소', 3);
+    return `<div class="hm-w hw-sm">${hwHead(+ym.slice(5) + '월 취소 · 반품', 'claim', '열기')}<b class="hm-big">${a.length}<small>건</small></b><p class="hw-foot">${ty.map(t => esc(t[0]) + ' ' + t[1]).join(' · ') || '없어요'} · 지난달 ${b}건</p></div>`; },
+  clmtop() { const from = isoDate(new Date(Date.now() - 90 * 864e5)), rows = hwCountTop(hwClaims().filter(x => x.day >= from), x => x.item, 6);
+    return `<div class="hm-w">${hwHead('취소 · 반품 많은 품목 · 3개월', 'claim', '열기')}${rows.length ? hwBarsList(rows, '건') : hwEmpty('최근 3개월 취소 · 반품이 없어요')}</div>`; },
+  hmonth() { const S = hwMonthStat();
+    return `<div class="hm-w hw-sm">${hwHead(S.m + '월 주문 · 매출', 'report', '보고서')}<div class="hw-two"><div><b class="hm-big">${S.o.toLocaleString('ko-KR')}<small>건</small></b>${hwCh(hwPct(S.o, S.po))}</div><div class="hw-rev"><b>${S.r ? wonShort(S.r) + '원' : '–'}</b>${hwCh(hwPct(S.r, S.pr))}</div></div><p class="hw-foot">지난달 같은 날까지와 비교</p></div>`; },
+  hcal() { const n = new Date(), y = n.getFullYear(), m = n.getMonth(), first = new Date(y, m, 1).getDay(), N = new Date(y, m + 1, 0).getDate(), t = isoDate(n);
+    const v = []; for (let d = 1; d <= N; d++) v.push(hwDayCnt(isoDate(new Date(y, m, d)))); const mx = Math.max(1, ...v);
+    return `<div class="hm-w">${hwHead((m + 1) + '월 · <b class="hw-inl">' + v.reduce((a, b) => a + b, 0) + '건</b>', 'days', '날짜별')}<div class="hw-cal">${WDK.map(w => `<s>${w}</s>`).join('')}${'<span></span>'.repeat(first)}${v.map((c, i) => { const iso = isoDate(new Date(y, m, i + 1)); return `<span class="${iso === t ? 'now' : ''} ${c ? 'l' + Math.min(4, Math.ceil(c / mx * 4)) : ''}" title="${i + 1}일 ${c}건">${i + 1}</span>`; }).join('')}</div></div>`; },
+  htop() { const t = isoDate(new Date()); let S = null; try { S = rangeStats(t.slice(0, 8) + '01', t); } catch (e) {} const g = new Map(); if (S) [...S.prod.values()].forEach(p => { const k = groupOf(p.name); g.set(k, (g.get(k) || 0) + p.qty); });
+    const rows = [...g.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8);
+    return `<div class="hm-w">${hwHead((+t.slice(5, 7)) + '월 많이 팔린 품목', 'report', '보고서')}${rows.length ? hwBarsList(rows, '개') : hwEmpty('이번 달 기록이 없어요')}</div>`; },
+  hreg() { const t = isoDate(new Date()); let S = null; try { S = rangeStats(t.slice(0, 8) + '01', t); } catch (e) {} const rows = S ? [...S.regions.entries()].map(([r, s]) => [r, s.size]).sort((a, b) => b[1] - a[1]).slice(0, 7) : [];
+    return `<div class="hm-w">${hwHead((+t.slice(5, 7)) + '월 지역', 'report', '보고서')}${rows.length ? hwBarsList(rows, '건') : hwEmpty('이번 달 기록이 없어요')}</div>`; },
+  crmcall() { const D = hmCrm(); if (!D) return `<div class="hm-w">${hwHead('연락 필요 고객', 'crm', '열기')}${hwEmpty(crmReady ? '고객 관리에서 카페24 주문을 받아 주세요' : '불러오는 중…')}</div>`;
+    const f = CRM_P.find(p => p[0] === 'call')[2], L = D.list.filter(c => f(c, D)).sort((a, b) => b.ago / (b.cyc || 1) - a.ago / (a.cyc || 1)).slice(0, 8);
+    return `<div class="hm-w">${hwHead('연락 필요 고객 · <b class="hw-inl">' + D.list.filter(c => f(c, D)).length + '명</b>', 'crm', '열기')}${L.length ? `<ul class="hm-list">${L.map(c => `<li><span class="nm">${esc(c.label || '고객')}<small>${esc(c.itemsTxt || '')}</small></span><b>${c.ago}일째</b></li>`).join('')}</ul>` : hwEmpty('지금 연락할 고객이 없어요')}</div>`; },
+  crmweek() { const D = hmCrm(); if (!D) return `<div class="hm-w">${hwHead('이번 주 주문 예정', 'crm', '열기')}${hwEmpty(crmReady ? '고객 관리에서 카페24 주문을 받아 주세요' : '불러오는 중…')}</div>`;
+    const f = CRM_P.find(p => p[0] === 'week')[2], A = D.list.filter(c => f(c, D)).sort((a, b) => String(a.next).localeCompare(String(b.next)));
+    return `<div class="hm-w">${hwHead('이번 주 주문 예정 · <b class="hw-inl">' + A.length + '명</b>', 'crm', '열기')}${A.length ? `<ul class="hm-list">${A.slice(0, 8).map(c => `<li><span class="nm">${esc(c.label || '고객')}<small>${esc(c.itemsTxt || '')}</small></span><b>${esc(crmDay(c.next))}</b></li>`).join('')}</ul>` : hwEmpty('이번 주 예정 고객이 없어요')}</div>`; },
+  crmcnt() { const D = hmCrm(); if (!D) return `<div class="hm-w hw-sm">${hwHead('고객', 'crm', '열기')}${hwEmpty(crmReady ? '고객 주문을 받아 주세요' : '불러오는 중…')}</div>`;
+    const n = k => { const f = CRM_P.find(p => p[0] === k)[2]; return D.list.filter(c => f(c, D)).length; };
+    return `<div class="hm-w hw-sm">${hwHead('고객 ' + D.list.length.toLocaleString('ko-KR') + '명', 'crm', '열기')}<div class="hw-nums"><div class="good"><b>${n('vip')}</b><span>단골</span></div><div><b>${n('new')}</b><span>새 고객</span></div><div class="warn"><b>${n('call')}</b><span>연락 필요</span></div></div></div>`; },
+  mkalert() { const ok = hmMkEnsure(), R = ok ? hmMkRows() : null; if (!R) return `<div class="hm-w">${hwHead('시장 알림', 'market', '시장')}${hwEmpty(hmMkMsg())}</div>`;
+    const c = new Date().getMonth() + 1, L = [];
+    R.filter(K => K.st === 'bad').forEach(K => L.push(['bad', '⚠️', K.k + ' 확인해 보세요', '시장 ' + (K.m > 0 ? '+' : '') + K.m + '% · 우리 ' + (K.o > 0 ? '+' : '') + K.o + '%']));
+    R.map(K => [K, K.peak.length ? Math.min(...K.peak.map(p => (p - c + 12) % 12)) : 99]).filter(x => x[1] > 0 && x[1] <= 4).sort((a, b) => a[1] - b[1]).forEach(([K, d]) => L.push(['soon', '🌱', K.k + ' 성수기 ' + d + '개월 전', K.peak.join('·') + '월에 가장 많이 찾아요']));
+    R.filter(K => K.st === 'good').forEach(K => L.push(['good', '👍', K.k + ' 잘하고 있어요', '시장 ' + (K.m > 0 ? '+' : '') + K.m + '% · 우리 +' + K.o + '%']));
+    return `<div class="hm-w">${hwHead('시장 알림', 'market', '시장')}${L.length ? `<ul class="hm-list hw-mk">${L.slice(0, 6).map(x => `<li class="${x[0]}"><i>${x[1]}</i><span class="nm">${esc(x[2])}<small>${esc(x[3])}</small></span></li>`).join('')}</ul>` : hwEmpty('지금 챙길 알림이 없어요')}</div>`; },
+  mkkw() { const ok = hmMkEnsure(), R = ok ? hmMkRows() : null; if (!R) return `<div class="hm-w">${hwHead('키워드 시장 · 우리', 'market', '시장')}${hwEmpty(hmMkMsg())}</div>`;
+    const p = v => v == null ? '<span class="msg">–</span>' : `<em class="hw-ch ${v > 0 ? 'up' : v < 0 ? 'dn' : ''}">${v > 0 ? '+' : ''}${v}%</em>`;
+    return `<div class="hm-w">${hwHead('키워드 · 시장 vs 우리', 'market', '시장')}<ul class="hm-list hw-kw"><li class="h"><span class="nm"></span><span>시장</span><span>우리</span></li>${R.map(K => `<li><span class="nm">${esc(K.k)}</span><span>${p(K.m)}</span><span>${p(K.o)}</span></li>`).join('')}</ul></div>`; },
+  mkpeak() { const ok = hmMkEnsure(), R = ok ? hmMkRows() : null; if (!R) return `<div class="hm-w">${hwHead('성수기 달력', 'market', '시장')}${hwEmpty(hmMkMsg())}</div>`;
+    const c = new Date().getMonth() + 1, L = R.filter(K => K.peak.length).map(K => [K, Math.min(...K.peak.map(p => (p - c + 12) % 12))]).sort((a, b) => a[1] - b[1]);
+    return `<div class="hm-w">${hwHead('성수기 달력', 'market', '시장')}${L.length ? `<ul class="hm-list hw-pk">${L.map(([K, d]) => `<li><span class="nm">${esc(K.k)}</span><span class="hw-mo">${Array.from({ length: 12 }, (_, i) => `<i class="${K.peak.includes(i + 1) ? 'pk' : ''} ${i + 1 === c ? 'now' : ''}"></i>`).join('')}</span><b>${d === 0 ? '지금' : d + '개월 뒤'}</b></li>`).join('')}</ul>` : hwEmpty('기간을 1년 이상으로 고르면 성수기가 나와요')}</div>`; },
+  memo(x) { return `<div class="hm-w hm-memo"><div class="hm-wt"><span class="hm-lb">메모</span></div><textarea class="hm-mtx" data-hmmemo="${esc(x.id)}" placeholder="여기에 메모를 적어 두세요" aria-label="메모">${esc(x.text || '')}</textarea></div>`; },
+  todo(x) { const L = x.todos || [], left = L.filter(t => !t.d).length;
+    return `<div class="hm-w hm-memo hw-todo"><div class="hm-wt"><span class="hm-lb">할 일${L.length ? ' · ' + left + '개 남음' : ''}</span></div><ul class="hw-tl">${L.map((t, i) => `<li class="${t.d ? 'done' : ''}"><button type="button" class="hw-ck" data-hmtodo="${esc(x.id)}" data-i="${i}" aria-label="${t.d ? '다시 하기' : '끝냄'}">${t.d ? '✓' : ''}</button><span>${esc(t.t)}</span><button type="button" class="hw-tx" data-hmtododel="${esc(x.id)}" data-i="${i}" aria-label="지우기">×</button></li>`).join('')}</ul><input class="hw-tin" data-hmtodoadd="${esc(x.id)}" placeholder="+ 할 일 적고 Enter" maxlength="60" aria-label="할 일 추가"></div>`; },
+  dday(x) { const has = x.date && /^\d{4}-\d\d-\d\d$/.test(x.date), n = has ? Math.round((dOf(x.date) - dOf(isoDate(new Date()))) / 864e5) : null;
+    return `<button type="button" class="hm-w hm-memo hw-dd" data-hmdday="${esc(x.id)}"><div class="hm-wt"><span class="hm-lb">${esc(x.title || 'D-day')}</span></div><b class="hm-big">${n == null ? '눌러서 정하기' : n === 0 ? 'D-DAY' : n > 0 ? 'D-' + n : 'D+' + (-n)}</b><p class="hw-foot">${has ? esc(crmDot(x.date)) : '날짜와 이름을 넣어요'}</p></button>`; }
+};
+function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
 const hmDefault = () => ({ v: 1, items: [
   { id: 'w-today', t: 'w', w: 'today', s: 'W' }, { id: 'w-alert', t: 'w', w: 'alert', s: 'W' },
   { id: 'a-c24', t: 'app', a: 'c24' }, { id: 'a-inv', t: 'app', a: 'inv' }, { id: 'a-sum', t: 'app', a: 'sum' }, { id: 'a-stock', t: 'app', a: 'stock' },
@@ -4479,14 +4635,6 @@ function hmLoad() {
 function hmSave() { try { localStorage.setItem(HM_KEY, JSON.stringify(hmL)); } catch (e) {} }
 const hmUid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 const hmIcon = a => { const A = HM_APPS[a]; return `<i class="hmic" style="--c1:${A[2]};--c2:${A[3]}"><svg viewBox="0 0 24 24" aria-hidden="true">${A[1]}</svg></i>`; };
-function hmWidget(x) {
-  if (x.w === 'today') return `<button class="hm-w hm-today" type="button" data-go="sum"><div class="hm-wt"><span class="hm-lb">오늘 들어온 주문</span><span class="hm-arrow" aria-hidden="true"></span></div><div class="hm-tbody"><div><b class="hm-big" id="hm-orders">0<small>건</small></b><div class="hm-slots"><span class="hm-slot" id="hm-am"></span><span class="hm-slot" id="hm-pm"></span></div></div><div class="hm-ring" id="hm-ring"><span id="hm-ringtxt"></span></div></div></button>`;
-  if (x.w === 'alert') return '<div class="hm-w hm-alert" id="hm-alert"></div>';
-  if (x.w === 'iss') return '<div class="hm-w hm-stock hm-iss"><div class="hm-wt"><span class="hm-lb">최근 품목별 이슈</span><button class="hm-more" type="button" data-go="issue">전체 보기</button></div><ul class="hm-list" id="hm-isslist"></ul></div>';
-  if (x.w === 'recent') return '<div class="hm-w hm-recent"><div class="hm-wt"><span class="hm-lb">최근 올린 파일</span><button class="hm-more" type="button" data-go="run">올리기</button></div><ul class="hm-list" id="hm-recentlist"></ul></div>';
-  if (x.w === 'memo') return `<div class="hm-w hm-memo"><div class="hm-wt"><span class="hm-lb">메모</span></div><textarea class="hm-mtx" data-hmmemo="${esc(x.id)}" placeholder="여기에 메모를 적어 두세요" aria-label="메모">${esc(x.text || '')}</textarea></div>`;
-  return '';
-}
 function hmItem(x) {
   let inner = '', s = '1';
   if (x.t === 'w') { inner = hmWidget(x); s = x.s; }
@@ -4540,23 +4688,51 @@ function hmFoldOut(fid, apps) { // 폴더 바로 뒤에 아이콘으로 꺼내�
   if (!f.apps.length) hmL.items.splice(hmFind(fid), 1);
 }
 // 추가 창
+let hmAddApp = null, hmPvSz = {};
+const HM_PVPX = { S: [168, 182], M: [360, 182], W: [360, 182], L: [360, 378] };
 function hmAddRender() {
   hmLoad();
-  const wl = Object.entries(HM_W).map(([k, w]) => { const has = !w.multi && hmHasW(k); return `<div class="hma-w"><div><b>${esc(w.n)}</b><small>${esc(w.d)}</small></div><button class="btn sm" type="button" data-hmaddw="${k}" ${has ? 'disabled' : ''}>${has ? '홈에 있음' : '＋ 추가'}</button></div>`; }).join('');
+  const body = $('hma-body'), box = body.closest('.hmabox') || body, sc = box.scrollTop;
+  if (hmAddApp) {
+    const A = hmAppInfo(hmAddApp), ks = Object.keys(HM_W).filter(k => HM_W[k].app === hmAddApp);
+    body.innerHTML = `<div class="hma-top"><button class="ibtn" type="button" id="hma-back" aria-label="뒤로">‹</button><i class="hmic sm" style="--c1:${A[2]};--c2:${A[3]}"><svg viewBox="0 0 24 24" aria-hidden="true">${A[1]}</svg></i><b>${esc(A[0])}</b><span class="msg">위젯 ${ks.length}개</span></div>
+      <div class="hma-pvs">${ks.map(k => { const w = HM_W[k], sz = w.s.includes(hmPvSz[k]) ? hmPvSz[k] : w.def, has = !w.multi && hmHasW(k), px = HM_PVPX[sz], x = { id: 'pv-' + k, t: 'w', w: k, s: sz, text: '', todos: k === 'todo' ? [{ t: '택배 박스 주문', d: 1 }, { t: '로즈마리 입고 확인', d: 0 }] : [], date: k === 'dday' ? isoDate(new Date(Date.now() + 12 * 864e5)) : '', title: k === 'dday' ? '추석 배송 마감' : '' };
+        return `<div class="hma-pv"><div class="hma-pvstage"><div class="hmi hmpv" data-s="${sz}" style="width:min(${px[0]}px,100%);height:${px[1]}px">${hmWidget(x)}</div></div>
+          <div class="hma-pvi"><div><b>${esc(w.n)}</b><small>${esc(w.d)}</small></div>${w.s.length > 1 ? `<div class="seg hma-szs" role="group" aria-label="크기">${w.s.map(z => `<button type="button" class="${z === sz ? 'on' : ''}" data-hmpsz="${k}" data-z="${z}">${HM_SZ[z]}</button>`).join('')}</div>` : `<span class="msg">${HM_SZ[sz]}</span>`}
+          <button class="btn sm pri" type="button" data-hmaddw="${k}" data-z="${sz}" ${has ? 'disabled' : ''}>${has ? '홈에 있음' : '＋ 홈에 추가'}</button></div></div>`; }).join('')}</div><p id="hma-msg" class="msg"></p>`;
+    box.scrollTop = sc; return;
+  }
+  const wa = HM_WAPPS.map(a => { const A = hmAppInfo(a), n = Object.keys(HM_W).filter(k => HM_W[k].app === a).length; return `<button type="button" class="hma-wapp" data-hmwapp="${a}"><i class="hmic" style="--c1:${A[2]};--c2:${A[3]}"><svg viewBox="0 0 24 24" aria-hidden="true">${A[1]}</svg></i><span>${esc(A[0])}</span><em>위젯 ${n}개</em></button>`; }).join('');
   const al = Object.keys(HM_APPS).map(a => { const has = hmHasApp(a); return `<button type="button" class="hma ${has ? 'has' : ''}" data-hmadda="${a}" ${has ? 'disabled' : ''}>${hmIcon(a)}<span>${esc(HM_APPS[a][0])}</span><em>${has ? '홈에 있음' : '＋'}</em></button>`; }).join('');
-  $('hma-body').innerHTML = `<h4>위젯</h4><div class="hma-ws">${wl}</div><h4>바로 가기</h4><div class="hma-apps">${al}</div><h4>폴더</h4><div class="hma-w"><div><b>새 폴더</b><small>만든 다음 아이콘을 폴더 위로 끌어 놓으면 들어가요</small></div><button class="btn sm" type="button" id="hm-addfold">＋ 만들기</button></div><p class="msg" id="hma-msg"></p>`;
+  body.innerHTML = `<h4>위젯 <span class="msg">아이콘을 누르면 고를 수 있는 위젯이 나와요</span></h4><div class="hma-wapps">${wa}</div><h4>바로 가기</h4><div class="hma-apps">${al}</div><h4>폴더</h4><div class="hma-w"><div><b>새 폴더</b><small>만든 다음 아이콘을 폴더 위로 끌어 놓으면 들어가요</small></div><button class="btn sm" type="button" id="hm-addfold">＋ 만들기</button></div><p id="hma-msg" class="msg"></p>`;
 }
+document.addEventListener('click', e => {
+  const t = e.target; if (!t.closest('#hmAdd')) return;
+  const wa = t.closest('[data-hmwapp]'); if (wa) { hmAddApp = wa.dataset.hmwapp; hmAddRender(); document.querySelector('.hmabox').scrollTop = 0; return; }
+  if (t.closest('#hma-back')) { hmAddApp = null; hmAddRender(); document.querySelector('.hmabox').scrollTop = 0; return; }
+  const z = t.closest('[data-hmpsz]'); if (z) { hmPvSz[z.dataset.hmpsz] = z.dataset.z; hmAddRender(); return; }
+});
+document.addEventListener('click', e => { const g = e.target.closest('[data-hmgo]'); if (!g || hmEditing || e.target.closest('#hmAdd')) return; hmOpenApp(g.dataset.hmgo); });
+// 할 일 · D-day
+document.addEventListener('click', e => {
+  if (e.target.closest('#hmAdd')) return;
+  const c = e.target.closest('[data-hmtodo]'); if (c) { const x = hmL.items[hmFind(c.dataset.hmtodo)]; if (x && x.todos && x.todos[+c.dataset.i]) { x.todos[+c.dataset.i].d = x.todos[+c.dataset.i].d ? 0 : 1; hmSave(); renderHome(); } return; }
+  const d = e.target.closest('[data-hmtododel]'); if (d) { const x = hmL.items[hmFind(d.dataset.hmtododel)]; if (x && x.todos) { x.todos.splice(+d.dataset.i, 1); hmSave(); renderHome(); } return; }
+  const dd = e.target.closest('[data-hmdday]'); if (dd && !hmEditing) { const x = hmL.items[hmFind(dd.dataset.hmdday)]; if (!x) return; const ti = prompt('무슨 날인가요?', x.title || ''); if (ti === null) return; const dt = prompt('날짜를 넣어 주세요 (예: ' + isoDate(new Date()).slice(0, 4) + '-12-24)', x.date || ''); if (dt === null) return;
+    const v = dt.trim().replace(/[./]/g, '-'); if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(v)) { alert('날짜를 2026-12-24 처럼 넣어 주세요'); return; } const [Y, M, D] = v.split('-').map(Number); x.date = isoDate(new Date(Y, M - 1, D)); x.title = ti.trim().slice(0, 20); hmSave(); renderHome(); }
+});
+document.addEventListener('keydown', e => { const i = e.target.closest && e.target.closest('[data-hmtodoadd]'); if (!i || e.key !== 'Enter' || e.isComposing) return; const v = i.value.trim(); if (!v) return; const x = hmL.items[hmFind(i.dataset.hmtodoadd)]; if (!x) return; x.todos = (x.todos || []).concat({ t: v.slice(0, 60), d: 0 }); hmSave(); i.value = ''; i.blur(); renderHome(); setTimeout(() => { const n = document.querySelector('[data-hmtodoadd="' + CSS.escape(x.id) + '"]'); if (n) n.focus(); }, 0); });
 document.addEventListener('click', e => {
   const t = e.target;
   if (t.closest('#hm-edit')) { hmSetEdit(true); return; }
   if (t.closest('#hm-done')) { hmSetEdit(false); return; }
-  if (t.closest('#hm-add')) { hmAddRender(); $('hmAdd').classList.remove('hidden'); return; }
+  if (t.closest('#hm-add')) { hmAddApp = null; hmAddRender(); $('hmAdd').classList.remove('hidden'); document.querySelector('.hmabox').scrollTop = 0; return; }
   const rs = t.closest('#hm-reset');
   if (rs) { if (!rs.dataset.sure) { rs.dataset.sure = 1; rs.textContent = '한 번 더 누르면 처음 모양으로'; rs.classList.add('danger'); setTimeout(() => { if (rs.isConnected) { delete rs.dataset.sure; rs.textContent = '기본으로'; rs.classList.remove('danger'); } }, 3500); return; }
     const memos = hmL.items.filter(x => x.t === 'w' && x.w === 'memo' && x.text); hmL = hmDefault(); hmL.items.push(...memos); hmRefresh(); return; }
   if (t.closest('#hma-close') || t.id === 'hmAdd') { $('hmAdd').classList.add('hidden'); return; }
   const aw = t.closest('[data-hmaddw]');
-  if (aw) { const k = aw.dataset.hmaddw; hmL.items.push({ id: hmUid('w-'), t: 'w', w: k, s: HM_W[k].def, ...(k === 'memo' ? { text: '' } : {}) }); hmRefresh(); hmAddRender(); $('hma-msg').className = 'msg ok'; $('hma-msg').textContent = HM_W[k].n + ' 위젯을 홈 맨 아래에 넣었어요'; return; }
+  if (aw) { const k = aw.dataset.hmaddw, z = HM_W[k].s.includes(aw.dataset.z) ? aw.dataset.z : HM_W[k].def; hmL.items.push({ id: hmUid('w-'), t: 'w', w: k, s: z, ...(k === 'memo' ? { text: '' } : k === 'todo' ? { todos: [] } : k === 'dday' ? { title: '', date: '' } : {}) }); hmRefresh(); hmAddRender(); $('hma-msg').className = 'msg ok'; $('hma-msg').textContent = HM_W[k].n + ' 위젯을 홈 맨 아래에 넣었어요'; return; }
   const aa = t.closest('[data-hmadda]');
   if (aa) { const a = aa.dataset.hmadda; hmL.items.push({ id: hmUid('a-'), t: 'app', a }); hmRefresh(); hmAddRender(); $('hma-msg').className = 'msg ok'; $('hma-msg').textContent = HM_APPS[a][0] + ' 바로 가기를 넣었어요'; return; }
   if (t.closest('#hm-addfold')) { const id = hmUid('f-'); hmL.items.push({ id, t: 'folder', name: '새 폴더', apps: [] }); hmRefresh(); $('hmAdd').classList.add('hidden'); hmFoldOpen(id); setTimeout(() => { const n = $('hmf-name'); n.focus(); n.select(); }, 30); return; }
@@ -5694,7 +5870,7 @@ const mkUnit = () => (dOf(mkDT) - dOf(mkDF)) / 864e5 <= 92 ? 'week' : 'month';
 async function mkLoad() {
   if (mkBusy) return; mkBusy = true; mkErr = ''; renderMarket();
   try { mkCfgV = await c24Call('/market/cfg'); } catch (e) { mkErr = e.code === 'not_found' ? 'Cloudflare 중계 서버 코드를 최신으로 바꿔 주세요' : (e.message || e.code); }
-  mkBusy = false; renderMarket();
+  mkBusy = false; renderMarket(); homeSoon();
 }
 async function mkTrend(force) {
   if (mkTrBusy || !mkCfgV || !mkCfgV.naver || !mkCfgV.kw.length) return; mkRange();
@@ -5702,7 +5878,7 @@ async function mkTrend(force) {
   mkTrKey = JSON.stringify([body.keywords, mkSrc, mkDF, mkDT]); mkTrBusy = true; renderMarket();
   try { mkTr = await c24Call('/market/trend', { method: 'POST', body: JSON.stringify(body) }); mkTr.df = mkDF; mkTr.dt = mkDT; }
   catch (e) { mkTr = { err: e.message || e.code }; }
-  mkTrBusy = false; if (mkTr.results && !mkTr.results.some(r => r.k === mkSel)) mkSel = null; renderMarket();
+  mkTrBusy = false; if (mkTr.results && !mkTr.results.some(r => r.k === mkSel)) mkSel = null; renderMarket(); homeSoon();
 }
 // 기간 칸: 데이터랩 구간 시작일들. 오늘이 들어 있는 (덜 찬) 구간은 비교에서 빼요
 function mkBuckets(data) { const today = isoDate(new Date()); return data.map((p, i) => ({ s: p[0], e: data[i + 1] ? mkAddD(data[i + 1][0], -1) : (mkTr.unit === 'week' ? mkAddD(p[0], 6) : isoDate(new Date(dOf(p[0]).getFullYear(), dOf(p[0]).getMonth() + 1, 0))), v: p[1] })).map(b => Object.assign(b, { part: b.e >= today })); }
