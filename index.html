@@ -1651,7 +1651,7 @@ html.dark .mall .mkpi div{background:rgba(255,255,255,.04)}html.dark .mall .mbar
 .subtabs .sdot{display:none;position:absolute;top:9px;right:12px;width:8px;height:8px;border-radius:50%;background:#e2603f;box-shadow:0 0 0 2px #fffdf8}
 .subtabs button.alert .sdot{display:block}
 section[data-cur] > [data-sub]{animation:subIn .28s ease both}
-#v-run[data-cur="order"] > [data-sub]:not([data-sub="order"]),#v-run[data-cur="wx"] > [data-sub]:not([data-sub="wx"]),#v-run[data-cur="inv"] > [data-sub]:not([data-sub="inv"]),
+#v-run[data-cur="order"] > [data-sub]:not([data-sub="order"]),#v-run[data-cur="wx"] > [data-sub]:not([data-sub="wx"]),#v-run[data-cur="inv"] > [data-sub]:not([data-sub="inv"]),#v-run[data-cur="ship"] > [data-sub]:not([data-sub="ship"]),
 #v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]),#v-hist[data-cur="mall"] > [data-sub]:not([data-sub="mall"]),#v-stock[data-cur="cur"] > [data-sub]:not([data-sub="cur"]),#v-stock[data-cur="chg"] > [data-sub]:not([data-sub="chg"]),#v-stock[data-cur="ret"] > [data-sub]:not([data-sub="ret"]),#v-rules[data-cur="order"] [data-sub]:not([data-sub="order"]),#v-rules[data-cur="sum"] [data-sub]:not([data-sub="sum"]),#v-rules[data-cur="wx"] [data-sub]:not([data-sub="wx"]),#v-rules[data-cur="stock"] [data-sub]:not([data-sub="stock"]),#v-rules[data-cur="set"] [data-sub]:not([data-sub="set"]){display:none!important}
 body.is-guest #v-hist .subtabs{display:none!important}
 @keyframes subIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -1795,6 +1795,18 @@ html.dark .hw-tg.off{background:rgba(232,121,138,.15);color:#e8798a}
 #nt-fields input[type=color],.nt-cols input{height:28px;border:1px solid var(--line2,#dadde1);border-radius:7px;padding:2px;background:var(--card)}#nt-fields input[type=color]{width:28px}#nt-fields select{font:inherit;font-size:12px;padding:3px 5px;border:1px solid var(--line2,#dadde1);border-radius:7px;background:var(--card);color:var(--ink)}#nt-fields .x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
 .nt-cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.nt-cols label{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--mute)}.nt-cols input{width:100%}
 @media(max-width:900px){.nt-wrap{grid-template-columns:1fr}.nt-stage{position:static}.nt-cv{max-height:52vh}#ntEd .ntbox{padding:14px}}
+.ship-top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin-bottom:14px}.ship-top .hmi{position:relative;grid-column:auto!important;grid-row:auto!important}
+.ship-top .ship-cal{height:520px}.ship-side{display:grid;grid-template-rows:190px 316px;gap:14px}.ship-side .hmi{height:100%}
+.ship-top .hmi>.hm-w{height:100%}
+.sp-row{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;display:grid;gap:8px}.sp-row.past{opacity:.6}
+.sp-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:13.5px}.sp-flow i{font-style:normal;color:var(--mute)}
+.sp-st{display:inline-flex;align-items:baseline;gap:5px;border-radius:9px;padding:5px 10px;font-size:12.5px;color:var(--mute)}.sp-st b{font-size:14px;color:var(--ink)}
+.sp-st.cut{background:#fdf1dc}.sp-st.off{background:#fbe6e9}.sp-st.res{background:color-mix(in srgb,var(--acc) 12%,transparent)}
+html.dark .sp-st.cut{background:rgba(227,178,90,.14)}html.dark .sp-st.off{background:rgba(232,121,138,.14)}
+.sp-meta{display:flex;flex-wrap:wrap;gap:6px}.sp-meta:empty{display:none}.sp-act{display:flex;flex-wrap:wrap;gap:6px}.sp-act .danger{color:#c94b5d}
+.sp-past{margin-top:12px}.sp-past summary{cursor:pointer;font-size:13px;color:var(--mute)}
+.sp-set{display:grid;gap:12px}.sp-times{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}.sp-times label{display:flex;flex-direction:column;gap:4px}.sp-times input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink)}
+@media(max-width:900px){.ship-top{grid-template-columns:1fr}.ship-top .ship-cal{height:470px}.ship-side{grid-template-rows:auto 320px}.ship-side #ship-next{height:200px}}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
 .hmf-h{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .hmf-h b{flex:1;font-size:17px}
@@ -2424,7 +2436,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <button class="themebtn" id="themebtn" type="button" title="화면 밝기: 누를 때마다 자동 → 다크 → 라이트"></button>
       <nav class="tabs" aria-label="화면">
         <button class="tab on" data-t="home" aria-label="홈" title="홈">홈</button>
-        <button class="tab" data-t="run" aria-label="정리하기" title="정리하기">정리하기</button>
+        <button class="tab" data-t="run" aria-label="정리" title="정리">정리</button>
         <button class="tab" data-t="sum" aria-label="집계 보기" title="집계 보기">집계 보기</button>
         <button class="tab" data-t="stock" aria-label="재고 관리" title="재고 관리">재고 관리</button>
         <button class="tab" data-t="crm" aria-label="고객 관리" title="고객 관리">고객 관리</button>
@@ -2453,7 +2465,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-run" class="hidden" data-cur="order">
-    <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="wx"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2.5v1.4M9 14.1v1.4M2.5 9h1.4M14.1 9h1.4M4.4 4.4l1 1M12.6 12.6l1 1M4.4 13.6l1-1M12.6 5.4l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 20h8a3 3 0 0 0 .4-6 4.5 4.5 0 0 0-8.6-.6A3.3 3.3 0 0 0 10.5 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>배송일 · 날씨</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>송장 등록</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="wx"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2.5v1.4M9 14.1v1.4M2.5 9h1.4M14.1 9h1.4M4.4 4.4l1 1M12.6 12.6l1 1M4.4 13.6l1-1M12.6 5.4l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 20h8a3 3 0 0 0 .4-6 4.5 4.5 0 0 0-8.6-.6A3.3 3.3 0 0 0 10.5 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>날씨</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ship"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 9h3.2l3.3 3.6V16H15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2" fill="currentColor"/></svg><span>배송</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>송장 등록</span><i class="sdot"></i></button></nav>
     <div class="card step upcard" data-sub="order">
       <div class="sh"><span class="num">1</span><div><h2>원본 엑셀 올리기</h2><p>Cafe24에서 내려받은 주문 파일 (.xlsx · .csv)</p></div></div>
       <div class="c24" id="c24">
@@ -2532,6 +2544,9 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div id="wplaces" class="help"></div>
       <div id="wneed" class="warnbox hidden"></div>
     </div>
+    <div class="ship-top" data-sub="ship"><div class="hmi ship-cal" data-s="L" id="ship-cal"></div><div class="ship-side"><div class="hmi" data-s="M" id="ship-next"></div><div class="hmi ship-hol" data-s="M" id="ship-hol"></div></div></div>
+    <div class="card shipc" data-sub="ship" id="ship-list"></div>
+    <div class="card shipc" data-sub="ship" id="ship-set"></div>
     <div class="card step invcard" data-sub="inv">
       <div class="sh"><span class="num">5</span><div><h2>송장번호 등록 파일 만들기</h2><p>택배사에서 받은 송장 엑셀을 올리면 카페24 엑셀 일괄배송에 바로 올릴 파일로 바꿔요</p></div></div>
       <div class="drop invdrop" id="invdrop">
@@ -2565,7 +2580,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="utrash hidden" id="utrash"></div>
       <div class="sdel"><span id="sumshare"></span><button class="ibtn ibtn-bad hidden" id="sdel" title="이 날 기록 지우기" aria-label="이 날 기록 지우기"></button><span class="msg" id="sdelmsg"></span></div>
     </div>
-    <div id="sumbody"><div class="card sumempty">정리하기 탭에서 원본 엑셀을 올리면 여기에 집계가 나와요.</div></div>
+    <div id="sumbody"><div class="card sumempty">정리 탭에서 원본 엑셀을 올리면 여기에 집계가 나와요.</div></div>
   </section>
 
   <div class="modal hidden" id="resetModal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
@@ -3114,7 +3129,7 @@ const fmt = v => v instanceof Date ? ymd(v) : (v ?? '');
 const ymd = d => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 
 // tabs
-const PAGE_TITLE = { crm: '고객 관리', issue: '이슈 관리', home: '홈', run: '정리하기', sum: '집계 보기', stock: '재고 관리', hist: '기록·통계', market: '시장', rules: '규칙 관리' };
+const PAGE_TITLE = { crm: '고객 관리', issue: '이슈 관리', home: '홈', run: '정리', sum: '집계 보기', stock: '재고 관리', hist: '기록·통계', market: '시장', rules: '규칙 관리' };
 const helloTxt = () => { const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토']; return '허브아이 · ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + W[d.getDay()] + '요일'; };
 function tabbarTick() {
   const d = new Date(), W = ['일', '월', '화', '수', '목', '금', '토'], h = d.getHours();
@@ -4144,7 +4159,7 @@ async function histSaveUpload(rows, fname, opt) {
   } catch (e) { if (old) throw e; msg.className = 'msg err'; msg.textContent = '기록 저장 실패: ' + (e.message || e.code); }
 }
 
-// 정리하기에서 직접 고친 값(ov) · 지운 줄(del)을 기록에 저장해서 집계 보기 · 재고 · 기록·통계에도 반영해요
+// 정리 탭에서 직접 고친 값(ov) · 지운 줄(del)을 기록에 저장해서 집계 보기 · 재고 · 기록·통계에도 반영해요
 function ovUses(b, ov) { // 고친 값으로 [이름, 옵션, 수량] 바꾸기
   if (!b.length) return ov.n !== undefined ? [[String(ov.n ?? ''), String(ov.o ?? ''), Number(ov.q) || 0]].filter(a => a[2]) : [];
   const f = b[0]; return [[ov.n !== undefined ? String(ov.n ?? '') : f[0], ov.o !== undefined ? String(ov.o ?? '') : f[1], ov.q !== undefined ? Number(ov.q) || 0 : f[2]]].concat(b.slice(1)).filter(a => a[2]);
@@ -4497,7 +4512,8 @@ const HM_KEY = 'herb5_home_v1';
 const HM_APPS = {
   c24: ['주문 불러오기', "<path d='M12 3a1.3 1.3 0 0 1 1.3 1.3v7.6l2.4-2.4a1.3 1.3 0 1 1 1.8 1.8l-4.6 4.6a1.3 1.3 0 0 1-1.8 0l-4.6-4.6a1.3 1.3 0 1 1 1.8-1.8l2.4 2.4V4.3A1.3 1.3 0 0 1 12 3zM4 15.5a1.3 1.3 0 0 1 1.3 1.3v1.4c0 .4.3.7.7.7h12c.4 0 .7-.3.7-.7v-1.4a1.3 1.3 0 1 1 2.6 0v1.4a3.3 3.3 0 0 1-3.3 3.3H6a3.3 3.3 0 0 1-3.3-3.3v-1.4A1.3 1.3 0 0 1 4 15.5z'/>", '#6fb3d6', '#2f6f96'],
   run: ['주문 정리', "<rect x='3' y='3' width='7.5' height='7.5' rx='2'/><rect x='13.5' y='3' width='7.5' height='7.5' rx='2'/><rect x='3' y='13.5' width='7.5' height='7.5' rx='2'/><rect x='13.5' y='13.5' width='7.5' height='7.5' rx='2'/>", '#7dbb86', '#3f7f50'],
-  wx: ['배송일 · 날씨', "<circle cx='8.5' cy='8.5' r='4.2'/><path d='M10.8 21.2h7.4a3.6 3.6 0 0 0 .6-7.1 5 5 0 0 0-9.5-.9 4 4 0 0 0 1.5 8z'/>", '#f6cd6a', '#e09a2c'],
+  wx: ['날씨', "<circle cx='8.5' cy='8.5' r='4.2'/><path d='M10.8 21.2h7.4a3.6 3.6 0 0 0 .6-7.1 5 5 0 0 0-9.5-.9 4 4 0 0 0 1.5 8z'/>", '#f6cd6a', '#e09a2c'],
+  ship: ['배송', "<path d='M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z'/><path d='M15 9h3.2l3.3 3.6V16H15z'/><circle cx='6.5' cy='17.5' r='2.2'/><circle cx='17.5' cy='17.5' r='2.2'/>", '#9ccfb3', '#3f8a62'],
   inv: ['송장 등록', "<path d='M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V8h3.2a1.5 1.5 0 0 1 1.2.6l2.1 2.8a1.5 1.5 0 0 1 .3.9v3.7a1.5 1.5 0 0 1-1.5 1.5h-.7a3 3 0 0 0-5.8 0H9.6a3 3 0 0 0-5.8 0H4a1.5 1.5 0 0 1-1.5-1.5zM15 10.2v3h4.7l-2.2-3z'/><circle cx='6.7' cy='17.6' r='2'/><circle cx='17.1' cy='17.6' r='2'/>", '#b59be0', '#7458b0'],
   sum: ['집계 보기', "<rect x='3' y='5' width='18' height='16' rx='3'/><rect x='7' y='2' width='2.5' height='5' rx='1'/><rect x='14.5' y='2' width='2.5' height='5' rx='1'/>", '#f4bf5c', '#d68f22'],
   oldup: ['예전 파일 올리기', "<path d='M4.5 3.5h15a1.5 1.5 0 0 1 1.5 1.5v3H3V5a1.5 1.5 0 0 1 1.5-1.5z'/><path d='M4 9.5h16V19a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 19zm5 3a1.1 1.1 0 0 0 0 2.2h6a1.1 1.1 0 0 0 0-2.2z'/>", '#d3b08a', '#9a7550'],
@@ -4519,7 +4535,7 @@ const HM_W = {
   today: { app: 'run', n: '오늘 들어온 주문', d: '오늘 주문 수와 오전 · 오후 비율', s: ['S', 'M', 'L', 'W'], def: 'W' },
   wk7: { app: 'run', n: '최근 7일 주문', d: '날마다 들어온 주문 수 막대', s: ['M', 'L', 'W'], def: 'M' },
   top: { app: 'run', n: '오늘 많이 나간 상품', d: '오늘 주문에서 수량 많은 순서', s: ['M', 'L', 'W'], def: 'M' },
-  recent: { app: 'run', n: '최근 올린 파일', d: '정리하기 · 집계에 올린 파일', s: ['S', 'M', 'L', 'W'], def: 'M' },
+  recent: { app: 'run', n: '최근 올린 파일', d: '정리 · 집계에 올린 파일', s: ['S', 'M', 'L', 'W'], def: 'M' },
   wxtemp: { app: 'wx', n: '배송일 지역 기온', d: '권역마다 최저 · 최고 기온과 포장', s: ['M', 'L', 'W'], def: 'M' },
   wxpack: { app: 'wx', n: '포장 요약', d: '보온 · 아이스팩이 필요한 지역 수', s: ['S', 'M'], def: 'S' },
   wxdays: { app: 'wx', n: '앞으로 날씨', d: '날마다 전국에서 가장 추운 · 더운 값', s: ['M', 'L', 'W'], def: 'M' },
@@ -4708,8 +4724,8 @@ HM_WAPPS.unshift('cal');
 HM_XICON.cal = ['달력', "<rect x='3' y='5' width='18' height='16' rx='3'/><rect x='7' y='2' width='2.5' height='5' rx='1'/><rect x='14.5' y='2' width='2.5' height='5' rx='1'/><rect x='6.5' y='12' width='3' height='3' rx='.8' fill='#e66'/>", '#9bc7a6', '#4f8a62'];
 document.addEventListener('click', async e => {
   if (e.target.closest('#hmAdd') || hmEditing) return;
-  const nv = e.target.closest('[data-hmcalnav]'); if (nv) { const id = nv.dataset.hmcalnav, v = +nv.dataset.v; hmCalOff[id] = v ? (hmCalOff[id] || 0) + v : 0; if (!v) delete hmCalSel[id]; renderHome(); return; }
-  const cd = e.target.closest('[data-hmcald]'); if (cd) { hmCalSel[cd.dataset.hmcald] = cd.dataset.d; renderHome(); return; }
+  const nv = e.target.closest('[data-hmcalnav]'); if (nv) { const id = nv.dataset.hmcalnav, v = +nv.dataset.v; hmCalOff[id] = v ? (hmCalOff[id] || 0) + v : 0; if (!v) delete hmCalSel[id]; hcRefresh(); return; }
+  const cd = e.target.closest('[data-hmcald]'); if (cd) { hmCalSel[cd.dataset.hmcald] = cd.dataset.d; hcRefresh(); return; }
   const no = e.target.closest('[data-hmcalnot]'); if (no) { window.ntOpen(no.dataset.hmcalnot); return; }
   const nd = e.target.closest('[data-hmcalnotdel]'); if (nd) { hcNoticeDel(nd.dataset.hmcalnotdel, nd); return; }
   const wi = e.target.closest('[data-hmcalwish]'); if (wi) { hcWish(wi.dataset.hmcalwish, wi); return; }
@@ -4719,7 +4735,7 @@ document.addEventListener('click', async e => {
 });
 
 // 배송 휴무 설정: 마지막 발송일 · 주문 마감 시간 · 다시 보내는 날
-async function hcSaveCfg(c) { const keep = rules.cafe24; rules.cafe24 = c; try { await saveRules(); try { c24FillSet(); c24ShowWin(); } catch (er) {} renderHome(); return true; } catch (er) { rules.cafe24 = keep; alert('저장하지 못했어요: ' + (er.message || er.code || er)); return false; } }
+async function hcSaveCfg(c) { const keep = rules.cafe24; rules.cafe24 = c; try { await saveRules(); try { c24FillSet(); c24ShowWin(); } catch (er) {} hcRefresh(); return true; } catch (er) { rules.cafe24 = keep; alert('저장하지 못했어요: ' + (er.message || er.code || er)); return false; } }
 
 function hcOpen(d) {
   const c = c24Cfg(); let last = hcAdd(d, -1); for (let i = 0; i < 30 && !hcShip(last); i++) last = hcAdd(last, -1);
@@ -4991,6 +5007,45 @@ document.addEventListener('click', async e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !wrapEl.classList.contains('hidden')) wrapEl.classList.add('hidden'); });
 })();
 
+
+// ---------- 정리 → 배송: 배송 달력 · 휴무 일정 · 기본 설정 ----------
+function hcRefresh() { try { renderHome(); } catch (e) {} try { renderShip(); } catch (e) {} }
+const shipOpen = () => $('v-run') && !$('v-run').classList.contains('hidden') && $('v-run').dataset.cur === 'ship';
+function hcPeriods() {
+  const c = c24Cfg(), t = isoDate(new Date()), offs = new Set((c.off || []).map(String)), used = new Set(), out = [];
+  Object.keys(c.cut || {}).sort().forEach(cd => { const R = hcResume(cd), L = []; for (let d = hcAdd(cd, 1); d < R && L.length < 60; d = hcAdd(d, 1)) { L.push(d); used.add(d); } out.push({ cut: cd, time: c.cut[cd], resume: R, offs: L }); });
+  [...offs].filter(d => !used.has(d)).sort().forEach(d => { const last = out[out.length - 1]; if (last && !last.cut && hcAdd(last.offs[last.offs.length - 1], 1) === d) last.offs.push(d); else out.push({ cut: '', offs: [d], resume: hcResume(d) }); });
+  out.forEach(p => { p.end = p.resume || p.offs[p.offs.length - 1]; p.past = p.end < t; p.key = p.cut || p.offs[0]; });
+  return out.sort((a, b) => a.key.localeCompare(b.key));
+}
+function renderShip() {
+  if (!$('ship-cal') || !shipOpen()) return;
+  const can = hcCanEdit(), c = c24Cfg(), fb = document.body.classList.contains('fbmode') && !!c.worker, f = d => { const x = dOf(d); return (x.getMonth() + 1) + '/' + x.getDate() + '(' + WDK[x.getDay()] + ')'; };
+  const put = (id, h) => { const el = $(id); if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
+  put('ship-cal', HW.cal({ id: 'ship' })); put('ship-next', HW.calship({})); put('ship-hol', HW.calhol({}));
+  const P = hcPeriods(), now = P.filter(p => !p.past), past = P.filter(p => p.past).slice(-3).reverse();
+  const row = p => { const hol = [...new Set(p.offs.map(hcHol).filter(Boolean).map(n => n.replace(/ 연휴$/, '')))], nr = p.cut && (c.notice || {})[p.cut];
+    const rng = p.offs.length ? f(p.offs[0]) + (p.offs.length > 1 ? ' ~ ' + f(p.offs[p.offs.length - 1]) : '') : '';
+    return `<div class="sp-row ${p.past ? 'past' : ''}"><div class="sp-flow">${p.cut ? `<span class="sp-st cut"><b>${f(p.cut)} ${esc(p.time)}</b>마감</span><i>→</i>` : ''}${rng ? `<span class="sp-st off"><b>${rng}</b>휴무${p.offs.length > 1 ? ' ' + p.offs.length + '일' : ''}</span><i>→</i>` : ''}<span class="sp-st res"><b>${f(p.resume)}</b>재개</span></div>
+      <div class="sp-meta">${hol.map(h => `<span class="hw-tg off">${esc(h)}</span>`).join('')}${nr ? '<span class="hw-tg on">공지 올림 ✓</span>' : ''}${p.past ? '<span class="hw-tg">지난 휴무</span>' : ''}</div>
+      ${can && !p.past ? `<div class="sp-act">${p.cut ? `<button type="button" class="btn sm" data-hmcalnot="${p.cut}">공지 이미지 만들기</button>` + (fb ? `<button type="button" class="btn sm" data-hmcalwish="${p.cut}">마감 뒤 주문에 ${f(p.resume)} 기록</button>` : '') + (nr && fb ? `<button type="button" class="btn sm" data-hmcalnotdel="${p.cut}">공지 내리기</button>` : '') : ''}<button type="button" class="btn sm" data-hmcalset="${p.cut || p.offs[0]}">고치기</button><button type="button" class="btn sm danger" data-shipdel="${p.key}">휴무 풀기</button></div>` : ''}</div>`; };
+  put('ship-list', `<div class="hh"><h2>휴무 일정</h2><span class="msg">달력에서 날짜를 눌러도 정할 수 있어요</span><span class="sp"></span>${can ? '<button class="btn sm pri" type="button" id="ship-add">＋ 휴무 추가</button>' : ''}</div>
+    ${now.length ? now.map(row).join('') : '<p class="crm-none">앞으로 정해 둔 휴무가 없어요</p>'}${past.length ? `<details class="sp-past"><summary>지난 휴무 ${past.length}개</summary>${past.map(row).join('')}</details>` : ''}`);
+  if (!$('ship-set').contains(document.activeElement)) put('ship-set', `<div class="hh"><h2>기본 배송 설정</h2><span class="msg">카페24 주문을 불러올 때 오전 · 오후 범위를 이 기준으로 잡아요</span></div>
+    <div class="sp-set"><div><span class="mk-lb">보내는 요일</span><span class="c24days">${[1, 2, 3, 4, 5, 6, 0].map(n => `<label><input type="checkbox" data-shipday="${n}" ${c.days.includes(n) ? 'checked' : ''} ${can ? '' : 'disabled'}>${'일월화수목금토'[n]}</label>`).join('')}</span></div>
+    <div class="sp-times"><label><span class="mk-lb">오전 마감</span><input type="time" id="ship-am" step="60" value="${esc(c.amCut)}" ${can ? '' : 'disabled'}></label><label><span class="mk-lb">오후 마감 (평소)</span><input type="time" id="ship-pm" step="60" value="${esc(c.pmCut)}" ${can ? '' : 'disabled'}></label>${can ? '<button class="btn" type="button" id="ship-save">저장</button>' : ''}</div></div><p class="msg" id="ship-msg"></p>`);
+}
+document.addEventListener('click', async e => {
+  if (e.target.closest('[data-subfor=run] [data-subgo="ship"]')) { setTimeout(renderShip, 0); return; }
+  if (e.target.closest('.tab[data-t=run]')) { setTimeout(renderShip, 0); return; }
+  if (!e.target.closest('#ship-list,#ship-set')) return;
+  if (e.target.closest('#ship-add')) { hcOpen(hcAdd(isoDate(new Date()), 7)); return; }
+  const dl = e.target.closest('[data-shipdel]'); if (dl) { const p = hcPeriods().find(x => x.key === dl.dataset.shipdel); if (!p || !confirm('이 휴무를 풀까요? 쉬는 날과 마감 시간이 원래대로 돌아가요.')) return;
+    const c = c24Cfg(), cut = Object.assign({}, c.cut || {}); if (p.cut) delete cut[p.cut]; await hcSaveCfg(Object.assign({}, c, { off: (c.off || []).filter(d => !p.offs.includes(d)), cut })); return; }
+  if (e.target.closest('#ship-save')) { const days = [...document.querySelectorAll('[data-shipday]:checked')].map(x => +x.dataset.shipday), m = $('ship-msg');
+    if (!days.length) { m.className = 'msg err'; m.textContent = '보내는 요일을 하나 이상 골라 주세요'; return; }
+    if (await hcSaveCfg(Object.assign({}, c24Cfg(), { days, amCut: $('ship-am').value || C24_DEF.amCut, pmCut: $('ship-pm').value || C24_DEF.pmCut }))) { $('ship-set')._h = ''; renderShip(); const m2 = $('ship-msg'); if (m2) { m2.className = 'msg ok'; m2.textContent = '저장했어요'; } } }
+});
 function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
 const hmDefault = () => ({ v: 1, items: [
   { id: 'w-today', t: 'w', w: 'today', s: 'W' }, { id: 'w-alert', t: 'w', w: 'alert', s: 'W' },
@@ -5037,7 +5092,7 @@ function hmHasApp(a) { return hmL.items.some(x => (x.t === 'app' && x.a === a) |
 function hmHasW(w) { return hmL.items.some(x => x.t === 'w' && x.w === w); }
 function hmOpenApp(a) {
   const go = t => { const b = document.querySelector('.tab[data-t="' + t + '"]'); if (b) b.click(); };
-  if (['c24', 'run', 'wx', 'inv'].includes(a)) { subSet('run', a === 'wx' || a === 'inv' ? a : 'order', true); go('run'); if (a === 'c24') setTimeout(() => { const c = $('c24'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 80); return; }
+  if (['c24', 'run', 'wx', 'inv', 'ship'].includes(a)) { subSet('run', ['wx', 'inv', 'ship'].includes(a) ? a : 'order', true); go('run'); if (a === 'c24') setTimeout(() => { const c = $('c24'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 80); return; }
   if (a === 'sum' || a === 'oldup') { go('sum'); if (a === 'oldup') setTimeout(() => { const o = $('oldup'); if (o) { o.open = true; o.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 80); return; }
   if (a === 'issue' || a === 'claim') { try { issCat = a === 'claim' ? 'claim' : 'item'; } catch (e) {} go('issue'); try { renderIssue(); } catch (e) {} return; }
   if (['report', 'days', 'mall'].includes(a)) { subSet('hist', a, true); go('hist'); return; }
@@ -5226,7 +5281,7 @@ function renderHistCal() {
 }
 function renderHistDay() {
   const el = $('hday'), d = histSel, e = hist[d];
-  if (!e) { el.innerHTML = `<div class="hh"><h2>${fmtDay(d)}</h2></div><div class="sumempty">이 날짜에는 기록이 없어요.<br>정리하기 탭에서 원본을 올리면 발주일 기준으로 자동 저장돼요.</div>`; return; }
+  if (!e) { el.innerHTML = `<div class="hh"><h2>${fmtDay(d)}</h2></div><div class="sumempty">이 날짜에는 기록이 없어요.<br>정리 탭에서 원본을 올리면 발주일 기준으로 자동 저장돼요.</div>`; return; }
   const res = dayResult(d), ords = dayOrders(d);
   const regs = new Map(); e.rows.filter(x => !x.del).forEach(x => { const r = regionOf(x.a); if (!regs.has(r)) regs.set(r, new Set()); regs.get(r).add(x.o); });
   const regTxt = [...regs.entries()].sort((a, b) => b[1].size - a[1].size).map(([r, s]) => `<span>${esc(r)} <b>${s.size}</b></span>`).join('');
@@ -5406,7 +5461,7 @@ function renderSum() {
   const del = $('sdel'); del.classList.toggle('hidden', !sumSel); delete del.dataset.sure; del.classList.remove('danger'); del.innerHTML = IC.trash; del.title = sumSel ? fmtDay(sumSel) + ' 기록 지우기' : '';
   renderUFiles(); renderTrash();
   const res = sumSel ? uplResult(sumSel, sumSlot) : null;
-  body.innerHTML = res ? sumCards(res.sheet3).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리하기 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
+  body.innerHTML = res ? sumCards(res.sheet3).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
 }
 let ufPick = new Set();
 function renderUFiles() {
@@ -6554,7 +6609,7 @@ function renderStock() {
     groups.get(g).sort((a, b) => oidx(a.key) - oidx(b.key) || a.key.localeCompare(b.key, 'ko')).map(x => {
       const st = x.cur === null ? 'none' : x.cur <= 0 ? 'out' : x.low ? 'low' : 'ok';
       return `<button class="sg-tile st-${st} ${sel === x.key ? 'sel' : ''}" data-stkpick="${esc(x.key)}"><span class="sg-nm">${esc(x.key)}${stkNote(x.key) ? '<i class="sg-memo" title="' + esc(stkNote(x.key)) + '"></i>' : ''}</span><b>${x.cur === null ? '미입력' : esc(stkShow(x.unit, x.cur))}</b>${x.today ? `<small>오늘 −${esc(stkShow(x.unit, x.today))}</small>` : ''}${stkNote(x.key) ? `<small class="sg-note">${esc(stkNote(x.key).split('\n')[0])}</small>` : ''}${x.days !== null ? `<small class="sg-days ${x.days < 3 ? 'soon' : ''}">약 ${x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치'}</small>` : ''}${x.low ? '<em class="sg-low">부족</em>' : x.cur !== null && x.cur <= 0 ? '<em class="sg-low">품절</em>' : ''}</button>`;
-    }).join('') + '</div></section>').join('') : '<div class="stkempty">정리하기에서 원본을 올리면 집계에 나온 품목이 여기에 자동으로 생겨요.<br>아직 주문이 없는 품목은 아래 재고 수정에서 이름을 적고 ＋로 넣으면 돼요.</div>';
+    }).join('') + '</div></section>').join('') : '<div class="stkempty">정리 탭에서 원본을 올리면 집계에 나온 품목이 여기에 자동으로 생겨요.<br>아직 주문이 없는 품목은 아래 재고 수정에서 이름을 적고 ＋로 넣으면 돼요.</div>';
   $('stksum').textContent = items.length ? items.filter(x => x.rec).length + ' / ' + items.length + '개 품목 입력됨' : '';
   $('stk-names').innerHTML = items.map(x => `<option value="${esc(x.key)}">`).join('');
   if (!$('stkshare').innerHTML) { $('stkshare').innerHTML = shareBtns('stock'); $('stkdayshare').innerHTML = shareBtns('stockday'); }
@@ -7119,7 +7174,7 @@ function renderSales() {
     <div class="calhead"><button class="calnav" data-salesnav="-1" aria-label="이전 달">‹</button><b>${y}년 ${mo + 1}월</b><button class="calnav" data-salesnav="1" aria-label="다음 달">›</button></div>
     <div class="slcal">${g}</div>
     ${salesDay && rev.has(salesDay) && salesDay.startsWith(y + '-' + String(mo + 1).padStart(2, '0')) ? salesDetailHtml(salesDay) : ''}
-    ${missing ? `<p class="msg snote">판매가 없이 저장된 날 ${missing}일은 빠졌어요. 그날 원본을 정리하기에서 한 번 더 올리면 채워져요.</p>` : ''}`;
+    ${missing ? `<p class="msg snote">판매가 없이 저장된 날 ${missing}일은 빠졌어요. 그날 원본을 정리 탭에서 한 번 더 올리면 채워져요.</p>` : ''}`;
 }
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-salesnav],[data-salesday]'); if (!t) return;
@@ -7335,7 +7390,7 @@ invBind(); renderInv();
 
 // ---------- 규칙 미리 돌려보기: 저장된 규칙 ↔ 지금 고친 규칙 ----------
 function rpSources() {
-  const out = []; if (srcRows && srcRows.length > 1) out.push(['src', '지금 정리하기에 올린 주문 · ' + (srcName || '원본') + ' (' + (srcRows.length - 1) + '줄)']);
+  const out = []; if (srcRows && srcRows.length > 1) out.push(['src', '지금 정리 탭에 올린 주문 · ' + (srcName || '원본') + ' (' + (srcRows.length - 1) + '줄)']);
   Object.keys(upl).sort().reverse().slice(0, 30).forEach(d => ['am', 'pm'].forEach(sl => { const b = upl[d] && upl[d][sl]; if (b && b.rows && b.rows.length) out.push([d + '|' + sl, fmtDay(d) + ' ' + (sl === 'am' ? '오전' : '오후') + ' 업로드 (' + b.rows.filter(r => !r.del).length + '줄)']); }));
   return out;
 }
@@ -7349,7 +7404,7 @@ function rpRun(rows, R) { try { return CORE.process(rows, R, {}); } catch (e) { 
 function renderRp() {
   const sel = $('rp-src'), key = sel.value, rows = key && rpRows(key), box = $('rp-out'), only = $('rp-only').checked;
   const changedRules = rulesSavedJ !== JSON.stringify(rules);
-  if (!rows) { box.innerHTML = '<p class="iss-empty">돌려볼 주문이 없어요. 정리하기에서 주문을 한 번 올리거나 불러와 주세요.</p>'; return; }
+  if (!rows) { box.innerHTML = '<p class="iss-empty">돌려볼 주문이 없어요. 정리 탭에서 주문을 한 번 올리거나 불러와 주세요.</p>'; return; }
   const A = rpRun(rows, JSON.parse(rulesSavedJ)), B = rpRun(rows, rules);
   if (A.err || B.err) { box.innerHTML = `<p class="msg err">${esc(B.err || A.err)}</p>`; return; }
   const h1 = A.sheet1[0], h2 = B.sheet1[0], ix = (h, k) => h.indexOf(k), cell = (r, h, k) => { const i = ix(h, k); return i < 0 ? '' : String(r[i] ?? ''); };
