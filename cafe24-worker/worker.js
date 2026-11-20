@@ -27,9 +27,6 @@ export default {
       if (url.pathname === '/who') { needAdmin(who); return json(await whoIs(env, url.searchParams), cors); }
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/market/cfg') { if (req.method === 'POST') { needAdmin(who); return json(await mkSetCfg(env, await req.json()), cors); } return json(await mkCfgOut(env), cors); }
-      if (url.pathname === '/market/snap' && req.method === 'POST') { needAdmin(who); return json(await mkSnap(env, true), cors); }
-      if (url.pathname === '/market/days') return json(await mkDays(env, url.searchParams), cors);
-      if (url.pathname === '/market/day') return json(await mkDay(env, url.searchParams), cors);
       if (url.pathname === '/market/trend' && req.method === 'POST') return json(await mkTrend(env, await req.json()), cors);
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
       return json({ error: 'not_found' }, cors, 404);
@@ -37,7 +34,7 @@ export default {
       return json({ error: e.code || 'error', message: e.message || String(e) }, cors, e.status || 500);
     }
   },
-  async scheduled(event, env, ctx) { ctx.waitUntil(refresh(env).catch(() => {})); ctx.waitUntil(mkSnap(env, false).catch(() => {})); }
+  async scheduled(event, env, ctx) { ctx.waitUntil(refresh(env).catch(() => {})); }
 };
 
 function corsHeaders(req, env) {
@@ -294,70 +291,48 @@ async function reviews(env, q) {
 }
 
 
-// ---------- 시장 비교: 네이버 쇼핑 검색 · 데이터랩 (공식 API) ----------
-// 필요: 변수 NAVER_CLIENT_ID, 비밀 값 NAVER_CLIENT_SECRET (developers.naver.com 애플리케이션 · 검색 + 데이터랩)
-const MK_CFG0 = { kw: ['식용꽃', '식용꽃 비올라', '로즈마리 생잎', '애플민트', '자스민 잎', '허브 모종'], me: ['허브아이', 'herb5'], watch: [] };
+// ---------- 시장 비교: NAVER API HUB 데이터랩 (검색어 트렌드 · 쇼핑 인사이트) + 경쟁사 가격 기록 ----------
+// 필요: 변수 NAVER_CLIENT_ID, 비밀 값 NAVER_CLIENT_SECRET (네이버 클라우드 콘솔 → NAVER API HUB → Application → 인증 정보)
+const HUB = 'https://naverapihub.apigw.ntruss.com';
+const MK_CFG0 = { kw: ['식용꽃', '로즈마리', '애플민트', '허브 모종', '바질'], cat: '50000006' };
 const nvOk = env => !!(env.NAVER_CLIENT_ID && env.NAVER_CLIENT_SECRET);
-const nvH = env => ({ 'X-Naver-Client-Id': env.NAVER_CLIENT_ID, 'X-Naver-Client-Secret': env.NAVER_CLIENT_SECRET });
+const nvH = env => ({ 'X-NCP-APIGW-API-KEY-ID': env.NAVER_CLIENT_ID, 'X-NCP-APIGW-API-KEY': env.NAVER_CLIENT_SECRET, 'Content-Type': 'application/json' });
 const kstDay = (t = Date.now()) => new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
-const strip = t => String(t || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').trim();
-async function mkCfg(env) { try { const v = JSON.parse(await env.TOKENS.get('mk:cfg') || 'null'); if (v && Array.isArray(v.kw)) return Object.assign({}, MK_CFG0, v); } catch (e) {} return Object.assign({}, MK_CFG0); }
-async function mkCfgOut(env) { const c = await mkCfg(env), last = await env.TOKENS.get('mk:last'); return Object.assign({ naver: nvOk(env), last: last || null }, c); }
+async function mkCfg(env) { try { const v = JSON.parse(await env.TOKENS.get('mk:cfg') || 'null'); if (v && Array.isArray(v.kw)) return { kw: v.kw, cat: v.cat || MK_CFG0.cat }; } catch (e) {} return Object.assign({}, MK_CFG0); }
+async function mkComp(env) { try { return JSON.parse(await env.TOKENS.get('mk:comp') || '[]') || []; } catch (e) { return []; } }
+async function mkCfgOut(env) { const c = await mkCfg(env); return Object.assign({ naver: nvOk(env), comp: await mkComp(env) }, c); }
 async function mkSetCfg(env, b) {
   const clean = (a, n, m) => [...new Set((Array.isArray(a) ? a : []).map(x => String(x || '').trim().slice(0, m)).filter(Boolean))].slice(0, n);
-  const c = await mkCfg(env); if (b.kw) c.kw = clean(b.kw, 20, 30); if (b.me) c.me = clean(b.me, 5, 30); if (b.watch) c.watch = clean(b.watch, 15, 30);
-  await env.TOKENS.put('mk:cfg', JSON.stringify({ kw: c.kw, me: c.me, watch: c.watch })); return mkCfgOut(env);
-}
-async function nvShop(env, q) {
-  const out = [];
-  for (const start of [1, 101]) {
-    const r = await fetch('https://openapi.naver.com/v1/search/shop.json?display=100&sort=sim&start=' + start + '&query=' + encodeURIComponent(q), { headers: nvH(env) });
-    const d = await r.json().catch(() => ({}));
-    if (!r.ok) throw fail(r.status, 'naver', '네이버 쇼핑 검색에 실패했어요: ' + (d.errorMessage || r.status));
-    (d.items || []).forEach(i => out.push([out.length + 1, strip(i.mallName) || '네이버', strip(i.title).slice(0, 70), Number(i.lprice) || 0, String(i.productId || ''), strip(i.brand || i.maker || '').slice(0, 20)]));
-    if ((d.items || []).length < 100) break;
+  const c = await mkCfg(env); if (b.kw) c.kw = clean(b.kw, 20, 30); if (b.cat !== undefined) c.cat = String(b.cat).replace(/\D/g, '').slice(0, 12) || MK_CFG0.cat;
+  await env.TOKENS.put('mk:cfg', JSON.stringify(c));
+  if (b.comp) {
+    let L = await mkComp(env); const o = b.comp, t = s => String(s || '').trim();
+    if (o.op === 'add' && t(o.name)) L.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), mall: t(o.mall).slice(0, 30) || '?', name: t(o.name).slice(0, 60), kw: t(o.kw).slice(0, 30), url: /^https?:\/\//.test(t(o.url)) ? t(o.url).slice(0, 300) : '', rec: Number(o.price) > 0 ? [[kstDay(), Math.round(Number(o.price))]] : [] });
+    if (o.op === 'del') L = L.filter(x => x.id !== o.id);
+    if (o.op === 'price') { const x = L.find(x => x.id === o.id), v = Math.round(Number(o.price)); if (x && v > 0) { const d = /^\d{4}-\d\d-\d\d$/.test(o.d || '') ? o.d : kstDay(); x.rec = x.rec.filter(r => r[0] !== d).concat([[d, v]]).sort((a, b) => a[0] < b[0] ? -1 : 1).slice(-200); } }
+    if (o.op === 'delrec') { const x = L.find(x => x.id === o.id); if (x) x.rec = x.rec.filter(r => r[0] !== o.d); }
+    await env.TOKENS.put('mk:comp', JSON.stringify(L.slice(0, 60)));
   }
-  return out;
+  return mkCfgOut(env);
 }
-async function mkSnap(env, force) {
-  if (!nvOk(env)) throw fail(400, 'naver_key', '네이버 API 키가 아직 없어요');
-  const day = kstDay(); if (!force && await env.TOKENS.get('mk:d:' + day)) return { ok: true, day, skipped: true };
-  const c = await mkCfg(env), kw = {};
-  for (const k of c.kw) { try { kw[k] = await nvShop(env, k); } catch (e) { kw[k] = { err: e.message }; } }
-  const at = new Date().toISOString();
-  await env.TOKENS.put('mk:d:' + day, JSON.stringify({ at, kw }), { expirationTtl: 60 * 60 * 24 * 800 });
-  await env.TOKENS.put('mk:last', at);
-  return { ok: true, day, at, n: Object.keys(kw).length };
+async function hubPost(env, path, body) {
+  const r = await fetch(HUB + path, { method: 'POST', headers: nvH(env), body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw fail(r.status, 'naver', (r.status === 401 || r.status === 403 ? '네이버 키가 맞지 않거나 이 API를 Application에 추가하지 않았어요' : r.status === 429 ? '오늘 조회 한도를 넘었어요' : '네이버 데이터랩 조회에 실패했어요') + ' (' + (d.errorMessage || d.errMsg || (d.error && d.error.message) || r.status) + ')');
+  return d;
 }
-const isMe = (mall, me) => { const m = String(mall || '').toLowerCase().replace(/\s+/g, ''); return me.some(x => m.includes(String(x).toLowerCase().replace(/\s+/g, ''))); };
-function mkSum(snap, c) {
-  const out = {};
-  Object.entries(snap.kw || {}).forEach(([k, L]) => {
-    if (!Array.isArray(L)) { out[k] = { err: L && L.err }; return; }
-    const pr = L.map(x => x[3]).filter(v => v > 0).sort((a, b) => a - b), mine = L.filter(x => isMe(x[1], c.me));
-    const watch = {}; c.watch.forEach(w => { const h = L.find(x => isMe(x[1], [w])); watch[w] = h ? h[0] : null; });
-    const malls = new Map(); L.slice(0, 40).forEach(x => { if (!malls.has(x[1])) malls.set(x[1], x[0]); });
-    out[k] = { me: mine.length ? mine[0][0] : null, meN: mine.length, mePrice: mine.length ? mine[0][3] : null, top: [...malls.entries()].slice(0, 5), min: pr[0] || 0, med: pr.length ? pr[Math.floor(pr.length / 2)] : 0, n: L.length, watch };
-  });
-  return out;
-}
-async function mkDays(env, q) {
-  const c = await mkCfg(env), to = q.get('to') || kstDay(), from = q.get('from') || kstDay(Date.now() - 29 * 864e5), out = {};
-  for (let t = new Date(from + 'T00:00:00Z').getTime(), n = 0; t <= new Date(to + 'T00:00:00Z').getTime() && n < 120; t += 864e5, n++) {
-    const d = new Date(t).toISOString().slice(0, 10), v = await env.TOKENS.get('mk:d:' + d); if (!v) continue;
-    const snap = JSON.parse(v); out[d] = { at: snap.at, kw: mkSum(snap, c) };
-  }
-  return { days: out, cfg: c };
-}
-async function mkDay(env, q) { const d = q.get('d') || kstDay(), v = await env.TOKENS.get('mk:d:' + d); if (!v) return { day: d, kw: {} }; const snap = JSON.parse(v), k = q.get('kw'); return { day: d, at: snap.at, kw: k ? { [k]: (snap.kw || {})[k] || [] } : snap.kw }; }
 async function mkTrend(env, b) {
   if (!nvOk(env)) throw fail(400, 'naver_key', '네이버 API 키가 아직 없어요');
   const kws = (Array.isArray(b.keywords) ? b.keywords : []).map(x => String(x).trim()).filter(Boolean).slice(0, 5);
   if (!kws.length) return { results: [] };
-  const end = b.end || kstDay(), start = b.start || kstDay(Date.now() - 365 * 3 * 864e5);
-  const r = await fetch('https://openapi.naver.com/v1/datalab/search', { method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, nvH(env)),
-    body: JSON.stringify({ startDate: start, endDate: end, timeUnit: b.unit === 'week' ? 'week' : 'month', keywordGroups: kws.map(k => ({ groupName: k, keywords: [k] })) }) });
-  const d = await r.json().catch(() => ({}));
-  if (!r.ok) throw fail(r.status, 'naver', '네이버 데이터랩 조회에 실패했어요: ' + (d.errorMessage || r.status));
-  return { results: (d.results || []).map(x => ({ k: x.title, data: (x.data || []).map(p => [p.period, p.ratio]) })) };
+  const c = await mkCfg(env), src = b.src === 'shop' ? 'shop' : 'search', unit = ['date', 'week', 'month'].includes(b.unit) ? b.unit : 'month';
+  const end = /^\d{4}-\d\d-\d\d$/.test(b.end || '') ? b.end : kstDay(), start = /^\d{4}-\d\d-\d\d$/.test(b.start || '') ? b.start : kstDay(Date.now() - 365 * 3 * 864e5);
+  const ck = 'mk:t:' + [src, unit, start, end, c.cat, kws.join('|')].join('~');
+  const hit = await env.TOKENS.get(ck); if (hit && !b.force) return JSON.parse(hit);
+  const d = src === 'shop'
+    ? await hubPost(env, '/shopping/v1/category/keywords', { startDate: start, endDate: end, timeUnit: unit, category: c.cat, keyword: kws.map(k => ({ name: k, param: [k] })) })
+    : await hubPost(env, '/search-trend/v1/search', { startDate: start, endDate: end, timeUnit: unit, keywordGroups: kws.map(k => ({ groupName: k, keywords: [k] })) });
+  const out = { src, unit, start, end, at: new Date().toISOString(), results: (d.results || []).map(x => ({ k: x.title, data: (x.data || []).map(p => [p.period, p.ratio]) })) };
+  await env.TOKENS.put(ck, JSON.stringify(out), { expirationTtl: 60 * 60 * 12 });
+  return out;
 }
