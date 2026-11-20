@@ -1797,6 +1797,75 @@ html:not(.dark) .sg-tile.st-none b{color:#a0a7ae!important}
 
 
 html:not(.dark){background:var(--bg)}
+/* ===== 디자인 B · 어두운 화면 ===== */
+/* ===== 공통 간소화 (A · B 둘 다) ===== */
+html.dark body{background:var(--bg)!important;background-attachment:scroll!important}
+html.dark .card,html.dark .sumcard,html.dark .wedit,html.dark .legend,html.dark .srcbox,html.dark .hm-w,html.dark .tabbar,html.dark .subtabs{background:var(--card)!important;border:1px solid var(--line)!important;outline:0!important;box-shadow:var(--sh)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+/* 카드 안 상자는 선 · 여백으로만 */
+html.dark .sg-group{background:none!important;border:0!important;padding:0!important;margin:0 0 20px!important;box-shadow:none!important}
+html.dark .sg-gh b{font-size:14px!important}
+html.dark .sg-tile{background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:none!important;border-radius:var(--r2)!important}
+html.dark .sg-tile.st-none{background:transparent!important;border-style:dashed!important}
+html.dark .sg-tile.st-out{background:rgba(214,96,120,.12)!important;border-color:rgba(214,96,120,.35)!important}
+/* 숫자 칸: 색 배경 · 아이콘 없이 */
+html.dark .kpis div,html.dark .stat,html.dark .mr-kpis>div{background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:none!important;padding:12px 16px!important;min-height:0!important;border-radius:var(--r2)!important}
+html.dark .kpis div::before,html.dark .kpis div::after,html.dark .stat::before,html.dark .stat::after{display:none!important}
+html.dark .stat.w{background:var(--card)!important}html.dark .stat.w .n{color:#f0b54d!important}
+html.dark .mr-ins{background:var(--soft)!important;border:0!important}
+html.dark .mr-rank li{background:none!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;padding:9px 2px!important}
+html.dark .mr-rank{gap:0!important}
+/* 단계 번호 · 버튼 */
+html.dark .sh .num{background:var(--acc)!important;box-shadow:none!important;width:26px!important;height:26px!important;font-size:13px!important}
+html.dark .btn{box-shadow:none!important;background:var(--card)!important;border:1px solid var(--line2)!important;color:var(--ink)!important;border-radius:var(--r3)!important}
+html.dark .btn.pri,html.dark .hm-up{background:var(--acc)!important;border-color:var(--acc)!important;color:#fff!important;box-shadow:none!important}
+html.dark .hm-ghost{box-shadow:none!important;border:1px solid var(--line2)!important;background:var(--card)!important}
+/* 경고 목록은 접힌 모양 (3줄만) */
+html.dark .warnbox{background:var(--card)!important;border:1px solid rgba(233,169,58,.3)!important;border-left:4px solid #e9a93a!important;border-radius:var(--r2)!important}
+/* 설명 글 줄이기 */
+/* 올리기 칸 */
+html.dark .drop{background:var(--soft)!important;box-shadow:none!important;border:1.5px dashed var(--line2)!important;border-radius:var(--r2)!important;padding:22px!important}
+/* 홈 위 칸 */
+html.dark .pagehead{min-height:0!important;padding:20px 24px!important;box-shadow:var(--sh)!important;border:1px solid var(--line)!important}
+html.dark .pagehead h2::after{display:none!important}
+html.dark .hmic{box-shadow:none!important}
+html.dark .hm-alert{background:var(--card)!important}
+html.dark .mr-kpis b,html.dark .hm-big{font-weight:700!important}
+
+
+/* ===== B: 아주 깔끔한 업무용 (흰 바탕 · 회색 선 · 초록 포인트) ===== */
+html.dark{--bg:#121614;--card:#1a1f1c;--soft:#1f2522;--line:#2a322d;--line2:#38413b;--acc:#3f9a6c;--ink:#e4e9e5;--mute:#98a29b;--sh:none;--r1:12px;--r2:10px;--r3:8px;--display:"Noto Sans KR",system-ui,sans-serif}
+html.dark .card,html.dark .hm-w,html.dark .pagehead{border-radius:var(--r1)!important}
+html.dark .pagehead{background:var(--card)!important}
+html.dark .pagehead::after,html.dark .pagehead .ph-art,html.dark .pagehead img,html.dark .pagehead>svg{display:none!important}
+html.dark .pagehead h2,html.dark .card h2,html.dark .hh h2{font-family:"Noto Sans KR",system-ui,sans-serif!important;text-shadow:none!important}
+html.dark header.top,html.dark .navs{background:var(--card)!important;box-shadow:none!important;border-color:var(--line)!important}
+html.dark header.top .tabs .tab::before{color:#8a939c!important}
+html.dark header.top .tabs .tab.on{background:rgba(63,154,108,.18)!important;box-shadow:none!important}
+html.dark header.top .tabs .tab.on::before{color:var(--acc)!important}
+html.dark .hmic{background:var(--soft)!important;border:1px solid var(--line)}html.dark .hmic svg{fill:var(--c2)!important}
+html.dark .hmfi{box-shadow:none!important;border-color:var(--line)!important}
+html.dark .hm-ring{box-shadow:none!important}
+html.dark .subtabs [data-subgo].on,html.dark .subtabs button.on{background:var(--acc)!important;box-shadow:none!important}
+html.dark .hm-memo{background:#24231a!important}
+html.dark .sg-tile:not(.st-none) b{color:var(--ink)!important}
+/* 재고: 묶음을 여러 줄로 흘려서 세로 길이 줄이기 */
+html.dark #stklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px 22px;align-items:start}
+html.dark #stklist .sg-group{margin:0 0 14px!important}
+html.dark #stklist .sg-tiles{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))!important;gap:8px!important}
+html.dark .sg-tile{min-height:66px!important;padding:10px 12px!important}
+html.dark .sg-tile.st-none b{color:#6f7a73!important}
+
+
+html.dark{background:var(--bg)}
+html.dark .hmi>.hm-alert.calm{background:var(--card)!important}
+html.dark .hm-alert:not(.calm){background:rgba(214,96,64,.08)!important}
+html.dark .hm-more{background:rgba(63,154,108,.14)!important}
+html.dark .drop{color:var(--ink)!important}
+html.dark .wrap>header.top{background:var(--card)!important;border:1px solid var(--line)!important;outline:0!important}
+html.dark .hm-slot{background:var(--soft)!important}
+html.dark .hm-ring::before{background:var(--card)!important}
+html.dark .mr-rank .rk{background:var(--soft)!important}
+html .stab.on{background:var(--acc)!important;border-color:var(--acc)!important;color:#fff!important;box-shadow:none!important}
 /* 확인 필요 목록: 4줄 넘으면 접어 두고 눌러서 펼치기 */
 .warnbox:has(li:nth-child(4)):not(.open) ul{max-height:78px;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
 .warnbox:has(li:nth-child(4)) h3{cursor:pointer;user-select:none}
