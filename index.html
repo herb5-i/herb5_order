@@ -3360,7 +3360,7 @@ function uplMerge(prevSlot, slot, fid, fname, now, newRows) {
   files = files.filter(f => !same.has(f.id));
   const map = new Map();
   ((prevSlot && prevSlot.rows) || []).forEach(x => { const f = (x.f || [legacyFid(slot)]).filter(id => !same.has(id)); if (f.length) map.set((x.d || '') + '|' + x.k, Object.assign({}, x, { f })); });
-  newRows.forEach(x => { const id = (x.d || '') + '|' + x.k, old = map.get(id), y = Object.assign({}, x, { f: [...new Set(((old && old.f) || []).concat(fid))] }); if (old) { if (old.del) y.del = true; if (old.ov) y.ov = old.ov; } map.set(id, y); });
+  newRows.forEach(x => { const id = (x.d || '') + '|' + x.k, old = map.get(id), y = Object.assign({}, x, { f: [...new Set(((old && old.f) || []).concat(fid))] }); if (old) { if (old.del) y.del = true; if (old.ov) y.ov = old.ov; if (!old.ns) delete y.ns; } map.set(id, y); });
   files = files.concat([{ id: fid, name: fname, at: now, n: new Set(newRows.map(x => x.o)).size, lines: newRows.length }]);
   return { name: fname, at: now, rows: [...map.values()], files };
 }
