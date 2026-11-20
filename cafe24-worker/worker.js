@@ -25,6 +25,7 @@ export default {
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/crm') { needAdmin(who); return json(await crm(env, url.searchParams), cors); }
       if (url.pathname === '/who') { needAdmin(who); return json(await whoIs(env, url.searchParams), cors); }
+      if (url.pathname === '/wish' && req.method === 'POST') { needAdmin(who); return json(await wish(env, await req.json()), cors); }
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/market/cfg') { if (req.method === 'POST') { needAdmin(who); return json(await mkSetCfg(env, await req.json()), cors); } return json(await mkCfgOut(env), cors); }
       if (url.pathname === '/market/trend' && req.method === 'POST') return json(await mkTrend(env, await req.json()), cors);
@@ -328,3 +329,34 @@ async function mkTrend(env, b) {
   return out;
 }
 
+
+// ---------- 배송 휴무: 마감 뒤 주문에 희망배송일(다시 보내는 날) 기록 ----------
+// 한 번에 최대 35건만 고쳐요 (무료 요금제의 요청 수 제한) · 남은 건수(left)가 있으면 사이트가 다시 불러요
+async function wish(env, b) {
+  const date = String(b && b.date || ''), from = new Date(b && b.from), to = new Date(b && b.to);
+  if (!/^\d{4}-\d\d-\d\d$/.test(date)) throw fail(400, 'date', '기록할 날짜가 올바르지 않아요');
+  if (isNaN(from) || isNaN(to) || to <= from || to - from > 31 * 864e5) throw fail(400, 'range', '주문 기간이 올바르지 않아요');
+  const day = d => new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10), token = await accessToken(env);
+  const H = { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION };
+  const todo = []; let seen = 0, already = 0;
+  for (let offset = 0; offset <= 5000; offset += 500) {
+    const u = new URL(base(env) + '/admin/orders');
+    u.searchParams.set('date_type', 'pay_date'); u.searchParams.set('start_date', day(from)); u.searchParams.set('end_date', day(to));
+    u.searchParams.set('embed', 'receivers'); u.searchParams.set('limit', '500'); u.searchParams.set('offset', String(offset));
+    const r = await fetch(u, { headers: H }), d = await r.json().catch(() => ({}));
+    if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 주문을 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
+    const list = d.orders || [];
+    list.forEach(o => { if (o.paid !== 'T' || o.canceled === 'T' || !o.payment_date) return; const t = kst(o.payment_date); if (t < from || t >= to) return;
+      (o.receivers || []).forEach(rc => { if (!rc.shipping_code) return; seen++; if (String(rc.wished_delivery_date || '').slice(0, 10) === date) { already++; return; } todo.push({ order_id: o.order_id, code: rc.shipping_code }); }); });
+    if (list.length < 500) break;
+  }
+  const ok = [], bad = [], max = 35;
+  for (const x of todo.slice(0, max)) {
+    const r = await fetch(base(env) + '/admin/orders/' + encodeURIComponent(x.order_id) + '/receivers/' + encodeURIComponent(x.code), { method: 'PUT', headers: H, body: JSON.stringify({ shop_no: 1, request: { wished_delivery_date: date } }) });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok) ok.push(x.order_id);
+    else { if (r.status === 401 || r.status === 403) throw fail(r.status, 'cafe24', '카페24가 주문 수정을 거절했어요: ' + ((d.error && d.error.message) || r.status) + ' (앱 권한에 주문 쓰기가 있는지 확인해 주세요)'); bad.push({ order_id: x.order_id, message: (d.error && (d.error.message || d.error.code)) || ('오류 ' + r.status) }); }
+    await new Promise(res => setTimeout(res, 120));
+  }
+  return { date, orders: seen, done: ok.length, already, fail: bad, left: Math.max(0, todo.length - max) };
+}
