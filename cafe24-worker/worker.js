@@ -16,6 +16,7 @@ export default {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     try {
       const url = new URL(req.url);
+      if (req.method === 'GET' && /^\/img\/[a-z0-9]{6,24}\.png$/.test(url.pathname)) return imgGet(env, url.pathname.slice(5, -4));   // 공지 이미지는 누구나 볼 수 있어요
       const who = await checkUser(req, env);                       // 로그인한 사람인지 확인
       if (url.pathname === '/status') return json(await status(env, who), cors);
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
@@ -25,6 +26,7 @@ export default {
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/crm') { needAdmin(who); return json(await crm(env, url.searchParams), cors); }
       if (url.pathname === '/who') { needAdmin(who); return json(await whoIs(env, url.searchParams), cors); }
+      if (url.pathname === '/img' && req.method === 'POST') { needAdmin(who); return json(await imgPut(env, await req.json(), url), cors); }
       if (url.pathname === '/boards') { needAdmin(who); return json(await boards(env), cors); }
       if (url.pathname === '/notice' && req.method === 'POST') { needAdmin(who); return json(await noticePost(env, await req.json()), cors); }
       if (url.pathname === '/notice/del' && req.method === 'POST') { needAdmin(who); return json(await noticeDel(env, await req.json()), cors); }
@@ -382,3 +384,19 @@ async function noticePost(env, b) {
   return { ok: true, board_no: no, article_no: a.article_no || null };
 }
 async function noticeDel(env, b) { const no = Number(b && b.board_no), art = Number(b && b.article_no); if (!no || !art) throw fail(400, 'notice', '지울 공지를 찾지 못했어요'); await c24Req(env, 'DELETE', '/admin/boards/' + no + '/articles/' + art + '?shop_no=1'); return { ok: true }; }
+
+// ---------- 공지 이미지 보관: 카페24 게시판 글에 넣을 PNG를 KV에 두고 주소로 보여 줘요 ----------
+async function imgPut(env, b, url) {
+  const m = String(b && b.data || '').match(/^data:image\/png;base64,([A-Za-z0-9+/=]+)$/);
+  if (!m) throw fail(400, 'img', '이미지가 올바르지 않아요');
+  const bin = Uint8Array.from(atob(m[1]), c => c.charCodeAt(0));
+  if (bin.length > 6 * 1024 * 1024) throw fail(400, 'img', '이미지가 너무 커요 (6MB까지)');
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  await env.TOKENS.put('img:' + id, bin, { expirationTtl: 60 * 60 * 24 * 400 });
+  return { ok: true, id, url: url.origin + '/img/' + id + '.png' };
+}
+async function imgGet(env, id) {
+  const v = await env.TOKENS.get('img:' + id, { type: 'arrayBuffer' });
+  if (!v) return new Response('not found', { status: 404 });
+  return new Response(v, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=31536000, immutable', 'Access-Control-Allow-Origin': '*' } });
+}
