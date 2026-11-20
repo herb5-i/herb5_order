@@ -129,7 +129,7 @@ async function orders(env, q) {
   return { orders: out, count: out.length, from: from.toISOString(), to: to.toISOString() };
 }
 
-// ---------- 고객 관리: 주문을 고객별로 묶을 수 있게 (이름 · 연락처 · 상세 주소는 해시로만 보내요) ----------
+// ---------- 고객 관리: 주문을 고객별로 묶을 수 있게 (고객 번호는 해시 · 이름은 관리자 화면 표시용 · 연락처 · 상세 주소는 안 보내요) ----------
 async function h16(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('herb5-crm|' + t)); return [...new Uint8Array(b)].slice(0, 8).map(x => x.toString(16).padStart(2, '0')).join(''); }
 const crmNorm = t => String(t || '').replace(/\s+/g, '').replace(/[()\-,.]/g, '').toLowerCase();
 const SIDO = { '서울특별시': '서울', '부산광역시': '부산', '대구광역시': '대구', '인천광역시': '인천', '광주광역시': '광주', '대전광역시': '대전', '울산광역시': '울산', '세종특별자치시': '세종', '경기도': '경기', '강원도': '강원', '강원특별자치도': '강원', '충청북도': '충북', '충청남도': '충남', '전라북도': '전북', '전북특별자치도': '전북', '전라남도': '전남', '경상북도': '경북', '경상남도': '경남', '제주특별자치도': '제주' };
@@ -155,7 +155,8 @@ async function crm(env, q) {
     const mem = String(o.member_id || '').trim();
     const cid = mem ? 'm' + await h16('m|' + mem) : 'g' + await h16(crmNorm(rc.address1) + '|' + crmNorm(rc.name || by.name));
     const ph = String(rc.cellphone || rc.phone || '').replace(/\D/g, '');
-    out.push({ i: o.order_id, d: day(t), c: cid, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '', r: crmRegion(rc.address1), l4: ph.length >= 8 && !/^050/.test(ph) ? ph.slice(-4) : '',
+    const bn = String(by.name || '').trim(), rn = String(rc.name || '').trim();
+    out.push({ i: o.order_id, d: day(t), c: cid, nm: bn || rn, rn: rn && rn !== bn ? rn : '', market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '', r: crmRegion(rc.address1), l4: ph.length >= 8 && !/^050/.test(ph) ? ph.slice(-4) : '',
       a: its.reduce((s, i) => s + ((Number(i.product_price) || 0) + (Number(i.option_price) || 0)) * (Number(i.quantity) || 0), 0),
       it: its.map(i => [i.product_name || '', i.option_value || '', Number(i.quantity) || 0]) });
   }
