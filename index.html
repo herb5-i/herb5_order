@@ -74,6 +74,10 @@ h1{font-size:24px;margin:0 0 4px}
 .warnbox{background:var(--warnbg);border:1px solid #f1d6a8;border-radius:10px;padding:12px 14px;margin-bottom:14px}
 .warnbox h3{margin:0 0 8px;font-size:14px;color:var(--warn)}
 .warnbox li{margin:4px 0}
+.noshipbox{border:1px solid #e9b8c2;background:#fdf3f5;border-radius:10px;padding:12px 14px;margin-bottom:14px}.noshipbox .nsh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.noshipbox .nsh .sp{flex:1}.noshipbox h3{margin:0;font-size:14px;color:#b0384c}.noshipbox h3 small{font-weight:600;color:var(--mute);margin-left:4px}.noshipbox>.msg{margin:6px 0 8px}
+.nsl{display:flex;flex-direction:column}.nsr{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1.8fr) minmax(0,.8fr);gap:8px;padding:6px 0;border-top:1px solid rgba(176,56,76,.15);font-size:13px;align-items:baseline}.nsr span{min-width:0;overflow-wrap:anywhere}.nsr small{color:var(--mute)}.nsr.nsh2{border-top:0;font-size:12px;color:var(--mute);font-weight:600;padding-top:0}
+html.dark .noshipbox{background:rgba(214,96,120,.10);border-color:rgba(214,96,120,.35)}html.dark .noshipbox h3{color:#f0a3b1}
+@media(max-width:560px){.nsr{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}.nsr span:nth-child(3){grid-column:1/-1;grid-row:2}.nsr.nsh2 span:nth-child(3){display:none}.noshipbox .nsh .btn{width:100%}}
 .warnbox ul{margin:0;padding-left:18px}
 .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:#fbe3bd;color:#7a4700;margin-right:4px}
 .stabs{display:flex;gap:6px;margin:8px 0}
@@ -5608,9 +5612,41 @@ function runProcess() {
       `<li>${w.flags.map(f => '<span class="tag">' + f + '</span>').join('')} ${w.row}행 · ${esc(w.receiver)} · <b>${esc(w.product)}</b>${w.note ? ' · 비고 "' + esc(w.note) + '"' : ''}` +
       (w.flags.includes('미등록 상품') ? ` <button class="btn sm" data-reg="${esc(w.product)}">상품명 규칙에 추가</button>` : '') + '</li>').join('') + '</ul></div>';
   }
-  $('warns').innerHTML = wh;
+  $('warns').innerHTML = wh + noShipHtml();
   renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack();
 }
+// 배송 불가 지역 (날씨 기준에 '경고'가 있는 포장 방법) 따로 모아 보기
+function noShipRows() {
+  if (!result || !result.sheet1 || !result.sheet1.length) return null;
+  const h = result.sheet1[0], pc = h.indexOf((rules.weather && rules.weather.col) || '포장방법'); if (pc < 0) return null;
+  const labs = new Set(((rules.weather && rules.weather.bands) || []).filter(b => String(b.warn || '').trim()).map(b => String(b.label || '').trim()).filter(Boolean)); if (!labs.size) return null;
+  const rows = result.sheet1.slice(1).filter(r => String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).some(l => labs.has(l.trim())));
+  return { h, pc, rows };
+}
+function noShipHtml() {
+  const R = noShipRows(); if (!R || !R.rows.length) return '';
+  const h = R.h, ix = n => h.indexOf(n), ro = ix('수령인'), ad = ix('주소'), on = ix('주문번호'), pn = ix('주문상품명') >= 0 ? ix('주문상품명') : ix('상품명'), op = ix('옵션'), qt = ix('수량'), tp = R.pc - 1;
+  const orders = new Set(R.rows.map(r => on >= 0 ? r[on] : '')).size, v = (r, i) => i >= 0 && r[i] != null ? String(r[i]) : '';
+  return `<div class="noshipbox"><div class="nsh"><h3>🚫 배송 불가 지역 ${R.rows.length}줄 <small>주문 ${orders}개</small></h3><span class="sp"></span><button class="btn sm" type="button" id="noshipdl">배송 불가만 내려받기 (엑셀)</button></div>
+    <p class="msg">날씨 기준에서 <b>배송 불가</b>로 나온 주문이에요. 출고 전에 손님께 연락하거나 보류해 주세요.</p>
+    <div class="nsl"><div class="nsr nsh2"><span>수령인</span><span>지역</span><span>상품</span><span>기온</span></div>${R.rows.map(r => `<div class="nsr"><span><b>${esc(v(r, ro))}</b></span><span>${esc(v(r, ad).trim().split(/\s+/).slice(0, 2).join(' '))}</span><span>${esc(v(r, pn))}${v(r, op) ? ' <small>' + esc(v(r, op)) + '</small>' : ''}${v(r, qt) ? ' × ' + esc(v(r, qt)) : ''}</span><span>${esc(tp >= 0 && /°/.test(v(r, tp)) ? v(r, tp).replace(/\s*\(.*\)$/, '') : '')}</span></div>`).join('')}</div>
+    <p class="msg" id="noshipmsg"></p></div>`;
+}
+document.addEventListener('click', async e => {
+  if (!e.target.closest || !e.target.closest('#noshipdl')) return;
+  const R = noShipRows(), m = $('noshipmsg'); if (!R || !R.rows.length) return;
+  try {
+    if (typeof XLSX === 'undefined') throw new Error('엑셀 도구를 불러오지 못했어요. 새로고침해 주세요');
+    const aoa = [R.h.map(x => String(x ?? ''))].concat(R.rows.map(r => R.h.map((_, i) => r[i] == null ? '' : String(r[i]))));
+    const ws = XLSX.utils.aoa_to_sheet(aoa), rg = XLSX.utils.decode_range(ws['!ref']);
+    for (let a = 0; a <= rg.e.r; a++) for (let b = 0; b <= rg.e.c; b++) { const c = ws[XLSX.utils.encode_cell({ r: a, c: b })]; if (c) { c.t = 's'; c.z = '@'; } }
+    ws['!cols'] = R.h.map(x => ({ wch: /주소/.test(x) ? 40 : /상품|옵션|비고|메모/.test(x) ? 26 : 14 }));
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '배송 불가');
+    const d = srcAt || new Date(), nm = '배송불가_' + String(d.getFullYear()).slice(2) + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.xlsx';
+    await saveFile(nm, new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    if (m) { m.className = 'msg ok'; m.textContent = nm + ' 로 ' + R.rows.length + '줄을 내려받았어요'; }
+  } catch (er) { if (er && er.code === 'declined') return; if (m) { m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er.code); } }
+});
 function renderPack() {
   const el = $('pksum'); if (!el) return;
   if (!result) { el.innerHTML = ''; return; }
