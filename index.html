@@ -1808,7 +1808,7 @@ html.dark .sp-st.cut{background:rgba(227,178,90,.14)}html.dark .sp-st.off{backgr
 .sp-set{display:grid;gap:12px}.sp-times{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}.sp-times label{display:flex;flex-direction:column;gap:4px}.sp-times input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink)}
 @media(max-width:900px){.ship-top{grid-template-columns:1fr}.ship-top .ship-cal{height:470px}.ship-side{grid-template-rows:auto 320px}.ship-side #ship-next{height:200px}}
 .ship-nwrap{margin-bottom:14px}.ship-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ship-nl{display:flex!important;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}.ship-nl label{display:flex;flex-direction:column;gap:4px}.ship-nl input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink)}.ship-nbtn{width:100%;justify-content:center;font-weight:700;padding:12px!important;border-radius:14px!important}.ship-nbtn i{font-style:normal;transition:transform .2s;display:inline-block;margin-left:4px}.ship-nbtn[aria-expanded=true] i{transform:rotate(180deg)}
-.ship-nbox{margin-top:10px}.nt-save{margin-left:auto}.nt-save.done{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}.nt-save+.ibtn{margin-left:6px}.ship-nl.multi{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border:1px solid var(--line);border-radius:14px;padding:8px 12px 12px}.ship-nl.multi input{width:100%;box-sizing:border-box;min-width:0}.ship-nhd{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;color:var(--acc);font-size:13px}.ship-nhd .ibtn{width:30px;height:30px}.ship-nadd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 12px}.ship-nadd .msg{flex-basis:100%}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
+.ship-nbox{margin-top:10px}.bk-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}.bk-chips .chip{font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid var(--line2,#dadde1);background:var(--card);color:var(--ink);cursor:pointer}.bk-chips .chip.on{background:var(--acc);border-color:var(--acc);color:#fff}.bk-note{margin:6px 0 0}.nt-save{margin-left:auto}.nt-save.done{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}.nt-save+.ibtn{margin-left:6px}.ship-nl.multi{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border:1px solid var(--line);border-radius:14px;padding:8px 12px 12px}.ship-nl.multi input{width:100%;box-sizing:border-box;min-width:0}.ship-nhd{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;color:var(--acc);font-size:13px}.ship-nhd .ibtn{width:30px;height:30px}.ship-nadd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 12px}.ship-nadd .msg{flex-basis:100%}.ship-nl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:10px}.ship-nl select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);max-width:100%}
 .ntbox.inline{max-width:none!important;max-height:none!important;overflow:visible!important;padding:0!important;box-shadow:none!important;background:none!important;border:0!important}.ntbox.inline .hmf-h b{display:none}
 .inv-badact{margin:8px 0 2px}
 .hmfbox,.hmabox{max-width:480px;max-height:86vh;overflow:auto;border-radius:24px}
@@ -4448,9 +4448,12 @@ document.addEventListener('submit', async e => {
 });
 // ---------- 백업 (일주일에 한 번 알려줘요) ----------
 const BAK_ID = 'bak0';
-async function fullBackup() {
-  const data = { app: 'herb5-history', version: 2, kind: 'full', exportedAt: new Date().toISOString(), history: hist, uploads: upl, stock, rules };
-  await saveFile('Herb5_전체백업_' + isoDate(new Date()) + '.json', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+async function fullBackup(from, to) {
+  const rng = !!(from || to), inR = d => /^\d{4}-\d{2}-\d{2}$/.test(d) && (!from || d >= from) && (!to || d <= to);
+  const pick = o => { const r = {}; Object.keys(o || {}).forEach(d => { if (inR(d)) r[d] = o[d]; }); return r; };
+  let st = stock; if (rng) { st = {}; Object.keys(stock).forEach(id => { const x = stock[id]; if (x && x.kind === 'issues') { if (!Object.keys(x.days || {}).some(inR)) return; } st[id] = x; }); }
+  const H = rng ? pick(hist) : hist, data = { app: 'herb5-history', version: 2, kind: rng ? 'range' : 'full', from: from || '', to: to || '', exportedAt: new Date().toISOString(), history: H, uploads: rng ? pick(upl) : upl, stock: st, rules };
+  await saveFile(rng ? 'Herb5_백업_' + (from || '처음') + '~' + (to || isoDate(new Date())) + '.json' : 'Herb5_전체백업_' + isoDate(new Date()) + '.json', new Blob([JSON.stringify(data)], { type: 'application/json' }));
   const who = (typeof fbUser !== 'undefined' && fbUser && fbUser.email) ? (typeof showId === 'function' ? showId(fbUser.email) : fbUser.email) : '';
   try { await stockWrite(BAK_ID, { kind: 'backup', name: '__backup', at: new Date().toISOString(), by: who, days: Object.keys(hist).length }); } catch (e) {}
 }
@@ -4467,12 +4470,45 @@ function renderBakNote() {
   return;
   box.innerHTML = need ? `<i class="hm-bakic"></i><div class="hm-bakt"><b>${ageD === null ? '아직 백업한 적이 없어요' : '마지막 백업 ' + ageD + '일 전'}</b><span>주문 기록 · 재고 · 이슈 · 규칙을 파일 하나로 내려받아 두면 안심이에요 (일주일에 한 번)</span></div><button class="hm-bakbtn" type="button" id="hm-bakgo">지금 백업</button>` : '';
 }
+// 기간 골라 백업
+function bkOpen() {
+  let m = $('bkModal'); if (!m) { m = document.createElement('div'); m.className = 'modal hidden'; m.id = 'bkModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '백업'); document.body.appendChild(m); }
+  const days = Object.keys(hist).filter(d => /^\d{4}-/.test(d)).sort(), first = days[0] || isoDate(new Date()), today = isoDate(new Date()), y = today.slice(0, 4);
+  const chips = [['all', '전체'], ['y1', '최근 1년'], ['ty', '올해'], ['ly', '작년'], ['m3', '최근 3개월']];
+  m.innerHTML = `<div class="mbox hcbox bkbox"><div class="hmf-h"><b>백업 내려받기</b><button class="ibtn" type="button" id="bk-x" aria-label="닫기">✕</button></div>
+    <div class="bk-chips" role="group" aria-label="기간 빨리 고르기">${chips.map(([k, n]) => `<button type="button" class="chip" data-bkq="${k}">${n}</button>`).join('')}</div>
+    <div class="hc-f"><label><span>시작 날짜</span><input type="date" id="bk-from" value="${first}" max="${today}"></label><label><span>끝 날짜</span><input type="date" id="bk-to" value="${today}" max="${today}"></label></div>
+    <div class="hc-sum" id="bk-sum"></div><p class="msg err" id="bk-err"></p>
+    <p class="msg bk-note">고른 기간의 주문 기록 · 집계 보기 · 품목 이슈가 들어가요. 재고 · 규칙은 지금 상태 그대로 함께 들어가요.</p>
+    <div class="hc-act"><button class="btn" type="button" id="bk-x2">취소</button><button class="btn pri" type="button" id="bk-go">내려받기</button></div></div>`;
+  m._first = first; m.classList.remove('hidden'); bkSet('all');
+}
+function bkSet(k) {
+  const m = $('bkModal'), today = isoDate(new Date()), y = +today.slice(0, 4), back = n => { const d = new Date(); d.setMonth(d.getMonth() - n); d.setDate(d.getDate() + 1); return isoDate(d); };
+  const r = { all: [m._first, today], y1: [back(12), today], ty: [y + '-01-01', today], ly: [(y - 1) + '-01-01', (y - 1) + '-12-31'], m3: [back(3), today] }[k]; if (!r) return;
+  $('bk-from').value = r[0]; $('bk-to').value = r[1]; m.querySelectorAll('[data-bkq]').forEach(b => b.classList.toggle('on', b.dataset.bkq === k)); bkSum();
+}
+function bkSum() {
+  const F = $('bk-from').value, T = $('bk-to').value, er = $('bk-err'), el = $('bk-sum'); er.textContent = '';
+  if (!F || !T || F > T) { el.innerHTML = ''; er.textContent = !F || !T ? '날짜를 모두 넣어 주세요' : '끝 날짜가 시작 날짜보다 뒤여야 해요'; $('bk-go').disabled = true; return null; }
+  const n = Object.keys(hist).filter(d => d >= F && d <= T).length, u = Object.keys(upl).filter(d => d >= F && d <= T).length;
+  const yd = d => { const [a, b, c] = d.split('-'); return a + '년 ' + (+b) + '월 ' + (+c) + '일'; };
+  el.innerHTML = `<div><i class="hc-dot a"></i><b>${yd(F)} ~ ${yd(T)}</b></div><div><i class="hc-dot c"></i>주문 기록 <b>${n}일치</b>${u ? ' · 집계 보기 ' + u + '일치' : ''}</div>`;
+  $('bk-go').disabled = false; return { F, T, all: F <= ($('bkModal')._first || F) && T >= isoDate(new Date()) };
+}
+document.addEventListener('input', e => { if (e.target.closest && e.target.closest('#bkModal input')) { $('bkModal').querySelectorAll('[data-bkq]').forEach(b => b.classList.remove('on')); bkSum(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('bkModal') && !$('bkModal').classList.contains('hidden')) $('bkModal').classList.add('hidden'); });
 document.addEventListener('click', async e => {
-  const b = e.target.closest('#hm-bakgo'); if (!b) return;
-  b.disabled = true; b.querySelector('.bk-t').textContent = '만드는 중…'; b.querySelector('.bk-s').textContent = '';
-  try { await fullBackup(); shareToast('백업 파일을 내려받았어요'); b.disabled = false; renderBakNote(); }
-  catch (er) { b.disabled = false; renderBakNote(); if (!(er && er.code === 'declined')) shareToast('백업하지 못했어요: ' + (er.message || er.code)); }
-});
+  if (e.target.closest('#hm-bakgo') || e.target.closest('#hexport')) { e.preventDefault(); e.stopImmediatePropagation(); bkOpen(); return; }
+  const m = e.target.closest('#bkModal'); if (!m) return;
+  if (e.target.id === 'bkModal' || e.target.closest('#bk-x,#bk-x2')) { m.classList.add('hidden'); return; }
+  const q = e.target.closest('[data-bkq]'); if (q) { bkSet(q.dataset.bkq); return; }
+  const go = e.target.closest('#bk-go'); if (!go) return;
+  const r = bkSum(); if (!r) return; go.disabled = true; go.textContent = '만드는 중…';
+  try { if (r.all) await fullBackup(); else await fullBackup(r.F, r.T); m.classList.add('hidden'); shareToast('백업 파일을 내려받았어요'); renderBakNote(); }
+  catch (er) { if (!(er && er.code === 'declined')) $('bk-err').textContent = '백업하지 못했어요: ' + (er.message || er.code); }
+  finally { go.disabled = false; go.textContent = '내려받기'; }
+}, true);
 
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
 function subSet(tab, key, noScroll) {
