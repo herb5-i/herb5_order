@@ -2016,6 +2016,8 @@ html.dark .retchip{background:rgba(214,96,120,.12);border-color:rgba(214,96,120,
 .aci b{color:var(--acc);font-weight:700}
 .aci:hover,.aci.on{background:rgba(47,125,85,.09)}
 
+.stkwst{margin-top:16px}.wst-lead{margin:-2px 0 10px}.ret-row.wst-row{grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,1.5fr) 38px!important}.wst-add{grid-template-columns:minmax(0,1.4fr) minmax(0,.8fr) minmax(0,1.4fr) auto!important}.wst-addbtn{background:#6b6f76!important;border-color:#6b6f76!important}.ret-h1 li em.rt-wst{background:#eeeff1;color:#4f545b}html.dark .ret-h1 li em.rt-wst{background:rgba(255,255,255,.08);color:#c9ccd1}
+@media(max-width:640px){.ret-row.wst-row{grid-template-columns:minmax(0,1fr) minmax(0,.9fr) 36px!important}.ret-row.wst-row .rr-w{grid-column:1/3!important;grid-row:2}.ret-row.wst-row.ret-h span:nth-child(3){display:none}.wst-add{grid-template-columns:1fr 1fr!important}.wst-add .btn{grid-column:1/-1!important}}
 .ret-seg{display:inline-flex;gap:0;border:1px solid var(--line2,#dadde1);border-radius:10px;overflow:hidden;margin:4px 0 12px}
 .ret-seg button{border:0;background:var(--card);padding:8px 16px;font:600 14px var(--body);color:var(--mute);cursor:pointer;display:flex;align-items:baseline;gap:6px}
 .ret-seg button small{font-size:11.5px;font-weight:500;opacity:.8}
@@ -2047,6 +2049,8 @@ html.dark .ret-issbtn{background:rgba(214,96,120,.12)!important;border-color:rgb
 @media(max-width:640px){.ret-add{grid-template-columns:1fr 1fr!important}.ret-add .btn{grid-column:auto!important}.ret-in .ret-add .btn{grid-column:1/-1!important}
   .ret-row{grid-template-columns:68px minmax(0,1fr) minmax(0,.9fr) 36px 36px!important}.ret-row .rr-w{grid-column:2/4!important}.ret-row.t-in .ibtn-bad{grid-column:5}
   .ret-row.ret-h{grid-template-columns:68px minmax(0,1fr) minmax(0,.9fr) 72px!important}}
+.ret-row.wst-row.ret-h{grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) minmax(0,1.5fr) 38px!important}.btn.pri.wst-addbtn{background:#5f646b!important;background-image:none!important;border-color:#5f646b!important;color:#fff!important}
+@media(max-width:640px){.ret-row.wst-row.ret-h{grid-template-columns:minmax(0,1fr) minmax(0,.9fr) 36px!important}.ret-row.wst-row.ret-h span:nth-child(3){display:none!important}}
 .rsubs button span{white-space:nowrap}
 @media(max-width:560px){.rsubs button{font-size:11.5px!important}.rsubs button svg{width:17px!important;height:17px!important}}
 /* 고객 관리 */
@@ -2643,6 +2647,20 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="ret-foot"><label class="ret-ded"><input type="checkbox" id="ret-deduct" checked> 완료할 때 재고에도 반영 (입고 ＋ · 반송 −)</label><span class="sp"></span><button class="btn pri" type="button" id="ret-send" disabled>처리 완료</button></div>
       <p class="msg" id="ret-msg"></p>
       <div class="ret-past"><h3>지난 입고 · 반송</h3><div id="ret-hist"></div></div>
+    </div>
+    <div class="card stkret stkwst" data-sub="ret">
+      <div class="hh"><h2>폐기</h2><span class="msg" id="wst-sum"></span><span class="sp"></span><button class="btn sm" type="button" id="wst-copy">목록 복사</button></div>
+      <p class="msg wst-lead">상하거나 팔 수 없어 버리는 품목을 따로 적어 둬요. 농장으로 돌려보내는 반송과는 따로 기록돼요.</p>
+      <div class="ret-add wst-add">
+        <label class="ra-n">품목<input id="wst-n" data-ac="1" placeholder="품목 찾기 (예: 로즈마리)" autocomplete="off"></label>
+        <label class="ra-q">수량<input id="wst-q" inputmode="decimal" placeholder="예: 2kg · 3" autocomplete="off"></label>
+        <label class="ra-w">사유<input id="wst-w" placeholder="예: 무름 · 변색 · 유통기한" autocomplete="off"></label>
+        <button class="btn pri wst-addbtn" type="button" id="wst-addbtn">＋ 폐기 담기</button>
+      </div>
+      <div class="ret-list" id="wst-body"></div>
+      <div class="ret-foot"><label class="ret-ded"><input type="checkbox" id="wst-deduct" checked> 완료할 때 재고에서 빼기</label><span class="sp"></span><button class="btn pri" type="button" id="wst-send" disabled>폐기 완료</button></div>
+      <p class="msg" id="wst-msg"></p>
+      <div class="ret-past"><h3>지난 폐기</h3><div id="wst-hist"></div></div>
     </div>
   </section>
 
@@ -6728,9 +6746,71 @@ document.addEventListener('change', async e => {
   else r.why = f.value.trim();
   try { await retSave(d); m.className = 'msg ok'; m.textContent = r.key + ' 고쳤어요'; } catch (er) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er.code); }
 });
+// ---------- 폐기: 버리는 재고 따로 기록 ----------
+const WST_ID = 'waste0';
+const wstDoc = () => { const r = stock[WST_ID]; return r && r.kind === 'waste' ? r : { kind: 'waste', name: '__waste', items: [], sent: [] }; };
+async function wstSave(d) { d.updatedAt = new Date().toISOString(); await stockWrite(WST_ID, d); }
+const wstText = (items, when) => ['[허브아이] 폐기 ' + fmtDay(when || isoDate(new Date())) + ' (' + items.length + '품목)', ...items.map(retLine)].join('\n');
+function renderWst() {
+  if (!$('wst-body')) return;
+  const d = wstDoc(), it = d.items || [], n = it.length;
+  $('wst-sum').textContent = n ? n + '품목' : ''; $('wst-send').disabled = !n; $('wst-copy').disabled = !n;
+  const act = document.activeElement, keep = act && act.closest && act.closest('#wst-body') ? { id: act.dataset.wstid, f: act.dataset.wstf } : null;
+  $('wst-body').innerHTML = n ? '<div class="ret-row wst-row ret-h"><span>품목</span><span>수량</span><span>사유</span><span></span></div>' + it.map(r => {
+    const x = retItemOf(r.key), cur = x && x.cur !== null ? '지금 ' + stkShow(x.unit, x.cur) : '';
+    return `<div class="ret-row wst-row"><span class="rr-n"><b>${esc(r.key)}</b><small>${esc(cur)}</small></span><span class="rr-q"><input data-wstid="${esc(r.id)}" data-wstf="q" value="${esc(retFmtQ(r.unit, r.v))}" inputmode="decimal" aria-label="${esc(r.key)} 수량"><em>${stkIsW(r.unit) ? '' : esc(r.unit)}</em></span><span class="rr-w"><input data-wstid="${esc(r.id)}" data-wstf="why" value="${esc(r.why || '')}" placeholder="사유" aria-label="${esc(r.key)} 사유"></span><button class="ibtn ibtn-bad" type="button" data-wstdel="${esc(r.id)}" title="목록에서 빼기" aria-label="목록에서 빼기">${IC.trash}</button></div>`; }).join('')
+    : '<p class="ret-empty">담긴 품목이 없어요. 품목 · 수량 · 사유를 넣고 <b>＋ 폐기 담기</b>를 눌러요.</p>';
+  if (keep) { const el = document.querySelector(`#wst-body [data-wstid="${CSS.escape(keep.id)}"][data-wstf="${keep.f}"]`); if (el) el.focus(); }
+  const sent = (d.sent || []).slice().reverse();
+  $('wst-hist').innerHTML = sent.length ? sent.slice(0, 30).map(h => `<details class="ret-h1"><summary><b>${esc(fmtDay(h.day))}</b><span>폐기 ${h.items.length}품목${h.deducted ? ' · 재고에서 뺌' : ''}${h.by ? ' · ' + esc(h.by) : ''}</span></summary><ul>${h.items.map(r => `<li><em class="rt-wst">폐기</em> ${esc(r.key)} <b>${esc(stkShow(r.unit, r.v))}</b>${r.why ? ' <small>' + esc(r.why) + '</small>' : ''}</li>`).join('')}</ul><div class="ret-hact"><button class="btn sm" type="button" data-wstcopyh="${esc(h.id)}">복사</button><button class="btn sm" type="button" data-wstdelh="${esc(h.id)}">기록 지우기</button></div></details>`).join('')
+    : '<p class="ret-empty">아직 기록이 없어요.</p>';
+}
+async function wstAdd() {
+  const m = $('wst-msg'), key = stkK(stkBase($('wst-n').value || '', '')), why = $('wst-w').value.trim();
+  if (!key) { m.className = 'msg err'; m.textContent = '품목을 골라 주세요'; return; }
+  const p = retParse($('wst-q').value, key); if (!p) { m.className = 'msg err'; m.textContent = '수량을 숫자로 적어 주세요 (예: 2kg, 500g, 3)'; return; }
+  if (p.err) { m.className = 'msg err'; m.textContent = p.err; return; }
+  const d = JSON.parse(JSON.stringify(wstDoc())); d.items = d.items || [];
+  const same = d.items.find(r => r.key === key && r.unit === p.unit);
+  if (same) { same.v += p.v; if (why && !String(same.why || '').includes(why)) same.why = [same.why, why].filter(Boolean).join(' · '); }
+  else d.items.push({ id: 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), key, v: p.v, unit: p.unit, why, at: new Date().toISOString(), by: retWho() });
+  try { await wstSave(d); m.className = 'msg ok'; m.textContent = key + ' ' + stkShow(p.unit, p.v) + ' 폐기 목록에 담았어요' + (same ? ' (같은 품목에 더함)' : ''); $('wst-n').value = ''; $('wst-q').value = ''; $('wst-w').value = ''; renderWst(); $('wst-n').focus(); }
+  catch (e) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (e.message || e.code); }
+}
+document.addEventListener('click', async e => {
+  const t = e.target; if (!t.closest || !t.closest('.stkwst')) return;
+  if (t.closest('#wst-addbtn')) { wstAdd(); return; }
+  if (t.closest('#wst-copy')) { const it = wstDoc().items || []; if (it.length) { try { await navigator.clipboard.writeText(wstText(it)); shareToast('폐기 목록을 복사했어요'); } catch (er) { shareToast('복사하지 못했어요'); } } return; }
+  const del = t.closest('[data-wstdel]'); if (del) { const d = JSON.parse(JSON.stringify(wstDoc())); d.items = (d.items || []).filter(r => r.id !== del.dataset.wstdel); try { await wstSave(d); renderWst(); } catch (er) {} return; }
+  const send = t.closest('#wst-send');
+  if (send) { const d = JSON.parse(JSON.stringify(wstDoc())), it = d.items || []; if (!it.length) return; const ded = $('wst-deduct').checked;
+    if (!send.dataset.sure) { send.dataset.sure = 1; send.textContent = it.length + '품목 폐기 완료 · 한 번 더 누르기'; clearTimeout(send._t); send._t = setTimeout(() => { delete send.dataset.sure; send.textContent = '폐기 완료'; }, 4000); return; }
+    clearTimeout(send._t); delete send.dataset.sure; send.disabled = true;
+    const now = new Date().toISOString(), day = isoDate(new Date()), msg = $('wst-msg'), skip = [];
+    try {
+      if (ded) for (const r of it) { const x = retItemOf(r.key); if (!x || !x.rec || (x.unit && stkIsW(x.unit) !== stkIsW(r.unit))) { skip.push(r.key); continue; }
+        const rec = JSON.parse(JSON.stringify(x.rec)); rec.adj = (rec.adj || []).concat([{ at: now, d: -r.v, wst: 1 }]); rec.log = (rec.log || []).concat([{ at: now, t: 'waste', d: -r.v, why: r.why || '' }]).slice(-300); rec.updatedAt = now; await stockWrite(x.id, rec); }
+      d.sent = (d.sent || []).concat([{ id: 'h' + Date.now().toString(36), at: now, day, by: retWho(), deducted: ded, items: it }]).slice(-200); d.items = [];
+      await wstSave(d); msg.className = 'msg ok'; msg.textContent = '폐기 완료로 기록했어요' + (ded ? ' · 재고에서 뺐어요' : '') + (skip.length ? ' (재고에 없는 품목이라 빼지 못함: ' + skip.join(', ') + ')' : '');
+      send.textContent = '폐기 완료'; renderWst();
+    } catch (er) { msg.className = 'msg err'; msg.textContent = '저장하지 못했어요: ' + (er.message || er.code); send.disabled = false; send.textContent = '폐기 완료'; }
+    return; }
+  const ch = t.closest('[data-wstcopyh]'); if (ch) { const h = (wstDoc().sent || []).find(x => x.id === ch.dataset.wstcopyh); if (h) { try { await navigator.clipboard.writeText(wstText(h.items, h.day)); shareToast('폐기 기록을 복사했어요'); } catch (er) {} } return; }
+  const dh = t.closest('[data-wstdelh]');
+  if (dh) { if (!dh.dataset.sure) { dh.dataset.sure = 1; dh.textContent = '한 번 더 누르면 지워요'; setTimeout(() => { if (dh.isConnected) { delete dh.dataset.sure; dh.textContent = '기록 지우기'; } }, 3500); return; }
+    const d = JSON.parse(JSON.stringify(wstDoc())); d.sent = (d.sent || []).filter(x => x.id !== dh.dataset.wstdelh); try { await wstSave(d); renderWst(); } catch (er) {} return; }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest && e.target.closest('.wst-add')) { e.preventDefault(); e.stopPropagation(); wstAdd(); } });
+document.addEventListener('change', async e => {
+  const f = e.target.closest && e.target.closest('[data-wstid]'); if (!f) return;
+  const d = JSON.parse(JSON.stringify(wstDoc())), r = (d.items || []).find(x => x.id === f.dataset.wstid); if (!r) return; const m = $('wst-msg');
+  if (f.dataset.wstf === 'q') { const p = retParse(f.value, r.key, r.unit); if (!p || p.err) { m.className = 'msg err'; m.textContent = p && p.err ? p.err : '수량을 숫자로 적어 주세요'; f.value = retFmtQ(r.unit, r.v); return; } r.v = p.v; r.unit = p.unit; } else r.why = f.value.trim();
+  try { await wstSave(d); m.className = 'msg ok'; m.textContent = r.key + ' 고쳤어요'; } catch (er) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er.code); }
+});
 function renderStock() {
   const host = $('stklist'); if (!host) return;
   try { renderRet(); } catch (e) {}
+  try { renderWst(); } catch (e) {}
   const { items } = stkCompute(), order = stkGroupOrder();
   const L = stkLayout(), lo = new Map((L.order || []).map((k, i) => [k, i])), lg = L.grp || {};
   const groups = new Map(); items.forEach(x => { const g = lg[x.key] || x.group; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(x); });
