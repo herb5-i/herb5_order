@@ -2,7 +2,9 @@
   "name": "Herb5 - 허브아이",
   "short_name": "허브아이",
   "start_url": "./",
-  "display": "browser",
+  "display": "standalone",
+  "scope": "./",
+  "id": "./",
   "background_color": "#d2d3c1",
   "theme_color": "#0f8584",
   "icons": [
