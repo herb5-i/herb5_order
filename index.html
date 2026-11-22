@@ -2252,6 +2252,7 @@ html{scrollbar-gutter:stable}
 @media(max-width:760px){.crm-side{position:static;flex-direction:row;gap:6px;overflow-x:auto}.crm-body .crm-side .crm-pills{flex:none}.crm-body .crm-geob{padding:4px}.crm-body .crm-geob .geo-btn{padding:8px 12px!important}}
 .crm-share{display:inline-flex;gap:6px}.crm-sumrow{min-height:38px}
 /* 고객 관리 개편: 업무 탭 + 필터 + 한 표 */
+
 #v-crm .crm-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px}#v-crm .crm-bar .sp{flex:1}
 .crm-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.crm-tabs::-webkit-scrollbar{display:none}
 .crm-tabs button{font:inherit;font-size:14px;font-weight:600;background:none;border:0;border-bottom:2px solid transparent;padding:9px 12px 8px;color:var(--mute);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-bottom:-1px}
@@ -2272,8 +2273,26 @@ html{scrollbar-gutter:stable}
 .crm-c1 .crm-why2{color:#b0573c}.crm-why{display:block;font-style:normal;font-size:11.5px;color:var(--acc);margin-top:2px}
 .crm-c2{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crm-c2 small{color:var(--mute)}
 .crm-c3 b,.crm-c4 b{display:block;font-size:14px}.crm-c3 small,.crm-c4 small{display:block;font-size:11.5px;color:var(--mute)}.crm-th .crm-c3,.crm-th .crm-c4{text-align:right}
+
+.crm-tr{grid-template-columns:minmax(0,1.3fr) minmax(0,1.45fr) 104px 84px 84px!important}.crm-c3,.crm-c4,.crm-c5{text-align:right;font-variant-numeric:tabular-nums}.crm-c5 b,.crm-c4 b{display:block;font-size:14px}
+.crm-c3 b.lt{font-weight:600}.crm-c4 b{font-weight:600}.crm-c5 b{font-weight:700}.crm-tr b.mu{color:var(--mute);font-weight:500}
+.crm-th .crm-c3,.crm-th .crm-c4,.crm-th .crm-c5{text-align:right}.crm-th button{font:inherit;font-size:12px;font-weight:600;color:var(--mute);background:none;border:0;padding:0;cursor:pointer;display:inline-flex;gap:3px;align-items:center}.crm-th button:hover,.crm-th button.on{color:var(--ink)}.crm-th button i{font-style:normal;font-size:9px;color:var(--acc)}
+.crm-cnt{font-size:12px;font-weight:600;color:var(--mute);background:var(--soft,#f1f3ef);border-radius:99px;padding:1px 7px}.crm-n.soft{background:#e08a3c}
+.crm-c1 .crm-why2{color:var(--mute)!important}.crm-fu{color:#b0573c!important;font-weight:600}.crm-fu.over{color:#c2475a!important}
+.crm-sec{padding:8px 16px;border-top:1px solid var(--line);background:var(--soft,#f6f8f5);font-size:12px;font-weight:700;color:var(--mute)}
+.cd-last{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:12px 0 2px}.cd-lh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}.cd-lh b{font-size:14.5px}.cd-lh span{font-size:12px;color:var(--mute)}
+.cd-its{display:flex;flex-direction:column}.cd-its>div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line);font-size:14px}.cd-its>div:first-child{border-top:0}
+.cd-its .op{font-weight:800;color:var(--acc);white-space:nowrap}.cd-its .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cd-its b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.cd-raw{margin-top:6px;font-size:12px;color:var(--mute)}.cd-raw summary{cursor:pointer}.cd-raw ul{margin:4px 0 0;padding-left:16px}
+.cd-prev{display:flex;flex-direction:column}.cd-po,.cd-pc{border-top:1px solid var(--line);font-size:13px}.cd-po:first-child,.cd-pc:first-child{border-top:0}
+.cd-po summary{list-style:none;display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:8px;padding:8px 0;cursor:pointer;align-items:baseline}.cd-po summary::-webkit-details-marker{display:none}
+.cd-po summary small,.cd-pc small{color:var(--mute)}.cd-po summary span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cd-po summary em{font-style:normal;font-size:11.5px;color:var(--mute)}.cd-po[open] summary span{white-space:normal}.cd-po .cd-its{padding:0 0 8px 50px}.cd-po .cd-its>div{font-size:13px;padding:4px 0}.cd-po .cd-rawl{padding-left:50px;margin:0 0 8px;font-size:11.5px;color:var(--mute)}
+.cd-pc{display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;padding:8px 0;color:#c94b5d}
+.cd-fu{display:flex;flex-wrap:wrap;gap:6px}.cd-fu input{font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink);min-width:0}.cd-fu input[type=text],.cd-fu #crm-fut{flex:1 1 180px}
+html.dark .crm-cnt{background:rgba(255,255,255,.08)}
+@media(max-width:640px){.crm-tr{grid-template-columns:minmax(0,1fr) auto!important}.crm-tr .crm-c4,.crm-tr .crm-c5{display:none}.crm-sec{padding:8px 12px}}
 html.dark .crm-tr.sel{background:rgba(63,154,108,.16)}html.dark .crm-c1 .crm-why2{color:#e7a58a}
-@media(max-width:640px){.crm-tr{grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:10px 12px}.crm-tr .crm-c1{grid-column:1;grid-row:1}.crm-tr .crm-c3{grid-column:2;grid-row:1 / span 2;align-self:center}.crm-tr .crm-c2{grid-column:1;grid-row:2;font-size:12.5px;color:var(--mute)}.crm-tr .crm-c4{display:none}.crm-th{display:none}
+@media(max-width:640px){.crm-tr{gap:2px 12px;padding:10px 12px}.crm-tr .crm-c1{grid-column:1;grid-row:1}.crm-tr .crm-c3{grid-column:2;grid-row:1 / span 2;align-self:center}.crm-tr .crm-c2{grid-column:1;grid-row:2;font-size:12.5px;color:var(--mute)}.crm-tr .crm-c4{display:none}.crm-th{display:none}
   #v-crm .crm-bar .sp{display:none}.crm-tabs{width:100%}.crm-flt{flex:1;min-width:108px}.crm-flt select{width:100%}#v-crm .crm-bar{gap:6px}.crm-tabs button{padding:9px 10px 8px;font-size:13.5px}}
 
 #inv-tplmsg code{display:inline-block;white-space:nowrap;margin:2px 2px 2px 0}
@@ -6463,10 +6482,10 @@ function crmData() {
     const qty = c.orders.reduce((s, o) => s + (o.it || []).reduce((t, x) => t + (x[2] || 0), 0), 0);
     c.autoBiz = !D.nobiz[c.id] && ((c.n >= 6 && c.cyc && c.cyc <= 14) || (c.n >= 3 && qty / c.n >= 8));
     c.tags = (D.tags[c.id] || []).slice(); if (c.autoBiz && !c.tags.includes('거래처')) c.tags.unshift('거래처');
-    c.note = (D.notes[c.id] || {}).t || ''; c.called = D.called[c.id] || '';
+    c.note = (D.notes[c.id] || {}).t || ''; c.called = D.called[c.id] || ''; c.fu = (D.follow || {})[c.id] || null;
     c.label = c.nm || ((c.r || '지역 모름') + (c.l4.size ? ' · …' + [...c.l4].slice(-1)[0] : ''));
     c.sub = [c.rn && c.rn !== c.nm ? '받는 분 ' + c.rn : '', c.nm ? c.r : ''].filter(Boolean).join(' · ');
-    c.itemsTxt = c.main ? c.main + (c.top.length > 1 ? ' 외 ' + (c.top.length - 1) + '개' : '') : '';
+    c.itemsTxt = c.main ? c.main + (c.top.length > 1 ? ' 외 ' + (c.top.length - 1) + '종' : '') : '';
     c.mainQ = c.main ? Math.max(1, Math.round(c.items.get(c.main) / (c.icnt.get(c.main) || 1))) : 0;
     c.next = c.cyc ? isoDate(new Date(dOf(c.last).getTime() + c.cyc * 864e5)) : null;
     c.late = c.cyc ? c.ago - c.cyc : 0;
@@ -6488,7 +6507,7 @@ const CRM_P = [
   ['vip', '단골', c => c.n >= 5 && c.ago <= 60],
   ['new', '새 고객', c => c.n === 1 && c.ago <= 30],
   ['sleep', '잠든 고객', c => c.ago > 60],
-  ['call', '연락 필요', (c, D) => c.n >= 2 && c.cyc && c.ago > c.cyc * 1.2 && c.ago <= 90 && !(c.called && (dOf(D.today) - dOf(c.called)) / 864e5 < 14), 1]];
+  ['call', '재주문 확인', (c, D) => c.n >= 2 && c.cyc && c.ago > c.cyc * 1.2 && c.ago <= 90 && !(c.called && (dOf(D.today) - dOf(c.called)) / 864e5 < 14), 1]];
 
 // 지역 지도: 시 · 도 원(크기 = 고객 수) → 누르면 시 · 군 · 구 막대 + 원 그래프
 let crmDm = false, crmView = 'list', crmGeoSel = null, crmGeoFrom = '', crmGeoTo = '';
@@ -6535,7 +6554,8 @@ function crmOpen() { crmInit().then(() => { crmRender(); if (crmMem.size) crmLoa
 function crmMatch(c, q) { return !q || ((c.nm || '') + ' ' + (c.rn || '') + ' ' + c.r + ' ' + [...c.items.keys()].join(' ') + ' ' + c.tags.join(' ') + ' ' + c.note + ' ' + [...c.l4].join(' ')).toLowerCase().replace(/\s+/g, '').includes(q); }
 const CRM_TABS = ['all', 'week', 'call'];
 const CRM_F = [['', '모든 고객', () => true], ['vip', '단골', c => c.n >= 5 && c.ago <= 60], ['new', '새 고객', c => c.n === 1 && c.ago <= 30], ['sleep', '잠든 고객', c => c.ago > 60], ['biz', '거래처', c => c.tags.includes('거래처')]];
-let crmF = '', crmMoreM = false;
+let crmF = '', crmMoreM = false, crmSK = null, crmSD = -1;
+const crmFuDue = (D) => D.list.filter(c => c.fu && c.fu.d && c.fu.d <= D.today);
 // 검색어가 화면에 안 보이는 칸에서 걸렸을 때만 이유 한 줄
 function crmWhy(c, q) {
   if (!q) return ''; const n = x => String(x || '').toLowerCase().replace(/\s+/g, ''), raw = crmQ.trim();
@@ -6548,37 +6568,51 @@ function crmWhy(c, q) {
   return '';
 }
 function crmFiltered(D, q) { const P = CRM_P.find(p => p[0] === crmP) || CRM_P[0], F = CRM_F.find(f => f[0] === crmF) || CRM_F[0]; return D.list.filter(c => P[2](c, D) && F[2](c, D) && crmMatch(c, q)); }
-function crmSort(L) { if (crmP === 'call') L.sort((a, b) => b.late - a.late); else if (crmP === 'week') L.sort((a, b) => a.next.localeCompare(b.next)); else if (crmF === 'new') L.sort((a, b) => a.ago - b.ago); else if (crmF === 'vip') L.sort((a, b) => b.n - a.n); return L; }
+// 정렬: 열 제목을 누르면 바뀌고, 안 누르면 탭마다 기본 기준
+function crmSortKey() { return crmSK || (crmP === 'call' ? 'late' : crmP === 'week' ? 'next' : crmF === 'vip' ? 'n' : 'last'); }
+function crmSortDir() { return crmSK ? crmSD : (crmSortKey() === 'next' ? 1 : -1); }
+function crmSort(L) { const k = crmSortKey(), d = crmSortDir(), v = c => k === 'last' ? c.last : k === 'next' ? (c.next || '9999') : k === 'cyc' ? (c.cyc == null ? (d > 0 ? 1e9 : -1) : c.cyc) : k === 'late' ? c.late : c.n;
+  return L.sort((a, b) => { const x = v(a), y = v(b); return (x < y ? -1 : x > y ? 1 : 0) * d || b.n - a.n; }); }
 function crmRender() {
   if (!$('v-crm')) return; crmSyncLine();
   const D = crmData(), q = crmQ.trim().toLowerCase().replace(/\s+/g, '');
   if (!D.list.length) { $('crm-pills').innerHTML = ''; $('crm-sum').innerHTML = ''; $('crm-list').innerHTML = '<p class="crm-none">아직 고객 데이터가 없어요. 위의 <b>카페24에서 3년치 받기</b>를 눌러 주세요.</p>'; return; }
   if (!CRM_TABS.includes(crmP)) crmP = 'all';
-  const isMap = crmView === 'map', cnt = k => { const f = CRM_P.find(p => p[0] === k)[2]; return D.list.filter(c => f(c, D)).length; };
-  $('crm-pills').innerHTML = CRM_TABS.map(k => { const P = CRM_P.find(p => p[0] === k), n = k === 'call' ? cnt('call') : 0; return `<button type="button" role="tab" aria-selected="${k === crmP}" data-crmp="${k}" class="${k === crmP ? 'on' : ''}">${P[1]}${n ? ` <b class="crm-n">${n}</b>` : ''}</button>`; }).join('');
+  const isMap = crmView === 'map', cnt = k => { const f = CRM_P.find(p => p[0] === k)[2]; return D.list.filter(c => f(c, D)).length; }, due = crmFuDue(D), over = due.filter(c => c.fu.d < D.today).length;
+  $('crm-pills').innerHTML = CRM_TABS.map(k => { const P = CRM_P.find(p => p[0] === k); let badge = '';
+    if (k === 'call') { const n = cnt('call'); badge = (over ? ` <b class="crm-n" title="기한 지난 연락 약속">약속 ${over}</b>` : due.length ? ` <b class="crm-n soft" title="오늘 연락 약속">약속 ${due.length}</b>` : '') + (n ? ` <span class="crm-cnt">${n.toLocaleString('ko-KR')}</span>` : ''); }
+    return `<button type="button" role="tab" aria-selected="${k === crmP}" data-crmp="${k}" class="${k === crmP ? 'on' : ''}">${P[1]}${badge}</button>`; }).join('');
   const fs = $('crm-flt'), fh = CRM_F.map(([k, l]) => `<option value="${k}">${l}</option>`).join(''); if (fs._h !== fh) { fs.innerHTML = fh; fs._h = fh; } fs.value = crmF;
   $('crm-geob').innerHTML = `<button type="button" data-crmview="list" class="${isMap ? '' : 'on'}" aria-pressed="${!isMap}">목록</button><button type="button" data-crmview="map" class="${isMap ? 'on' : ''}" aria-pressed="${isMap}">지도</button>`;
   $('crm-geo').classList.toggle('hidden', !isMap); $('crm-list').classList.toggle('hidden', isMap); document.querySelector('.crm-sumrow').classList.toggle('hidden', isMap);
   $('crm-share').innerHTML = isMap ? '' : `<button class="btn sm" id="crm-copy" type="button" title="지금 보이는 목록을 엑셀 · 구글 시트용 표로 복사">표 복사</button><span class="crm-more"><button class="ibtn" type="button" id="crm-morem" aria-haspopup="true" aria-expanded="${crmMoreM}" aria-label="더보기" title="더보기">⋯</button>${crmMoreM ? `<div class="crm-menu" role="menu"><button type="button" role="menuitem" data-share="crm">표 이미지로 복사</button>${navigator.share ? '<button type="button" role="menuitem" data-share="crm" data-sharevia="1">표 이미지 보내기 (카톡 · 메일)</button>' : ''}</div>` : ''}</span>`;
   if (isMap) { crmGeo(); return; }
-  const L = crmSort(crmFiltered(D, q)), T = D.today, Wk = '일월화수목금토';
+  let L = crmSort(crmFiltered(D, q)); const T = D.today, Wk = '일월화수목금토';
+  const FU = crmP === 'call' ? crmSort(D.list.filter(c => c.fu && c.fu.d && c.fu.d <= T && (CRM_F.find(f => f[0] === crmF) || CRM_F[0])[2](c, D) && crmMatch(c, q))).sort((a, b) => a.fu.d.localeCompare(b.fu.d)) : [];
+  if (FU.length) { const ids = new Set(FU.map(c => c.id)); L = L.filter(c => !ids.has(c.id)); }
   let sum = L.length.toLocaleString('ko-KR') + '명';
-  if (crmP === 'call') sum += ' · 평소 주문 간격보다 늦어진 순 · <b>연락함</b>을 누르면 2주 동안 빠져요';
+  if (crmP === 'call') sum = (FU.length ? `연락 약속 <b>${FU.length}명</b> · ` : '') + `자동으로 추린 고객 ${L.length.toLocaleString('ko-KR')}명 · 평소 주문 간격보다 <b>${crmSK ? '고른 기준' : '오래 늦어진'}</b> 순이라 맨 위가 가장 많이 늦었어요 · <b>연락함</b>을 누르면 2주 동안 빠져요`;
   else if (crmP === 'week') { const dm = new Map(); L.forEach(c => dm.set(c.main, (dm.get(c.main) || 0) + c.mainQ)); sum += ' · 주문 간격으로 추정한 예상이에요 · 예상일 빠른 순' + (L.length ? ` <button type="button" class="btn sm" id="crm-dmbtn">${crmDm ? '예상 수요 숨기기' : '예상 수요 보기'}</button>` + (crmDm ? '<span class="crm-dm">' + [...dm.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `<b>${esc(k)} ${v}개</b>`).join(' · ') + '</span>' : '') : ''); }
   if (crmQ.trim()) sum += ` · 검색 ‘${esc(crmQ.trim())}’`;
   $('crm-sum').innerHTML = sum;
-  const dateCell = d => { const ago = Math.round((dOf(T) - dOf(d)) / 864e5); return ago <= 1 ? `<b>${ago === 0 ? '오늘' : '어제'}</b>` : `<b>${crmDay(d)}</b><small>${ago}일 전</small>`; };
+  const dateCell = d => { const ago = Math.round((dOf(T) - dOf(d)) / 864e5); return ago <= 1 ? `<b class="lt">${ago === 0 ? '오늘' : '어제'}</b>` : `<b class="lt">${crmDay(d)}</b><small>${ago}일 전</small>`; };
   const nextCell = d => { const dd = Math.round((dOf(d) - dOf(T)) / 864e5); return `<b class="${dd < 0 ? 'crm-red' : ''}">${dd === 0 ? '오늘' : dd === 1 ? '내일' : dd === -1 ? '어제' : crmDay(d)}</b><small>${dd < -1 ? -dd + '일 지남' : Wk[dOf(d).getDay()] + '요일'}</small>`; };
-  const H = crmP === 'week' ? ['고객 · 지역', '예상 품목', '예상 주문일', '평소 주문 간격'] : crmP === 'call' ? ['고객 · 연락 사유', '주문 품목', '최근 주문일', '늦어진 날'] : ['고객 · 지역', '주문 품목', '최근 주문일', '평소 주문 간격'];
-  const rows = L.slice(0, crmShow).map(c => {
+  const H = [[crmP === 'call' ? '고객 · 판단 근거' : '고객 · 지역', ''], [crmP === 'week' ? '예상 품목' : '주문 품목', ''], [crmP === 'week' ? '예상 주문일' : '최근 주문일', crmP === 'week' ? 'next' : 'last'], ['주문 간격', 'cyc'], crmP === 'call' ? ['늦어진 날', 'late'] : ['누적 주문', 'n']];
+  const sk = crmSortKey(), sd = crmSortDir();
+  const row = (c, fu) => {
     const why = crmWhy(c, q), chips = (c.tags.includes('거래처') ? '<span class="crm-chip">거래처</span>' : '') + (c.claims.length ? '<span class="crm-chip cl">반품 이력</span>' : '');
-    const sub = crmP === 'call' ? `<small class="crm-why2">${c.note ? '📝 ' + esc(c.note.split('\n')[0]) : `평소 ${c.cyc}일 간격 · 마지막 주문 ${c.ago}일 전`}</small>` : `<small>${esc(c.r || '지역 모름')}</small>`;
+    const sub = fu ? `<small class="crm-fu ${c.fu.d < T ? 'over' : ''}">📌 ${c.fu.d < T ? crmDay(c.fu.d) + ' 약속 · ' + Math.round((dOf(T) - dOf(c.fu.d)) / 864e5) + '일 지남' : '오늘 연락 약속'}${c.fu.t ? ' · ' + esc(c.fu.t) : ''}</small>`
+      : crmP === 'call' ? `<small class="crm-why2">평소 ${c.cyc}일 간격 · 마지막 주문 ${c.ago}일 전${c.note ? ' · 📝 ' + esc(c.note.split('\n')[0]) : ''}</small>` : `<small>${esc(c.r || '지역 모름')}</small>`;
     const items = crmP === 'week' ? `${esc(c.main)} <small>${c.mainQ}개쯤</small>` : esc(c.itemsTxt || '–');
     const c3 = crmP === 'week' ? nextCell(c.next) : dateCell(c.last);
-    const c4 = crmP === 'call' ? `<b class="crm-red">${c.late}일</b><small>평소 ${c.cyc}일</small>` : c.cyc ? `<b>${c.cyc}일</b><small>${c.n}회 주문</small>` : `<b>–</b><small>${c.n}회 주문</small>`;
-    return `<div class="crm-tr ${c.id === crmSel ? 'sel' : ''}" role="row" data-crmc="${c.id}" tabindex="0"><div class="crm-c1" role="cell"><span class="crm-nm"><b>${esc(c.label)}</b>${chips}</span>${sub}${why ? `<em class="crm-why">${esc(why)}</em>` : ''}</div><div class="crm-c2" role="cell">${items}</div><div class="crm-c3" role="cell">${c3}</div><div class="crm-c4" role="cell">${c4}</div></div>`;
-  }).join('');
-  $('crm-list').innerHTML = L.length ? `<div class="crm-table" role="table"><div class="crm-tr crm-th" role="row">${H.map((h, i) => `<div class="crm-c${i + 1}" role="columnheader">${h}</div>`).join('')}</div>${rows}</div>` + (L.length > crmShow ? `<button class="btn sm crm-morebtn" type="button" id="crm-morebtn">${(L.length - crmShow).toLocaleString('ko-KR')}명 더 보기</button>` : '') : '<p class="crm-none">해당하는 고객이 없어요</p>';
+    const c4 = c.cyc ? `<b>${c.cyc}일</b>` : '<b class="mu">–</b>';
+    const c5 = crmP === 'call' ? (c.cyc && c.late > 0 ? `<b>${c.late}일</b>` : '<b class="mu">–</b>') : `<b>${c.n.toLocaleString('ko-KR')}회</b>`;
+    return `<div class="crm-tr ${c.id === crmSel ? 'sel' : ''}" role="row" data-crmc="${c.id}" tabindex="0"><div class="crm-c1" role="cell"><span class="crm-nm"><b>${esc(c.label)}</b>${chips}</span>${sub}${why ? `<em class="crm-why">${esc(why)}</em>` : ''}</div><div class="crm-c2" role="cell">${items}</div><div class="crm-c3" role="cell">${c3}</div><div class="crm-c4" role="cell">${c4}</div><div class="crm-c5" role="cell">${c5}</div></div>`;
+  };
+  const head = `<div class="crm-tr crm-th" role="row">${H.map(([h, k], i) => `<div class="crm-c${i + 1}" role="columnheader"${k ? ` aria-sort="${k === sk ? (sd > 0 ? 'ascending' : 'descending') : 'none'}"` : ''}>${k ? `<button type="button" data-crmsort="${k}" class="${k === sk ? 'on' : ''}">${h}${k === sk ? `<i>${sd > 0 ? '▲' : '▼'}</i>` : ''}</button>` : h}</div>`).join('')}</div>`;
+  const sec = t => `<div class="crm-sec" role="row"><div role="cell">${t}</div></div>`;
+  const body = (FU.length ? sec(`📌 연락 약속 ${FU.length}명 · 약속한 날짜 순`) + FU.map(c => row(c, 1)).join('') + (L.length ? sec(`자동으로 추린 고객 · 평소 주문 간격보다 늦은 고객`) : '') : '') + L.slice(0, crmShow).map(c => row(c)).join('');
+  $('crm-list').innerHTML = L.length || FU.length ? `<div class="crm-table" role="table">${head}${body}</div>` + (L.length > crmShow ? `<button class="btn sm crm-morebtn" type="button" id="crm-morebtn">${(L.length - crmShow).toLocaleString('ko-KR')}명 더 보기</button>` : '') : '<p class="crm-none">해당하는 고객이 없어요</p>';
   if (crmSel && document.body.classList.contains('crm-open')) crmDrawer();
 }
 function crmDrawer() {
@@ -6587,15 +6621,27 @@ function crmDrawer() {
   const cal = months.map(m => `<div class="mo">${[0, 1, 2, 3].map(w => { const k = c.orders.filter(o => o.d.startsWith(m) && Math.min(3, Math.floor((Number(o.d.slice(8)) - 1) / 8)) === w).length; return `<i class="${k ? 'h' + Math.min(3, k) : ''}"></i>`; }).join('')}<small>${Number(m.slice(5))}</small></div>`).join('');
   const late = c.cyc && c.ago > c.cyc ? ` <span class="crm-red">(평소보다 ${c.ago - c.cyc}일 늦음)</span>` : c.cyc ? ' (평소대로예요)' : '';
   const sent = (c.cyc ? `보통 <b>${c.cyc}일마다</b> ` : '지금까지 <b>한 번</b> ') + (c.main ? `<b>${esc(c.main)} ${c.mainQ}개</b>${c.cyc ? '씩' : ''} ` : '') + `사는 ${c.tags.includes('거래처') ? '거래처' : '고객'}이에요. 마지막 주문은 <b>${crmAgoTxt(c.ago)}</b>${late}.` + (c.claims.length ? `<br><span class="crm-red">⚠ 반품 · 취소 이력 ${c.claims.length}건 — 포장 · 상태를 한 번 더 챙겨요.</span>` : '') + (c.note ? `<br><span class="cd-note">📝 ${esc(c.note)}</span>` : '');
-  const ev = c.orders.map(o => ({ d: o.d, h: (o.it || []).map(x => esc(x[0]) + (x[1] ? ' <small>' + esc(x[1]) + '</small>' : '') + ' × ' + x[2]).join(', ') + ` <small>· ${esc(CRM_CHN[mallChOf(o)])}</small>` }))
-    .concat(c.claims.map(x => ({ d: x.day, c: 1, h: `<b>${esc(x.ctype || '클레임')}</b> ${esc(x.item || '')} <small>${esc(String(x.text || '').split(' · 주문')[0])}</small>` }))).sort((a, b) => b.d.localeCompare(a.d));
-  const W = crmWho[c.id], D0 = crmDocGet(), my = D0.tags[c.id] || [], TAGS = ['거래처', '식당·카페', '도매', '상태 예민', '포장 꼼꼼히', '정기 주문'];
+  const alias = mallAliasFn(), opt = o => String(o || '').split(/\s*[,/]\s*|\n/).map(x => x.replace(/^[^=:]{1,20}[=:]\s*/, '').trim()).filter(Boolean).join(' · ');
+  const it3 = o => (o.it || []).map(x => ({ nm: alias(x[0]), raw: x[0], op: opt(x[1]), q: x[2] }));
+  const ords = c.orders.slice().sort((a, b) => b.d.localeCompare(a.d) || String(b.i).localeCompare(String(a.i))), last = ords[0];
+  const dayK = d => Number(d.slice(5, 7)) + '월 ' + Number(d.slice(8)) + '일' + (d.slice(0, 4) !== T.slice(0, 4) ? ' (' + d.slice(0, 4) + ')' : '');
+  const its = L => `<div class="cd-its">${L.map(x => `<div><span class="op">${esc(x.op || '옵션 없음')}</span><span class="nm">${esc(x.nm)}</span><b>× ${x.q}</b></div>`).join('')}</div>`;
+  const raws = L => L.some(x => x.raw !== x.nm || x.op) ? `<details class="cd-raw"><summary>원래 상품명 보기</summary><ul>${L.map(x => `<li>${esc(x.raw)}${x.op ? ' <small>/ ' + esc(x.op) + '</small>' : ''}</li>`).join('')}</ul></details>` : '';
+  const lastL = last ? it3(last) : [];
+  const lastH = last ? `<div class="cd-last"><div class="cd-lh"><b>${dayK(last.d)} 주문</b><span>${esc(CRM_CHN[mallChOf(last)])} · ${crmAgoTxt(Math.round((dOf(T) - dOf(last.d)) / 864e5))}</span></div>${its(lastL)}${raws(lastL)}</div>` : '';
+  const ev = ords.slice(1).map(o => ({ d: o.d, o })).concat(c.claims.map(x => ({ d: x.day, x }))).sort((a, b) => b.d.localeCompare(a.d));
+  const prevH = ev.slice(0, crmMoreO ? 80 : 6).map(e => { if (e.x) { const x = e.x; return `<div class="cd-pc"><small>${crmDay(e.d)}</small><span><b>${esc(x.ctype || '클레임')}</b> ${esc(x.item || '')} <small>${esc(String(x.text || '').split(' · 주문')[0])}</small></span></div>`; }
+    const L = it3(e.o), s1 = L.slice(0, 2).map(x => esc(x.nm) + (x.op ? ' ' + esc(x.op) : '') + '×' + x.q).join(', ') + (L.length > 2 ? ` 외 ${L.length - 2}종` : '');
+    return `<details class="cd-po"><summary><small>${crmDay(e.d)}</small><span>${s1}</span><em>${esc(CRM_CHN[mallChOf(e.o)])}</em></summary>${its(L)}<p class="cd-rawl">${L.map(x => esc(x.raw)).join(' · ')}</p></details>`; }).join('');
+  const W = crmWho[c.id], D0 = crmDocGet(), my = D0.tags[c.id] || [], TAGS = ['거래처', '식당·카페', '도매', '상태 예민', '포장 꼼꼼히', '정기 주문'], fu = c.fu;
   el.innerHTML = `<div class="cd-h"><div class="cd-av d-${c.st}">${esc((c.nm || '고')[0])}</div><div class="cd-t"><b>${esc(c.label)}</b><small>${esc([c.rn && c.rn !== c.nm ? '받는 분 ' + c.rn : '', c.r, c.n + '회 주문', '첫 주문 ' + crmDay(c.first)].filter(Boolean).join(' · '))}</small><small>${esc(Object.keys(c.ch).map(k => CRM_CHN[k] + ' ' + c.ch[k]).join(' · '))}</small></div><button class="cd-x" type="button" data-crmclose aria-label="닫기">✕</button></div>
     <div class="cd-sent">${sent}</div>
+    ${lastH}
+    ${ev.length ? `<h3>이전 주문 <small>${ev.length}건 · 눌러서 펼치기</small></h3><div class="cd-prev">${prevH}</div>${ev.length > 6 && !crmMoreO ? '<button class="btn sm" type="button" id="crm-moreo">전체 주문 보기</button>' : ''}` : ''}
+    <h3>자주 사는 품목 <small>${c.top.length}종 · 많이 산 순</small></h3><div class="cd-items">${c.top.map(([k, v]) => `<div><b>${esc(k)}</b><small>${v}개 · 마지막 ${crmDay(c.ilast.get(k))}</small></div>`).join('')}</div>
     <h3>최근 12개월 구매 <small>칸 하나 = 약 일주일 · 진할수록 많이</small></h3><div class="cd-cal">${cal}</div>
-    <h3>사는 품목 <small>${c.top.length}가지 · 많이 산 순</small></h3><div class="cd-items">${c.top.map(([k, v]) => `<div><b>${esc(k)}</b><small>${v}개 · 마지막 ${crmDay(c.ilast.get(k))}</small></div>`).join('')}</div>
-    <h3>최근 주문 <small>${ev.length}건</small></h3><ul class="cd-ord">${ev.slice(0, crmMoreO ? 60 : 5).map(x => `<li class="${x.c ? 'c' : ''}"><small>${crmDay(x.d)}</small><span>${x.h}</span></li>`).join('')}</ul>${ev.length > 5 && !crmMoreO ? '<button class="btn sm" type="button" id="crm-moreo">전체 주문 보기</button>' : ''}
     <h3>태그</h3><div class="cd-tags">${TAGS.concat(my.filter(x => !TAGS.includes(x))).map(t => `<button type="button" class="${my.includes(t) || (t === '거래처' && c.autoBiz) ? 'on' : ''}" data-crmtag="${esc(t)}">${esc(t)}${t === '거래처' && c.autoBiz && !my.includes(t) ? ' (자동)' : ''}</button>`).join('')}<input id="crm-newtag" placeholder="+ 새 태그" maxlength="12"></div>
+    <h3>연락 약속 <small>날짜를 정하면 그날부터 재주문 확인 맨 위에 나와요</small></h3><div class="cd-fu"><input type="date" id="crm-fud" value="${fu ? esc(fu.d) : ''}" aria-label="연락할 날짜"><input id="crm-fut" maxlength="40" placeholder="무엇을 (예: 다음 주 비올라 입고 알려 주기)" value="${fu ? esc(fu.t || '') : ''}"><button class="btn sm" type="button" data-crmfu="${c.id}">${fu ? '바꾸기' : '약속 저장'}</button>${fu ? `<button class="btn sm" type="button" data-crmfux="${c.id}">지우기</button>` : ''}</div>
     <h3>메모</h3><textarea id="crm-note" data-cid="${c.id}" rows="3" placeholder="이 고객에 대해 남길 메모 (예: 매주 화요일 주문 · 꽃 크기 일정하게)">${esc(c.note)}</textarea><p class="msg" id="crm-notemsg"></p>
     <div class="cd-who">${W ? (W.err ? `<span class="crm-red">${esc(W.err)}</span>` : `<b>${esc(W.phone)}</b><br><small>${esc(W.address)}</small><br><small>🔒 창을 닫으면 사라지고 저장하지 않아요</small>`) : ''}</div>
     <div class="cd-acts"><button class="btn pri" type="button" data-crmcalled="${c.id}">${c.called ? '✓ ' + crmDay(c.called) + ' 연락함' : '📞 연락함'}</button>${W ? '' : `<button class="btn" type="button" data-crmwho="${c.id}">연락처 · 주소 보기</button>`}</div>`;
@@ -6617,7 +6663,8 @@ document.addEventListener('click', async e => {
   const t = e.target;
   if (t.closest('#crm-load')) { crmLoad({ all: true, force: crmMem.size > 0 }); return; }
   if (t.closest('#crm-stop')) { crmStop = true; return; }
-  const p = t.closest('[data-crmp]'); if (p) { crmP = p.dataset.crmp; crmView = 'list'; crmShow = 120; crmRender(); return; }
+  const p = t.closest('[data-crmp]'); if (p) { crmP = p.dataset.crmp; crmView = 'list'; crmShow = 120; crmSK = null; crmRender(); return; }
+  const so = t.closest('[data-crmsort]'); if (so) { const k = so.dataset.crmsort; if (crmSortKey() === k) { crmSK = k; crmSD = -crmSortDir(); } else { crmSK = k; crmSD = k === 'next' ? 1 : -1; } crmShow = 120; crmRender(); return; }
   if (t.closest('#crm-morem')) { crmMoreM = !crmMoreM; crmRender(); return; }
   if (crmMoreM && !t.closest('.crm-more')) { crmMoreM = false; crmRender(); }
   if (t.closest('.crm-menu [data-share]')) { setTimeout(() => { crmMoreM = false; crmRender(); }, 0); }
@@ -6626,7 +6673,9 @@ document.addEventListener('click', async e => {
   if (t.closest('#crm-moreo')) { crmMoreO = true; crmDrawer(); return; }
   if (t.closest('[data-crmclose]') || t.id === 'crm-scrim') { crmCloseD(); return; }
   if (t.closest('#crm-copy')) { try { await navigator.clipboard.writeText(crmTsv(crmCurList().L)); shareToast('지금 보이는 고객 목록을 복사했어요 · 엑셀에 붙여 넣어요'); } catch (er) { shareToast('복사하지 못했어요'); } return; }
-  const cl = t.closest('[data-crmcalled]'); if (cl) { const id = cl.dataset.crmcalled, on = crmDocGet().called[id] !== isoDate(new Date()); try { await crmDocSave(d => { d.called = d.called || {}; if (on) d.called[id] = isoDate(new Date()); else delete d.called[id]; }); } catch (er) { shareToast('저장하지 못했어요: ' + (er.message || er.code)); } crmRender(); return; }
+  const fb = t.closest('[data-crmfu]'); if (fb) { const id = fb.dataset.crmfu, dd = $('crm-fud').value, tx = $('crm-fut').value.trim(); if (!dd) { shareToast('연락할 날짜를 골라 주세요'); return; } try { await crmDocSave(d => { d.follow = d.follow || {}; d.follow[id] = { d: dd, t: tx, by: retWho(), at: new Date().toISOString() }; }); shareToast('연락 약속을 저장했어요'); } catch (er) { shareToast('저장하지 못했어요: ' + (er.message || er.code)); } crmRender(); return; }
+  const fx = t.closest('[data-crmfux]'); if (fx) { const id = fx.dataset.crmfux; try { await crmDocSave(d => { if (d.follow) delete d.follow[id]; }); } catch (er) {} crmRender(); return; }
+  const cl = t.closest('[data-crmcalled]'); if (cl) { const id = cl.dataset.crmcalled, on = crmDocGet().called[id] !== isoDate(new Date()); try { await crmDocSave(d => { d.called = d.called || {}; if (on) { d.called[id] = isoDate(new Date()); if (d.follow && d.follow[id] && d.follow[id].d <= isoDate(new Date())) delete d.follow[id]; } else delete d.called[id]; }); } catch (er) { shareToast('저장하지 못했어요: ' + (er.message || er.code)); } crmRender(); return; }
   const w = t.closest('[data-crmwho]');
   if (w) { const c = crmData().map.get(w.dataset.crmwho); if (!c) return; w.disabled = true; w.textContent = '불러오는 중…';
     try { crmWho[c.id] = await c24Call('/who?order_id=' + encodeURIComponent(c.orders[c.orders.length - 1].i)); } catch (er) { crmWho[c.id] = { err: er.code === 'not_found' ? 'Cloudflare 중계 서버 코드를 최신으로 바꿔 주세요' : '불러오지 못했어요: ' + (er.message || er.code) }; }
