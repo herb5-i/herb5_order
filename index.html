@@ -2251,6 +2251,31 @@ html{scrollbar-gutter:stable}
 .crm-row{min-height:62px;box-sizing:border-box}
 @media(max-width:760px){.crm-side{position:static;flex-direction:row;gap:6px;overflow-x:auto}.crm-body .crm-side .crm-pills{flex:none}.crm-body .crm-geob{padding:4px}.crm-body .crm-geob .geo-btn{padding:8px 12px!important}}
 .crm-share{display:inline-flex;gap:6px}.crm-sumrow{min-height:38px}
+/* 고객 관리 개편: 업무 탭 + 필터 + 한 표 */
+#v-crm .crm-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 8px}#v-crm .crm-bar .sp{flex:1}
+.crm-tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.crm-tabs::-webkit-scrollbar{display:none}
+.crm-tabs button{font:inherit;font-size:14px;font-weight:600;background:none;border:0;border-bottom:2px solid transparent;padding:9px 12px 8px;color:var(--mute);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;margin-bottom:-1px}
+.crm-tabs button:hover{color:var(--ink)}.crm-tabs button.on{color:var(--ink);border-bottom-color:var(--acc)}
+.crm-n{font-size:11.5px;font-weight:800;color:#fff;background:#c94b5d;border-radius:99px;padding:1px 7px;line-height:1.5}
+.crm-flt select{font:inherit;font-size:13px;padding:7px 28px 7px 11px;border:1px solid var(--line2,#dadde1);border-radius:9px;background:var(--card);color:var(--ink)}.crm-flt .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.crm-seg{display:inline-flex;border:1px solid var(--line2,#dadde1);border-radius:9px;overflow:hidden}.crm-seg button{font:inherit;font-size:13px;font-weight:600;padding:7px 12px;border:0;background:var(--card);color:var(--mute);cursor:pointer}.crm-seg button+button{border-left:1px solid var(--line2,#dadde1)}.crm-seg button.on{background:var(--ink);color:var(--card)}
+#v-crm .crm-share{display:inline-flex;gap:6px;align-items:center}.crm-more{position:relative}.crm-more .ibtn{font-size:18px;line-height:1}
+.crm-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px -12px rgba(0,0,0,.3);padding:6px;min-width:200px;display:flex;flex-direction:column}
+.crm-menu button{font:inherit;font-size:13.5px;text-align:left;background:none;border:0;border-radius:8px;padding:9px 11px;cursor:pointer;color:var(--ink)}.crm-menu button:hover{background:var(--soft,#f3f5f2)}
+#v-crm .crm-sumrow{margin:0 2px 6px;min-height:0}#v-crm .crm-sum{font-size:12.5px}#v-crm .crm-sum .btn{margin-left:6px}
+#v-crm .crm-list{background:none;border:0;padding:0;border-radius:14px}.crm-table{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:clip}.crm-th{position:sticky;top:0;z-index:2}
+.crm-tr{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1.5fr) 112px 112px;gap:14px;align-items:center;padding:10px 16px;border-top:1px solid var(--line)}
+.crm-tr[data-crmc]{cursor:pointer}.crm-tr[data-crmc]:hover{background:var(--soft,#f6f8f5)}.crm-tr.sel{background:#e8f3ec}.crm-tr:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.crm-th{border-top:0;padding-top:9px;padding-bottom:9px;font-size:12px;font-weight:600;color:var(--mute);background:var(--soft,#f6f8f5)}
+.crm-tr>div{min-width:0}.crm-c3,.crm-c4{text-align:right;font-variant-numeric:tabular-nums}
+.crm-c1 .crm-nm{display:flex;align-items:center;gap:6px;min-width:0}.crm-c1 .crm-nm b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crm-c1 small{display:block;font-size:12px;color:var(--mute);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crm-c1 .crm-why2{color:#b0573c}.crm-why{display:block;font-style:normal;font-size:11.5px;color:var(--acc);margin-top:2px}
+.crm-c2{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crm-c2 small{color:var(--mute)}
+.crm-c3 b,.crm-c4 b{display:block;font-size:14px}.crm-c3 small,.crm-c4 small{display:block;font-size:11.5px;color:var(--mute)}.crm-th .crm-c3,.crm-th .crm-c4{text-align:right}
+html.dark .crm-tr.sel{background:rgba(63,154,108,.16)}html.dark .crm-c1 .crm-why2{color:#e7a58a}
+@media(max-width:640px){.crm-tr{grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:10px 12px}.crm-tr .crm-c1{grid-column:1;grid-row:1}.crm-tr .crm-c3{grid-column:2;grid-row:1 / span 2;align-self:center}.crm-tr .crm-c2{grid-column:1;grid-row:2;font-size:12.5px;color:var(--mute)}.crm-tr .crm-c4{display:none}.crm-th{display:none}
+  #v-crm .crm-bar .sp{display:none}.crm-tabs{width:100%}.crm-flt{flex:1;min-width:108px}.crm-flt select{width:100%}#v-crm .crm-bar{gap:6px}.crm-tabs button{padding:9px 10px 8px;font-size:13.5px}}
+
 #inv-tplmsg code{display:inline-block;white-space:nowrap;margin:2px 2px 2px 0}
 @media(max-width:999px){header.top .brand{min-width:0;flex:1 1 auto}header.top .brand>div{min-width:0;overflow:hidden}header.top .brand h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 @media(max-width:430px){header.top .brand h1 .h1a,header.top .brand h1 .pill{display:none}}
@@ -2682,10 +2707,16 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   <section id="v-crm" class="hidden">
     <div class="crm-sync"><span id="crm-st" class="msg"></span><span class="sp"></span><button class="btn sm" type="button" id="crm-stop" hidden>멈추기</button><button class="btn sm" type="button" id="crm-load">카페24에서 3년치 받기</button></div>
     <div class="crm-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="crm-q" type="search" placeholder="이름 · 품목 · 지역 · 메모로 찾기 (예: 로즈마리, 마포)" autocomplete="off"></div>
-    <div class="crm-body"><div class="crm-side"><nav class="crm-pills" id="crm-pills" aria-label="고객 보기"></nav><div class="crm-pills crm-geob" id="crm-geob"></div></div><div class="crm-main">
-    <div class="crm-sumrow"><p class="crm-sum" id="crm-sum"></p><span class="crm-share" id="crm-share"></span></div>
+    <div class="crm-bar">
+      <nav class="crm-tabs" id="crm-pills" role="tablist" aria-label="고객 보기"></nav>
+      <span class="sp"></span>
+      <label class="crm-flt"><span class="sr">고객 종류</span><select id="crm-flt" aria-label="고객 종류"></select></label>
+      <div class="crm-seg" id="crm-geob" role="group" aria-label="보기 방식"></div>
+      <span class="crm-share" id="crm-share"></span>
+    </div>
+    <div class="crm-sumrow"><p class="crm-sum" id="crm-sum"></p></div>
     <div class="crm-list" id="crm-list"></div>
-    <div class="crm-geo hidden" id="crm-geo"></div></div></div>
+    <div class="crm-geo hidden" id="crm-geo"></div>
     <div class="crm-scrim" id="crm-scrim"></div>
     <aside class="crm-drawer" id="crm-drawer" aria-label="고객 자세히"></aside>
   </section>
@@ -4679,7 +4710,7 @@ const HM_W = {
   htop: { app: 'hist', n: '이번 달 많이 팔린 품목', d: '품목별 수량 순서', s: ['M', 'L', 'W'], def: 'M' },
   hreg: { app: 'hist', n: '이번 달 지역', d: '주문이 많은 지역 순서', s: ['M', 'L'], def: 'M' },
   crmcall: { app: 'crm', n: '연락 필요 고객', d: '평소 주기보다 오래 주문이 없는 단골', s: ['M', 'L', 'W'], def: 'M' },
-  crmweek: { app: 'crm', n: '이번 주 주문 예정', d: '주기로 보면 이번 주에 주문할 고객', s: ['M', 'L', 'W'], def: 'M' },
+  crmweek: { app: 'crm', n: '이번 주 주문 예상', d: '주문 간격으로 보면 이번 주에 주문할 고객', s: ['M', 'L', 'W'], def: 'M' },
   crmcnt: { app: 'crm', n: '고객 한눈에', d: '단골 · 새 고객 · 잠든 고객 수', s: ['S', 'M'], def: 'S' },
   mkalert: { app: 'market', n: '시장 알림', d: '확인할 키워드 · 다가오는 성수기', s: ['M', 'W'], def: 'M' },
   mkkw: { app: 'market', n: '키워드 시장 · 우리', d: '키워드마다 시장과 우리 판매 변화', s: ['M', 'L', 'W'], def: 'M' },
@@ -4794,9 +4825,9 @@ const HW = {
   crmcall() { const D = hmCrm(); if (!D) return `<div class="hm-w">${hwHead('연락 필요 고객', 'crm', '열기')}${hwEmpty(crmReady ? '고객 관리에서 카페24 주문을 받아 주세요' : '불러오는 중…')}</div>`;
     const f = CRM_P.find(p => p[0] === 'call')[2], L = D.list.filter(c => f(c, D)).sort((a, b) => b.ago / (b.cyc || 1) - a.ago / (a.cyc || 1)).slice(0, 8);
     return `<div class="hm-w">${hwHead('연락 필요 고객 · <b class="hw-inl">' + D.list.filter(c => f(c, D)).length + '명</b>', 'crm', '열기')}${L.length ? `<ul class="hm-list">${L.map(c => `<li><span class="nm">${esc(c.label || '고객')}<small>${esc(c.itemsTxt || '')}</small></span><b>${c.ago}일째</b></li>`).join('')}</ul>` : hwEmpty('지금 연락할 고객이 없어요')}</div>`; },
-  crmweek() { const D = hmCrm(); if (!D) return `<div class="hm-w">${hwHead('이번 주 주문 예정', 'crm', '열기')}${hwEmpty(crmReady ? '고객 관리에서 카페24 주문을 받아 주세요' : '불러오는 중…')}</div>`;
+  crmweek() { const D = hmCrm(); if (!D) return `<div class="hm-w">${hwHead('이번 주 주문 예상', 'crm', '열기')}${hwEmpty(crmReady ? '고객 관리에서 카페24 주문을 받아 주세요' : '불러오는 중…')}</div>`;
     const f = CRM_P.find(p => p[0] === 'week')[2], A = D.list.filter(c => f(c, D)).sort((a, b) => String(a.next).localeCompare(String(b.next)));
-    return `<div class="hm-w">${hwHead('이번 주 주문 예정 · <b class="hw-inl">' + A.length + '명</b>', 'crm', '열기')}${A.length ? `<ul class="hm-list">${A.slice(0, 8).map(c => `<li><span class="nm">${esc(c.label || '고객')}<small>${esc(c.itemsTxt || '')}</small></span><b>${esc(crmDay(c.next))}</b></li>`).join('')}</ul>` : hwEmpty('이번 주 예정 고객이 없어요')}</div>`; },
+    return `<div class="hm-w">${hwHead('이번 주 주문 예상 · <b class="hw-inl">' + A.length + '명</b>', 'crm', '열기')}${A.length ? `<ul class="hm-list">${A.slice(0, 8).map(c => `<li><span class="nm">${esc(c.label || '고객')}<small>${esc(c.itemsTxt || '')}</small></span><b>${esc(crmDay(c.next))}</b></li>`).join('')}</ul>` : hwEmpty('이번 주 주문 예상 고객이 없어요')}</div>`; },
   crmcnt() { const D = hmCrm(); if (!D) return `<div class="hm-w hw-sm">${hwHead('고객', 'crm', '열기')}${hwEmpty(crmReady ? '고객 주문을 받아 주세요' : '불러오는 중…')}</div>`;
     const n = k => { const f = CRM_P.find(p => p[0] === k)[2]; return D.list.filter(c => f(c, D)).length; };
     return `<div class="hm-w hw-sm">${hwHead('고객 ' + D.list.length.toLocaleString('ko-KR') + '명', 'crm', '열기')}<div class="hw-nums"><div class="good"><b>${n('vip')}</b><span>단골</span></div><div><b>${n('new')}</b><span>새 고객</span></div><div class="warn"><b>${n('call')}</b><span>연락 필요</span></div></div></div>`; },
@@ -6453,7 +6484,7 @@ const crmAgoTxt = n => n === 0 ? '오늘' : n === 1 ? '어제' : n + '일 전';
 let crmP = 'all', crmQ = '', crmShow = 120, crmSel = null, crmMoreO = false, crmWho = {};
 const CRM_P = [
   ['all', '전체', () => true],
-  ['week', '이번 주 주문 예정', (c, D) => c.next && c.ago <= 60 && c.next >= isoDate(new Date(dOf(D.today).getTime() - 864e5)) && c.next <= isoDate(new Date(dOf(D.today).getTime() + 6 * 864e5))],
+  ['week', '이번 주 주문 예상', (c, D) => c.next && c.ago <= 60 && c.next >= isoDate(new Date(dOf(D.today).getTime() - 864e5)) && c.next <= isoDate(new Date(dOf(D.today).getTime() + 6 * 864e5))],
   ['vip', '단골', c => c.n >= 5 && c.ago <= 60],
   ['new', '새 고객', c => c.n === 1 && c.ago <= 30],
   ['sleep', '잠든 고객', c => c.ago > 60],
@@ -6502,31 +6533,52 @@ document.addEventListener('click', e => {
 }, true);
 function crmOpen() { crmInit().then(() => { crmRender(); if (crmMem.size) crmLoad(); }); }
 function crmMatch(c, q) { return !q || ((c.nm || '') + ' ' + (c.rn || '') + ' ' + c.r + ' ' + [...c.items.keys()].join(' ') + ' ' + c.tags.join(' ') + ' ' + c.note + ' ' + [...c.l4].join(' ')).toLowerCase().replace(/\s+/g, '').includes(q); }
+const CRM_TABS = ['all', 'week', 'call'];
+const CRM_F = [['', '모든 고객', () => true], ['vip', '단골', c => c.n >= 5 && c.ago <= 60], ['new', '새 고객', c => c.n === 1 && c.ago <= 30], ['sleep', '잠든 고객', c => c.ago > 60], ['biz', '거래처', c => c.tags.includes('거래처')]];
+let crmF = '', crmMoreM = false;
+// 검색어가 화면에 안 보이는 칸에서 걸렸을 때만 이유 한 줄
+function crmWhy(c, q) {
+  if (!q) return ''; const n = x => String(x || '').toLowerCase().replace(/\s+/g, ''), raw = crmQ.trim();
+  if (n(c.label).includes(q) || n(c.r).includes(q) || n(c.main).includes(q)) return '';
+  const it = [...c.items.keys()].find(k => n(k).includes(q)); if (it) return '품목에 ‘' + it + '’ 있음';
+  if (n(c.note).includes(q)) return '메모에서 ‘' + raw + '’ 일치';
+  const tg = c.tags.find(t => n(t).includes(q)); if (tg) return '태그 ‘' + tg + '’';
+  if (n(c.rn).includes(q)) return '받는 분 ‘' + c.rn + '’';
+  if ([...c.l4].some(x => n(x).includes(q))) return '전화번호 끝자리 일치';
+  return '';
+}
+function crmFiltered(D, q) { const P = CRM_P.find(p => p[0] === crmP) || CRM_P[0], F = CRM_F.find(f => f[0] === crmF) || CRM_F[0]; return D.list.filter(c => P[2](c, D) && F[2](c, D) && crmMatch(c, q)); }
+function crmSort(L) { if (crmP === 'call') L.sort((a, b) => b.late - a.late); else if (crmP === 'week') L.sort((a, b) => a.next.localeCompare(b.next)); else if (crmF === 'new') L.sort((a, b) => a.ago - b.ago); else if (crmF === 'vip') L.sort((a, b) => b.n - a.n); return L; }
 function crmRender() {
   if (!$('v-crm')) return; crmSyncLine();
   const D = crmData(), q = crmQ.trim().toLowerCase().replace(/\s+/g, '');
   if (!D.list.length) { $('crm-pills').innerHTML = ''; $('crm-sum').innerHTML = ''; $('crm-list').innerHTML = '<p class="crm-none">아직 고객 데이터가 없어요. 위의 <b>카페24에서 3년치 받기</b>를 눌러 주세요.</p>'; return; }
-  $('crm-pills').innerHTML = CRM_P.map(([k, l, fn, hot]) => `<button type="button" data-crmp="${k}" class="${k === crmP && crmView === 'list' ? 'on' : ''} ${hot ? 'hot' : ''}">${l}</button>`).join('');
-  $('crm-geob').innerHTML = `<button type="button" data-crmview="map" class="geo-btn ${crmView === 'map' ? 'on' : ''}">🗺 지역 지도</button>`;
-  const isMap = crmView === 'map'; $('crm-geo').classList.toggle('hidden', !isMap); $('crm-list').classList.toggle('hidden', isMap); document.querySelector('.crm-sumrow').classList.toggle('hidden', isMap);
+  if (!CRM_TABS.includes(crmP)) crmP = 'all';
+  const isMap = crmView === 'map', cnt = k => { const f = CRM_P.find(p => p[0] === k)[2]; return D.list.filter(c => f(c, D)).length; };
+  $('crm-pills').innerHTML = CRM_TABS.map(k => { const P = CRM_P.find(p => p[0] === k), n = k === 'call' ? cnt('call') : 0; return `<button type="button" role="tab" aria-selected="${k === crmP}" data-crmp="${k}" class="${k === crmP ? 'on' : ''}">${P[1]}${n ? ` <b class="crm-n">${n}</b>` : ''}</button>`; }).join('');
+  const fs = $('crm-flt'), fh = CRM_F.map(([k, l]) => `<option value="${k}">${l}</option>`).join(''); if (fs._h !== fh) { fs.innerHTML = fh; fs._h = fh; } fs.value = crmF;
+  $('crm-geob').innerHTML = `<button type="button" data-crmview="list" class="${isMap ? '' : 'on'}" aria-pressed="${!isMap}">목록</button><button type="button" data-crmview="map" class="${isMap ? 'on' : ''}" aria-pressed="${isMap}">지도</button>`;
+  $('crm-geo').classList.toggle('hidden', !isMap); $('crm-list').classList.toggle('hidden', isMap); document.querySelector('.crm-sumrow').classList.toggle('hidden', isMap);
+  $('crm-share').innerHTML = isMap ? '' : `<button class="btn sm" id="crm-copy" type="button" title="지금 보이는 목록을 엑셀 · 구글 시트용 표로 복사">표 복사</button><span class="crm-more"><button class="ibtn" type="button" id="crm-morem" aria-haspopup="true" aria-expanded="${crmMoreM}" aria-label="더보기" title="더보기">⋯</button>${crmMoreM ? `<div class="crm-menu" role="menu"><button type="button" role="menuitem" data-share="crm">표 이미지로 복사</button>${navigator.share ? '<button type="button" role="menuitem" data-share="crm" data-sharevia="1">표 이미지 보내기 (카톡 · 메일)</button>' : ''}</div>` : ''}</span>`;
   if (isMap) { crmGeo(); return; }
-  const P = CRM_P.find(p => p[0] === crmP); let L = D.list.filter(c => P[2](c, D) && crmMatch(c, q)), sum = '';
-  if (crmP === 'call') { L.sort((a, b) => b.late - a.late); sum = '평소 주문 주기보다 늦어진 고객이에요 · 늦은 순 · <b>연락함</b>을 누르면 2주 동안 빠져요'; }
-  else if (crmP === 'week') { L.sort((a, b) => a.next.localeCompare(b.next)); const dm = new Map(); L.forEach(c => dm.set(c.main, (dm.get(c.main) || 0) + c.mainQ));
-    sum = L.length ? `<button type="button" class="btn sm" id="crm-dmbtn">${crmDm ? '예상 수요 숨기기' : '📦 예상 수요 보기'}</button>` + (crmDm ? '<span class="crm-dm">' + [...dm.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `<b>${esc(k)} ${v}개</b>`).join(' · ') + '</span>' : '') : ''; }
-  else if (crmP === 'new') L.sort((a, b) => a.ago - b.ago);
-  else if (crmP === 'vip') L.sort((a, b) => b.n - a.n);
+  const L = crmSort(crmFiltered(D, q)), T = D.today, Wk = '일월화수목금토';
+  let sum = L.length.toLocaleString('ko-KR') + '명';
+  if (crmP === 'call') sum += ' · 평소 주문 간격보다 늦어진 순 · <b>연락함</b>을 누르면 2주 동안 빠져요';
+  else if (crmP === 'week') { const dm = new Map(); L.forEach(c => dm.set(c.main, (dm.get(c.main) || 0) + c.mainQ)); sum += ' · 주문 간격으로 추정한 예상이에요 · 예상일 빠른 순' + (L.length ? ` <button type="button" class="btn sm" id="crm-dmbtn">${crmDm ? '예상 수요 숨기기' : '예상 수요 보기'}</button>` + (crmDm ? '<span class="crm-dm">' + [...dm.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `<b>${esc(k)} ${v}개</b>`).join(' · ') + '</span>' : '') : ''); }
+  if (crmQ.trim()) sum += ` · 검색 ‘${esc(crmQ.trim())}’`;
   $('crm-sum').innerHTML = sum;
-  if (!$('crm-share').innerHTML) $('crm-share').innerHTML = shareBtns('crm') + '<button class="ibtn" id="crm-copy" type="button" title="표 복사 (엑셀 · 구글 시트에 붙여넣기)" aria-label="엑셀용 표 복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15" stroke="currentColor" stroke-width="1.6"/></svg></button>';
-  const W = '일월화수목금토', T = D.today;
-  $('crm-list').innerHTML = L.slice(0, crmShow).map(c => {
-    let r;
-    if (crmP === 'call') r = `<b class="crm-red">${c.late}일 늦음</b>평소 ${c.cyc}일마다`;
-    else if (crmP === 'week') { const nd = c.next; r = `<b class="${nd < T ? 'crm-red' : ''}">${nd < T ? '어제' : nd === T ? '오늘' : W[dOf(nd).getDay()] + '요일'}</b>${esc(c.main)} ${c.mainQ}개`; }
-    else if (crmP === 'new') r = `<b>${crmAgoTxt(c.ago)}</b>첫 주문`;
-    else r = `<b class="${c.st === 'y' || c.st === 'r' ? 'crm-red' : ''}">${crmAgoTxt(c.ago)}</b>${c.cyc ? '평소 ' + c.cyc + '일마다' : c.n + '회 주문'}`;
-    return `<div class="crm-row ${c.id === crmSel ? 'sel' : ''}" data-crmc="${c.id}"><i class="crm-dot d-${c.st}"></i><div class="crm-who"><b>${esc(c.label)}</b>${c.tags.includes('거래처') ? '<span class="crm-chip">거래처</span>' : ''}${c.claims.length ? '<span class="crm-chip cl">반품 이력</span>' : ''}<small>${esc([c.itemsTxt, c.r].filter(Boolean).join(' · '))}</small></div><div class="crm-when">${r}</div></div>`;
-  }).join('') + (L.length > crmShow ? `<button class="btn sm crm-morebtn" type="button" id="crm-morebtn">${(L.length - crmShow).toLocaleString('ko-KR')}명 더 보기</button>` : '') || '<p class="crm-none">해당하는 고객이 없어요</p>';
+  const dateCell = d => { const ago = Math.round((dOf(T) - dOf(d)) / 864e5); return ago <= 1 ? `<b>${ago === 0 ? '오늘' : '어제'}</b>` : `<b>${crmDay(d)}</b><small>${ago}일 전</small>`; };
+  const nextCell = d => { const dd = Math.round((dOf(d) - dOf(T)) / 864e5); return `<b class="${dd < 0 ? 'crm-red' : ''}">${dd === 0 ? '오늘' : dd === 1 ? '내일' : dd === -1 ? '어제' : crmDay(d)}</b><small>${dd < -1 ? -dd + '일 지남' : Wk[dOf(d).getDay()] + '요일'}</small>`; };
+  const H = crmP === 'week' ? ['고객 · 지역', '예상 품목', '예상 주문일', '평소 주문 간격'] : crmP === 'call' ? ['고객 · 연락 사유', '주문 품목', '최근 주문일', '늦어진 날'] : ['고객 · 지역', '주문 품목', '최근 주문일', '평소 주문 간격'];
+  const rows = L.slice(0, crmShow).map(c => {
+    const why = crmWhy(c, q), chips = (c.tags.includes('거래처') ? '<span class="crm-chip">거래처</span>' : '') + (c.claims.length ? '<span class="crm-chip cl">반품 이력</span>' : '');
+    const sub = crmP === 'call' ? `<small class="crm-why2">${c.note ? '📝 ' + esc(c.note.split('\n')[0]) : `평소 ${c.cyc}일 간격 · 마지막 주문 ${c.ago}일 전`}</small>` : `<small>${esc(c.r || '지역 모름')}</small>`;
+    const items = crmP === 'week' ? `${esc(c.main)} <small>${c.mainQ}개쯤</small>` : esc(c.itemsTxt || '–');
+    const c3 = crmP === 'week' ? nextCell(c.next) : dateCell(c.last);
+    const c4 = crmP === 'call' ? `<b class="crm-red">${c.late}일</b><small>평소 ${c.cyc}일</small>` : c.cyc ? `<b>${c.cyc}일</b><small>${c.n}회 주문</small>` : `<b>–</b><small>${c.n}회 주문</small>`;
+    return `<div class="crm-tr ${c.id === crmSel ? 'sel' : ''}" role="row" data-crmc="${c.id}" tabindex="0"><div class="crm-c1" role="cell"><span class="crm-nm"><b>${esc(c.label)}</b>${chips}</span>${sub}${why ? `<em class="crm-why">${esc(why)}</em>` : ''}</div><div class="crm-c2" role="cell">${items}</div><div class="crm-c3" role="cell">${c3}</div><div class="crm-c4" role="cell">${c4}</div></div>`;
+  }).join('');
+  $('crm-list').innerHTML = L.length ? `<div class="crm-table" role="table"><div class="crm-tr crm-th" role="row">${H.map((h, i) => `<div class="crm-c${i + 1}" role="columnheader">${h}</div>`).join('')}</div>${rows}</div>` + (L.length > crmShow ? `<button class="btn sm crm-morebtn" type="button" id="crm-morebtn">${(L.length - crmShow).toLocaleString('ko-KR')}명 더 보기</button>` : '') : '<p class="crm-none">해당하는 고객이 없어요</p>';
   if (crmSel && document.body.classList.contains('crm-open')) crmDrawer();
 }
 function crmDrawer() {
@@ -6548,18 +6600,17 @@ function crmDrawer() {
     <div class="cd-who">${W ? (W.err ? `<span class="crm-red">${esc(W.err)}</span>` : `<b>${esc(W.phone)}</b><br><small>${esc(W.address)}</small><br><small>🔒 창을 닫으면 사라지고 저장하지 않아요</small>`) : ''}</div>
     <div class="cd-acts"><button class="btn pri" type="button" data-crmcalled="${c.id}">${c.called ? '✓ ' + crmDay(c.called) + ' 연락함' : '📞 연락함'}</button>${W ? '' : `<button class="btn" type="button" data-crmwho="${c.id}">연락처 · 주소 보기</button>`}</div>`;
 }
-function crmOpenD(id) { if (crmSel !== id) crmMoreO = false; crmSel = id; document.body.classList.add('crm-open'); crmDrawer(); $('crm-drawer').scrollTop = 0; document.querySelectorAll('.crm-row').forEach(r => r.classList.toggle('sel', r.dataset.crmc === id)); }
-function crmCloseD() { document.body.classList.remove('crm-open'); }
+function crmOpenD(id) { if (crmSel !== id) crmMoreO = false; crmSel = id; document.body.classList.add('crm-open'); crmDrawer(); $('crm-drawer').scrollTop = 0; document.querySelectorAll('.crm-tr[data-crmc]').forEach(r => r.classList.toggle('sel', r.dataset.crmc === id)); }
+function crmCloseD() { document.body.classList.remove('crm-open'); const r = document.querySelector('.crm-tr[data-crmc="' + crmSel + '"]'); if (r) try { r.focus({ preventScroll: true }); } catch (e) {} }
 
-function crmCurList() { const D = crmData(), q = crmQ.trim().toLowerCase().replace(/\s+/g, ''), P = CRM_P.find(x => x[0] === crmP); let L = D.list.filter(c => P[2](c, D) && crmMatch(c, q));
-  if (crmP === 'call') L.sort((a, b) => b.late - a.late); else if (crmP === 'week') L.sort((a, b) => a.next.localeCompare(b.next)); else if (crmP === 'new') L.sort((a, b) => a.ago - b.ago); else if (crmP === 'vip') L.sort((a, b) => b.n - a.n);
-  return { D, L, P }; }
+function crmCurList() { const D = crmData(), q = crmQ.trim().toLowerCase().replace(/\s+/g, ''), P = CRM_P.find(x => x[0] === crmP) || CRM_P[0]; const L = crmSort(crmFiltered(D, q));
+  return { D, L, P: crmF ? [P[0], P[1] + ' · ' + CRM_F.find(f => f[0] === crmF)[1]] : P }; }
 function tblCrm() {
   const { D, L, P } = crmCurList(), MAXR = 150, W = '일월화수목금토';
   const right = c => crmP === 'call' ? c.late + '일 늦음' : crmP === 'week' ? (c.next === D.today ? '오늘' : W[dOf(c.next).getDay()] + '요일') + ' · ' + c.main + ' ' + c.mainQ + '개' : crmAgoTxt(c.ago);
   const rows = L.slice(0, MAXR).map(c => ({ cells: [c.label, c.r || '', crmDay(c.last), c.n + '회', c.cyc ? c.cyc + '일' : '–', c.itemsTxt, right(c)] }));
   return { title: '허브아이 고객 · ' + P[1], sub: L.length.toLocaleString('ko-KR') + '명' + (crmQ.trim() ? '   ·   검색 "' + crmQ.trim() + '"' : '') + (L.length > MAXR ? '   ·   위에서 ' + MAXR + '명만 (전체는 엑셀용 표 복사)' : '') + '   ·   ' + shareTime() + ' 기준',
-    sections: [{ title: '', cols: [['고객', 'l'], ['지역', 'l'], ['마지막 주문', 'r'], ['주문', 'r'], ['평소 주기', 'r'], ['사는 품목', 'l'], [crmP === 'call' ? '늦음' : crmP === 'week' ? '예정' : '마지막', 'r']], rows }] };
+    sections: [{ title: '', cols: [['고객', 'l'], ['지역', 'l'], ['마지막 주문', 'r'], ['주문', 'r'], ['평소 주기', 'r'], ['사는 품목', 'l'], [crmP === 'call' ? '늦음' : crmP === 'week' ? '예상' : '마지막', 'r']], rows }] };
 }
 function crmTsv(L) { return ['고객\t받는 분\t지역\t채널\t첫 구매\t마지막 주문\t주문 수\t평소 주기\t사는 품목\t태그\t메모'].concat(L.map(c => [c.label, c.rn || '', c.r, CRM_CHN[c.chMain], c.first, c.last, c.n, c.cyc || '', c.top.map(x => x[0] + ' ' + x[1]).join(', '), c.tags.join(','), c.note.replace(/\s+/g, ' ')].join('\t'))).join('\n'); }
 document.addEventListener('click', async e => {
@@ -6567,6 +6618,9 @@ document.addEventListener('click', async e => {
   if (t.closest('#crm-load')) { crmLoad({ all: true, force: crmMem.size > 0 }); return; }
   if (t.closest('#crm-stop')) { crmStop = true; return; }
   const p = t.closest('[data-crmp]'); if (p) { crmP = p.dataset.crmp; crmView = 'list'; crmShow = 120; crmRender(); return; }
+  if (t.closest('#crm-morem')) { crmMoreM = !crmMoreM; crmRender(); return; }
+  if (crmMoreM && !t.closest('.crm-more')) { crmMoreM = false; crmRender(); }
+  if (t.closest('.crm-menu [data-share]')) { setTimeout(() => { crmMoreM = false; crmRender(); }, 0); }
   if (t.closest('#crm-morebtn')) { crmShow += 300; crmRender(); return; }
   if (t.closest('#crm-dmbtn')) { crmDm = !crmDm; crmRender(); return; }
   if (t.closest('#crm-moreo')) { crmMoreO = true; crmDrawer(); return; }
@@ -6591,7 +6645,9 @@ document.addEventListener('keydown', async e => {
   if (e.target.id === 'crm-newtag' && e.key === 'Enter') { e.preventDefault(); const v = e.target.value.trim(), id = crmSel; if (!v || !id) return;
     try { await crmDocSave(d => { d.tags = d.tags || {}; const cur = d.tags[id] || []; if (!cur.includes(v)) d.tags[id] = cur.concat(v); }); } catch (er) {} crmRender(); }
 });
-document.addEventListener('input', e => { if (e.target.id === 'crm-q') { crmQ = e.target.value; crmShow = 120; if (crmQ.trim() && crmP !== 'all') crmP = 'all'; if (crmQ.trim()) crmView = 'list'; clearTimeout(e.target._t); e.target._t = setTimeout(crmRender, 150); } });
+document.addEventListener('change', e => { if (e.target.id === 'crm-flt') { crmF = e.target.value; crmShow = 120; crmView = 'list'; crmRender(); } });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.crm-tr[data-crmc]')) { e.preventDefault(); crmOpenD(e.target.dataset.crmc); } if (e.key === 'Escape' && crmMoreM) { crmMoreM = false; crmRender(); } });
+document.addEventListener('input', e => { if (e.target.id === 'crm-q') { crmQ = e.target.value; crmShow = 120; if (crmQ.trim()) crmView = 'list'; clearTimeout(e.target._t); e.target._t = setTimeout(crmRender, 150); } });
 document.addEventListener('change', async e => {
   if (e.target.id === 'crm-note') { const id = e.target.dataset.cid, v = e.target.value.trim(), m = $('crm-notemsg');
     try { await crmDocSave(d => { d.notes = d.notes || {}; if (v) d.notes[id] = { t: v, at: new Date().toISOString(), by: retWho() }; else delete d.notes[id]; }); m.className = 'msg ok'; m.textContent = '메모를 저장했어요'; crmRender(); } catch (er) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er.code); } }
