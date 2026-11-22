@@ -4226,8 +4226,9 @@ async function histSaveUpload(rows, fname, opt) {
       const prev = hist[d] || { rows: [], files: [] }, map = new Map((prev.rows || []).map(x => [x.k, x]));
       let added = 0; byDate[d].forEach(x => { const old = map.get(x.k); if (!old) added++; else { if (old.del) x.del = true; if (old.ov) x.ov = old.ov; } x.f = [...new Set(((old && old.f) || []).concat(fid))]; map.set(x.k, x); });
       const files = (prev.files || []).filter(f => f.name !== fname).concat([{ id: fid, name: fname, at: now, lines: byDate[d].length, ...(old ? { old: 1 } : {}) }]).slice(-20);
-      const pb = (prev.batches || {})[slot], bkeys = [...new Set(((pb && pb.keys) || []).concat(byDate[d].map(x => x.k)))];
-      const batches = Object.assign({}, prev.batches || {}, { [slot]: { keys: bkeys, name: fname, at: now } });
+      const pb = (prev.batches || {})[slot], inOther = new Set(Object.entries(prev.batches || {}).filter(([k]) => k !== slot).flatMap(([, x]) => (x && x.keys) || []));
+      const fresh = byDate[d].map(x => x.k).filter(k => !inOther.has(k)), bkeys = [...new Set(((pb && pb.keys) || []).concat(fresh))];
+      const batches = Object.assign({}, prev.batches || {}); if (bkeys.length) batches[slot] = { keys: bkeys, name: fname, at: (pb && pb.keys && pb.keys.length && fresh.every(k => pb.keys.includes(k))) ? pb.at : now };
       await histWrite(d, { rows: [...map.values()], files, batches, updatedAt: now });
       saved.push(d.slice(5).replace('-', '/') + (added ? ' 새 ' + added + '줄' : ' 이미 있음'));
     }
@@ -4287,7 +4288,9 @@ function slotRows(d, slot) {
   const e = hist[d]; if (!e || !e.rows) return [];
   if (!slot || slot === 'all') return e.rows.filter(x => !x.del);
   const b = e.batches && e.batches[slot]; if (!b || !b.keys) return [];
-  const ks = new Set(b.keys); return e.rows.filter(x => ks.has(x.k) && !x.del);
+  // 같은 주문 줄이 오전 · 오후에 둘 다 들어가 있으면(같은 파일을 다시 올린 경우) 먼저 올린 쪽에만 세요
+  const other = Object.entries(e.batches).filter(([k, x]) => k !== slot && x && x.keys && (x.at || '') < (b.at || '')).flatMap(([, x]) => x.keys), skip = new Set(other);
+  const ks = new Set(b.keys.filter(k => !skip.has(k))); return e.rows.filter(x => ks.has(x.k) && !x.del);
 }
 function dayResult(d, slot) {
   const rk = JSON.stringify(rules); if (rk !== histRulesKey) { histCache.clear(); histRulesKey = rk; }
@@ -6142,8 +6145,9 @@ function stkEvents() {
   const sig = uplRev + '|' + Object.keys(upl).sort().map(d => d + (upl[d].updatedAt || '') + ((upl[d].am || {}).at || '') + ((upl[d].pm || {}).at || '')).join(',');
   if (sig === stkEvSig) return stkEvList;
   const evs = [];
+  const seen = new Set(); // 같은 주문 줄을 다른 날 다시 올려도 재고에서 한 번만 빼요
   Object.keys(upl).sort().forEach(day => {
-    const e = upl[day] || {}, seen = new Set();
+    const e = upl[day] || {};
     ['am', 'pm'].forEach(slot => {
       const b = e[slot]; if (!b || !Array.isArray(b.rows)) return;
       b.rows.forEach(x => { if (x.del || x.ns || seen.has(x.k)) return; seen.add(x.k); evs.push({ day, slot, at: b.at || '', k: x.k, uses: stkRowUse(x, day).map(([n, o, q]) => ({ key: stkK(stkBase(n, o)), n, o, g: gramOf(o), q })) }); });
