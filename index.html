@@ -1745,7 +1745,7 @@ body.hm-dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 .hw-ch{font-style:normal;font-size:12px;font-weight:700;margin-left:6px;white-space:nowrap}.hw-ch.up{color:#2f9e63}.hw-ch.dn{color:#c94b5d}
 .hw-foot{margin:auto 0 0;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hw-sm .hm-big{margin:2px 0 4px}
-.ost-btns{display:flex;gap:6px;flex:none}.hw-ost .hm-lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}@media(max-width:700px){.hw-ost .ost-src .k,.hw-ost .ost-btns .t{display:none}}.hmi[data-s=M] .hw-ost .ost-src .k,.hmi[data-s=M] .hw-ost .ost-btns .t{display:none}.hw-ost .hm-wt{gap:6px}.hc-f1{display:flex;flex-direction:column;gap:4px;margin:4px 0}.hc-f1 input{font:inherit;padding:9px 11px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);min-width:0}
+.hw-ost .ost-re{width:30px;height:30px;padding:0;display:grid;place-items:center;flex:none;font-size:15px}.hw-ost .ost-re.spin i{display:inline-block;animation:ostspin 1s linear infinite}@keyframes ostspin{to{transform:rotate(360deg)}}.hw-ost .hm-lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}@media(max-width:700px){.hw-ost .ost-src .k{display:none}}.hmi[data-s=M] .hw-ost .ost-src .k{display:none}.hw-ost .hm-wt{gap:6px}.hc-f1{display:flex;flex-direction:column;gap:4px;margin:4px 0}.hc-f1 input{font:inherit;padding:9px 11px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);min-width:0}
 .hw-ost .ost-src{font-size:11px;font-weight:600;color:var(--mute);background:rgba(60,70,40,.07);border-radius:99px;padding:2px 7px;margin-left:4px}
 .ost-g{display:grid;grid-template-columns:1fr 2fr 1fr 1fr 1fr;gap:8px;margin:4px 0 2px}.ost-pair{display:grid;grid-template-columns:1fr 1fr;background:var(--acc2,#eef6f1);border-radius:12px}.ost-pair .ost-c{background:none}.ost-pair .ost-c+.ost-c{border-left:1px solid rgba(0,0,0,.07)}
 .ost-c{background:var(--acc2,#eef6f1);border-radius:12px;padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:10px}.ost-c span{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ost-c b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--mute)}.ost-c.on b{color:var(--acc)}
@@ -4727,35 +4727,13 @@ function ostEnsure() {
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ostTimer && ostD && Date.now() - new Date(ostD.at).getTime() > 600e3) ostLoad(); });
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-ostre]')) { ostErr = ''; ostLoad(true); } });
-// 마켓 주문수집: 카페24는 수집을 대신 눌러 주는 API가 없어서, 마켓플러스 주문수집 화면을 새 창으로 열어요
-function ostColSet(edit) {
-  let m = $('ostColModal'); if (!m) { m = document.createElement('div'); m.className = 'modal hidden'; m.id = 'ostColModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '주문수집 화면 주소'); document.body.appendChild(m); }
-  const cur = c24Cfg().collectUrl || '';
-  m.innerHTML = `<div class="mbox hcbox"><div class="hmf-h"><b>주문수집 화면 주소</b><button class="ibtn" type="button" data-ostcx="1" aria-label="닫기">✕</button></div>
-    <ol class="inst-ol"><li>카페24 관리자에서 <b>마켓플러스 → 주문수집</b> 화면을 열어요. (<b>마켓주문수집 ›</b> 버튼을 누른 화면)</li><li>그 화면의 <b>주소창 주소</b>를 복사해 아래에 붙여 넣어요.</li><li>다음부터 <b>주문수집 ↗</b>을 누르면 그 화면이 바로 새 창으로 열려요. 거기서 <b>전체마켓 주문수집</b>을 누르면 돼요.</li></ol>
-    <label class="hc-f1"><span class="msg">주소</span><input id="ostcol-u" type="url" placeholder="https://….cafe24.com/…" value="${esc(cur)}" autocomplete="off"></label>
-    <p class="msg err" id="ostcol-e"></p><div class="hc-act">${cur ? '<button class="btn" type="button" data-ostcopen="1">지금 주소로 열기</button>' : ''}<button class="btn pri" type="button" data-ostcsave="1">저장</button></div></div>`;
-  m.classList.remove('hidden'); setTimeout(() => { const i = $('ostcol-u'); if (i) i.focus(); }, 30);
-}
-function ostColOpen(u) { const w = window.open(u, '_blank', 'noopener'); if (!w) location.href = u; clearTimeout(ostColOpen._t); ostColOpen._t = setTimeout(() => ostLoad(true), 120e3); shareToast('주문수집 화면을 열었어요 · 2분 뒤 현황을 새로 받아요'); }
-document.addEventListener('click', async e => {
-  if (!e.target.closest) return;
-  const b = e.target.closest('[data-ostcol]');
-  if (b) { const u = c24Cfg().collectUrl; if (u && !e.shiftKey) ostColOpen(u); else ostColSet(); return; }
-  const m = e.target.closest('#ostColModal'); if (!m) return;
-  if (e.target.id === 'ostColModal' || e.target.closest('[data-ostcx]')) { m.classList.add('hidden'); return; }
-  if (e.target.closest('[data-ostcopen]')) { m.classList.add('hidden'); ostColOpen(c24Cfg().collectUrl); return; }
-  if (e.target.closest('[data-ostcsave]')) { const v = ($('ostcol-u').value || '').trim(), er = $('ostcol-e');
-    if (!/^https:\/\/[^\s]+\.cafe24\.com\//i.test(v)) { er.textContent = '카페24 관리자 화면 주소(https://…cafe24.com/…)를 붙여 넣어 주세요'; return; }
-    const ok = await hcSaveCfg(Object.assign({}, c24Cfg(), { collectUrl: v })); if (ok) { m.classList.add('hidden'); shareToast('주문수집 주소를 저장했어요'); homeSoon(); } }
-});
-document.addEventListener('contextmenu', e => { if (e.target.closest && e.target.closest('[data-ostcol]')) { e.preventDefault(); ostColSet(); } });
+
 const HW = {
   ost() { ostEnsure(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
     const cell = (k, n) => `<div class="ost-c${C && C[k] ? ' on' : ''}"><span>${n}</span><b>${v(k)}</b></div>`;
     const t = ostD ? new Date(ostD.at) : null, tm = t ? String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') : '';
     const foot = !ostOn() ? '로그인하는 웹 버전에서 카페24에 연결되면 보여요' : ostErr ? '⚠ ' + esc(ostErr) : ostBusy && !ostD ? '카페24에서 불러오는 중…' : '';
-    return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요"><span class="k">카페24${tm ? ' · ' : ''}</span>${tm}</small></span><span class="ost-btns"><button class="hm-more ost-col" type="button" data-ostcol="1" title="카페24 마켓플러스 주문수집 화면을 열어요 · 주소를 바꾸려면 오른쪽 클릭(휴대폰은 길게 누르기)">주문수집 ↗</button><button class="hm-more" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="지금 새로 받기">${ostBusy ? '받는 중…' : '↻<span class="t"> 새로</span>'}</button></span></div>
+    return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요"><span class="k">카페24${tm ? ' · ' : ''}</span>${tm}</small></span><button class="hm-more ost-re${ostBusy ? ' spin' : ''}" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="${ostBusy ? '받는 중' : '지금 새로 받기'}" title="${ostBusy ? '받는 중…' : '새로 받기'}"><i aria-hidden="true">↻</i></button></div>
       <div class="ost-g">${cell('N00', '입금전')}<div class="ost-pair">${cell('N10', '상품준비중')}${cell('N22', '배송보류중')}</div>${cell('N20', '배송준비중')}${cell('N21', '배송대기')}${cell('N30', '배송중')}</div>
       ${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}</div>`; },
   today() { const t = isoDate(new Date()), U = upl[t] || {}, am = U.am ? uplOrders(t, 'am') : 0, pm = U.pm ? uplOrders(t, 'pm') : 0, all = uplOrders(t), tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
@@ -8385,7 +8363,7 @@ function c24Bind() {
   $('c24save').onclick = async () => {
     const off = $('c24off').value.split(/[\s,]+/).map(x => x.trim()).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
     const days = [...$('c24dw').querySelectorAll('input:checked')].map(x => Number(x.value));
-    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off, cut: c24Cfg().cut || {}, notice: c24Cfg().notice || {}, ntDraft: c24Cfg().ntDraft || {}, collectUrl: c24Cfg().collectUrl || '' };
+    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off, cut: c24Cfg().cut || {}, notice: c24Cfg().notice || {}, ntDraft: c24Cfg().ntDraft || {} };
     await saveRules(); c24FillSet(); $('c24day').value = ''; c24ShowWin(); c24Status();
     $('c24msg').className = 'msg ok'; $('c24msg').textContent = '연결 설정을 저장했어요';
   };
