@@ -22,6 +22,7 @@ export default {
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
+      if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/crm') { needAdmin(who); return json(await crm(env, url.searchParams), cors); }
@@ -254,6 +255,22 @@ async function claims(env, q) {
     }
   }
   return { day, claims: out };
+}
+
+// ---------- 주문 처리 현황: 상태별 주문 수만 (개인정보 없음) · 9분 동안 같은 값을 나눠 써요 (KV 쓰기 하루 160번 이하) ----------
+const OST = [['N00', '입금전'], ['N10', '상품준비중'], ['N22', '배송보류중'], ['N20', '배송준비중'], ['N21', '배송대기'], ['N30', '배송중']];
+let ostMem = null;
+async function ostatus(env, fresh) {
+  const ok = h => h && Date.now() - h.t < (fresh ? 60e3 : 540e3);
+  if (ok(ostMem)) return ostMem;
+  const hit = JSON.parse((await env.TOKENS.get('ost')) || 'null'); if (ok(hit)) { ostMem = hit; return hit; }
+  const token = await accessToken(env), day = ms => new Date(ms + 9 * 3600e3).toISOString().slice(0, 10), now = Date.now();
+  const params = { start_date: day(now - 89 * 864e5), end_date: day(now), date_type: 'order_date' };
+  const counts = {};
+  await Promise.all(OST.map(async ([code]) => { const d = await c24get(env, token, '/admin/orders/count', Object.assign({ order_status: code }, params), '주문(Order) 읽기'); counts[code] = Number(d.count) || 0; }));
+  const out = { t: now, at: new Date(now).toISOString(), from: params.start_date, counts, labels: Object.fromEntries(OST) };
+  ostMem = out; await env.TOKENS.put('ost', JSON.stringify(out), { expirationTtl: 3600 }).catch(() => {});
+  return out;
 }
 
 // ---------- 상품 후기: 후기 게시판 글 + 상품 이름 (작성자 이름·이메일은 보내지 않아요) ----------

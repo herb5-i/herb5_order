@@ -1745,6 +1745,12 @@ body.hm-dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 .hw-ch{font-style:normal;font-size:12px;font-weight:700;margin-left:6px;white-space:nowrap}.hw-ch.up{color:#2f9e63}.hw-ch.dn{color:#c94b5d}
 .hw-foot{margin:auto 0 0;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hw-sm .hm-big{margin:2px 0 4px}
+.hw-ost .ost-src{font-size:11px;font-weight:600;color:var(--mute);background:rgba(60,70,40,.07);border-radius:99px;padding:2px 7px;margin-left:4px}
+.ost-g{display:grid;grid-template-columns:1fr 2fr 1fr 1fr 1fr;gap:8px;margin:4px 0 2px}.ost-pair{display:grid;grid-template-columns:1fr 1fr;background:var(--acc2,#eef6f1);border-radius:12px}.ost-pair .ost-c{background:none}.ost-pair .ost-c+.ost-c{border-left:1px solid rgba(0,0,0,.07)}
+.ost-c{background:var(--acc2,#eef6f1);border-radius:12px;padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:10px}.ost-c span{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ost-c b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--mute)}.ost-c.on b{color:var(--acc)}
+
+@media(max-width:700px){.ost-g{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.ost-pair{display:contents}.ost-pair .ost-c{background:var(--acc2,#eef6f1)}.ost-pair .ost-c+.ost-c{border-left:0}.ost-c{flex-direction:row;justify-content:space-between;align-items:center;padding:5px 10px;gap:4px}.ost-c span{font-size:12px}.ost-c b{font-size:16px}}
+.hmi[data-s=M] .ost-g{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.hmi[data-s=M] .ost-pair{display:contents}.hmi[data-s=M] .ost-pair .ost-c{background:var(--acc2,#eef6f1)}.hmi[data-s=M] .ost-pair .ost-c+.ost-c{border-left:0}.hmi[data-s=M] .ost-c{flex-direction:row;justify-content:space-between;align-items:center;padding:5px 9px;gap:4px}.hmi[data-s=M] .ost-c span{font-size:11.5px}.hmi[data-s=M] .ost-c b{font-size:15px}
 .hw-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex:1;align-items:center}.hw-nums>div{text-align:center;min-width:0}.hw-nums b{display:block;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}.hw-nums span{font-size:11.5px;color:var(--mute);white-space:nowrap}
 .hw-nums .bad b{color:#c94b5d}.hw-nums .warn b{color:#c48a1a}.hw-nums .good b{color:var(--acc)}.hmi[data-s=S] .hw-nums b{font-size:22px}
 .hm-list.hw-wx li{padding:7px 2px;gap:8px}.hw-tp{display:flex;gap:6px;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;flex:none}.hw-tp i{font-style:normal}.hw-tp .lo{color:#3f7891}.hw-tp .hi{color:#c2614a}
@@ -4647,6 +4653,7 @@ const HM_APPS = {
 const HM_SZ = { S: '작게', M: '중간', L: '크게', W: '가로 꽉' };
 // 위젯: app = 어느 아이콘의 위젯인지 (홈에 추가 → 아이콘을 누르면 그 아이콘 위젯 3~4개가 나와요)
 const HM_W = {
+  ost: { app: 'run', n: '주문 처리 현황', d: '카페24 입금전 · 배송준비중 · 배송중… 10분마다 새로', s: ['M', 'W'], def: 'W' },
   today: { app: 'run', n: '오늘 들어온 주문', d: '오늘 주문 수와 오전 · 오후 비율', s: ['S', 'M', 'L', 'W'], def: 'W' },
   wk7: { app: 'run', n: '최근 7일 주문', d: '날마다 들어온 주문 수 막대', s: ['M', 'L', 'W'], def: 'M' },
   top: { app: 'run', n: '오늘 많이 나간 상품', d: '오늘 주문에서 수량 많은 순서', s: ['M', 'L', 'W'], def: 'M' },
@@ -4702,7 +4709,31 @@ function hmMkRows() { if (!mkTr || !mkTr.results) return null; try { return mkTr
 let hmCrmAsk = false;
 function hmCrm() { if (!crmReady) { if (!hmCrmAsk) { hmCrmAsk = true; crmInit().then(homeSoon).catch(() => {}); } return null; } try { const D = crmData(); return D.list && D.list.length ? D : null; } catch (e) { return null; } }
 const hmMkMsg = () => !document.body.classList.contains('fbmode') || !c24Cfg().worker ? '로그인하는 웹 버전에서 쓸 수 있어요' : mkErr ? esc(mkErr) : mkCfgV && !mkCfgV.naver ? '시장 탭에서 네이버 데이터랩을 연결해 주세요' : mkTr && mkTr.err ? esc(mkTr.err) : '시장 자료를 불러오는 중…';
+// 카페24 주문 처리 현황 (상태별 주문 수, 10분마다)
+let ostD = null, ostBusy = false, ostErr = '', ostTimer = null;
+try { ostD = JSON.parse(localStorage.getItem('h5_ost') || 'null'); } catch (e) {}
+const ostOn = () => document.body.classList.contains('fbmode') && !!c24Cfg().worker;
+async function ostLoad(fresh) {
+  if (ostBusy || !ostOn()) return; ostBusy = true; ostErr = ''; homeSoon();
+  try { const d = await c24Call('/ostatus' + (fresh ? '?fresh=1' : '')); if (d && d.counts) { ostD = d; try { localStorage.setItem('h5_ost', JSON.stringify(d)); } catch (e) {} } }
+  catch (e) { ostErr = e.message || '불러오지 못했어요'; }
+  ostBusy = false; homeSoon();
+}
+function ostEnsure() {
+  if (!ostOn()) return;
+  if (!ostTimer) ostTimer = setInterval(() => { if (document.visibilityState === 'visible') ostLoad(); }, 600e3);
+  if (!ostBusy && (!ostD || Date.now() - new Date(ostD.at).getTime() > 600e3) && !ostErr) ostLoad();
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ostTimer && ostD && Date.now() - new Date(ostD.at).getTime() > 600e3) ostLoad(); });
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-ostre]')) { ostErr = ''; ostLoad(true); } });
 const HW = {
+  ost() { ostEnsure(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
+    const cell = (k, n) => `<div class="ost-c${C && C[k] ? ' on' : ''}"><span>${n}</span><b>${v(k)}</b></div>`;
+    const t = ostD ? new Date(ostD.at) : null, tm = t ? String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') : '';
+    const foot = !ostOn() ? '로그인하는 웹 버전에서 카페24에 연결되면 보여요' : ostErr ? '⚠ ' + esc(ostErr) : ostBusy && !ostD ? '카페24에서 불러오는 중…' : '';
+    return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요">카페24${tm ? ' · ' + tm : ''}</small></span><button class="hm-more" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="지금 새로 받기">${ostBusy ? '받는 중…' : '↻ 새로'}</button></div>
+      <div class="ost-g">${cell('N00', '입금전')}<div class="ost-pair">${cell('N10', '상품준비중')}${cell('N22', '배송보류중')}</div>${cell('N20', '배송준비중')}${cell('N21', '배송대기')}${cell('N30', '배송중')}</div>
+      ${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}</div>`; },
   today() { const t = isoDate(new Date()), U = upl[t] || {}, am = U.am ? uplOrders(t, 'am') : 0, pm = U.pm ? uplOrders(t, 'pm') : 0, all = uplOrders(t), tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
     const sl = (k, n, lb) => `<span class="hm-slot ${U[k] ? 'done' : 'wait'}"><i></i>${lb} ${U[k] ? n + '건 · ' + esc(hhmm(U[k].at).replace(/^오[전후] /, '')) : '대기'}</span>`;
     return `<button class="hm-w hm-today" type="button" data-go="sum"><div class="hm-wt"><span class="hm-lb">오늘 들어온 주문</span><span class="hm-arrow" aria-hidden="true"></span></div><div class="hm-tbody"><div><b class="hm-big">${all.toLocaleString('ko-KR')}<small>건</small></b><div class="hm-slots">${sl('am', am, '오전')}${sl('pm', pm, '오후')}</div></div><div class="hm-ring ${tot ? '' : 'empty'}" style="--p:${tot ? p : 0}"><span>${tot ? '<b>' + p + '%</b><small>오전</small>' : '<small>아직<br>없음</small>'}</span></div></div></button>`; },
@@ -5291,7 +5322,7 @@ document.addEventListener('click', async e => {
 });
 function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
 const hmDefault = () => ({ v: 1, items: [
-  { id: 'w-today', t: 'w', w: 'today', s: 'W' }, { id: 'w-alert', t: 'w', w: 'alert', s: 'W' },
+  { id: 'w-ost', t: 'w', w: 'ost', s: 'W' }, { id: 'w-today', t: 'w', w: 'today', s: 'W' }, { id: 'w-alert', t: 'w', w: 'alert', s: 'W' },
   { id: 'a-c24', t: 'app', a: 'c24' }, { id: 'a-inv', t: 'app', a: 'inv' }, { id: 'a-sum', t: 'app', a: 'sum' }, { id: 'a-stock', t: 'app', a: 'stock' },
   { id: 'a-issue', t: 'app', a: 'issue' }, { id: 'a-claim', t: 'app', a: 'claim' }, { id: 'a-wx', t: 'app', a: 'wx' },
   { id: 'f-stat', t: 'folder', name: '기록 · 통계', apps: ['report', 'days', 'mall'] },
@@ -5302,6 +5333,7 @@ function hmLoad() {
   try { const v = JSON.parse(localStorage.getItem(HM_KEY) || 'null'); if (v && Array.isArray(v.items)) {
     v.items = v.items.filter(x => x && x.id && (x.t === 'w' ? HM_W[x.w] : x.t === 'app' ? HM_APPS[x.a] : x.t === 'folder' && Array.isArray(x.apps)));
     v.items.forEach(x => { if (x.t === 'folder') x.apps = x.apps.filter(a => HM_APPS[a]); if (x.t === 'w' && !HM_W[x.w].s.includes(x.s)) x.s = HM_W[x.w].def; });
+    try { if (!localStorage.getItem('h5_ost_add')) { if (!v.items.some(x => x.t === 'w' && x.w === 'ost')) v.items.unshift({ id: 'w-ost', t: 'w', w: 'ost', s: 'W' }); localStorage.setItem('h5_ost_add', '1'); localStorage.setItem(HM_KEY, JSON.stringify(v)); } } catch (e) {}
     hmL = v; return hmL; } } catch (e) {}
   hmL = hmDefault(); return hmL;
 }
