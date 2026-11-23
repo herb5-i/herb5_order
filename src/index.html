@@ -263,6 +263,7 @@ th{background:#eef3ec}
 .hd.today .n{text-decoration:underline}
 .hd.on{background:var(--acc);border-color:var(--acc);color:#fff}.hd.on .n{color:#fff}
 .hmsum{margin:10px 0 0}
+.c24sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 0;padding:10px 12px;border-radius:10px;background:#eef4fb;color:#2b4f7a;font-size:13px}.c24sync span{flex:1;min-width:0}.c24sync small{color:var(--mute)}.c24sync.hidden{display:none}html.dark .c24sync{background:rgba(90,140,210,.14);color:#b9d1ee}
 .bmk{margin-left:6px;font-size:13px;color:var(--mute)}.hredate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#fdf3ea;color:#8a4a24;font-size:13px}.hredate span{flex:1;min-width:0}.hredate.hidden{display:none}html.dark .hredate{background:rgba(224,138,60,.14);color:#f0c39d}
 .hbak{margin-top:14px}
 #hbakmsg:empty,#histsave:empty{display:none}
@@ -2339,6 +2340,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
         </div>
         <p class="c24win" id="c24win"></p>
         <p class="msg" id="c24msg"></p>
+        <div class="c24sync hidden" id="c24sync"></div>
         <details class="adm-only" id="c24set"><summary>연결 설정 (관리자)</summary>
           <div class="c24row"><label>중계 서버 주소 <input type="url" id="c24url" placeholder="https://herb5-cafe24.○○○.workers.dev" style="width:min(340px,100%)"></label></div>
           <div class="c24row"><label>오전 마감(결제 기준) <input type="time" id="c24am" step="60"></label><label>오후 마감 <input type="time" id="c24pm" step="60"></label></div>
@@ -5597,7 +5599,7 @@ function stockInit(db) {
     try { db.collection('stock').onSnapshot(qs => {
       const next = {}, list = qs.docs || (qs.forEach ? (() => { const a = []; qs.forEach(x => a.push(x)); return a; })() : []);
       list.forEach(d => { const v = d.data(); if (v && v.name) next[d.id] = v; });
-      stock = next; if (stkOpen()) renderStock(); homeSoon(); if (issOpen()) renderIssue(); if ($('hsales') && !$('v-hist').classList.contains('hidden')) renderSales();
+      stock = next; if (stkOpen()) renderStock(); homeSoon(); try { c24SyncCheck(); } catch (e) {} if (issOpen()) renderIssue(); if ($('hsales') && !$('v-hist').classList.contains('hidden')) renderSales();
     }, () => {}); } catch (e) {}
   } else { try { stock = JSON.parse(localStorage.getItem('herb5_stock') || '{}') || {}; } catch (e) { stock = {}; } }
 }
@@ -7920,25 +7922,55 @@ function c24Rows(list, dayIso) {   // 카페24 엑셀과 같은 열 · 같은 �
   });
   return rows;
 }
+// 주문 불러오기. sync=true면 다른 기기가 불러온 것을 이 기기에서도 똑같이 불러와요 (기록 저장 · 공유는 다시 하지 않아요)
+async function c24Load(day, slot, sync) {
+  const msg = $('c24msg'), c = c24Cfg(), w = c24Window(day, c, slot);
+  msg.className = 'msg'; msg.textContent = sync ? '다른 기기에서 불러온 주문을 받는 중…' : '카페24에서 주문을 가져오는 중…';
+  const d = await c24Call('/orders?from=' + encodeURIComponent(w.from.toISOString()) + '&to=' + encodeURIComponent(w.to.toISOString()));
+  if (!d.orders.length) { msg.className = 'msg'; msg.textContent = '이 시간에 결제된 주문이 없어요'; return null; }
+  const rows = c24Rows(d.orders, day), fname = '카페24_' + day.replace(/-/g, '') + '_' + (slot === 'am' ? '오전' : '오후') + '.api';
+  userEdits = new Map(); edMode = false;
+  srcRows = rows; srcName = fname.replace(/\.api$/, ''); srcAt = new Date(); c24Cur = { day, slot };
+  if ($('c24day').value !== day || c24Slot !== slot) { $('c24day').value = day; c24Slot = slot; try { c24ShowWin(); } catch (e) {} }
+  const wxr = wxForOrderDay(day);
+  msg.className = 'msg ok'; msg.textContent = (sync ? '다른 기기에서 불러온 ' : '') + (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요' + wxNote(wxr);
+  $('runmsg').textContent = '';
+  runProcess();
+  if (!sync) histSaveUpload(srcRows, fname, { slot, day });
+  return d.orders.length;
+}
 async function c24Import() {
-  const btn = $('c24go'), msg = $('c24msg'), c = c24Cfg(), day = $('c24day').value;
+  const btn = $('c24go'), msg = $('c24msg'), day = $('c24day').value, slot = c24Slot;
   if (!day) return;
-  const w = c24Window(day, c, c24Slot), slot = c24Slot;
-  btn.disabled = true; msg.className = 'msg'; msg.textContent = '카페24에서 주문을 가져오는 중…';
+  btn.disabled = true;
   try {
-    const d = await c24Call('/orders?from=' + encodeURIComponent(w.from.toISOString()) + '&to=' + encodeURIComponent(w.to.toISOString()));
-    if (!d.orders.length) { msg.className = 'msg'; msg.textContent = '이 시간에 결제된 주문이 없어요'; return; }
-    const rows = c24Rows(d.orders, day), fname = '카페24_' + day.replace(/-/g, '') + '_' + (slot === 'am' ? '오전' : '오후') + '.api';
-    userEdits = new Map(); edMode = false;
-    srcRows = rows; srcName = fname.replace(/\.api$/, ''); srcAt = new Date();
-    const wxr = wxForOrderDay(day);
-    msg.className = 'msg ok'; msg.textContent = (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요' + wxNote(wxr);
-    $('runmsg').textContent = '';
-    runProcess();
-    histSaveUpload(srcRows, fname, { slot, day });
+    const n = await c24Load(day, slot, false);
+    // 다른 기기에도 알려요: 무엇을(날짜 · 오전/오후) 불러왔는지만 저장하고, 주문 내용(이름 · 연락처)은 저장하지 않아요
+    if (n && document.body.classList.contains('fbmode')) { const at = new Date().toISOString(); c24SyncSeen = at; try { localStorage.setItem('h5_c24seen', at); } catch (e) {} stockWrite(C24LAST, { kind: 'c24last', name: '__c24last', day, slot, n, at, by: retWho() }).catch(() => {}); }
   } catch (e) { msg.className = 'msg err'; msg.textContent = e.message; if (e.code === 'not_connected' || e.code === 'expired') c24Status(); }
   finally { btn.disabled = false; }
 }
+// ---------- 다른 기기에서 불러온 주문 따라가기 ----------
+const C24LAST = 'c24last';
+let c24Cur = null, c24SyncSeen = (() => { try { return localStorage.getItem('h5_c24seen') || ''; } catch (e) { return ''; } })(), c24SyncBusy = false;
+function c24SyncCheck() {
+  const L = stock[C24LAST]; if (!L || L.kind !== 'c24last' || !document.body.classList.contains('fbmode') || !c24Cfg().worker) { c24SyncBar(null); return; }
+  if (L.at <= c24SyncSeen || Date.now() - new Date(L.at).getTime() > 18 * 3600e3) { c24SyncBar(null); return; }   // 18시간 지난 건 따라가지 않아요
+  const busy = userEdits && userEdits.size > 0;   // 이 기기에서 고치는 중이면 덮어쓰지 않고 알려만 줘요
+  if (!busy && !c24SyncBusy) { c24SyncGo(L); return; }
+  c24SyncBar(L);
+}
+async function c24SyncGo(L) {
+  c24SyncBusy = true; c24SyncSeen = L.at; try { localStorage.setItem('h5_c24seen', L.at); } catch (e) {}
+  try { const n = await c24Load(L.day, L.slot, true); c24SyncBar(null); if (n) shareToast((L.by ? L.by + '님이 ' : '다른 기기에서 ') + fmtDay(L.day) + ' ' + (L.slot === 'am' ? '오전' : '오후') + ' 주문을 불러와서 여기도 맞췄어요'); }
+  catch (e) { const m = $('c24msg'); if (m) { m.className = 'msg err'; m.textContent = '다른 기기에서 불러온 주문을 받지 못했어요: ' + (e.message || e.code); } }
+  finally { c24SyncBusy = false; }
+}
+function c24SyncBar(L) {
+  const el = $('c24sync'); if (!el) return; el.classList.toggle('hidden', !L); if (!L) return;
+  el.innerHTML = `<span>📥 ${L.by ? esc(L.by) + '님이' : '다른 기기에서'} ${esc(fmtDay(L.day))} ${L.slot === 'am' ? '오전' : '오후'} 주문을 불러왔어요 <small>${esc(new Date(L.at).toTimeString().slice(0, 5))}</small> · 이 기기에서 고친 내용이 있어 자동으로 바꾸지 않았어요</span><button class="btn sm" type="button" id="c24syncgo">이 기기에도 불러오기</button>`;
+}
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('#c24syncgo')) { const L = stock[C24LAST]; if (L) c24SyncGo(L); } });
 function c24FillSet() {
   const c = c24Cfg();
   $('c24url').value = c.worker || ''; $('c24am').value = c.amCut; $('c24pm').value = c.pmCut; $('c24off').value = (c.off || []).join(', ');
@@ -7979,7 +8011,7 @@ function c24Bind() {
   };
   const go = async () => {   // 규칙(중계 서버 주소)이 공유 저장소에서 다 불러와질 때까지 잠깐 기다려요
     for (let i = 0; i < 60 && !c24Cfg().worker; i++) await new Promise(r => setTimeout(r, 250));
-    c24FillSet(); c24ShowWin(); c24Status(); c24Callback();
+    c24FillSet(); c24ShowWin(); c24Status(); c24Callback(); try { c24SyncCheck(); } catch (e) {}
   };
   if (window.h5Fb && window.h5Fb.ready) go(); else window.addEventListener('h5ready', go, { once: true });
 }
