@@ -8321,10 +8321,10 @@ function c24Bind() {
 c24Bind();
 
 // ---------- 내려받기 ----------
-// 엑셀 비고란 맨 뒤에만 붙이는 표시: 영하(최저기온 기준 · 보온 포장)일 때만. 배송 불가 ■배송불가■, 두껍게 ▲두껍게 포장▲, 얇게 △얇게 포장△ — 줄을 바꿔 붙여서 송장 왼쪽 칸에 따로 한 줄로 찍혀요 (50자 안)
+// 엑셀 비고란 맨 뒤에만 붙이는 표시: 영하(최저기온 기준 · 보온 포장)일 때만. 배송 불가 △▲꼼꼼한 포장△▲, 두껍게 ▲꼼꼼한 포장▲, 얇게 △꼼꼼한 포장△ — 줄을 바꿔 붙여서 송장 왼쪽 칸에 따로 한 줄로 찍혀요 (50자 안)
 // (규칙 관리 → 날씨 · 포장의 '엑셀 표시 기호'에 적으면 그 기호를 써요. 아이스팩 기준은 비워 두면 안 붙어요)
 function bandMarks() { const m = new Map(); ((rules.weather && rules.weather.bands) || []).forEach(b => { const l = String(b.label || '').trim(); if (!l || m.has(l)) return; const own = String(b.mark || '').trim(), cold = String(b.basis || '').includes('최저');
-  const def = !cold ? '' : String(b.warn || '').trim() ? '■배송불가■' : /두껍/.test(l) ? '▲두껍게 포장▲' : /얇/.test(l) ? '△얇게 포장△' : ''; if (own || def) m.set(l, own || def); }); return m; }
+  const def = !cold ? '' : String(b.warn || '').trim() ? '△▲꼼꼼한 포장△▲' : /두껍/.test(l) ? '▲꼼꼼한 포장▲' : /얇/.test(l) ? '△꼼꼼한 포장△' : ''; if (own || def) m.set(l, own || def); }); return m; }
 function buildXlsx() {
   const wb = XLSX.utils.book_new();
   const colorMap0 = new Map(result.colors.map(c => [c[0] + ',' + c[1], c[2]]));
