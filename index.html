@@ -285,7 +285,7 @@ th{background:#eef3ec}
 .hd.today .n{text-decoration:underline}
 .hd.on{background:var(--acc);border-color:var(--acc);color:#fff}.hd.on .n{color:#fff}
 .hmsum{margin:10px 0 0}
-.hredate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#fdf3ea;color:#8a4a24;font-size:13px}.hredate span{flex:1;min-width:0}.hredate.hidden{display:none}html.dark .hredate{background:rgba(224,138,60,.14);color:#f0c39d}
+.bmk{margin-left:6px;font-size:13px;color:var(--mute)}.hredate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#fdf3ea;color:#8a4a24;font-size:13px}.hredate span{flex:1;min-width:0}.hredate.hidden{display:none}html.dark .hredate{background:rgba(224,138,60,.14);color:#f0c39d}
 .hbak{margin-top:14px}
 #hbakmsg:empty,#histsave:empty{display:none}
 #histsave{margin:4px 0 0}
@@ -3146,6 +3146,12 @@ const CORE = (() => {
         if (e.big) highlight.push(sheet3.length - 1);
       }
     }
+    // 배송 불가(경고 문구가 있는 기준) 줄을 맨 위로 올려요. 같은 묶음 안 순서는 그대로
+    const warnLab = new Set((W.bands || []).filter(b => s(b.warn).trim()).map(b => s(b.label).trim()).filter(Boolean));
+    if (wCol >= 0 && warnLab.size) {
+      const body = sheet1.slice(1).map((r, i) => ({ r, i: i + 1, w: warnLab.has(s(r[wCol + 1]).trim()) })), ord = body.filter(x => x.w).concat(body.filter(x => !x.w));
+      if (ord.some((x, k) => x.i !== k + 1)) { const mv = new Map(ord.map((x, k) => [x.i, k + 1])); sheet1.splice(1, sheet1.length - 1, ...ord.map(x => x.r)); colors.forEach(c => { if (mv.has(c[0])) c[0] = mv.get(c[0]); }); }
+    }
     return { sheet1, sheet2, sheet3, highlight, warnings, colors, weatherCol: wCol, needed: [...needed.keys()] };
   }
   return { process };
@@ -3269,7 +3275,7 @@ const TABLES = {
   optionMap: { get: () => (rules.optionMap = rules.optionMap || []), cols: [['product','원본 상품명(선택)'],['from','정리된 옵션'],['to','바꿀 옵션']] },
   fixedValues: { get: () => (rules.fixedValues = rules.fixedValues || []), cols: [['col','열 이름'],['value','넣을 값']] },
   extra: { get: () => rules.summary.extra, cols: [['name','집계 상품명'],['add','더할 수량']] },
-  bands: { get: () => rules.weather.bands, cols: [['basis','기준 (최저/최고)'],['min','이상 (°C)'],['max','이하 (°C)'],['label','넣을 문구'],['color','색 코드'],['warn','경고 (선택)']] },
+  bands: { get: () => rules.weather.bands, cols: [['basis','기준 (최저/최고)'],['min','이상 (°C)'],['max','이하 (°C)'],['label','넣을 문구'],['color','색 코드'],['warn','경고 (선택)'],['mark','엑셀 표시 기호']] },
   groups: { get: () => (rules.summary.groups = rules.summary.groups || clone(DEFAULT_RULES.summary.groups)), cols: [['match','상품명에 이 글자가 있으면'],['group','묶음 이름']] },
   stockUnits: { get: () => (rules.stockUnits = rules.stockUnits || []), cols: [['item','재고 품목 이름'],['unit','단위 (kg · g · 개 · 팩 · 송이 …)'],['per','주문 1개당 빠지는 양 (선택)'],['min','최소 수량 (부족 알림)']] },
   mallAlias: { get: () => (rules.mallAlias = Array.isArray(rules.mallAlias) ? rules.mallAlias : JSON.parse(JSON.stringify(MALL_ALIAS0))), cols: [['item','비교에서 보일 이름'],['keywords','묶을 키워드 (쉼표로)'],['exclude','빼는 키워드 (선택)']] },
@@ -3926,8 +3932,9 @@ $('wcal').addEventListener('click', e => {
 function renderWeather() {
   renderDays();
   const B = rules.weather.bands || [];
+  const BMK = bandMarks();
   const rngTxt = b => { const a = b.min === '' || b.min === undefined, z = b.max === '' || b.max === undefined; return a ? esc(b.max) + '도 이하' : z ? esc(b.min) + '도 이상' : esc(b.min) + ' ~ ' + esc(b.max) + '도'; };
-  const grp = (t, list) => list.length ? `<div class="lg"><h4>${t}</h4>` + list.map(b => `<div><span class="rg2">${rngTxt(b)}</span><span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span></div>`).join('') + '</div>' : '';
+  const grp = (t, list) => list.length ? `<div class="lg"><h4>${t}</h4>` + list.map(b => `<div><span class="rg2">${rngTxt(b)}</span><span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span><span class="bmk" title="엑셀에만 붙는 기호">${esc(BMK.get(String(b.label || '').trim()) || '')}</span></div>`).join('') + '</div>' : '';
   $('bandsTxt').innerHTML = grp('보온 포장 · 최저기온 기준', B.filter(b => String(b.basis).includes('최저'))) + grp('아이스팩 · 최고기온 기준', B.filter(b => !String(b.basis).includes('최저')));
   const dd = dayData();
   $('wsrc').innerHTML = wdata ? `
@@ -8534,13 +8541,19 @@ function c24Bind() {
 c24Bind();
 
 // ---------- 내려받기 ----------
+// 엑셀에만 붙이는 기호: 배송 불가는 ★, 나머지 기준은 순서대로 기호를 하나씩 (규칙 관리 → 날씨 · 포장의 '엑셀 표시 기호'로 바꿀 수 있어요)
+const MARKS = ['◆', '●', '▲', '■', '♣', '◎', '♥', '※', '▼', '◇'];
+function bandMarks() { const m = new Map(); let i = 0; ((rules.weather && rules.weather.bands) || []).forEach(b => { const l = String(b.label || '').trim(); if (!l || m.has(l)) return; const own = String(b.mark || '').trim(); m.set(l, own || (String(b.warn || '').trim() ? '★' : MARKS[i++ % MARKS.length])); }); return m; }
 function buildXlsx() {
   const wb = XLSX.utils.book_new();
   const colorMap0 = new Map(result.colors.map(c => [c[0] + ',' + c[1], c[2]]));
   // 내려받는 파일에는 예보기온 · 포장방법 칸을 넣지 않아요 (화면에서만 확인)
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
-    const full = result[key], drop = new Set(full[0].map((h, c) => wxHeads.has(String(h)) ? c : -1).filter(c => c >= 0));
+    let full = result[key];
+    if (si === 0) { const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('주문상품명'), BM = bandMarks();
+      if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].join(''); if (!mk) return r; const c = r.slice(); c[nc] = mk + ' ' + (c[nc] ?? ''); return c; }); }
+    const drop = new Set(full[0].map((h, c) => wxHeads.has(String(h)) ? c : -1).filter(c => c >= 0));
     const aoa = drop.size ? full.map(r => r.filter((_, c) => !drop.has(c))) : full;
     const ws = XLSX.utils.aoa_to_sheet(aoa, { cellDates: true, dateNF: 'yyyy-mm-dd' });
     const range = XLSX.utils.decode_range(ws['!ref']);
