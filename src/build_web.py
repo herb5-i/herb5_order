@@ -20,7 +20,7 @@ rep('<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bun
     f'<script src="https://www.gstatic.com/firebasejs/{FB}/firebase-firestore-compat.js"></script>\n'
     '<script src="firebase-config.js"></script>\n' + INLINE_CFG)
 rep('<h1><span class="h1a">Herb5 - </span>허브아이</h1>', '<h1><span class="h1a">Herb5 - </span>허브아이 <span class="pill">웹</span></h1>')
-rep('<title>Herb5 - 허브아이</title>', '<title>Herb5 - 허브아이</title>\n<link rel="apple-touch-icon" href="apple-touch-icon.png">\n<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">\n<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">\n<link rel="manifest" href="manifest.webmanifest">\n<meta name="theme-color" content="#f5f2ea">\n<meta name="apple-mobile-web-app-title" content="허브아이">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="default">')
+rep('<title>Herb5 - 허브아이</title>', '<title>Herb5 - 허브아이</title>\n<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">\n<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2">\n<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png?v=2">\n<link rel="manifest" href="manifest.webmanifest">\n<meta name="theme-color" content="#f5f2ea">\n<meta name="apple-mobile-web-app-title" content="허브아이">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="default">')
 logo = re.search(r'<img class="mark"[^>]*? src="(data:image/png;base64,[^"]+)"', s).group(1)
 # 머리말: 계정 표시
 rep('''      <span class="sync" id="syncbadge" title=""></span>''', '''      <span class="sync" id="syncbadge" title=""></span>
@@ -105,12 +105,12 @@ open(os.path.join(out, 'manifest.webmanifest'), 'w', encoding='utf8').write('''{
   "display": "standalone",
   "scope": "./",
   "id": "./",
-  "background_color": "#d2d3c1",
+  "background_color": "#ffffff",
   "theme_color": "#0f8584",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icon-192.png?v=2", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png?v=2", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png?v=2", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
 ''')
