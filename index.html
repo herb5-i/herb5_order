@@ -1608,11 +1608,17 @@ html.dark .mall .mzero{background:rgba(255,255,255,.05);border-color:rgba(238,13
 .mall .mzx{margin-left:8px;vertical-align:middle}.mall .mzn{margin:8px 0 0;padding:10px 14px;border-radius:12px;background:rgba(214,150,70,.1);font-size:14px;color:var(--ink);line-height:1.55}.mall .mzn .lnk{font-weight:700;white-space:nowrap}
 .mall .mupdn{flex-basis:100%;order:3;margin:-2px 0 0;font-size:13.5px;font-weight:600;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:baseline}.mall .mupdn i{font-style:normal;color:var(--mute,#889)}.mall .mupdn small{font-weight:400;margin-left:8px}.mall th.mchn{white-space:normal;word-break:keep-all;line-height:1.3}
 .mall tfoot .mtot td{border-top:2px solid var(--line,#d9ddd5);background:rgba(63,127,80,.06);font-weight:600}.mall tfoot .mtot td.sb .sbf{font-weight:400}html.dark .mall tfoot .mtot td{background:rgba(255,255,255,.04)}
+.mall .mna{color:var(--mute,#667)}.mall .mna b{color:#a5782a!important;font-size:inherit!important}.mall .mna .btn{margin-left:6px}
+.mall .mchk{display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:99px;border:1px solid #e3c08a;background:#fdf3e2;color:#8a5a12;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}html.dark .mall .mchk{background:rgba(227,192,138,.15);color:#f0c58c;border-color:rgba(227,192,138,.35)}
+.mall .tbw{display:grid;grid-template-columns:30px 1fr;column-gap:6px}.mall .tby{position:relative;height:84px;font-size:10.5px;color:var(--mute,#778)}.mall .tby span{position:absolute;right:0;transform:translateY(50%);white-space:nowrap}.mall .tbw .tbl{grid-column:2}
+.mall .tbs{position:relative}.mall .tbs em{position:absolute;left:0;right:0;border-top:1px dashed rgba(120,130,110,.25);pointer-events:none}
+.mall button.tbc{border:0;background:none;padding:0;cursor:pointer;font:inherit}.mall .tbc.sel{background:rgba(63,127,80,.1);border-radius:3px}
+.mall .tbtip{margin:2px 0 0 36px;font-size:12.5px;color:var(--mute,#667);min-height:1.2em}
 .mall .mcmp{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-2px 0 6px;font-size:12.5px;color:var(--mute,#667)}
 .mall tr.mdet .mtr{max-width:var(--tw,100%);white-space:normal}.mall tr.mdet .mtr *{white-space:normal}.mall tr.mdet .tbl span,.mall tr.mdet .mns,.mall tr.mdet .seg button{white-space:nowrap}.mall tr.mdet>td{background:rgba(63,127,80,.04);padding:12px 14px!important;white-space:normal;text-align:left}html.dark .mall tr.mdet>td{background:rgba(255,255,255,.03)}
 .mall .mtrh{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:13px}.mall .mtrh>b{font-size:14px}.mall .mtrh .seg{margin-left:auto}
 .mall .lgc,.mall .lgp{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 3px 0 8px;vertical-align:-1px;background:#3f7f50}.mall .lgp{background:#cfd3cb}
-.mall .tbw{margin:10px 0 2px}.mall .tbs{display:flex;align-items:flex-end;gap:2px;height:84px;border-bottom:1px solid var(--line,#dfe3dc)}.mall .tbc{flex:1;height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center;gap:1px;min-width:0}
+.mall .tbw{margin:10px 0 0}.mall .tbs{display:flex;align-items:flex-end;gap:2px;height:84px;border-bottom:1px solid var(--line,#dfe3dc)}.mall .tbc{flex:1;height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center;gap:1px;min-width:0}
 .mall .tbc i{display:block;width:45%;max-width:12px;border-radius:2px 2px 0 0;min-height:0}.mall .tbc i.c{background:#3f7f50}.mall .tbc i.p{background:#cfd3cb}html.dark .mall .tbc i.p{background:rgba(255,255,255,.22)}html.dark .mall .tbc i.c{background:#7fcf93}
 .mall .tbl{position:relative;height:18px;font-size:11px;color:var(--mute,#778)}.mall .tbl span{position:absolute;top:3px;transform:translateX(-50%);white-space:nowrap}.mall .tbl span:first-child{transform:none;left:0!important}.mall .tbl span:last-child{transform:translateX(-100%);left:100%!important}
 .mall .mtrs{margin:6px 0 0;font-size:13.5px;color:var(--ink)}
@@ -8368,32 +8374,39 @@ function mallAgg(from, to) {
   }
   return { items, tot, raw, byM };
 }
-let mallQ = '', mallChSel = new Set(MALL_CH.map(c => c[0])), mallSort = 'my', mallEdit = false, mallSaveT = null, mallMode = 'qty', mallZero = false, mallSumTxt = '', mallSortBy = { qty: null, diff: null };   // 보기마다 사용자가 고른 정렬 기억 (증감 보기 처음엔 감소 수량 큰 순)
+let mallQ = '', mallChSel = new Set(MALL_CH.map(c => c[0])), mallSort = 'my', mallEdit = false, mallSaveT = null, mallMode = 'qty', mallZero = false, mallChk = false, mallSumTxt = '', mallSortBy = { qty: null, diff: null };   // 보기마다 사용자가 고른 정렬 기억 (증감 보기 처음엔 감소 수량 큰 순)
 const mJosa = (w, a, b) => { const c = String(w || '').trim().slice(-1).charCodeAt(0); if (c < 0xAC00 || c > 0xD7A3) return a + '(' + b + ')'; const j = (c - 0xAC00) % 28; return (a === '으로' ? (j && j !== 8) : j) ? a : b; };
 const MALL_NOTE = 'mallnote';
+const mallChkSet = () => new Set(mallNotes().filter(x => x.status !== 'done').map(x => x.item));
 const mallNotes = () => { const d = stock[MALL_NOTE]; return d && d.kind === 'mallnote' && Array.isArray(d.notes) ? d.notes : []; };
 async function mallNoteWrite(fn) { const cur = mallNotes().map(x => Object.assign({}, x)); fn(cur); await stockWrite(MALL_NOTE, cur.length ? { kind: 'mallnote', name: '__mallnote', notes: cur, updatedAt: new Date().toISOString() } : null); }
 function mallDetail(n, rg, chs, cols) {   // 품목을 펼치면: 일별/주별 추이(이번 기간 · 비교 기간 겹쳐 보기) + 최근 판매일 + 확인 메모
   const alias = mallAliasFn(), ks = new Set(chs.map(c => c[0])), fmt = x => x.toLocaleString('ko-KR'), today = isoDate(new Date());
   const long = rg.days > 92, unit = long ? 'week' : mallTrendUnit, nb = unit === 'week' ? Math.ceil(rg.days / 7) : rg.days;
   const cur = Array(nb).fill(0), prv = Array(nb).fill(0); let last = '', lastIn = '';
+  const prevOkD = !rg.pfrom || (() => { for (let d = dOf(rg.pfrom.slice(0, 7) + '-01'); ymOf(d) <= rg.pto.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) if (!mallMem.has(ymOf(d)) && ymOf(d) >= mallFirstYm()) return false; return true; })();
   const scan = (from, to, arr) => { for (let d = dOf(from.slice(0, 7) + '-01'); ymOf(d) <= to.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) { const c = mallMem.get(ymOf(d)); if (!c) continue;
     c.rows.forEach(([day, ch, nm, , q]) => { if (day < from || day > to || !q || !ks.has(ch) || alias(nm) !== n) return; let i = Math.round((dOf(day) - dOf(from)) / 864e5); if (unit === 'week') i = Math.floor(i / 7); if (i >= 0 && i < nb) arr[i] += q; }); } };
   scan(rg.from, rg.to, cur); if (rg.pfrom) scan(rg.pfrom, rg.pto, prv);
-  mallMem.forEach(v => (v.rows || []).forEach(([day, ch, nm, , q]) => { if (q > 0 && day <= today && ks.has(ch) && day > last && alias(nm) === n) last = day; }));
+  const endD = rg.to < today ? rg.to : today;
+  mallMem.forEach(v => (v.rows || []).forEach(([day, ch, nm, , q]) => { if (q > 0 && day <= endD && ks.has(ch) && day > last && alias(nm) === n) last = day; }));
   cur.forEach((q, i) => { if (q) lastIn = i; });
   const mx = Math.max(1, ...cur, ...prv), lab = i => { const d = new Date(dOf(rg.from).getTime() + (unit === 'week' ? i * 7 : i) * 864e5); return `${d.getMonth() + 1}/${d.getDate()}`; };
   const pd = i => { const d = new Date(dOf(rg.pfrom || rg.from).getTime() + (unit === 'week' ? i * 7 : i) * 864e5); return `${d.getMonth() + 1}/${d.getDate()}`; };
-  const ago = last ? Math.round((dOf(today) - dOf(last)) / 864e5) : null;
+  const ago = last ? Math.round((dOf(endD) - dOf(last)) / 864e5) : null;
+  const fd = (iso0, i) => { const d = new Date(dOf(iso0).getTime() + (unit === 'week' ? i * 7 : i) * 864e5); return `${d.getMonth() + 1}월 ${d.getDate()}일${unit === 'week' ? '부터 1주' : ''}`; };
+  const step = mx <= 4 ? 1 : Math.ceil(mx / 4 / (mx > 40 ? 10 : mx > 10 ? 5 : 1)) * (mx > 40 ? 10 : mx > 10 ? 5 : 1), top = Math.max(step, Math.ceil(mx / step) * step), yt = []; for (let v = 0; v <= top; v += step) yt.push(v);
   const sumC = cur.reduce((a, b) => a + b, 0), sumP = prv.reduce((a, b) => a + b, 0);
-  const bars = cur.map((q, i) => `<div class="tbc" title="${unit === 'week' ? lab(i) + ' 주' : lab(i)}: 이번 ${fmt(q)}개${rg.pfrom ? ` · 비교(${pd(i)}${unit === 'week' ? ' 주' : ''}) ${fmt(prv[i])}개` : ''}">${rg.pfrom ? `<i class="p" style="height:${prv[i] / mx * 100}%"></i>` : ''}<i class="c" style="height:${q / mx * 100}%"></i></div>`).join('');
+  const tipOf = i => `${fd(rg.from, i)} ${fmt(cur[i])}개${rg.pfrom && prevOkD ? ` / ${fd(rg.pfrom, i)} ${fmt(prv[i])}개` : ''}`;
+  const bars = cur.map((q, i) => `<button type="button" class="tbc" data-tbtip="${esc(tipOf(i))}" title="${esc(tipOf(i))}">${rg.pfrom && prevOkD ? `<i class="p" style="height:${prv[i] / top * 100}%"></i>` : ''}<i class="c" style="height:${q / top * 100}%"></i></button>`).join('');
   const ticks = [0, Math.floor((nb - 1) / 2), nb - 1].filter((v, i, a) => a.indexOf(v) === i);
   const notes = mallNotes().filter(x => x.item === n).sort((a, b) => String(b.at).localeCompare(String(a.at)));
   const chNm = chs.length === MALL_CH.filter(c => c[0] !== 'etc').length || chs.length >= 4 ? '전체 쇼핑몰' : chs.map(c => c[1]).join('·');
   return `<tr class="mo mdet"><td colspan="${cols}"><div class="mtr">
-    <div class="mtrh"><b>판매 추이</b><span class="mu">${chNm} · ${dayTxtS(rg.from, rg.to)}${rg.pfrom ? ` <i class="lgc"></i>이번 <i class="lgp"></i>비교(${dayTxtS(rg.pfrom, rg.pto)})` : ''}</span>${long ? '<small class="mu">긴 기간은 주별로 봐요</small>' : `<div class="seg sm" role="group" aria-label="추이 단위"><button type="button" data-malltu="day" class="${unit === 'day' ? 'on' : ''}">일별</button><button type="button" data-malltu="week" class="${unit === 'week' ? 'on' : ''}">주별</button></div>`}</div>
-    <div class="tbw"><div class="tbs">${bars}</div><div class="tbl">${ticks.map(i => `<span style="left:${(i + .5) / nb * 100}%">${lab(i)}</span>`).join('')}</div></div>
-    <p class="mtrs">이번 ${fmt(sumC)}개${rg.pfrom ? ` · 비교 기간 ${fmt(sumP)}개` : ''} · <b>최근 판매일 ${last ? `${Number(last.slice(5, 7))}월 ${Number(last.slice(8))}일${ago ? ` (${ago}일 전)` : ' (오늘)'}` : '받아 둔 자료에 없어요'}</b>${sumC && lastIn !== '' && lastIn < nb - 1 && unit === 'day' && nb - 1 - lastIn >= 3 ? ` · <span class="dn">${nb - 1 - lastIn}일째 판매 없음</span>` : ''}</p>
+    <div class="mtrh"><b>판매 추이</b><span class="mu">${chNm} · ${dayTxtS(rg.from, rg.to)} · 단위: 개${rg.pfrom ? ` <i class="lgc"></i>이번 ${prevOkD ? `<i class="lgp"></i>비교(${dayTxtS(rg.pfrom, rg.pto)})` : '· 비교 자료 미수집'}` : ''}</span>${long ? '<small class="mu">긴 기간은 주별로 봐요</small>' : `<div class="seg sm" role="group" aria-label="추이 단위"><button type="button" data-malltu="day" class="${unit === 'day' ? 'on' : ''}">일별</button><button type="button" data-malltu="week" class="${unit === 'week' ? 'on' : ''}">주별</button></div>`}</div>
+    <div class="tbw"><div class="tby">${yt.map(v => `<span style="bottom:${v / top * 100}%">${fmt(v)}</span>`).join('')}</div><div class="tbs">${yt.slice(1).map(v => `<em style="bottom:${v / top * 100}%"></em>`).join('')}${bars}</div><div class="tbl">${ticks.map(i => `<span style="left:${(i + .5) / nb * 100}%">${lab(i)}</span>`).join('')}</div></div>
+    <p class="tbtip" aria-live="polite">막대를 누르면 날짜별 수량을 보여 줘요</p>
+    <p class="mtrs">이번 ${fmt(sumC)}개${rg.pfrom && prevOkD ? ` · 비교 기간 ${fmt(sumP)}개` : ''} · <b>${last ? `마지막 판매 ${Number(last.slice(5, 7))}월 ${Number(last.slice(8))}일${ago ? ` · <span class="dn">이후 ${ago}일간 판매 0개</span>` : ''}` : '받아 둔 자료에 판매 기록이 없어요'}</b></p>
     <div class="mnt"><div class="mnth"><b>확인 메모</b><small class="mu">쇼핑몰 · 기간이 자동으로 붙어요</small></div>
       ${notes.map(x => `<div class="mnr ${x.status === 'done' ? 'done' : ''}"><button type="button" class="mns" data-mallnst="${esc(x.id)}" title="누르면 ${x.status === 'done' ? '확인 중' : '확인 완료'}으로 바꿔요">${x.status === 'done' ? '✓ 확인 완료' : '확인 중'}</button><span class="mnx">${esc(x.text)}</span><small class="mu">${esc(x.malls || '')} · ${esc(x.range || '')} · ${esc(String(x.at || '').slice(5, 10).replace('-', '/'))} ${esc(hhmm(x.at))}${x.by ? ' · ' + esc(x.by) : ''}</small><button type="button" class="ibtn sm" data-mallndel="${esc(x.id)}" title="지우기" aria-label="지우기">${IC.trash}</button></div>`).join('')}
       <form class="mnf" data-mallnote="${esc(n)}" data-malls="${esc(chNm)}" data-range="${esc(dayTxtS(rg.from, rg.to))}" autocomplete="off"><input name="t" maxlength="200" placeholder="확인한 내용 (예: 쿠팡 상품 노출 상태 확인 중)"><select name="s" aria-label="상태"><option value="doing">확인 중</option><option value="done">확인 완료</option></select><button class="btn sm pri" type="submit">메모 남기기</button></form>
@@ -8405,10 +8418,10 @@ function mallScrollTo(el) {   // 위에 붙는 하위 탭(월간 보고서 · �
   window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - top), behavior: 'smooth' });
 }
 function mallList(A, P, chs, hasP) {   // 화면 · 복사에서 같이 쓰는 품목 목록 (pt = 이전 기간 수량)
-  const totOf = o => chs.reduce((a, c) => a + o[c[0]], 0), drop = hasP && (mallSort === 'drop' || mallMode === 'diff' || chs.length === 1 || mallZero), byDrop = hasP && mallSort === 'drop', pt = n => { const v = P.items.get(n); return v ? totOf(v.c) : 0; };
+  const totOf = o => chs.reduce((a, c) => a + o[c[0]], 0), drop = hasP && (mallSort === 'drop' || mallMode === 'diff' || chs.length === 1 || mallZero || mallChk), byDrop = hasP && mallSort === 'drop', pt = n => { const v = P.items.get(n); return v ? totOf(v.c) : 0; };
   const all = [...A.items.values()].map(it => Object.assign(it, { tt: totOf(it.c), pt: hasP ? pt(it.n) : 0 }));
   if (drop) P.items.forEach((v, n) => { if (!A.items.has(n) && totOf(v.c) > 0) all.push({ n, c: mallZ(), t: 0, ops: new Map(), src: v.src, tt: 0, pt: totOf(v.c) }); });   // 이번엔 하나도 안 팔린 품목도 감소 순에 넣어요
-  const hit = all.filter(it => (it.tt > 0 || (drop && it.pt > 0)) && (!(hasP && mallZero) || (it.tt === 0 && it.pt > 0)) && mallMatch(it));
+  const hit = all.filter(it => (it.tt > 0 || (drop && it.pt > 0)) && (!(hasP && mallZero) || (it.tt === 0 && it.pt > 0)) && (!mallChk || mallChkSet().has(it.n)) && mallMatch(it));
   const list = byDrop ? hit.slice().sort((a, b) => (a.tt - a.pt) - (b.tt - b.pt) || b.pt - a.pt) : mallSortList(hit, x => x.n, x => x.tt, mallOrd().items);
   return { list, hit, gone: drop };
 }
@@ -8455,10 +8468,10 @@ function renderMall() {
   const rg = mallRange(), A = mallAgg(rg.from, rg.to), P = mallAgg(rg.pfrom, rg.pto);
   const shown = MALL_CH.filter(c => c[0] === 'self' || A.tot[c[0]] || P.tot[c[0]]), chs = shown.filter(c => mallChSel.has(c[0]));
   const totOf = o => chs.reduce((a, c) => a + o[c[0]], 0);
-  const pct = (a, b) => b ? Math.round(a / b * 100) : 0, fmt = n => n.toLocaleString('ko-KR'), hasP = !!rg.pfrom, sg = n => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmt(Math.abs(n)), cls = n => n > 0 ? 'up' : n < 0 ? 'dn' : 'mu';
-  const chg = (a, b) => { if (!hasP || (!b && !a)) return ''; if (!b) return '<span class="up">새로</span>'; const r = Math.round((a - b) / b * 100); return r > 0 ? `<span class="up">▲${r}%</span>` : r < 0 ? `<span class="dn">▼${-r}%</span>` : ''; };
+  const pct = (a, b) => b ? Math.round(a / b * 100) : 0, fmt = n => n.toLocaleString('ko-KR'), hasP0 = !!rg.pfrom, sg = n => (n > 0 ? '+' : n < 0 ? '−' : '±') + fmt(Math.abs(n)), cls = n => n > 0 ? 'up' : n < 0 ? 'dn' : 'mu';
+  const chg = (a, b) => { if (!hasP || (!b && !a)) return ''; if (!b) return '<span class="up">이전 0개</span>'; const r = Math.round((a - b) / b * 100); return r > 0 ? `<span class="up">▲${r}%</span>` : r < 0 ? `<span class="dn">▼${-r}%</span>` : ''; };
   // 말로 쓰는 증감: "166개 감소 (−32%)"
-  const word = (a, b, strong) => { const d = a - b, w = d < 0 ? fmt(-d) + '개 감소' : d > 0 ? fmt(d) + '개 증가' : '변화 없음', r = !b ? (a ? ' (새로 판매)' : '') : d ? ` (${d > 0 ? '+' : '−'}${Math.abs(Math.round(d / b * 100))}%)` : '';
+  const word = (a, b, strong) => { const d = a - b, w = d < 0 ? fmt(-d) + '개 감소' : d > 0 ? fmt(d) + '개 증가' : '변화 없음', r = !b ? (a ? ` (${prevNm} 0개 → ${fmt(a)}개)` : '') : d ? ` (${d > 0 ? '+' : '−'}${Math.abs(Math.round(d / b * 100))}%)` : '';
     return strong ? `<b class="${cls(d)}">${w}</b>${r}` : `<span class="${cls(d)}">${w}${r}</span>`; };
   const perNm = { week: '이번 주', month: '이번 달', last: '지난달', '3m': '최근 3개월', year: '올해', lastyear: '작년', all: '전체(5년)', custom: '고른 기간' }[mallPer] || '고른 기간';
   const yoy = mallCmp === 'yoy' && !['all', 'year', 'lastyear'].includes(mallPer);
@@ -8468,22 +8481,23 @@ function renderMall() {
     return y1 === y2 && m1 === m2 ? `${yy ? y1 + '년 ' : ''}${m1}월 ${d1}~${d2}일` : `${yy ? y1 + '년 ' : ''}${m1}월 ${d1}일 ~ ${yy ? y2 + '년 ' : ''}${m2}월 ${d2}일`; };
   const have = [...mallMem.keys()].filter(k => k >= mallFirstYm()).length, want = MALL_YEARS * 12 + 1;
   const monthsOf = (a, b) => { const o = []; if (!a) return o; for (let d = dOf(a.slice(0, 7) + '-01'); ymOf(d) <= b.slice(0, 7); d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) o.push(ymOf(d)); return o; };
-  const curOk = monthsOf(rg.from, rg.to).every(m => mallMem.has(m)), prevOk = !hasP || monthsOf(rg.pfrom, rg.pto).every(m => mallMem.has(m) || m < mallFirstYm());
+  const curOk = monthsOf(rg.from, rg.to).every(m => mallMem.has(m)), prevOk = !hasP0 || monthsOf(rg.pfrom, rg.pto).every(m => mallMem.has(m) || m < mallFirstYm());
+  const hasP = hasP0 && prevOk, noCmp = hasP0 && !prevOk;   // 비교 기간 자료를 아직 못 받았으면 증감 · 비교 문구를 모두 빼요
   const per = [['week', '이번 주'], ['month', '이번 달'], ['last', '지난달'], ['3m', '최근 3개월'], ['year', '올해'], ['lastyear', '작년'], ['all', '전체(5년)']];
-  if (!hasP) { if (mallSort === 'drop') mallSort = 'qty'; mallMode = 'qty'; }
+  if (!hasP0) { if (mallSort === 'drop') mallSort = 'qty'; mallMode = 'qty'; }
   if (!hasP) mallZero = false;
   const filtered = !!mallQ.trim(), { list, hit, gone } = mallList(A, P, chs, hasP);
   const prevS = yoy ? '작년' : { month: '지난달', week: '지난주', year: '작년', lastyear: '재작년', last: '그 전달' }[mallPer] || '앞 기간';
-  const dW = d => d < 0 ? fmt(-d) + '개 감소' : d > 0 ? fmt(d) + '개 증가' : '변화 없음', rP = (t, p) => !p ? (t ? '새로 판매' : '') : (t - p ? (t > p ? '+' : '−') + Math.abs(Math.round((t - p) / p * 100)) + '%' : '0%'), plain = (t, p) => dW(t - p) + (rP(t, p) ? '(' + rP(t, p) + ')' : '');
+  const dW = d => d < 0 ? fmt(-d) + '개 감소' : d > 0 ? fmt(d) + '개 증가' : '변화 없음', rP = (t, p) => !p ? (t ? '이전 0개' : '') : (t - p ? (t > p ? '+' : '−') + Math.abs(Math.round((t - p) / p * 100)) + '%' : '0%'), plain = (t, p) => !p && t ? `${prevNm} 0개 → ${fmt(t)}개` : dW(t - p) + (rP(t, p) ? '(' + rP(t, p) + ')' : '');
   const sumT = filtered ? hit.reduce((a, it) => { MALL_CH.forEach(([k]) => a[k] += it.c[k]); return a; }, mallZ()) : A.tot;
   const sumP = filtered ? [...P.items.values()].filter(mallMatch).reduce((a, it) => { MALL_CH.forEach(([k]) => a[k] += it.c[k]); return a; }, mallZ()) : P.tot;
   const sum = totOf(sumT), solo = chs.length === 1 && shown.length > 1 ? chs[0][0] : '', soloNm = solo ? MALL_CH.find(c => c[0] === solo)[1] : '';
-  const dm = !solo && mallMode === 'diff', soloT = solo && hasP;   // 한 쇼핑몰만 고르면 '지난달 → 이번 달 → 변화' 표
+  const dm = hasP && !solo && mallMode === 'diff', soloT = solo && hasP;   // 한 쇼핑몰만 고르면 '지난달 → 이번 달 → 변화' 표
   const cS = shown.reduce((a, [k]) => a + sumT[k], 0), cP = shown.reduce((a, [k]) => a + sumP[k], 0);
   let h = `<div class="mh"><h2>쇼핑몰 비교</h2>${shareBtns('mall')}<button class="ibtn" id="malltsv" type="button" title="표 복사 (엑셀·구글 시트에 붙여넣기)" aria-label="엑셀용 표 복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 4.5v15" stroke="currentColor" stroke-width="1.6"/></svg></button><button class="btn sm msumcp" id="mallsumcp" type="button" title="이 화면의 기간 · 쇼핑몰 기준 요약 문장을 복사해요">${IC.copy}<span>요약 복사</span></button><span class="mhsp"></span>${mallBusy ? '<button class="btn sm" id="mallstop" type="button">멈추기</button>' : `<span class="mhave">전체 자료 ${have}/${want}개월</span><button class="btn sm" id="mallall" type="button">${have >= want ? '5년치 다시 받기' : '5년치 모두 받기'}</button><button class="btn sm" id="mallre" type="button">새로 받기</button>`}</div>
     <div class="mper">${per.map(([k, l]) => `<button type="button" data-mallper="${k}" class="${mallPer === k ? 'on' : ''}">${l}</button>`).join('')}<span class="mpd ${mallPer === 'custom' ? 'on' : ''}"><span>직접</span><input type="date" id="mallf" value="${rg.from}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}" aria-label="시작일"><span class="til">~</span><input type="date" id="mallt" value="${rg.to}" min="${mallFirstYm()}-01" max="${isoDate(new Date())}" aria-label="끝날"></span></div>
-    ${hasP && !['year', 'lastyear'].includes(mallPer) ? `<div class="mcmp"><span>비교 기준</span><div class="seg sm" role="group" aria-label="비교 기준"><button type="button" data-mallcmp="prev" class="${!yoy ? 'on' : ''}">${{ week: '지난주', month: '지난달', last: '그 전달' }[mallPer] || '바로 앞'} 같은 기간</button><button type="button" data-mallcmp="yoy" class="${yoy ? 'on' : ''}">작년 같은 기간</button></div></div>` : ''}
-    <p class="mnote">결제일 ${dayTxt(rg.from, rg.to)}${hasP ? ' · 비교 ' + dayTxt(rg.pfrom, rg.pto) : ''} · ${curOk && prevOk ? '<span class="mok">✓ ' + (hasP ? '비교 기간 자료 확보' : '자료 확보') + '</span>' : mallBusy ? '자료 받는 중' : `<span class="dn">${!prevOk && curOk ? '비교 기간 자료가 아직 없어요' : '자료가 다 없어요'}</span> <button type="button" class="btn sm" id="mallcmpget">비교 자료 받기</button>`} · 취소된 주문은 빼고 수량만 세요${mallMsg ? ' · <b>' + esc(mallMsg) + '</b>' : ''}</p>`;
+    ${hasP0 && !['year', 'lastyear'].includes(mallPer) ? `<div class="mcmp"><span>비교 기준</span><div class="seg sm" role="group" aria-label="비교 기준"><button type="button" data-mallcmp="prev" class="${!yoy ? 'on' : ''}">${{ week: '지난주', month: '지난달', last: '그 전달' }[mallPer] || '바로 앞'} 같은 기간</button><button type="button" data-mallcmp="yoy" class="${yoy ? 'on' : ''}">작년 같은 기간</button></div></div>` : ''}
+    <p class="mnote">결제일 ${dayTxt(rg.from, rg.to)}${hasP0 ? ' · 비교 ' + dayTxt(rg.pfrom, rg.pto) : ''} · ${curOk && prevOk ? '<span class="mok">✓ ' + (hasP0 ? '비교 기간 자료 확보' : '자료 확보') + '</span>' : mallBusy ? '자료 받는 중' : `<span class="dn">${!prevOk && curOk ? '비교 기간 자료가 아직 없어요' : '자료가 다 없어요'}</span> <button type="button" class="btn sm" id="mallcmpget">비교 자료 받기</button>`} · 취소된 주문은 빼고 수량만 세요${mallMsg ? ' · <b>' + esc(mallMsg) + '</b>' : ''}</p>`;
   const searchBox = `<label class="msq mtq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="mallq" type="search" data-ac="1" placeholder="품목 · 옵션 검색" value="${esc(mallQ)}" autocomplete="off">${mallQ ? '<button type="button" id="mallqx" aria-label="지우기">×</button>' : ''}</label>`;
   const done = () => { el.innerHTML = h; { const tw = el.querySelector('.tblwrap'); if (tw) el.style.setProperty('--tw', Math.max(200, tw.clientWidth - 18) + 'px'); } const cw = el.querySelector('.mchw'); if (cw) cw.scrollLeft = cw.scrollWidth; if (keepFocus) { const q = $('mallq'); if (q) { q.focus(); try { q.setSelectionRange(keepFocus[0], keepFocus[1]); } catch (e) {} } } };
   if (!chs.length) { h += `<div class="mtbar">${searchBox}</div>` + '<p class="mempty">쇼핑몰을 하나 이상 골라 주세요</p>'; return done(); }
@@ -8492,27 +8506,28 @@ function renderMall() {
   const dd = shown.map(([k, l]) => [k, l, sumT[k] - sumP[k]]), worst = dd.slice().sort((a, b) => a[2] - b[2])[0], best = dd.slice().sort((a, b) => b[2] - a[2])[0];
   const mv1 = hasP && shown.length > 1 ? (cS - cP <= 0 ? (worst[2] < 0 ? ['줄어든', worst] : null) : (best[2] > 0 ? ['늘어난', best] : null)) : null;
   const mvC = mv1 ? MALL_CH.find(c => c[0] === mv1[1][0]) : null;
-  h += `<div class="msum ${mv1 ? 'two' : ''}"><div class="msl"><p class="msk">${filtered ? '검색한 품목 ' : ''}${perNm} 전체 판매</p><b class="msn">${fmt(cS)}<small>개</small></b>${hasP ? `<p class="mres">${prevS} 같은 기간보다 ${word(cS, cP, true)}</p>` : ''}</div>
+  h += `<div class="msum ${mv1 ? 'two' : ''}"><div class="msl"><p class="msk">${filtered ? '검색한 품목 ' : ''}${perNm} 전체 판매</p><b class="msn">${fmt(cS)}<small>개</small></b>${hasP ? `<p class="mres">${prevS} 같은 기간보다 ${word(cS, cP, true)}</p>` : noCmp ? `<p class="mres mna">${prevNm} <b>자료 미수집</b> <button type="button" class="btn sm" id="mallcmpget2">비교 자료 받기</button></p>` : ''}</div>
     ${mv1 ? `<div class="msr" style="--c:${mvC[2]}"><p class="msk">가장 많이 ${mv1[0] === '줄어든' ? '감소한' : '증가한'} 쇼핑몰</p><b class="msm2"><i></i>${mvC[1]}</b><p class="mres">${word(sumT[mvC[0]], sumP[mvC[0]], true)}</p>${solo === mvC[0] ? '' : `<button type="button" class="btn sm msgo" data-mallcard="${mvC[0]}">품목 보기 ›</button>`}</div>` : ''}</div>`;
   // 2) 쇼핑몰 카드: 두 퍼센트에 이름 붙이기
-  h += `<p class="mkcap">쇼핑몰별 판매${hasP ? ` · <b>${prevNm} 대비</b>` : ''} · 카드를 누르면 그 쇼핑몰 품목을 봐요</p><div class="mkpi">${shown.map(([k, l, c]) => `<button type="button" class="mkc ${solo === k ? 'on' : ''}" data-mallcard="${k}" style="--c:${c}" aria-pressed="${solo === k}" title="${solo === k ? '누르면 모든 쇼핑몰로 돌아가요' : l + ' 품목별 판매 변화 보기'}"><span class="mkn"><i></i>${l}${solo === k ? '<em>✓ 선택됨</em>' : ''}</span><span class="mk1"><b>${fmt(sumT[k])}<small>개</small></b><i class="mkdot"> · </i>전체 판매량의 ${pct(sumT[k], cS)}%</span>${hasP && (sumT[k] || sumP[k]) ? `<span class="mkd">${word(sumT[k], sumP[k], true)}</span>` : ''}</button>`).join('')}</div>`;
+  h += `<p class="mkcap">쇼핑몰별 판매${hasP ? ` · <b>${prevNm} 대비</b>` : noCmp ? ` · ${prevNm} 자료 미수집이라 증감은 빼고 보여 줘요` : ''} · 카드를 누르면 그 쇼핑몰 품목을 봐요</p><div class="mkpi">${shown.map(([k, l, c]) => `<button type="button" class="mkc ${solo === k ? 'on' : ''}" data-mallcard="${k}" style="--c:${c}" aria-pressed="${solo === k}" title="${solo === k ? '누르면 모든 쇼핑몰로 돌아가요' : l + ' 품목별 판매 변화 보기'}"><span class="mkn"><i></i>${l}${solo === k ? '<em>✓ 선택됨</em>' : ''}</span><span class="mk1"><b>${fmt(sumT[k])}<small>개</small></b><i class="mkdot"> · </i>${noCmp ? '이번 기간 ' : ''}전체 판매량의 ${pct(sumT[k], cS)}%</span>${hasP && (sumT[k] || sumP[k]) ? `<span class="mkd">${word(sumT[k], sumP[k], true)}</span>` : ''}</button>`).join('')}</div>`;
   h += mallChart(A, rg, chs, filtered ? hit.map(x => x.n) : null);
   // 3) 한 쇼핑몰 상세: 제목 + 한 줄 해석
   if (solo) {
     let line = '';
     if (hasP) { const d = sumT[solo] - sumP[solo], arr = list.map(it => [it.n, it.tt - it.pt]);
-      if (d < 0) { const t = arr.filter(x => x[1] < 0).sort((a, b) => a[1] - b[1])[0]; if (t) line = `${soloNm} 판매가 <b>${fmt(-d)}개</b> 줄었어요. ` + (-t[1] <= -d ? `<b>${esc(t[0])}</b>${mJosa(t[0], '이', '가')} ${fmt(-t[1])}개 줄어 감소분의 <b>${Math.round(t[1] / d * 100)}%</b>를 차지했어요.` : `가장 많이 줄어든 품목은 <b>${esc(t[0])}</b>(${fmt(-t[1])}개 감소)예요.`); }
-      else if (d > 0) { const t = arr.filter(x => x[1] > 0).sort((a, b) => b[1] - a[1])[0]; if (t) line = `${soloNm} 판매가 <b>${fmt(d)}개</b> 늘었어요. ` + (t[1] <= d ? `<b>${esc(t[0])}</b>${mJosa(t[0], '이', '가')} ${fmt(t[1])}개 늘어 증가분의 <b>${Math.round(t[1] / d * 100)}%</b>를 차지했어요.` : `가장 많이 늘어난 품목은 <b>${esc(t[0])}</b>(${fmt(t[1])}개 증가)예요.`); } }
+      if (d < 0) { const t = arr.filter(x => x[1] < 0).sort((a, b) => a[1] - b[1])[0]; if (t) line = `${soloNm} 판매는 <b>${fmt(-d)}개 감소</b>했어요. ` + (t[1] === d ? `감소분은 모두 <b>${esc(t[0])}</b>에서 발생했어요.` : -t[1] <= -d ? `감소분의 <b>${Math.round(t[1] / d * 100)}%(${fmt(-t[1])}개)</b>는 <b>${esc(t[0])}</b>에서 발생했어요.` : `가장 많이 줄어든 품목은 <b>${esc(t[0])}</b>(${fmt(-t[1])}개 감소)예요.`); }
+      else if (d > 0) { const t = arr.filter(x => x[1] > 0).sort((a, b) => b[1] - a[1])[0]; if (t) line = `${soloNm} 판매는 <b>${fmt(d)}개 증가</b>했어요. ` + (t[1] === d ? `증가분은 모두 <b>${esc(t[0])}</b>에서 나왔어요.` : t[1] <= d ? `증가분의 <b>${Math.round(t[1] / d * 100)}%(${fmt(t[1])}개)</b>는 <b>${esc(t[0])}</b>에서 나왔어요.` : `가장 많이 늘어난 품목은 <b>${esc(t[0])}</b>(${fmt(t[1])}개 증가)예요.`); } }
     h += `<div class="msolo"><div><h3>${soloNm} 품목별 판매 변화</h3><p class="mu">${hasP ? `${dayTxt(rg.pfrom, rg.pto)}과 ${dayTxt(rg.from, rg.to)} 비교` : dayTxt(rg.from, rg.to)}</p></div><button type="button" class="btn sm" data-mallcard="all">전체 쇼핑몰 보기</button></div>${line ? `<p class="mline">${line}</p>` : ''}`;
   }
   // 4) 표시 기준 · 정렬 (이름 붙인 두 묶음)
   const mv = (kind, key, item) => mallEdit ? `<span class="mgrip" data-mallgrip="${kind}" data-k="${esc(key)}" ${item !== undefined ? `data-it="${esc(item)}"` : ''} title="끌어서 순서 바꾸기" aria-label="끌어서 순서 바꾸기"><svg viewBox="0 0 12 18" aria-hidden="true"><circle cx="3" cy="3" r="1.6"/><circle cx="9" cy="3" r="1.6"/><circle cx="3" cy="9" r="1.6"/><circle cx="9" cy="9" r="1.6"/><circle cx="3" cy="15" r="1.6"/><circle cx="9" cy="15" r="1.6"/></svg></span>` : '';
   const zeroL = hasP ? [...P.items.values()].filter(v => totOf(v.c) > 0 && !(A.items.get(v.n) && totOf(A.items.get(v.n).c) > 0) && mallMatch(v)).map(v => [v.n, totOf(v.c)]).sort((a, b) => b[1] - a[1]) : [], zeroN = zeroL.length;
   const ups = list.filter(it => it.tt > it.pt), dns = list.filter(it => it.tt < it.pt), sumUp = ups.reduce((a, it) => a + it.tt - it.pt, 0), sumDn = dns.reduce((a, it) => a + it.pt - it.tt, 0);
-  const updn = hasP && gone && !mallZero && list.length > 1 ? `<p class="mupdn">${dns.length ? `<span class="dn">감소 품목 ${dns.length}개 · ${fmt(sumDn)}개 감소</span>` : ''}${dns.length && ups.length ? '<i> / </i>' : ''}${ups.length ? `<span class="up">증가 품목 ${ups.length}개 · ${fmt(sumUp)}개 증가</span>` : ''}${dm ? '<small class="mu">— 두 기간 모두 판매 없음</small>' : ''}</p>` : '';
-  const ttl = (filtered ? '검색 결과 · ' : '') + (hasP && mallZero ? `${prevS}에는 팔렸지만 ${perNm} 판매가 없는 품목 ${list.length}개` : gone ? `두 기간 중 판매된 품목 ${list.length}개` : `${perNm} 판매된 품목 ${list.length}개`);
-  h += `<div class="mthd"><h3 class="mtt">${ttl}${hasP && mallZero ? ' <button type="button" class="btn sm mzx" id="mallzero">필터 해제</button>' : ''}</h3>${updn}${hasP && !solo ? `<div class="seg sm" role="group" aria-label="보기"><button type="button" data-mallmode="qty" class="${!dm ? 'on' : ''}">판매량</button><button type="button" data-mallmode="diff" class="${dm ? 'on' : ''}">${prevS} 대비 증감</button></div>` : ''}</div>
-    <div class="mtbar">${searchBox}<label class="msel"><span>정렬</span><select id="mallsortsel"><option value="my" ${mallSort === 'my' ? 'selected' : ''}>내 순서</option><option value="qty" ${mallSort === 'qty' ? 'selected' : ''}>많이 팔린 순</option>${hasP ? `<option value="drop" ${mallSort === 'drop' ? 'selected' : ''}>감소 수량 큰 순</option>` : ''}</select></label>${mallSort === 'my' ? `<button class="btn sm ${mallEdit ? 'pri' : ''}" type="button" id="malledit">${mallEdit ? '순서 다 바꿨어요' : '순서 바꾸기'}</button>` : ''}${hasP && !mallZero && zeroN ? `<button type="button" class="mzero" id="mallzero" title="${prevS}에는 팔렸지만 ${perNm} 판매가 없는 품목만 보기">${perNm} 판매 없는 품목 ${zeroN}개</button>` : ''}</div>
+  const updn = hasP && gone && !mallZero && !mallChk && list.length > 1 ? `<p class="mupdn">${dns.length ? `<span class="dn">감소 품목 ${dns.length}개 · ${fmt(sumDn)}개 감소</span>` : ''}${dns.length && ups.length ? '<i> / </i>' : ''}${ups.length ? `<span class="up">증가 품목 ${ups.length}개 · ${fmt(sumUp)}개 증가</span>` : ''}${dm ? '<small class="mu">— 두 기간 모두 판매 없음</small>' : ''}</p>` : '';
+  const chkN = mallChkSet().size; if (!chkN) mallChk = false;
+  const ttl = (filtered ? '검색 결과 · ' : '') + (mallChk ? `확인 중인 품목 ${list.length}개` : hasP && mallZero ? `${prevS}에는 팔렸지만 ${perNm} 판매가 없는 품목 ${list.length}개` : gone ? `두 기간 중 판매된 품목 ${list.length}개` : `${perNm} 판매된 품목 ${list.length}개`);
+  h += `<div class="mthd"><h3 class="mtt">${ttl}${hasP && mallZero ? ' <button type="button" class="btn sm mzx" id="mallzero">필터 해제</button>' : mallChk ? ' <button type="button" class="btn sm mzx" id="mallchk">필터 해제</button>' : ''}</h3>${updn}${hasP && !solo ? `<div class="seg sm" role="group" aria-label="보기"><button type="button" data-mallmode="qty" class="${!dm ? 'on' : ''}">판매량</button><button type="button" data-mallmode="diff" class="${dm ? 'on' : ''}">${prevS} 대비 증감</button></div>` : ''}</div>
+    <div class="mtbar">${searchBox}<label class="msel"><span>정렬</span><select id="mallsortsel"><option value="my" ${mallSort === 'my' ? 'selected' : ''}>내 순서</option><option value="qty" ${mallSort === 'qty' ? 'selected' : ''}>많이 팔린 순</option>${hasP ? `<option value="drop" ${mallSort === 'drop' ? 'selected' : ''}>감소 수량 큰 순</option>` : ''}</select></label>${mallSort === 'my' ? `<button class="btn sm ${mallEdit ? 'pri' : ''}" type="button" id="malledit">${mallEdit ? '순서 다 바꿨어요' : '순서 바꾸기'}</button>` : ''}${!mallChk && chkN ? `<button type="button" class="mchk" id="mallchk" title="직원이 확인 중이라고 남긴 품목만 보기">확인 중 ${chkN}개</button>` : ''}${hasP && !mallZero && !mallChk && zeroN ? `<button type="button" class="mzero" id="mallzero" title="${prevS}에는 팔렸지만 ${perNm} 판매가 없는 품목만 보기">${perNm} 판매 없는 품목 ${zeroN}개</button>` : ''}</div>
     ${shown.length > 1 ? `<div class="msc mtch"><span>쇼핑몰</span>${shown.map(([k, l, c]) => `<button type="button" data-mallch="${k}" class="${mallChSel.has(k) ? 'on' : ''}" style="--c:${c}">${l}</button>`).join('')}</div>` : ''}`;
   if (mallEdit) h += '<p class="mnote">왼쪽 <b>⠿</b> 손잡이를 끌어서 품목 순서를, 품목을 펼쳐서 옵션 순서를 바꿔요. 바꾼 순서는 <b>내 순서</b>로 저장돼서 다른 기기에서도 그대로 보여요.</p>';
   // 5) 표
@@ -8530,26 +8545,27 @@ function renderMall() {
     head = chs.map(([, l]) => `<th class="mchn">${l}</th>`).join('') + `<th>${dm ? '<span class="lf">합계 증감</span><span class="ls">증감</span>' : '합계'}</th>${dm && chs.length < 2 ? '' : `<th class="sb">${dm ? '가장 크게 변한 곳' : '품목 내 판매 비중'}</th>`}`; cols = chs.length + 3;
   }
   h += `<div class="tblwrap"><table class="${soloT ? 'msolot' : ''}"><thead><tr><th>품목 · 옵션${soloT ? '' : ' <small class="mu">(단위: 개)</small>'}</th>${head}</tr></thead><tbody>` +
-    list.map(it => { const op = mallOpen.has(it.n) || (filtered && list.length <= 3), pv = P.items.get(it.n);
+    list.map(it => { const op = mallOpen.has(it.n) || ((filtered || mallChk) && list.length <= 3), pv = P.items.get(it.n);
       const ops = mallOps(it, pv, chs, hasP);
       return `<tr class="mi ${op ? 'open' : ''} ${mallFocus === it.n ? 'focus' : ''}" data-mallitem="${esc(it.n)}" data-itk="${esc(it.n)}"><td>${mv('item', it.n)}<b>${esc(it.n)}</b>${mallNotes().some(x => x.item === it.n && x.status !== 'done') ? ' <i class="mnb">확인 중</i>' : ''} <small class="mu">옵션 ${ops.length}개${it.src.size > 1 ? ' · 상품명 ' + it.src.size + '개 묶음' : ''}</small></td>${cells(it, hasP && pv ? pv.c : null)}</tr>` +
         (op ? mallDetail(it.n, rg, chs, cols) + (it.src.size > 1 ? `<tr class="mo msrc"><td colspan="${cols}">묶인 상품명: ${[...it.src.entries()].sort((a, b) => b[1] - a[1]).map(([k, q]) => esc(k) + ' <small>' + fmt(q) + '</small>').join(' · ')}</td></tr>` : '') +
           ops.map(([o, v]) => `<tr class="mo" data-opit="${esc(it.n)}" data-opk="${esc(o)}"><td>${mv('op', o, it.n)}${esc(o || '(옵션 없음)')}</td>${cells(v, hasP ? v.pc : null)}</tr>`).join('') : ''); }).join('') + '</tbody>' +
     (() => { const tc = mallZ(), tp = mallZ(); list.forEach(it => { const pv = P.items.get(it.n); MALL_CH.forEach(([k]) => { tc[k] += it.c[k]; if (hasP && pv && gone) tp[k] += pv.c[k]; }); });
       if (hasP && !gone) [...P.items.values()].filter(v => mallMatch(v)).forEach(v => MALL_CH.forEach(([k]) => { tp[k] += v.c[k]; }));   // 판매량 보기: 지난달은 이번에 안 팔린 품목까지 다 더해서 위 요약과 같게
-      const nm = filtered ? '검색 결과 소계' : hasP && mallZero ? '선택 품목 소계' : '합계';
+      const nm = filtered ? '검색 결과 소계' : (hasP && mallZero) || mallChk ? '선택 품목 소계' : '합계';
       return `<tfoot><tr class="mtot"><td><b>${nm}</b>${nm === '합계' ? '' : ` <small class="mu">(위 ${list.length}개 품목)</small>`}</td>${cells({ c: tc }, hasP ? tp : null)}</tr></tfoot>`; })() + '</table></div>' +
-    (hasP && !gone && zeroN ? (() => { const shD = list.reduce((a, it) => a + it.tt - it.pt, 0), zS = zeroL.reduce((a, x) => a + x[1], 0), tot = shD - zS;
+    (hasP && !gone && zeroN && !mallChk ? (() => { const shD = list.reduce((a, it) => a + it.tt - it.pt, 0), zS = zeroL.reduce((a, x) => a + x[1], 0), tot = shD - zS;
       const a1 = shD < 0 ? `${fmt(-shD)}개 감소했어요` : shD > 0 ? `${fmt(shD)}개 증가했어요` : '변화가 없어요';
       const who = zeroN === 1 ? `<b>${esc(zeroL[0][0])}</b>${mJosa(zeroL[0][0], '이', '가')} ${fmt(zeroL[0][1])}개에서 0개로 줄어` : `<b>${zeroL.slice(0, 2).map(x => esc(x[0]) + '(' + fmt(x[1]) + '개)').join(', ')}</b>${zeroN > 2 ? ` 외 ${zeroN - 2}개` : ''} 품목이 모두 0개가 되어 ${fmt(zS)}개가 줄고`;
       const a2 = tot < 0 ? `전체 감소량은 <b>${fmt(-tot)}개</b>예요.` : tot > 0 ? `전체로는 <b>${fmt(tot)}개 증가</b>예요.` : '전체로는 변화가 없어요.';
       return `<p class="mzn">표에 보이는 ${list.length}개 품목은 ${a1}. ${who} ${a2} <button type="button" class="lnk" data-mallzero="1">판매 없는 품목 보기 ›</button></p>`; })() : '');
   { const L = [`${dayTxt(rg.from, rg.to)} 판매 보고${hasP ? ' · ' + dayTxt(rg.pfrom, rg.pto) + ' 대비' : ''}${filtered ? ' · 검색 "' + mallQ.trim() + '"' : ''}`, `전체 ${fmt(cS)}개 판매${hasP ? ', ' + plain(cS, cP) : ''}.`];
+    if (noCmp) L.push(`${prevNm}(${dayTxt(rg.pfrom, rg.pto)}) 자료 미수집이라 증감은 아직 비교하지 않았습니다.`);
     const fk = solo || (mv1 && mv1[1][0]);
     if (fk) { const nm = MALL_CH.find(c => c[0] === fk)[1], t = sumT[fk], p = sumP[fk]; L.push(`${nm} ${fmt(t)}개 판매${hasP ? ', ' + plain(t, p) : ''}.`);
       if (hasP && t !== p) { const dn = t < p, rows = [...new Set([...A.items.keys(), ...P.items.keys()])].filter(n => { const it = A.items.get(n) || P.items.get(n); return !filtered || mallMatch(it); }).map(n => { const a = A.items.get(n), b = P.items.get(n); return [n, a ? a.c[fk] : 0, b ? b.c[fk] : 0]; }).filter(r => dn ? r[1] < r[2] : r[1] > r[2]).sort((x, y) => dn ? (x[1] - x[2]) - (y[1] - y[2]) : (y[1] - y[2]) - (x[1] - x[2]));
         if (rows[0]) { const [n, a, b] = rows[0]; L.push(`${nm}에서 가장 많이 ${dn ? '줄어든' : '늘어난'} 품목은 ${n}${mJosa(n, '으로', '로')}, ${fmt(b)}개에서 ${fmt(a)}개로 ${fmt(Math.abs(a - b))}개 ${dn ? '감소' : '증가'}했습니다.`); } } }
-    else if (!hasP) shown.forEach(([k, l]) => L.push(`${l} ${fmt(sumT[k])}개(${pct(sumT[k], cS)}%)`));
+    if (!hasP) shown.forEach(([k, l]) => L.push(`${l} ${fmt(sumT[k])}개(전체의 ${pct(sumT[k], cS)}%)`));
     mallSumTxt = L.join('\n'); }
   h += `<details class="mraw"><summary>쇼핑몰 구분 확인</summary><p>카페24가 알려 준 판매처 값(마켓 / 주문경로)과 수량이에요. 다르게 잡힌 게 있으면 이 목록을 캡처해서 알려 주세요.</p><ul>${[...A.raw.entries()].sort((a, b) => b[1] - a[1]).map(([m, q]) => `<li>${esc(m)} → ${MALL_CH.find(c => c[0] === mallChOf({ market_id: m.split(' / ')[0], order_place_id: m.split(' / ').slice(1).join(' ') }))[1]} · ${fmt(q)}개</li>`).join('')}</ul></details>`;
   done();
@@ -8658,10 +8674,12 @@ document.addEventListener('click', e => {
     mallSort = 'my'; renderMall(); mallSaveOrder(); return; }
   const chb = e.target.closest('[data-mallch]'); if (chb) { const k = chb.dataset.mallch; if (mallChSel.has(k) && mallChSel.size === 1) { MALL_CH.forEach(c => mallChSel.add(c[0])); } else if (mallChSel.size === MALL_CH.length) { mallChSel = new Set([k]); } else { mallChSel.has(k) ? mallChSel.delete(k) : mallChSel.add(k); } renderMall(); return; }
   const cmp = e.target.closest('[data-mallcmp]'); if (cmp) { mallCmp = cmp.dataset.mallcmp; renderMall(); mallLoad(); return; }
-  if (e.target.closest('#mallcmpget')) { mallLoad({ force: true }); return; }
+  if (e.target.closest('#mallcmpget,#mallcmpget2')) { mallLoad({ force: true }); return; }
+  const tb = e.target.closest('[data-tbtip]'); if (tb) { const w = tb.closest('.mtr'); w.querySelectorAll('.tbc.sel').forEach(x => x.classList.remove('sel')); tb.classList.add('sel'); w.querySelector('.tbtip').textContent = tb.dataset.tbtip; return; }
   const tu = e.target.closest('[data-malltu]'); if (tu) { mallTrendUnit = tu.dataset.malltu; renderMall(); return; }
   const nst = e.target.closest('[data-mallnst]'); if (nst) { const id = nst.dataset.mallnst; mallNoteWrite(a => { const x = a.find(v => v.id === id); if (x) { x.status = x.status === 'done' ? 'doing' : 'done'; x.doneAt = new Date().toISOString(); } }).then(renderMall).catch(er => shareToast('저장하지 못했어요: ' + (er.message || er))); return; }
   const ndl = e.target.closest('[data-mallndel]'); if (ndl) { if (!confirmTap(ndl, 'mn' + ndl.dataset.mallndel, '한 번 더 누르면 이 메모를 지워요')) return; const id = ndl.dataset.mallndel; mallNoteWrite(a => { const i = a.findIndex(v => v.id === id); if (i >= 0) a.splice(i, 1); }).then(renderMall).catch(er => shareToast('지우지 못했어요: ' + (er.message || er))); return; }
+  if (e.target.closest('#mallchk')) { mallChk = !mallChk; if (mallChk) { mallZero = false; mallEdit = false; } renderMall(); return; }
   if (e.target.closest('#mallzero,[data-mallzero]')) { mallZero = !mallZero; if (mallZero) mallEdit = false; renderMall(); return; }
   if (e.target.closest('#mallsumcp')) { (async () => { let ok = false; try { await navigator.clipboard.writeText(mallSumTxt); ok = true; } catch (er) { try { const ta = document.createElement('textarea'); ta.value = mallSumTxt; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (e2) {} } shareToast(ok ? '요약을 복사했어요 · 카톡이나 메일에 붙여넣기 하세요' : '복사하지 못했어요'); })(); return; }
   const so = e.target.closest('[data-mallsort]'); if (so) { mallSort = so.dataset.mallsort; if (mallSort === 'drop') mallEdit = false; renderMall(); return; }
