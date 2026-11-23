@@ -8900,9 +8900,14 @@ function buildXlsx() {
   // 내려받는 파일에는 예보기온 · 포장방법 칸을 넣지 않아요 (화면에서만 확인)
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
-    let full = result[key];
+    let full = result[key], ord = null;
     if (si === 0) { const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), BM = bandMarks();
-      if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; }); }
+      if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
+      // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
+      if (pc >= 0 && full.length > 2) { const bl = ((rules.weather && rules.weather.bands) || []).map(b => String(b.label || '').trim());
+        const rk = r => { const ls = String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => bl.indexOf(l.trim())).filter(i => i >= 0); return ls.length ? Math.min(...ls) : 1e9; };
+        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r) })).sort((x, y) => x.k - y.k || x.i - y.i);
+        ord = [0, ...idx.map(o => o.i)]; full = ord.map(i => full[i]); } }
     const drop = new Set(full[0].map((h, c) => wxHeads.has(String(h)) ? c : -1).filter(c => c >= 0));
     const aoa = drop.size ? full.map(r => r.filter((_, c) => !drop.has(c))) : full;
     const ws = XLSX.utils.aoa_to_sheet(aoa, { cellDates: true, dateNF: 'yyyy-mm-dd' });
@@ -8910,7 +8915,7 @@ function buildXlsx() {
     for (let R = range.s.r; R <= range.e.r; R++) for (let C = range.s.c; C <= range.e.c; C++) {
       const a = XLSX.utils.encode_cell({ r: R, c: C }), cell = ws[a]; if (!cell) continue;
       if (cell.t === 'd' || cell.v instanceof Date) cell.z = 'yyyy-mm-dd';
-      if (si === 0 && !drop.size) { const c = colorMap0.get(R + ',' + C); if (c) cell.s = { fill: { patternType: 'solid', fgColor: { rgb: c.toUpperCase() } } }; }
+      if (si === 0 && !drop.size) { const c = colorMap0.get((ord ? ord[R] : R) + ',' + C); if (c) cell.s = { fill: { patternType: 'solid', fgColor: { rgb: c.toUpperCase() } } }; }
     }
     ws['!cols'] = aoa[0].map((h, c) => {
       let w = String(h).length * 2;
