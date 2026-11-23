@@ -1230,6 +1230,11 @@ html.dark .iss-cats{background:rgba(255,255,255,.04);border-color:rgba(255,255,2
 .iss-mh{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
 .iss-mh h2{margin:2px 0 0!important;font:700 21px/1.25 var(--body)!important}
 .iss-item.wb-hit,#iss-item.wb-hit{box-shadow:0 0 0 3px rgba(214,150,70,.55)!important;transition:box-shadow .3s}
+.iss-add.iss-addi{width:42px;padding:0;justify-content:center;gap:0}.iss-add.iss-addi svg{width:20px;height:20px}
+.iss-cw{position:relative}.iss-cw .iss-chip{padding-right:92px}.iss-cw .iss-chip em{right:86px}
+.iss-cdl{position:absolute;z-index:1;right:40px;top:50%;transform:translateY(-50%);width:38px;height:38px;display:grid;place-items:center;border:1px solid #ecd9c4;border-radius:12px;background:#fff;color:#a4622b;cursor:pointer}
+.iss-cdl svg{width:18px;height:18px}.iss-cdl:hover{background:#fff4e8}.iss-cdl.busy{opacity:.5;pointer-events:none}.iss-cdl.err{border-color:#d9534f;color:#d9534f}
+html.dark .iss-cdl{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:#f0c58c}
 .iss-mhb{display:flex;align-items:center;gap:8px;flex:none}.iss-pimg{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.iss-pimg svg{width:16px;height:16px}.iss-pimg.hidden{display:none}
 @media(max-width:420px){.iss-pimg span{display:none}.iss-pimg{padding:7px 9px}}
 #v-issue[data-cat="parcel"] .iss-has .iss-c{color:#b0702a}#v-issue[data-cat="parcel"] .hd.on .iss-c,#v-issue[data-cat="claim"] .hd.on .iss-c{color:#fff}
@@ -3915,9 +3920,9 @@ function renderIssue() {
   if (!$('isscal')) return;
   const today = isoDate(new Date()); if (!issDay) issDay = today;
   if (!issMonth) { const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); }
-  const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(issCat !== 'item' ? x.id : x.item); });
+  const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(issCat !== 'item' && issCat !== 'parcel' ? x.id : x.item); });
   document.querySelectorAll('[data-isscat]').forEach(b => b.classList.toggle('on', b.dataset.isscat === issCat)); $('v-issue').dataset.cat = issCat; try { issSyncLine(); } catch (e) {}
-  const PC = issCat === 'parcel'; $('iss-q').placeholder = PC ? '송장번호 · 메모 검색' : '품목 검색 · 그 품목의 이슈를 한번에 봐요'; $('iss-addbtn').lastChild.textContent = PC ? '사고 적기' : '이슈 적기';
+  const PC = issCat === 'parcel'; $('iss-q').placeholder = PC ? '송장번호 · 메모 검색' : '품목 검색 · 그 품목의 이슈를 한번에 봐요'; $('iss-addbtn').lastChild.textContent = PC ? '' : '이슈 적기'; $('iss-addbtn').classList.toggle('iss-addi', PC); $('iss-addbtn').setAttribute('aria-label', PC ? '택배 사고 적기' : '이슈 적기'); $('iss-addbtn').title = PC ? '택배 사고 적기' : '';
   $('iss-names').innerHTML = issNames().map(n => `<option value="${esc(n)}">`).join('');
   // 달력
   const y = issMonth.getFullYear(), mo = issMonth.getMonth(), first = new Date(y, mo, 1), n = new Date(y, mo + 1, 0).getDate();
@@ -3934,7 +3939,7 @@ function renderIssue() {
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
-    `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
+    (issCat === 'parcel' ? `<div class="iss-cw"><button class="iss-cdl" type="button" data-issimg="${esc(it)}" title="사진과 메모를 이미지로 저장" aria-label="이미지로 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>` : '') + `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>` + (issCat === 'parcel' ? '</div>' : '')).join('')
     : (issCat === 'review' ? '<p class="iss-empty">이 날 들어온 상품 후기가 없어요.<br>카페24 후기 게시판에 글이 올라오면 자동으로 여기에 기록돼요.</p>' : issCat === 'parcel' ? '<p class="iss-empty">이 날 적어 둔 택배 사고가 없어요.<br><b>사고 적기</b>를 눌러 사진 · 메모를 남겨 보세요. 송장 사진을 올리면 송장번호를 자동으로 찾아 적어 줘요.<br>사고 접수할 때 <b>이미지로 저장</b>해서 택배사에 올리면 돼요.</p>' : issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
   renderIssueSearch();
 }
@@ -3969,9 +3974,9 @@ function renderIssList() {
   const PC = issCat === 'parcel'; $('iss-pimg').classList.toggle('hidden', !(PC && arr.length));
   $('iss-text').placeholder = PC ? (arr.length ? '메모나 사진을 더 붙이기' : '메모 (예: 박스 한쪽 찌그러짐 · 내용물 젖음 · 사고접수 예정)') : arr.length ? '이 품목에 이슈를 더 적기' : '어떤 이슈였는지 적어 주세요 (예: 잎 끝 갈변 · 3팩 교환)';
 }
-async function issParcelImg() {   // 택배 사고: 사진 + 메모를 한 장의 이미지로
-  const it = issModalItem, arr = issOfDay(issDay).filter(x => x.item === it).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
-  if (!arr.length) return; const m = $('iss-msg'); m.className = 'msg'; m.textContent = '이미지 만드는 중…';
+async function issParcelImg(it0, btn) {   // 택배 사고: 사진 + 메모를 한 장의 이미지로
+  const it = it0 || issModalItem, arr = issOfDay(issDay).filter(x => x.item === it).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  if (!arr.length) return; const m = btn ? { set className(v) {}, set textContent(v) { btn.title = v; } } : $('iss-msg'); m.className = 'msg'; m.textContent = '이미지 만드는 중…'; if (btn) btn.classList.add('busy');
   try {
     const load = d => new Promise(r => { if (!d) return r(null); const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = d; });
     const ims = (await Promise.all(arr.flatMap(x => x.ph || []).map(async id => load(await photoGet(id))))).filter(Boolean);
@@ -4002,7 +4007,8 @@ async function issParcelImg() {   // 택배 사고: 사진 + 메모를 한 장�
     const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .9));
     await saveFile('택배사고_' + issDay + '_' + String(it).replace(/[^\w가-힣-]+/g, '') + '.jpg', blob);
     m.className = 'msg ok'; m.textContent = '이미지로 저장했어요';
-  } catch (er) { m.className = 'msg err'; m.textContent = '이미지를 만들지 못했어요: ' + (er.message || er); }
+  } catch (er) { m.className = 'msg err'; m.textContent = '이미지를 만들지 못했어요: ' + (er.message || er); if (btn) btn.classList.add('err'); }
+  finally { if (btn) { btn.classList.remove('busy'); setTimeout(() => { btn.title = '사진과 메모를 이미지로 저장'; btn.classList.remove('err'); }, 3000); } }
 }
 const issClose = () => { $('issModal').classList.add('hidden'); issEditId = null; };
 document.addEventListener('click', async e => {
@@ -4012,6 +4018,7 @@ document.addEventListener('click', async e => {
   const ch = t.closest('[data-issitem]'); if (ch) return issOpenModal(ch.dataset.issitem);
   if (t.closest('#iss-addbtn')) return issOpenModal(null);
   if (t.closest('#iss-pimg')) return issParcelImg();
+  const pim = t.closest('[data-issimg]'); if (pim) return issParcelImg(pim.dataset.issimg, pim);
   if (t.closest('#iss-close') || t.id === 'issModal') return issClose();
   if (t.closest('#iss-x')) { $('iss-q').value = ''; renderIssueSearch(); $('iss-q').focus(); return; }
   const j = t.closest('[data-issjump]'); if (j) { if (!issOpen()) document.querySelector('.tab[data-t=issue]').click(); if (j.dataset.issjumpcat) issCat = j.dataset.issjumpcat; issDay = j.dataset.issjump; const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderIssue(); issOpenModal(j.dataset.issjumpitem); return; }
