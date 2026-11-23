@@ -4416,6 +4416,7 @@ function renderPend() {
 // 송장번호 자동 찾기: 사진 속 바코드를 읽어요 (BarcodeDetector → 안 되면 ZXing을 그때만 불러와요)
 let zxP = null; const ZX_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js';
 function zxLoad() { if (window.ZXing) return Promise.resolve(window.ZXing); if (!zxP) zxP = new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = ZX_URL; sc.onload = () => window.ZXing ? res(window.ZXing) : rej(new Error('zxing')); sc.onerror = () => { zxP = null; rej(new Error('바코드 읽기 도구를 불러오지 못했어요')); }; document.head.appendChild(sc); }); return zxP; }
+const wbFmt = v => { const d = String(v || '').replace(/\D/g, ''); return /^\d{8,16}$/.test(d) && /^[\d\s-]+$/.test(String(v).trim()) ? d.match(/.{1,4}/g).join('-') : String(v || '').trim(); };
 const wbPick = txts => { for (const t of txts) { const d = String(t || '').replace(/\D/g, ''); if (/^\d{10,14}$/.test(d)) return d; } return ''; };
 async function wbScan(dataUrl) {
   const img = await new Promise((r, j) => { const im = new Image(); im.onload = () => r(im); im.onerror = j; im.src = dataUrl; });
@@ -4431,11 +4432,12 @@ async function wbScan(dataUrl) {
 }
 let wbAuto = false;   // 송장번호 칸을 자동으로 채웠는지 (직접 고치면 false)
 document.addEventListener('input', e => { if (e.target.id === 'iss-item') wbAuto = false; });
+document.addEventListener('change', e => { if (e.target.id === 'iss-item' && issCat === 'parcel') e.target.value = wbFmt(e.target.value); });
 async function wbTry(urls) {
   const box = $('iss-item'), m = $('iss-msg'); if (issCat !== 'parcel' || box.classList.contains('hidden') || (box.value.trim() && !wbAuto)) return;
   m.className = 'msg'; m.textContent = '사진에서 송장번호 찾는 중…';
   for (const u of urls) { let n = ''; try { n = await wbScan(u); } catch (er) { m.className = 'msg err'; m.textContent = er.message || '송장번호를 찾지 못했어요'; return; }
-    if (n) { if (box.value.trim() && !wbAuto) return; box.value = n; wbAuto = true; box.classList.add('wb-hit'); setTimeout(() => box.classList.remove('wb-hit'), 1600); m.className = 'msg ok'; m.textContent = '송장번호를 찾았어요 · 틀리면 고쳐 주세요'; return; } }
+    if (n) { if (box.value.trim() && !wbAuto) return; box.value = wbFmt(n); wbAuto = true; box.classList.add('wb-hit'); setTimeout(() => box.classList.remove('wb-hit'), 1600); m.className = 'msg ok'; m.textContent = '송장번호를 찾았어요 · 틀리면 고쳐 주세요'; return; } }
   m.className = 'msg'; m.textContent = '사진에서 송장번호를 못 찾았어요 · 직접 적어 주세요';
 }
 document.addEventListener('change', async e => {
@@ -4466,7 +4468,7 @@ let issCat = 'item';   // 'item' 품목 이슈 · 'claim' 취소·반품·교환
 const issItems = () => issAllRaw().filter(x => !x.cat || x.cat === 'item');
 const issAll = () => issAllRaw().filter(x => (x.cat || 'item') === issCat);
 const issOfDay = day => issAll().filter(x => x.day === day);
-const issNorm = t => String(t || '').replace(/\s+/g, '').toLowerCase();
+const issNorm = t => String(t || '').replace(/[\s-]+/g, '').toLowerCase();
 async function issWrite(day, fn) {
   const id = issDocId(day), cur = stock[id] && stock[id].kind === 'issues' ? JSON.parse(JSON.stringify(stock[id])) : { kind: 'issues', name: '__issues', days: {} };
   cur.days = cur.days || {}; const arr = (cur.days[day] || []).slice(); fn(arr);
@@ -4590,7 +4592,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('issModa
 document.addEventListener('input', e => { if (e.target.id === 'iss-q') renderIssueSearch(); });
 document.addEventListener('submit', async e => {
   if (e.target.id !== 'iss-form') return; e.preventDefault();
-  const renm = issCat === 'parcel' && issEditId && !$('iss-item').classList.contains('hidden'), item = (renm || !issModalItem ? $('iss-item').value : issModalItem).trim(), text = $('iss-text').value.trim(), m = $('iss-msg');
+  const renm = issCat === 'parcel' && issEditId && !$('iss-item').classList.contains('hidden'), item = (x => issCat === 'parcel' ? wbFmt(x) : x)((renm || !issModalItem ? $('iss-item').value : issModalItem).trim()), text = $('iss-text').value.trim(), m = $('iss-msg');
   if (!item) { m.className = 'msg err'; m.textContent = issCat === 'parcel' ? '송장번호를 적어 주세요' : '품목을 적어 주세요'; $('iss-item').focus(); return; }
   if (!text && !issPend.length) { m.className = 'msg err'; m.textContent = '내용을 적거나 사진을 붙여 주세요'; $('iss-text').focus(); return; }
   const who = (typeof fbUser !== 'undefined' && fbUser && fbUser.email) ? (typeof showId === 'function' ? showId(fbUser.email) : fbUser.email) : '';
