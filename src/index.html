@@ -5818,6 +5818,7 @@ function stkClaimer(recKeys) {
     let best = null;
     cs.forEach(c => { if (c.ws.length && c.ws.every(w => stkHit(w, t)) && (!best || c.len > best.len)) best = c; });
     if (!best) best = cs.find(c => !c.ws.length) || null;
+    if (!best && cs.length === 1) best = cs[0];   // 묶음에 재고 품목이 하나뿐이면 이름이 조금 달라도 그 품목에서 빼요 (예: '미니장미 5송이' → '미니장미 생화 장식용')
     const r = best ? best.key : null; memo.set(mk, r); return r;
   };
 }
