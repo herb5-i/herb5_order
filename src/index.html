@@ -3295,6 +3295,18 @@ const isoOf = off => { const d = new Date(); d.setDate(d.getDate() + off); retur
 function dlabel(off) { const d = new Date(); d.setDate(d.getDate() + off); return (d.getMonth() + 1) + '/' + d.getDate() + ' (' + WD[d.getDay()] + ')'; }
 const fmtR = a => Array.isArray(a) ? (a[0] === a[1] ? a[0] : a[0] + ' ~ ' + a[1]) : '';
 function dayData() { return wdata && wdata.days ? wdata.days[isoOf(dayOff)] : null; }
+// 주문을 불러오면 날씨는 '주문 받은 날 + 1일(도착일)' 예보로 맞춰요. 그날 예보가 없으면 가장 가까운 날 예보를 써요
+function wxForOrderDay(orderIso) {
+  const t = new Date(orderIso + 'T00:00:00'); t.setDate(t.getDate() + 1);
+  const target = isoDate(t), today = new Date(); today.setHours(0, 0, 0, 0);
+  const offOf = iso => Math.round((new Date(iso + 'T00:00:00') - today) / 864e5);
+  let use = target; const days = wdata && wdata.days ? Object.keys(wdata.days).filter(k => wdata.days[k]).sort() : [];
+  if (days.length && !days.includes(target)) use = days.reduce((b, k) => Math.abs(offOf(k) - offOf(target)) < Math.abs(offOf(b) - offOf(target)) ? k : b, days[0]);
+  dayOff = offOf(use); wDirty = false; edited.clear(); try { computeTemps(); renderDays(); renderWeather(); } catch (e) {}
+  return { target, use };
+}
+const wxNote = r => !r ? '' : r.use === r.target ? ' · 날씨는 ' + fmtDay(r.target) + ' 도착 기준' : ' · ' + fmtDay(r.target) + ' 예보가 없어 ' + fmtDay(r.use) + ' 예보로 포장을 정했어요';
+function maxOrderDay(rows) { const h = (rows[0] || []).map(v => String(v ?? '').trim()), oc = h.indexOf('주문번호'); let m = ''; if (oc >= 0) rows.slice(1).forEach(r => { const x = String((r || [])[oc] ?? '').match(/^(\d{4})(\d{2})(\d{2})-/); if (x) { const d = x[1] + '-' + x[2] + '-' + x[3]; if (d > m) m = d; } }); return m || isoDate(new Date()); }
 function computeTemps() {
   temps = {};
   const dd = dayData(); if (!dd) return;
@@ -5198,7 +5210,8 @@ function readFile(f) {
       srcRows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null, raw: true });
       srcRows = srcRows.map(r => r.map(v => v instanceof Date ? new Date(v.getFullYear(), v.getMonth(), v.getDate() + (v.getHours() >= 12 ? 1 : 0)) : v));
       srcName = f.name.replace(/\.[^.]+$/, ''); srcAt = new Date();
-      $('runmsg').className = 'msg ok'; $('runmsg').textContent = f.name + ' · ' + (srcRows.length - 1) + '줄을 읽었어요';
+      const wxr = wxForOrderDay(maxOrderDay(srcRows));
+      $('runmsg').className = 'msg ok'; $('runmsg').textContent = f.name + ' · ' + (srcRows.length - 1) + '줄을 읽었어요' + wxNote(wxr);
       runProcess();
       histSaveUpload(srcRows, f.name);
     } catch (e) { $('runmsg').className = 'msg err'; $('runmsg').textContent = '파일을 읽지 못했어요: ' + e.message; }
@@ -7918,7 +7931,8 @@ async function c24Import() {
     const rows = c24Rows(d.orders, day), fname = '카페24_' + day.replace(/-/g, '') + '_' + (slot === 'am' ? '오전' : '오후') + '.api';
     userEdits = new Map(); edMode = false;
     srcRows = rows; srcName = fname.replace(/\.api$/, ''); srcAt = new Date();
-    msg.className = 'msg ok'; msg.textContent = (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요';
+    const wxr = wxForOrderDay(day);
+    msg.className = 'msg ok'; msg.textContent = (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요' + wxNote(wxr);
     $('runmsg').textContent = '';
     runProcess();
     histSaveUpload(srcRows, fname, { slot, day });
