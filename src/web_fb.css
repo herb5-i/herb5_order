@@ -1,0 +1,55 @@
+/* 웹(Firebase) 전용 */
+.authwrap{position:fixed;inset:0;z-index:60;background:var(--bg);display:grid;place-items:center;padding:20px;overflow:auto}
+.authwrap[hidden]{display:none}
+body.authing{overflow:hidden}
+.authcard{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 30px rgba(20,40,30,.08);width:100%;max-width:400px;padding:28px 26px;text-align:center}
+.authcard .mark{width:64px;height:64px;object-fit:contain;margin:0 auto 6px;display:block}
+.authcard h1{font-size:21px;margin:0 0 14px}
+.authcard h2{font:400 18px/1.3 var(--display);margin:6px 0 6px}
+.authcard form{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.authcard input{font-size:15px;padding:11px 12px}
+.authcard .btn{padding:11px;font-size:15px}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.gbtn svg{width:18px;height:18px}
+.aor{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:12px;margin:14px 0 2px}
+.aor::before,.aor::after{content:"";flex:1;height:1px;background:var(--line)}
+.alinks{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:12px}
+.alinks button{border:0;background:none;color:var(--acc);font:inherit;font-size:13px;cursor:pointer;padding:4px}
+.authbtns{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+#authmsg{margin:12px 0 0;min-height:1em}
+.acct{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--mute);white-space:nowrap;min-width:0}
+.acct .rl,.acct .btn{flex:none;white-space:nowrap}
+.acct[hidden]{display:none}
+.acct .em{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct .rl{background:var(--acc2);color:var(--acc);border-radius:99px;padding:2px 8px;font-weight:600}
+.fbonly{display:none}
+body.fbmode .fbonly{display:inline-flex}
+body.fbmode #rpwchange,body.fbmode #rlockbtn{display:none}
+body.is-staff #hdel,body.is-staff #sdel,body.is-staff #v-rules .rbak,body.is-staff #reset,body.is-staff .rtabs,body.is-staff #v-rules .rbar,body.is-staff #v-rules .adminpane{display:none!important}
+.mtbl{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:13.5px}
+.mtbl td{padding:8px 6px;border-top:1px solid var(--line);vertical-align:middle}
+.mtbl select{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.madd{display:grid;grid-template-columns:2fr 1.2fr 110px auto;gap:8px}
+.madd>*{min-width:0}
+.gcodebox{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.gcodebox input[type=text]{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:9px;min-width:0}
+.gchk{display:flex;gap:6px;align-items:center;font-size:14px;white-space:nowrap}
+@media(max-width:640px){
+  .madd{grid-template-columns:1fr auto}
+  .madd #memail,.madd #mname{grid-column:1/-1}
+  .gcodebox{grid-template-columns:1fr}
+  .gcodebox .btn{width:100%}
+  .mtbl td{padding:8px 4px}
+  .mtbl td:first-child{word-break:break-all}
+  .mtbl select{padding:4px 4px;font-size:13px}
+  .mtbl td:last-child:empty{display:none}
+}
+@media(max-width:560px){
+  .navs .acct{grid-column:1/-1;grid-row:3;display:flex;width:100%}
+  .navs .acct .em{flex:1;max-width:none;overflow:hidden;text-overflow:ellipsis}
+  #v-rules .rbar{padding:10px 12px;flex-direction:column;align-items:stretch;gap:8px}
+  #v-rules .rbar .row{justify-content:flex-end}
+  .rtabs{display:flex;width:100%}.rtabs button{flex:1;padding:8px 6px;white-space:nowrap}
+}
+.madd input,.madd select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:9px}
+.cardnote{font-size:12.5px;color:var(--mute);margin:6px 0 0}
