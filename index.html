@@ -1750,7 +1750,7 @@ body.hm-dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 .hw-ost .ost-re{width:30px;height:30px;padding:0;display:grid;place-items:center;flex:none;font-size:15px}.hw-ost .ost-re.spin i{display:inline-block;animation:ostspin 1s linear infinite}@keyframes ostspin{to{transform:rotate(360deg)}}.hw-ost .hm-lb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}@media(max-width:700px){.hw-ost .ost-src .k{display:none}}.hmi[data-s=M] .hw-ost .ost-src .k{display:none}.hw-ost .hm-wt{gap:6px}.hc-f1{display:flex;flex-direction:column;gap:4px;margin:4px 0}.hc-f1 input{font:inherit;padding:9px 11px;border:1px solid var(--line2,#dadde1);border-radius:10px;background:var(--card);color:var(--ink);min-width:0}
 .hw-ost .ost-src{font-size:11px;font-weight:600;color:var(--mute);background:rgba(60,70,40,.07);border-radius:99px;padding:2px 7px;margin-left:4px}
 .ost-g{display:grid;grid-template-columns:1fr 2fr 1fr 1fr 1fr;gap:8px;margin:4px 0 2px}.ost-pair{display:grid;grid-template-columns:1fr 1fr;background:var(--acc2,#eef6f1);border-radius:12px}.ost-pair .ost-c{background:none}.ost-pair .ost-c+.ost-c{border-left:1px solid rgba(0,0,0,.07)}
-.ost-c{background:var(--acc2,#eef6f1);border-radius:12px;padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:10px}.ost-c span{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ost-c b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--mute)}.ost-c.on b{color:var(--acc)}
+.ost-c{background:var(--acc2,#eef6f1);border-radius:12px;padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:10px;font:inherit;border:0;text-align:left;cursor:pointer;color:inherit}.ost-c:hover{filter:brightness(.97)}.ost-c:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}.ost-c.lk span::after{content:' ↗';color:var(--mute);font-weight:500}.ost-c span{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ost-c b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--mute)}.ost-c.on b{color:var(--acc)}
 
 @media(max-width:700px){.ost-g{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.ost-pair{display:contents}.ost-pair .ost-c{background:var(--acc2,#eef6f1)}.ost-pair .ost-c+.ost-c{border-left:0}.ost-c{flex-direction:row;justify-content:space-between;align-items:center;padding:5px 10px;gap:4px}.ost-c span{font-size:12px}.ost-c b{font-size:16px}}
 .hmi[data-s=M] .ost-g{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.hmi[data-s=M] .ost-pair{display:contents}.hmi[data-s=M] .ost-pair .ost-c{background:var(--acc2,#eef6f1)}.hmi[data-s=M] .ost-pair .ost-c+.ost-c{border-left:0}.hmi[data-s=M] .ost-c{flex-direction:row;justify-content:space-between;align-items:center;padding:5px 9px;gap:4px}.hmi[data-s=M] .ost-c span{font-size:11.5px}.hmi[data-s=M] .ost-c b{font-size:15px}
@@ -4804,12 +4804,37 @@ function ostEnsure() {
   if (!ostTimer) ostTimer = setInterval(() => { if (document.visibilityState === 'visible') ostLoad(); }, 600e3);
   if (!ostBusy && (!ostD || Date.now() - new Date(ostD.at).getTime() > 600e3) && !ostErr) ostLoad();
 }
+// 칸을 누르면 카페24 관리자 그 화면으로. 주소는 처음 한 번 붙여 넣으면 저장돼요 (관리자)
+const OST_N = { N00: '입금전', N10: '상품준비중', N22: '배송보류중', N20: '배송준비중', N21: '배송대기', N30: '배송중' };
+function ostUrlSet(k) {
+  let m = $('ostUrlModal'); if (!m) { m = document.createElement('div'); m.className = 'modal hidden'; m.id = 'ostUrlModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '카페24 화면 주소'); document.body.appendChild(m); }
+  const U = c24Cfg().ostUrl || {}, admin = bakCanSee();
+  m.innerHTML = `<div class="mbox hcbox"><div class="hmf-h"><b>${OST_N[k]} 화면 주소</b><button class="ibtn" type="button" data-ostux="1" aria-label="닫기">✕</button></div>
+    <ol class="inst-ol"><li>카페24 관리자에서 <b>주문 → ${OST_N[k]}</b> 목록 화면을 열어요.</li><li>그 화면의 <b>주소창 주소</b>를 복사해 아래에 붙여 넣고 저장해요.</li><li>다음부터 홈의 <b>${OST_N[k]}</b> 칸을 누르면 그 화면이 새 창으로 바로 열려요.</li></ol>
+    ${admin ? `<label class="hc-f1"><span class="msg">주소</span><input id="ostu-in" type="url" placeholder="https://….cafe24.com/…" value="${esc(U[k] || '')}" autocomplete="off"></label><p class="msg err" id="ostu-e"></p>
+    <div class="hc-act">${U[k] ? '<button class="btn" type="button" data-ostudel="1">주소 지우기</button>' : ''}<button class="btn pri" type="button" data-ostusave="${k}">저장</button></div>` : '<p class="msg">주소는 관리자 계정으로 넣을 수 있어요. 관리자에게 부탁해 주세요.</p>'}</div>`;
+  m._k = k; m.classList.remove('hidden'); setTimeout(() => { const i = $('ostu-in'); if (i) i.focus(); }, 30);
+}
+document.addEventListener('click', async e => {
+  if (!e.target.closest) return;
+  const g = e.target.closest('[data-ostgo]');
+  if (g) { const k = g.dataset.ostgo, u = (c24Cfg().ostUrl || {})[k]; if (u && !e.shiftKey) { const w = window.open(u, '_blank', 'noopener'); if (!w) location.href = u; } else ostUrlSet(k); return; }
+  const m = e.target.closest('#ostUrlModal'); if (!m) return;
+  if (e.target.id === 'ostUrlModal' || e.target.closest('[data-ostux]')) { m.classList.add('hidden'); return; }
+  const sv = e.target.closest('[data-ostusave]'), dl = e.target.closest('[data-ostudel]');
+  if (sv || dl) { const v = dl ? '' : ($('ostu-in').value || '').trim();
+    if (sv && !/^https:\/\/[^\s/]*cafe24\.com\//i.test(v)) { $('ostu-e').textContent = '카페24 관리자 화면 주소(https://…cafe24.com/…)를 붙여 넣어 주세요'; return; }
+    const U = Object.assign({}, c24Cfg().ostUrl || {}); if (v) U[m._k] = v; else delete U[m._k];
+    if (await hcSaveCfg(Object.assign({}, c24Cfg(), { ostUrl: U }))) { m.classList.add('hidden'); shareToast(v ? OST_N[m._k] + ' 주소를 저장했어요' : '주소를 지웠어요'); homeSoon(); } }
+});
+document.addEventListener('contextmenu', e => { const g = e.target.closest && e.target.closest('[data-ostgo]'); if (g) { e.preventDefault(); ostUrlSet(g.dataset.ostgo); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('ostUrlModal')) $('ostUrlModal').classList.add('hidden'); });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ostTimer && ostD && Date.now() - new Date(ostD.at).getTime() > 600e3) ostLoad(); });
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-ostre]')) { ostErr = ''; ostLoad(true); } });
 
 const HW = {
   ost() { ostEnsure(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
-    const cell = (k, n) => `<div class="ost-c${C && C[k] ? ' on' : ''}"><span>${n}</span><b>${v(k)}</b></div>`;
+    const U = c24Cfg().ostUrl || {}, cell = (k, n) => `<button type="button" class="ost-c${C && C[k] ? ' on' : ''}${U[k] ? ' lk' : ''}" data-ostgo="${k}" title="${U[k] ? '카페24 ' + n + ' 화면 열기 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : n + ' 화면 주소 넣기'}"><span>${n}</span><b>${v(k)}</b></button>`;
     const t = ostD ? new Date(ostD.at) : null, tm = t ? String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') : '';
     const foot = !ostOn() ? '로그인하는 웹 버전에서 카페24에 연결되면 보여요' : ostErr ? '⚠ ' + esc(ostErr) : ostBusy && !ostD ? '카페24에서 불러오는 중…' : '';
     return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요"><span class="k">카페24${tm ? ' · ' : ''}</span>${tm}</small></span><button class="hm-more ost-re${ostBusy ? ' spin' : ''}" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="${ostBusy ? '받는 중' : '지금 새로 받기'}" title="${ostBusy ? '받는 중…' : '새로 받기'}"><i aria-hidden="true">↻</i></button></div>
@@ -8566,7 +8591,7 @@ function c24Bind() {
   $('c24save').onclick = async () => {
     const off = $('c24off').value.split(/[\s,]+/).map(x => x.trim()).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
     const days = [...$('c24dw').querySelectorAll('input:checked')].map(x => Number(x.value));
-    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off, cut: c24Cfg().cut || {}, notice: c24Cfg().notice || {}, ntDraft: c24Cfg().ntDraft || {} };
+    rules.cafe24 = { worker: (v => v && !/^https?:\/\//i.test(v) ? 'https://' + v : v)($('c24url').value.trim().replace(/\/+$/, '')), amCut: $('c24am').value || C24_DEF.amCut, pmCut: $('c24pm').value || C24_DEF.pmCut, days: days.length ? days : C24_DEF.days, off, cut: c24Cfg().cut || {}, notice: c24Cfg().notice || {}, ntDraft: c24Cfg().ntDraft || {}, ostUrl: c24Cfg().ostUrl || {} };
     await saveRules(); c24FillSet(); $('c24day').value = ''; c24ShowWin(); c24Status();
     $('c24msg').className = 'msg ok'; $('c24msg').textContent = '연결 설정을 저장했어요';
   };
