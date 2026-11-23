@@ -1229,6 +1229,7 @@ html.dark .iss-cats{background:rgba(255,255,255,.04);border-color:rgba(255,255,2
 .iss-mbox{max-width:460px!important;border-radius:24px!important;padding:22px!important;max-height:min(86vh,720px);overflow:auto}
 .iss-mh{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
 .iss-mh h2{margin:2px 0 0!important;font:700 21px/1.25 var(--body)!important}
+.iss-item.wb-hit,#iss-item.wb-hit{box-shadow:0 0 0 3px rgba(214,150,70,.55)!important;transition:box-shadow .3s}
 .iss-mhb{display:flex;align-items:center;gap:8px;flex:none}.iss-pimg{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.iss-pimg svg{width:16px;height:16px}.iss-pimg.hidden{display:none}
 @media(max-width:420px){.iss-pimg span{display:none}.iss-pimg{padding:7px 9px}}
 #v-issue[data-cat="parcel"] .iss-has .iss-c{color:#b0702a}#v-issue[data-cat="parcel"] .hd.on .iss-c,#v-issue[data-cat="claim"] .hd.on .iss-c{color:#fff}
@@ -2542,7 +2543,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
   </section>
 
   <section id="v-issue" class="hidden">
-    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button><button type="button" role="tab" data-isscat="parcel"><span class="lf">택배 반품</span><span class="ls">택배반품</span><i id="iss-pcn"></i></button></div>
+    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button><button type="button" role="tab" data-isscat="parcel"><span class="lf">택배 사고</span><span class="ls">택배사고</span><i id="iss-pcn"></i></button></div>
     <div class="iss-sync hidden" id="iss-sync"><span id="iss-syncmsg"></span><button class="btn sm" type="button" id="iss-syncbtn">카페24에서 지금 가져오기</button></div>
     <div class="iss-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -3843,12 +3844,37 @@ function renderPend() {
   box.innerHTML = issPend.map((d, i) => `<span class="iss-ph pend"><img src="${d}" alt="붙일 사진"><button type="button" data-phrm="${i}" aria-label="빼기">✕</button></span>`).join('');
   box.classList.toggle('hidden', !issPend.length);
 }
+// 송장번호 자동 찾기: 사진 속 바코드를 읽어요 (BarcodeDetector → 안 되면 ZXing을 그때만 불러와요)
+let zxP = null; const ZX_URL = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0/umd/index.min.js';
+function zxLoad() { if (window.ZXing) return Promise.resolve(window.ZXing); if (!zxP) zxP = new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = ZX_URL; sc.onload = () => window.ZXing ? res(window.ZXing) : rej(new Error('zxing')); sc.onerror = () => { zxP = null; rej(new Error('바코드 읽기 도구를 불러오지 못했어요')); }; document.head.appendChild(sc); }); return zxP; }
+const wbPick = txts => { for (const t of txts) { const d = String(t || '').replace(/\D/g, ''); if (/^\d{10,14}$/.test(d)) return d; } return ''; };
+async function wbScan(dataUrl) {
+  const img = await new Promise((r, j) => { const im = new Image(); im.onload = () => r(im); im.onerror = j; im.src = dataUrl; });
+  const views = [img]; for (const deg of [90, 270]) { const c = document.createElement('canvas'), w = img.naturalWidth, h = img.naturalHeight; c.width = h; c.height = w; const g = c.getContext('2d'); g.translate(h / 2, w / 2); g.rotate(deg * Math.PI / 180); g.drawImage(img, -w / 2, -h / 2); views.push(c); }
+  if ('BarcodeDetector' in window) { try { const bd = new BarcodeDetector(); for (const v of views) { const r = await bd.detect(v); const n = wbPick(r.map(x => x.rawValue)); if (n) return n; } } catch (e) {} }
+  if (window.__wbMock) return window.__wbMock(dataUrl);
+  const ZX = await zxLoad(), hints = new Map(); hints.set(ZX.DecodeHintType.TRY_HARDER, true);
+  const rd = new ZX.MultiFormatReader(); rd.setHints(hints);
+  for (const v of views) { try { let c = v; if (!(v instanceof HTMLCanvasElement)) { c = document.createElement('canvas'); c.width = v.naturalWidth; c.height = v.naturalHeight; c.getContext('2d').drawImage(v, 0, 0); }
+    const px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data, gy = new Uint8ClampedArray(c.width * c.height); for (let i = 0, j = 0; j < gy.length; i += 4, j++) gy[j] = (px[i] * 77 + px[i + 1] * 150 + px[i + 2] * 29) >> 8; const lum = new ZX.RGBLuminanceSource(gy, c.width, c.height);
+    const n = wbPick([rd.decode(new ZX.BinaryBitmap(new ZX.HybridBinarizer(lum))).getText()]); if (n) return n; } catch (e) {} }
+  return '';
+}
+let wbAuto = false;   // 송장번호 칸을 자동으로 채웠는지 (직접 고치면 false)
+document.addEventListener('input', e => { if (e.target.id === 'iss-item') wbAuto = false; });
+async function wbTry(urls) {
+  const box = $('iss-item'), m = $('iss-msg'); if (issCat !== 'parcel' || box.classList.contains('hidden') || (box.value.trim() && !wbAuto)) return;
+  m.className = 'msg'; m.textContent = '사진에서 송장번호 찾는 중…';
+  for (const u of urls) { let n = ''; try { n = await wbScan(u); } catch (er) { m.className = 'msg err'; m.textContent = er.message || '송장번호를 찾지 못했어요'; return; }
+    if (n) { if (box.value.trim() && !wbAuto) return; box.value = n; wbAuto = true; box.classList.add('wb-hit'); setTimeout(() => box.classList.remove('wb-hit'), 1600); m.className = 'msg ok'; m.textContent = '송장번호를 찾았어요 · 틀리면 고쳐 주세요'; return; } }
+  m.className = 'msg'; m.textContent = '사진에서 송장번호를 못 찾았어요 · 직접 적어 주세요';
+}
 document.addEventListener('change', async e => {
   if (e.target.id !== 'iss-file') return;
   const fs = [...e.target.files]; e.target.value = ''; const m = $('iss-msg');
   for (const f of fs.slice(0, 6 - issPend.length)) { try { issPend.push(await photoShrink(f)); } catch (er) { m.className = 'msg err'; m.textContent = er.message; } }
   if (fs.length > 6) { m.className = 'msg'; m.textContent = '사진은 한 번에 6장까지 붙여요'; }
-  renderPend();
+  renderPend(); wbTry(issPend.slice());
 });
 document.addEventListener('click', async e => {
   const rm = e.target.closest('[data-phrm]'); if (rm) { issPend.splice(+rm.dataset.phrm, 1); renderPend(); return; }
@@ -3889,7 +3915,7 @@ function renderIssue() {
   if (!issMonth) { const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); }
   const all = issAll(), byDay = new Map(); all.forEach(x => { if (!byDay.has(x.day)) byDay.set(x.day, new Set()); byDay.get(x.day).add(issCat !== 'item' ? x.id : x.item); });
   document.querySelectorAll('[data-isscat]').forEach(b => b.classList.toggle('on', b.dataset.isscat === issCat)); $('v-issue').dataset.cat = issCat; try { issSyncLine(); } catch (e) {}
-  const PC = issCat === 'parcel'; $('iss-q').placeholder = PC ? '송장번호 · 메모 검색' : '품목 검색 · 그 품목의 이슈를 한번에 봐요'; $('iss-addbtn').lastChild.textContent = PC ? '반품 적기' : '이슈 적기';
+  const PC = issCat === 'parcel'; $('iss-q').placeholder = PC ? '송장번호 · 메모 검색' : '품목 검색 · 그 품목의 이슈를 한번에 봐요'; $('iss-addbtn').lastChild.textContent = PC ? '사고 적기' : '이슈 적기';
   $('iss-names').innerHTML = issNames().map(n => `<option value="${esc(n)}">`).join('');
   // 달력
   const y = issMonth.getFullYear(), mo = issMonth.getMonth(), first = new Date(y, mo, 1), n = new Date(y, mo + 1, 0).getDate();
@@ -3906,8 +3932,8 @@ function renderIssue() {
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
-    `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 반품</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
-    : (issCat === 'review' ? '<p class="iss-empty">이 날 들어온 상품 후기가 없어요.<br>카페24 후기 게시판에 글이 올라오면 자동으로 여기에 기록돼요.</p>' : issCat === 'parcel' ? '<p class="iss-empty">이 날 적어 둔 택배 반품이 없어요.<br><b>반품 적기</b>를 눌러 송장번호 · 사진 · 메모를 남겨 보세요.<br>사고 접수할 때 <b>이미지로 저장</b>해서 택배사에 올리면 돼요.</p>' : issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
+    `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>`).join('')
+    : (issCat === 'review' ? '<p class="iss-empty">이 날 들어온 상품 후기가 없어요.<br>카페24 후기 게시판에 글이 올라오면 자동으로 여기에 기록돼요.</p>' : issCat === 'parcel' ? '<p class="iss-empty">이 날 적어 둔 택배 사고가 없어요.<br><b>사고 적기</b>를 눌러 사진 · 메모를 남겨 보세요. 송장 사진을 올리면 송장번호를 자동으로 찾아 적어 줘요.<br>사고 접수할 때 <b>이미지로 저장</b>해서 택배사에 올리면 돼요.</p>' : issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
   renderIssueSearch();
 }
 function renderIssueSearch() {
@@ -3926,8 +3952,8 @@ function renderIssueSearch() {
 function issOpenModal(item) {
   issModalItem = item || null; issEditId = null;
   $('iss-md').textContent = fmtDay(issDay);
-  const PC = issCat === 'parcel'; $('iss-mt').textContent = item ? item : PC ? '택배 반품 적기' : '새 이슈 적기';
-  $('iss-item').placeholder = PC ? '송장번호 (예: 5123 4567 8901)' : '품목 (예: 로즈마리)'; $('iss-pimg').classList.add('hidden');
+  const PC = issCat === 'parcel'; $('iss-mt').textContent = item ? item : PC ? '택배 사고 적기' : '새 이슈 적기';
+  $('iss-item').placeholder = PC ? '송장번호 · 송장 사진을 붙이면 자동으로 적어요' : '품목 (예: 로즈마리)'; $('iss-pimg').classList.add('hidden'); wbAuto = false;
   $('iss-item').value = item || ''; $('iss-item').classList.toggle('hidden', !!item);
   $('iss-text').value = ''; $('iss-msg').textContent = ''; $('iss-save').textContent = '저장'; issPend = []; renderPend();
   renderIssList();
@@ -3941,7 +3967,7 @@ function renderIssList() {
   const PC = issCat === 'parcel'; $('iss-pimg').classList.toggle('hidden', !(PC && arr.length));
   $('iss-text').placeholder = PC ? (arr.length ? '메모나 사진을 더 붙이기' : '메모 (예: 박스 한쪽 찌그러짐 · 내용물 젖음 · 사고접수 예정)') : arr.length ? '이 품목에 이슈를 더 적기' : '어떤 이슈였는지 적어 주세요 (예: 잎 끝 갈변 · 3팩 교환)';
 }
-async function issParcelImg() {   // 택배 반품: 사진 + 메모를 한 장의 이미지로
+async function issParcelImg() {   // 택배 사고: 사진 + 메모를 한 장의 이미지로
   const it = issModalItem, arr = issOfDay(issDay).filter(x => x.item === it).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
   if (!arr.length) return; const m = $('iss-msg'); m.className = 'msg'; m.textContent = '이미지 만드는 중…';
   try {
@@ -3959,7 +3985,7 @@ async function issParcelImg() {   // 택배 반품: 사진 + 메모를 한 장�
     const H = P + 150 + (ims.length ? photoH + 24 : 0) + memoH + 70;
     c.width = W; c.height = Math.ceil(H); g.fillStyle = '#fff'; g.fillRect(0, 0, W, c.height); g.textBaseline = 'top';
     let y = P;
-    g.fillStyle = '#8a5418'; g.font = '700 26px ' + F; g.fillText('택배 반품 · 사고 접수용', P, y);
+    g.fillStyle = '#8a5418'; g.font = '700 26px ' + F; g.fillText('택배 사고 접수용', P, y);
     g.fillStyle = '#7a7f70'; g.font = '500 26px ' + F; const dt = fmtDay(issDay); g.fillText(dt, W - P - g.measureText(dt).width, y); y += 44;
     g.fillStyle = '#1f2a1c'; g.font = '800 46px ' + F; const tl = wrap('송장번호 ' + it, '800 46px ' + F, W - P * 2)[0]; g.fillText(tl, P, y); y += 74;
     g.fillStyle = '#e4e0d4'; g.fillRect(P, y, W - P * 2, 2); y += 30;
@@ -3972,7 +3998,7 @@ async function issParcelImg() {   // 택배 반품: 사진 + 메모를 한 장�
     }
     g.fillStyle = '#9a9e90'; g.font = '400 22px ' + F; const ft = '허브아이 · ' + (arr[0].at ? hhmm(arr[0].at) + ' 기록' : '') + (arr[0].by ? ' · ' + arr[0].by : ''); g.fillText(ft, P, c.height - P - 6);
     const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .9));
-    await saveFile('택배반품_' + issDay + '_' + String(it).replace(/[^\w가-힣-]+/g, '') + '.jpg', blob);
+    await saveFile('택배사고_' + issDay + '_' + String(it).replace(/[^\w가-힣-]+/g, '') + '.jpg', blob);
     m.className = 'msg ok'; m.textContent = '이미지로 저장했어요';
   } catch (er) { m.className = 'msg err'; m.textContent = '이미지를 만들지 못했어요: ' + (er.message || er); }
 }
@@ -3987,7 +4013,7 @@ document.addEventListener('click', async e => {
   if (t.closest('#iss-close') || t.id === 'issModal') return issClose();
   if (t.closest('#iss-x')) { $('iss-q').value = ''; renderIssueSearch(); $('iss-q').focus(); return; }
   const j = t.closest('[data-issjump]'); if (j) { if (!issOpen()) document.querySelector('.tab[data-t=issue]').click(); if (j.dataset.issjumpcat) issCat = j.dataset.issjumpcat; issDay = j.dataset.issjump; const d = dOf(issDay); issMonth = new Date(d.getFullYear(), d.getMonth(), 1); renderIssue(); issOpenModal(j.dataset.issjumpitem); return; }
-  const ed = t.closest('[data-issedit]'); if (ed) { const x = issOfDay(issDay).find(v => v.id === ed.dataset.issedit); if (!x) return; issEditId = x.id; $('iss-text').value = x.text; $('iss-save').textContent = '고친 내용 저장'; renderIssList(); $('iss-text').focus(); return; }
+  const ed = t.closest('[data-issedit]'); if (ed) { const x = issOfDay(issDay).find(v => v.id === ed.dataset.issedit); if (!x) return; issEditId = x.id; $('iss-text').value = x.text; $('iss-save').textContent = '고친 내용 저장'; if (issCat === 'parcel') { $('iss-item').value = x.item; $('iss-item').classList.remove('hidden'); } renderIssList(); $('iss-text').focus(); return; }
   const del = t.closest('[data-issdel]'); if (del) { if (!confirmTap(del, del.dataset.issdel, '한 번 더 누르면 이 메모를 지워요')) return;
     try { const gone = issOfDay(issDay).find(v => v.id === del.dataset.issdel); await issWrite(issDay, arr => { const i = arr.findIndex(v => v.id === del.dataset.issdel); if (i >= 0) arr.splice(i, 1); }); ((gone && gone.ph) || []).forEach(photoDel); renderIssList(); if (!issOfDay(issDay).some(x => x.item === issModalItem)) issClose(); } catch (er) { $('iss-msg').className = 'msg err'; $('iss-msg').textContent = '지우지 못했어요: ' + (er.message || er.code); } return; }
 });
@@ -3995,7 +4021,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('issModa
 document.addEventListener('input', e => { if (e.target.id === 'iss-q') renderIssueSearch(); });
 document.addEventListener('submit', async e => {
   if (e.target.id !== 'iss-form') return; e.preventDefault();
-  const item = (issModalItem || $('iss-item').value).trim(), text = $('iss-text').value.trim(), m = $('iss-msg');
+  const renm = issCat === 'parcel' && issEditId && !$('iss-item').classList.contains('hidden'), item = (renm || !issModalItem ? $('iss-item').value : issModalItem).trim(), text = $('iss-text').value.trim(), m = $('iss-msg');
   if (!item) { m.className = 'msg err'; m.textContent = issCat === 'parcel' ? '송장번호를 적어 주세요' : '품목을 적어 주세요'; $('iss-item').focus(); return; }
   if (!text && !issPend.length) { m.className = 'msg err'; m.textContent = '내용을 적거나 사진을 붙여 주세요'; $('iss-text').focus(); return; }
   const who = (typeof fbUser !== 'undefined' && fbUser && fbUser.email) ? (typeof showId === 'function' ? showId(fbUser.email) : fbUser.email) : '';
@@ -4004,6 +4030,7 @@ document.addEventListener('submit', async e => {
     const eid = issEditId, ph = [];
     if (issPend.length) { m.className = 'msg'; m.textContent = '사진 올리는 중…'; for (const d of issPend) { const pid = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); await photoPut(pid, d, { day: issDay, item, by: who }); ph.push(pid); } }
     await issWrite(issDay, arr => {
+      if (eid && renm && item !== issModalItem) arr.forEach(v => { if (v.item === issModalItem && (v.cat || 'item') === issCat) v.item = item; });
       if (eid) { const x = arr.find(v => v.id === eid); if (x) { x.text = text; x.editedAt = new Date().toISOString(); if (ph.length) x.ph = (x.ph || []).concat(ph); } }
       else { const nx = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), item, text, at: new Date().toISOString(), by: who }; if (issCat !== 'item') { nx.cat = issCat; nx.ctype = '메모'; } if (ph.length) nx.ph = ph; arr.push(nx); }
     });
