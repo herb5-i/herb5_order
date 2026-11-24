@@ -4014,7 +4014,7 @@ function renderWeather() {
   const B = rules.weather.bands || [];
   const BMK = bandMarks();
   const rngTxt = b => { const a = b.min === '' || b.min === undefined, z = b.max === '' || b.max === undefined; return a ? esc(b.max) + '도 이하' : z ? esc(b.min) + '도 이상' : esc(b.min) + ' ~ ' + esc(b.max) + '도'; };
-  const grp = (t, list) => list.length ? `<div class="lg"><h4>${t}</h4>` + list.map(b => `<div><span class="rg2">${rngTxt(b)}</span><span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span><span class="bmk" title="엑셀에만 붙는 기호">${esc(BMK.get(String(b.label || '').trim()) || '')}</span></div>`).join('') + '</div>' : '';
+  const grp = (t, list) => list.length ? `<div class="lg"><h4>${t}</h4>` + list.map(b => `<div><span class="rg2">${rngTxt(b)}</span><span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span><span class="bmk" title="엑셀에만 붙는 기호">${esc((BMK.get(String(b.label || '').trim()) || '').replace('@T', '[최저기온]'))}</span></div>`).join('') + '</div>' : '';
   $('bandsTxt').innerHTML = grp('보온 포장 · 최저기온 기준', B.filter(b => String(b.basis).includes('최저'))) + grp('아이스팩 · 최고기온 기준', B.filter(b => !String(b.basis).includes('최저')));
   const dd = dayData();
   $('wsrc').innerHTML = wdata ? `
@@ -8890,10 +8890,10 @@ function c24Bind() {
 c24Bind();
 
 // ---------- 내려받기 ----------
-// 엑셀 비고란 맨 뒤에만 붙이는 표시: 영하(최저기온 기준 · 보온 포장)일 때만. 배송 불가 △▲꼼꼼한 포장△▲, 두껍게 ▲꼼꼼한 포장▲, 얇게 △꼼꼼한 포장△ — 줄을 바꿔 붙여서 송장 왼쪽 칸에 따로 한 줄로 찍혀요 (50자 안)
+// 엑셀 비고란 맨 뒤에만 붙이는 표시: 영하(최저기온 기준 · 보온 포장)일 때만. 최저기온을 [-4도]처럼 — 줄을 바꿔 붙여서 송장 왼쪽 칸에 따로 한 줄로 찍혀요 (50자 안)
 // (규칙 관리 → 날씨 · 포장의 '엑셀 표시 기호'에 적으면 그 기호를 써요. 아이스팩 기준은 비워 두면 안 붙어요)
 function bandMarks() { const m = new Map(); ((rules.weather && rules.weather.bands) || []).forEach(b => { const l = String(b.label || '').trim(); if (!l || m.has(l)) return; const own = String(b.mark || '').trim(), cold = String(b.basis || '').includes('최저');
-  const def = !cold ? '' : String(b.warn || '').trim() ? '△▲꼼꼼한 포장△▲' : /두껍/.test(l) ? '▲꼼꼼한 포장▲' : /얇/.test(l) ? '△꼼꼼한 포장△' : ''; if (own || def) m.set(l, own || def); }); return m; }
+  const def = cold ? '@T' : ''; if (own || def) m.set(l, own || def); }); return m; }
 function buildXlsx() {
   const wb = XLSX.utils.book_new();
   const colorMap0 = new Map(result.colors.map(c => [c[0] + ',' + c[1], c[2]]));
@@ -8901,8 +8901,9 @@ function buildXlsx() {
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
     let full = result[key], ord = null;
-    if (si === 0) { const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), BM = bandMarks();
-      if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
+    if (si === 0) { const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
+      const loOf = r => { const m = String(tc >= 0 ? r[tc] ?? '' : '').match(/^\s*(-?\d+(?:\.\d+)?)/); return m ? '[' + Number(m[1]) + '도]' : ''; };
+      if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
       if (pc >= 0 && full.length > 2) { const bl = ((rules.weather && rules.weather.bands) || []).map(b => String(b.label || '').trim());
         const rk = r => { const ls = String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => bl.indexOf(l.trim())).filter(i => i >= 0); return ls.length ? Math.min(...ls) : 1e9; };
