@@ -286,6 +286,20 @@ th{background:#eef3ec}
 .hd.on{background:var(--acc);border-color:var(--acc);color:#fff}.hd.on .n{color:#fff}
 .hmsum{margin:10px 0 0}
 .c24sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 0;padding:10px 12px;border-radius:10px;background:#eef4fb;color:#2b4f7a;font-size:13px}.c24sync span{flex:1;min-width:0}.c24sync small{color:var(--mute)}.c24sync.hidden{display:none}html.dark .c24sync{background:rgba(90,140,210,.14);color:#b9d1ee}
+.ktc .ktbiz{display:flex;align-items:flex-end;gap:8px}.ktc .ktl{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);min-width:0}
+.ktc .ktl select,.ktc .ktl input{height:38px;border-radius:10px;border:1px solid var(--line);padding:0 10px;font:inherit;font-size:15px;color:var(--ink);min-width:0;width:100%;box-sizing:border-box}
+.ktc .ktbiz .ktl{flex:0 1 360px}.ktc .ktbiz .ibtn{margin-bottom:2px}.ktc .ktinfo{margin:8px 0 0;font-size:13px;color:var(--mute);overflow-wrap:anywhere}.ktc .ktinfo:empty{display:none}
+.ktc .ktbf{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px}.ktc .ktbfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.ktc .ktwide{grid-column:1/-1}
+.ktc .ktsm{margin:8px 0 0;font-size:12px;color:var(--mute)}.ktc .ktbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.ktc .ktpaste{margin-top:12px}.ktc .ktpaste summary{cursor:pointer;font-size:14px;color:var(--acc);font-weight:600}.ktc .ktpaste textarea{width:100%;box-sizing:border-box;margin-top:8px;border-radius:10px;border:1px solid var(--line);padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);resize:vertical}
+.ktc .kthd,.ktc .ktrow{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 64px 34px;gap:6px;align-items:center}.ktc .kthd{margin-top:14px;font-size:12px;color:var(--mute)}
+.ktc .ktrow{margin-top:6px}.ktc .ktrow input{height:38px;border-radius:10px;border:1px solid var(--line);padding:0 8px;font:inherit;font-size:15px;color:var(--ink);min-width:0;width:100%;box-sizing:border-box}
+.ktc .ktadd{margin-top:8px}.ktc .ktfoot{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.ktc .ktfoot .ktl{flex:0 1 170px}.ktc .ktfoot .ktnote{flex:1 1 240px}
+.ktc #ktlist{margin-top:14px}.ktc #ktlist:empty{display:none}.ktc .ktlh{font-size:13px;font-weight:700;margin:10px 0 6px;color:var(--ink)}
+.ktc .ktit{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-top:6px;font-size:14px}.ktc .ktit .ktt{flex:1;min-width:0;overflow-wrap:anywhere}.ktc .ktit .ktt small{display:block;color:var(--mute);font-size:12px}
+.ktc .ktit.done{opacity:.6}.ktc .ktst{flex:none;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc);white-space:nowrap}.ktc .ktit.out .ktst{background:var(--line);color:var(--mute)}
+#tbl tr.ktr td{background:var(--acc2)}#tbl tr.ktr td.rn span{font-size:11px;color:var(--acc);font-weight:700}
+@media(max-width:420px){.ktc .kthd,.ktc .ktrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 52px 34px;gap:4px}.ktc .ktrow input{padding:0 6px;font-size:14px}.ktc .ktit{flex-wrap:wrap}.ktc .ktit .ktt{flex:1 1 100%}.ktc .ktit .ktst{margin-right:auto}}
 .bmk{margin-left:6px;font-size:13px;color:var(--mute)}.hredate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#fdf3ea;color:#8a4a24;font-size:13px}.hredate span{flex:1;min-width:0}.hredate.hidden{display:none}html.dark .hredate{background:rgba(224,138,60,.14);color:#f0c39d}
 .hbak{margin-top:14px}
 #hbakmsg:empty,#histsave:empty{display:none}
@@ -2657,6 +2671,33 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
     <div class="card step ph4" data-sub="order">
       <div class="sh"><span class="num">2</span><div><h2>결과 확인 · 내려받기</h2><p>1번에서 원본을 올리면 여기에 결과가 나와요</p></div></div>
+    </div>
+    <div class="card step ktc" data-sub="order" id="ktcard">
+      <div class="sh"><span class="num">3</span><div><h2>카톡 주문 넣기</h2><p>카톡으로 받은 주문을 엑셀 주문정리에 합쳐요 · 집계에는 안 들어가요</p></div></div>
+      <div class="ktbiz"><label class="ktl">업체<select id="ktbiz"></select></label>
+        <button class="ibtn" id="ktbizadd" type="button" title="업체 등록" aria-label="업체 등록"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="ibtn" id="ktbized" type="button" title="업체 정보 고치기" aria-label="업체 정보 고치기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
+      <p class="ktinfo" id="ktinfo"></p>
+      <form class="ktbf hidden" id="ktbf" autocomplete="off">
+        <div class="ktbfg"><label class="ktl">업체명 *<input type="text" id="ktb-name" maxlength="40" required></label>
+        <label class="ktl">받는 분<input type="text" id="ktb-rcv" maxlength="30" placeholder="비우면 업체명"></label>
+        <label class="ktl">전화번호<input type="tel" id="ktb-phone" maxlength="20"></label>
+        <label class="ktl">우편번호<input type="text" id="ktb-zip" maxlength="7" inputmode="numeric"></label>
+        <label class="ktl ktwide">주소 *<input type="text" id="ktb-addr" maxlength="120" required></label></div>
+        <p class="ktsm">업체 정보는 이 기기에만 저장돼요. 공용 저장소에는 올라가지 않아요.</p>
+        <div class="ktbtns"><button class="btn pri sm" type="submit">업체 저장</button><button class="btn sm" type="button" id="ktb-cancel">취소</button><button class="btn sm hidden" type="button" id="ktb-del">업체 지우기</button></div>
+      </form>
+      <details class="ktpaste"><summary>카톡 대화 붙여 넣기</summary>
+        <textarea id="ktpt" rows="4" placeholder="카톡 대화를 복사해서 붙여 넣으면 상품 · 수량을 찾아 아래 칸에 채워요"></textarea>
+        <div class="ktbtns"><button class="btn sm" id="ktparse" type="button">상품 찾기</button><span class="msg" id="ktpmsg"></span></div>
+      </details>
+      <div class="kthd"><span>주문상품명</span><span>옵션</span><span>수량</span><span></span></div>
+      <div id="ktitems"></div>
+      <button class="btn sm ktadd" id="ktrowadd" type="button">+ 상품 줄</button>
+      <div class="ktfoot"><label class="ktl">발주일<input type="date" id="ktday"></label><label class="ktl ktnote">비고<input type="text" id="ktnote" maxlength="50"></label></div>
+      <div class="ktbtns"><button class="btn pri" id="ktgo" type="button">엑셀에 합치기</button><button class="btn sm hidden" id="ktcancel" type="button">고치기 취소</button><span class="msg" id="ktmsg"></span></div>
+      <div id="ktlist"></div>
+      <datalist id="ktnames"></datalist><datalist id="ktops"></datalist>
     </div>
 
     <div class="card step calcard" data-sub="wx">
@@ -5966,7 +6007,7 @@ function runProcess() {
       (w.flags.includes('미등록 상품') ? ` <button class="btn sm" data-reg="${esc(w.product)}">상품명 규칙에 추가</button>` : '') + '</li>').join('') + '</ul></div>';
   }
   $('warns').innerHTML = wh + noShipHtml();
-  renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack();
+  renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack(); try { ktRenderList(); ktLists(); } catch (e) {}
 }
 // 배송 불가 지역 (날씨 기준에 '경고'가 있는 포장 방법) 따로 모아 보기
 function noShipRows() {
@@ -6200,7 +6241,8 @@ document.addEventListener('click', e => {
   const ins = $('ed-names').querySelectorAll('tr:last-child input'); if (ins[1]) { ins[1].focus(); ins[1].select(); }
 });
 function renderSheetTabs() {
-  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1})</button>`).join('');
+  const ktn = ktOn().reduce((n, o) => n + o.items.length, 0);
+  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0)})</button>`).join('');
   $('stabs').querySelectorAll('.stab').forEach(b => b.onclick = () => { if (edMode) edCollect(); curSheet = +b.dataset.s; renderSheetTabs(); renderSheet(); });
 }
 function renderSheet() {
@@ -6222,6 +6264,7 @@ function renderSheet() {
       return `<td class="${ch ? 'ch' : ''}${ed ? ' ed' : ''}"${col ? ` style="background:#${esc(col)}"` : ''}${edMode && oi >= 0 && !delDraft ? ` contenteditable="plaintext-only" spellcheck="false" data-ek="${esc(ek)}" data-orig="${esc(fmt(v))}"` : ''}>${esc(fmt(edDraft.has(ek) ? edDraft.get(ek) : v))}</td>`;
     }).join('') + '</tr>';
   }
+  if (curSheet === 0) ktSheetRows(aoa[0]).forEach(r => { h += '<tr class="ktr"><td class="msg rn"><span>카톡</span></td>' + r.map(v => '<td>' + esc(fmt(v)) + '</td>').join('') + '</tr>'; });
   $('tbl').innerHTML = h + '</tbody>';
   $('tbl').classList.toggle('editing', edMode); edButtons();
 }
@@ -8901,7 +8944,7 @@ function buildXlsx() {
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
     let full = result[key], ord = null;
-    if (si === 0) { const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
+    if (si === 0) { full = full.concat(ktSheetRows(full[0])); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
       const loOf = r => { const m = String(tc >= 0 ? r[tc] ?? '' : '').match(/^\s*(-?\d+(?:\.\d+)?)/); return m ? '[' + Number(m[1]) + '도]' : ''; };
       if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
@@ -8927,6 +8970,133 @@ function buildXlsx() {
   });
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
+// ---------- 카톡 주문 넣기 ----------
+// 업체(받는 분 · 전화 · 주소)와 카톡 주문은 이 기기(IndexedDB)에만 저장해요. 공용 저장소(Firestore)에는 안 올려요.
+// '엑셀에 합치기' 한 주문은 주문정리 표 맨 아래와 내려받는 엑셀 주문정리 시트에만 들어가요 (수령인별 · 집계에는 안 들어가요).
+// 엑셀을 내려받으면 '내려받음'이 되고, 같은 주문 묶음(오전/오후)을 다시 내려받을 때만 또 들어가요 → 다음 묶음에 두 번 들어가지 않아요.
+const ktDb = () => new Promise((ok, no) => { try { const r = indexedDB.open('herb5_kakao', 1); r.onupgradeneeded = () => r.result.createObjectStore('m'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); } catch (e) { no(e); } });
+async function ktGet(k) { try { const d = await ktDb(); return await new Promise(res => { const q = d.transaction('m', 'readonly').objectStore('m').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(undefined); }); } catch (e) { return undefined; } }
+async function ktPut(k, v) { try { const d = await ktDb(); await new Promise(res => { const tx = d.transaction('m', 'readwrite'); tx.objectStore('m').put(v, k); tx.oncomplete = res; tx.onerror = res; }); } catch (e) {} }
+let ktBiz = [], ktList = [], ktItems = [{ p: '', op: '', q: 1 }], ktEditId = null, ktBizEd = null;
+const ktBatch = () => srcAt ? String(srcAt.getTime()) : '';
+const ktOn = () => ktList.filter(o => o.st === 'in' || (o.st === 'done' && o.batch && o.batch === ktBatch()));
+const ktSaveList = () => ktPut('orders', ktList);
+const ktCurBiz = () => ktBiz.find(b => b.id === $('ktbiz').value) || null;
+function ktWx(o) { // 받는 주소의 예보로 예보기온 · 포장방법 칸을 채워요 (엑셀 비고 [-4도] 표시 · 포장 정렬에 쓰여요)
+  try { const it = o.items[0] || {}, r = CORE.process([HIST_HEAD, [o.no, o.day, it.p || '-', it.op || '', 1, '', o.addr || '', '']], rules, wxCtx()), h = r.sheet1[0], row = r.sheet1[1] || [];
+    const tc = h.indexOf('예보기온(최저/최고)'), pc = h.indexOf((rules.weather && rules.weather.col) || '포장방법'); return { t: tc >= 0 ? row[tc] : null, p: pc >= 0 ? row[pc] : null }; } catch (e) { return { t: null, p: null }; }
+}
+function ktSheetRows(H) {
+  const fixed = new Map((rules.fixedValues || []).filter(f => String(f.col || '').trim()).map(f => [String(f.col).trim(), f.value])), out = [];
+  ktOn().forEach(o => { const w = ktWx(o), [y, m, d] = String(o.day).split('-').map(Number), ph = o.phone || null;
+    o.items.forEach(it => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.no, '주문상품명': '●' + it.p + '●', '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': o.rcv || o.biz, '우편번호': o.zip || null, '주소': o.addr,
+      '수령지전화': null, '전화번호': ph && !/^01/.test(ph.replace(/\D/g, '')) ? ph : null, '핸드폰': ph && /^01/.test(ph.replace(/\D/g, '')) ? ph : null, '비고': o.note || null, '주문자': o.biz, '예보기온(최저/최고)': w.t };
+      v[(rules.weather && rules.weather.col) || '포장방법'] = w.p;
+      out.push(H.map(h => fixed.has(h) ? fixed.get(h) : (h in v ? v[h] : null))); }); });
+  return out;
+}
+function ktSyncSheet() { if (!result) return; try { if (edMode) edCollect(); renderSheetTabs(); renderSheet(); } catch (e) {} }
+function ktLists() {
+  const nm = new Set(); (((rules.summary || {}).order) || []).concat((rules.names || []).map(n => n.to)).forEach(n => { n = String(n || '').trim(); if (n && !/^★/.test(n)) nm.add(n); });
+  ktList.forEach(o => o.items.forEach(it => it.p && nm.add(it.p)));
+  $('ktnames').innerHTML = [...nm].map(n => `<option value="${esc(n)}">`).join('');
+  const op = new Set(); try { if (result) { const h = result.sheet1[0], oc = h.indexOf('옵션'); if (oc >= 0) result.sheet1.slice(1).forEach(r => { const v = String(r[oc] ?? '').trim(); if (v) op.add(v); }); } } catch (e) {}
+  ktList.forEach(o => o.items.forEach(it => it.op && op.add(it.op)));
+  $('ktops').innerHTML = [...op].slice(0, 80).map(n => `<option value="${esc(n)}">`).join('');
+}
+function ktRenderBiz(sel) {
+  const s0 = sel ?? $('ktbiz').value;
+  $('ktbiz').innerHTML = ktBiz.length ? ktBiz.map(b => `<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('') : '<option value="">업체를 먼저 등록해 주세요 (+)</option>';
+  if (ktBiz.some(b => b.id === s0)) $('ktbiz').value = s0;
+  const b = ktCurBiz(); $('ktbized').disabled = !b;
+  $('ktinfo').textContent = b ? ['받는 분 ' + (b.rcv || b.name), b.phone, [b.zip && '(' + b.zip + ')', b.addr].filter(Boolean).join(' ')].filter(Boolean).join(' · ') : '';
+}
+function ktRenderItems() {
+  $('ktitems').innerHTML = ktItems.map((it, i) => `<div class="ktrow"><input type="text" list="ktnames" data-kti="${i}" data-k="p" value="${esc(it.p)}" placeholder="예: 로즈마리" aria-label="주문상품명"><input type="text" list="ktops" data-kti="${i}" data-k="op" value="${esc(it.op)}" placeholder="예: 100g" aria-label="옵션"><input type="number" min="1" step="1" inputmode="numeric" data-kti="${i}" data-k="q" value="${esc(it.q)}" aria-label="수량"><button class="ibtn" type="button" data-ktdel="${i}" title="이 줄 빼기" aria-label="이 줄 빼기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('');
+}
+function ktItemTxt(o) { return o.items.map(it => it.p + (it.op ? ' ' + it.op : '') + ' ×' + it.q).join(', '); }
+function ktRenderList() {
+  const now = Date.now(), L = ktList.filter(o => now - new Date(o.at) < 7 * 864e5).sort((a, b) => String(b.at).localeCompare(String(a.at))), on = new Set(ktOn().map(o => o.id));
+  if (!L.length) { $('ktlist').innerHTML = ''; return; }
+  const tm = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
+  const ic = (k, id, t, path) => `<button class="ibtn" type="button" data-${k}="${esc(id)}" title="${t}" aria-label="${t}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${path}</svg></button>`;
+  const P_OUT = '<path d="M5 12h14"/>', P_IN = '<path d="M12 5v14M5 12h14"/>', P_DEL = '<path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"/>', P_ED = '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/>';
+  const n = ktOn().reduce((s, o) => s + o.items.length, 0);
+  $('ktlist').innerHTML = `<div class="ktlh">최근 카톡 주문 · 이번 엑셀에 ${n}줄 들어가요</div>` + L.map(o => {
+    const st = on.has(o.id) ? (o.st === 'done' ? '내려받음 · 다시 받으면 포함' : '엑셀에 합침') : o.st === 'done' ? '내려받음 ' + tm(o.doneAt) : '빼 둠';
+    return `<div class="ktit ${on.has(o.id) ? '' : o.st === 'done' ? 'done' : 'out'}"><span class="ktt"><b>${esc(o.biz)}</b> · ${esc(ktItemTxt(o))}<small>${esc(o.no)} · 발주일 ${esc(o.day)} · ${tm(o.at)} 적음</small></span><span class="ktst">${st}</span>` +
+      (on.has(o.id) ? ic('ktout', o.id, '이번 엑셀에서 빼기', P_OUT) : ic('ktin', o.id, '엑셀에 다시 넣기', P_IN)) + ic('kted', o.id, '고치기', P_ED) + ic('ktrm', o.id, '지우기', P_DEL) + '</div>';
+  }).join('');
+}
+function ktRender() { ktRenderBiz(); ktRenderItems(); ktRenderList(); ktLists(); if (!$('ktday').value) $('ktday').value = isoDate(new Date()); if (!$('ktnote').value && !ktEditId) $('ktnote').value = rules.defaultNote || ''; }
+function ktBizForm(b) { ktBizEd = b ? b.id : null; $('ktbf').classList.remove('hidden'); $('ktb-del').classList.toggle('hidden', !b);
+  [['name', 'name'], ['rcv', 'rcv'], ['phone', 'phone'], ['zip', 'zip'], ['addr', 'addr']].forEach(([f, k]) => $('ktb-' + f).value = b ? (b[k] || '') : ''); $('ktb-name').focus(); }
+$('ktbizadd').onclick = () => ktBizForm(null);
+$('ktbized').onclick = () => { const b = ktCurBiz(); if (b) ktBizForm(b); };
+$('ktb-cancel').onclick = () => $('ktbf').classList.add('hidden');
+$('ktbiz').onchange = () => ktRenderBiz();
+$('ktbf').onsubmit = async e => { e.preventDefault(); const g = f => $('ktb-' + f).value.trim(), name = g('name'), addr = g('addr'); if (!name || !addr) return;
+  const v = { name, rcv: g('rcv'), phone: g('phone'), zip: g('zip'), addr };
+  let id = ktBizEd; if (id) Object.assign(ktBiz.find(b => b.id === id) || {}, v); else { id = 'b' + Date.now(); ktBiz.push(Object.assign({ id }, v)); }
+  ktBiz.sort((a, b) => a.name.localeCompare(b.name, 'ko')); await ktPut('biz', ktBiz); $('ktbf').classList.add('hidden'); ktRenderBiz(id); shareToast('업체를 저장했어요'); };
+$('ktb-del').onclick = async e => { if (!ktBizEd || !confirmTap(e.currentTarget, ktBizEd, '한 번 더 누르면 업체가 지워져요')) return; ktBiz = ktBiz.filter(b => b.id !== ktBizEd); await ktPut('biz', ktBiz); $('ktbf').classList.add('hidden'); ktRenderBiz(); };
+$('ktitems').addEventListener('input', e => { const t = e.target, i = +t.dataset.kti; if (!ktItems[i]) return; ktItems[i][t.dataset.k] = t.dataset.k === 'q' ? t.value : t.value; });
+$('ktitems').addEventListener('click', e => { const b = e.target.closest('[data-ktdel]'); if (!b) return; ktItems.splice(+b.dataset.ktdel, 1); if (!ktItems.length) ktItems.push({ p: '', op: '', q: 1 }); ktRenderItems(); });
+$('ktrowadd').onclick = () => { ktItems.push({ p: '', op: '', q: 1 }); ktRenderItems(); const ins = $('ktitems').querySelectorAll('input[data-k=p]'); ins[ins.length - 1].focus(); };
+$('ktcard').addEventListener('focusin', e => { if (e.target.matches('input[list]')) ktLists(); });
+function ktReset() { ktItems = [{ p: '', op: '', q: 1 }]; ktEditId = null; $('ktgo').textContent = '엑셀에 합치기'; $('ktcancel').classList.add('hidden'); $('ktnote').value = rules.defaultNote || ''; $('ktday').value = isoDate(new Date()); ktRenderItems(); }
+$('ktcancel').onclick = () => { ktReset(); $('ktmsg').textContent = ''; };
+$('ktgo').onclick = async () => { const m = $('ktmsg'), b = ktCurBiz(); m.className = 'msg';
+  const items = ktItems.map(it => ({ p: String(it.p || '').trim().replace(/^●+|●+$/g, ''), op: String(it.op || '').trim(), q: Math.max(1, Math.round(Number(it.q) || 1)) })).filter(it => it.p);
+  if (!b) { m.className = 'msg err'; m.textContent = '업체를 먼저 고르거나 등록해 주세요'; return; }
+  if (!items.length) { m.className = 'msg err'; m.textContent = '주문상품명을 적어 주세요'; return; }
+  const day = $('ktday').value || isoDate(new Date()), note = $('ktnote').value.trim(), snap = { bizId: b.id, biz: b.name, rcv: b.rcv || '', phone: b.phone || '', zip: b.zip || '', addr: b.addr, day, note, items };
+  if (ktEditId) { const o = ktList.find(x => x.id === ktEditId); if (o) Object.assign(o, snap); }
+  else { const pre = 'KT' + day.slice(2).replace(/-/g, '') + '-', seq = ktList.filter(o => String(o.no).startsWith(pre)).reduce((mx, o) => Math.max(mx, Number(String(o.no).slice(pre.length)) || 0), 0) + 1;
+    ktList.push(Object.assign({ id: 'k' + Date.now(), no: pre + pad2(seq), st: 'in', at: new Date().toISOString() }, snap)); }
+  await ktSaveList(); const ed = !!ktEditId; ktReset(); ktRenderList(); ktSyncSheet();
+  m.className = 'msg ok'; m.textContent = (ed ? '고친 내용을 저장했어요' : b.name + ' 주문을 엑셀 주문정리에 합쳤어요') + (result ? '' : ' · 주문을 불러오면 엑셀에 같이 들어가요'); };
+$('ktlist').addEventListener('click', async e => { const b = e.target.closest('button'); if (!b) return; const k = Object.keys(b.dataset).find(x => /^kt(out|in|ed|rm)$/.test(x)); if (!k) return; const id = b.dataset[k], o = ktList.find(x => x.id === id); if (!o) return;
+  if (k === 'ktout') { o.st = 'out'; delete o.batch; }
+  else if (k === 'ktin') { o.st = 'in'; delete o.batch; }
+  else if (k === 'kted') { ktEditId = id; ktItems = o.items.map(it => Object.assign({}, it)); if (ktBiz.some(x => x.id === o.bizId)) $('ktbiz').value = o.bizId; ktRenderBiz(); $('ktday').value = o.day; $('ktnote').value = o.note || ''; ktRenderItems(); $('ktgo').textContent = '고친 내용 저장'; $('ktcancel').classList.remove('hidden'); $('ktmsg').textContent = o.no + ' 고치는 중'; $('ktitems').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  else if (k === 'ktrm') { if (!confirmTap(b, id, '한 번 더 누르면 지워져요')) return; ktList = ktList.filter(x => x.id !== id); if (ktEditId === id) ktReset(); }
+  await ktSaveList(); ktRenderList(); ktSyncSheet(); });
+function ktAfterDl() { const bt = ktBatch(), t = new Date().toISOString(); let ch = false; ktList.forEach(o => { if (o.st === 'in') { o.st = 'done'; o.batch = bt; o.doneAt = t; ch = true; } }); if (ch) { ktSaveList(); ktRenderList(); ktSyncSheet(); } }
+// 카톡 대화 붙여 넣기 → 상품 · 수량 찾기 (맞는지는 사람이 확인해요)
+function ktKeywords() {
+  const ord = (((rules.summary || {}).order) || []).filter(n => !/^★/.test(n)), tos = [...new Set((rules.names || []).map(n => String(n.to || '').trim()).filter(t => t && !/^★/.test(t)))];
+  const rank = t => { const i = ord.indexOf(t); return i < 0 ? 999 : i; }, kw = new Map(), add = (w, t) => { w = String(w || '').trim(); if (w.length < 2) return; const c = kw.get(w); if (!c || rank(t) < rank(c)) kw.set(w, t); };
+  (rules.names || []).forEach(n => { const t = String(n.to || '').trim(); if (t && !/^★/.test(t)) add(n.from, t); });
+  tos.forEach(t => { add(t, t); t.replace(/\(.*?\)|\[.*?\]/g, ' ').split(/\s+/).forEach(w => { if (!/\d/.test(w) && !/^(생잎|생화|허브|먹는꽃|장식용|잎)$/.test(w)) add(w, t); if (/잎$/.test(w)) add(w.replace(/잎$/, ''), t); }); });
+  add('한련화', tos.find(t => /한련화/.test(t)) || ''); add('줄기스피아', tos.find(t => /스피아민트/.test(t)) || '');
+  return [...kw.entries()].filter(([, t]) => t).sort((a, b) => b[0].length - a[0].length);
+}
+function ktParse(txt) {
+  const KW = ktKeywords(), found = []; let sender = '';
+  String(txt || '').split(/\r?\n/).forEach(line => {
+    let l = line.trim(); if (!l || /^-{3,}|^\d{4}년 \d{1,2}월 \d{1,2}일/.test(l)) return;
+    let m = l.match(/^\[([^\]]+)\]\s*\[(?:오전|오후)\s*\d{1,2}:\d{2}\]\s*(.*)$/); if (m) { sender = m[1]; l = m[2]; }
+    else if ((m = l.match(/^\d{4}[.\-]\s*\d{1,2}[.\-]\s*\d{1,2}\.?\s*(?:오전|오후)?\s*\d{1,2}:\d{2},?\s*([^:]{1,30}?)\s*:\s*(.*)$/))) { sender = m[1]; l = m[2]; }
+    l.split(/\s*(?:,|\/|및|그리고|랑|하고)\s*/).forEach(seg => { let t = null, kw = '';
+      for (const [w, to] of KW) if (seg.replace(/\s+/g, '').includes(w.replace(/\s+/g, ''))) { t = to; kw = w; break; }
+      if (!t) return; let rest = seg.replace(kw, ' '), q = null, op = '', x;
+      if ((x = seg.match(/(\d+(?:\.\d+)?)\s*(kg|키로|킬로)/i))) { op = x[1] + 'kg'; rest = rest.replace(x[0], ' '); }
+      else if ((x = seg.match(/(\d+)\s*(g|그램)(?![a-z])/i))) { op = x[1] + 'g'; rest = rest.replace(x[0], ' '); }
+      if ((x = rest.match(/(\d+)\s*송이/))) { const base = (t.match(/(\d+)\s*송이/) || [])[1], n = +x[1]; if (base && n % base === 0) q = n / base; else op = (op ? op + ' ' : '') + n + '송이'; rest = rest.replace(x[0], ' '); }
+      if (q == null && (x = rest.match(/(\d+)\s*(개|팩|봉지|봉|박스|box|세트|통|묶음|단|키트)/i))) q = +x[1];
+      if (q == null && (x = rest.match(/(?:^|\D)(\d{1,2})(?!\d)/))) q = +x[1];
+      found.push({ p: t, op, q: q > 0 ? q : 1 }); });
+  });
+  return { found, sender };
+}
+$('ktparse').onclick = () => { const { found, sender } = ktParse($('ktpt').value), m = $('ktpmsg');
+  if (!found.length) { m.className = 'msg err'; m.textContent = '상품을 찾지 못했어요. 아래 칸에 직접 적어 주세요'; return; }
+  const cur = ktItems.filter(it => String(it.p || '').trim()); ktItems = cur.concat(found); ktRenderItems();
+  const sb = sender && ktBiz.find(b => sender.includes(b.name) || b.name.includes(sender) || (b.rcv && sender.includes(b.rcv)));
+  if (sb) { $('ktbiz').value = sb.id; ktRenderBiz(); }
+  m.className = 'msg ok'; m.textContent = '상품 ' + found.length + '개를 채웠어요. 이름 · 옵션 · 수량이 맞는지 확인해 주세요' + (sb ? ' (업체: ' + sb.name + ')' : ''); };
+(async () => { ktBiz = (await ktGet('biz')) || []; const all = (await ktGet('orders')) || [], cut = Date.now() - 30 * 864e5; ktList = all.filter(o => o.st !== 'done' || new Date(o.doneAt || o.at) > cut); if (ktList.length !== all.length) ktSaveList(); ktRender(); ktSyncSheet(); })();
 $('dl').onclick = async () => {
   if (!result) return;
   const m = $('dlmsg'); m.className = 'msg';
@@ -8934,6 +9104,7 @@ $('dl').onclick = async () => {
     const buf = buildXlsx();
     await saveFile(dlName() + '.xlsx', new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     m.className = 'msg ok'; m.textContent = dlName() + '.xlsx 로 내려받았어요';
+    ktAfterDl();
   } catch (e) {
     if (e && e.code === 'declined') { m.textContent = '내려받기를 취소했어요'; return; }
     m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + ((e && (e.message || e.code)) || e);
