@@ -294,6 +294,9 @@ th{background:#eef3ec}
 .ktc .ktpaste{margin-top:12px}.ktc .ktpaste summary{cursor:pointer;font-size:14px;color:var(--acc);font-weight:600}.ktc .ktpaste textarea{width:100%;box-sizing:border-box;margin-top:8px;border-radius:10px;border:1px solid var(--line);padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);resize:vertical}
 .ktc .kthd,.ktc .ktrow{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.6fr) 64px 34px;gap:6px;align-items:center}.ktc .kthd{margin-top:14px;font-size:12px;color:var(--mute)}
 .ktc .ktrow{margin-top:6px}.ktc .ktrow input{height:38px;border-radius:10px;border:1px solid var(--line);padding:0 8px;font:inherit;font-size:15px;color:var(--ink);min-width:0;width:100%;box-sizing:border-box}
+.ktc .ktcb{position:relative;min-width:0;display:flex;align-items:center;height:38px;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;background:var(--card)}.ktc .ktcb:focus-within{border-color:var(--acc)}.ktc .ktrow .ktcb input{flex:1;height:36px;border:0;background:transparent;box-shadow:none;outline:0}.ktc .ktarr{flex:none;width:30px;height:36px;border:0;background:none;color:var(--mute);padding:0;cursor:pointer;display:grid;place-items:center}.ktc .ktarr svg{width:16px;height:16px}
+.ktc .ktsug{position:absolute;left:0;top:calc(100% + 4px);z-index:30;width:max(100%,220px);max-width:calc(100vw - 40px);max-height:240px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px}
+html.dark .ktc .ktsug{background:#1d2622}.ktc .ktsug button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer;overflow-wrap:anywhere}.ktc .ktsug button.on,.ktc .ktsug button:hover{background:var(--acc2)}.ktc .ktsug b{color:var(--acc)}
 .ktc .ktadd{margin-top:8px}.ktc .ktfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}.ktc .ktfoot .ktl{flex:0 1 170px}.ktc .ktfoot .ktnote{flex:1 1 240px}.ktc .ktdq{display:flex;gap:6px;flex-wrap:wrap}
 .ktc .ktchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.ktc .ktchip{display:inline-flex;align-items:center;gap:2px;height:30px;padding:0 4px 0 10px;border-radius:99px;background:var(--acc2);color:var(--acc);font-size:13px;font-weight:600;border:0}.ktc .ktchip button{width:24px;height:24px;border:0;background:none;color:inherit;font-size:15px;cursor:pointer;border-radius:50%;padding:0}
 .ktc .ktchips .ktnone{font-size:13px;color:var(--bad)}.ktc .ktsave .ktgo{width:46px;height:46px;background:var(--acc);border-color:var(--acc);color:#fff}.ktc .ktsave .ktgo svg{width:22px;height:22px}
@@ -303,7 +306,7 @@ th{background:#eef3ec}
 .ktc .ktit{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-top:6px;font-size:14px}.ktc .ktit .ktt{flex:1;min-width:0;overflow-wrap:anywhere}.ktc .ktit .ktt small{display:block;color:var(--mute);font-size:12px}
 .ktc .ktit.done{opacity:.6}.ktc .ktst{flex:none;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc);white-space:nowrap}.ktc .ktit.saved .ktst{background:var(--line);color:var(--mute)}
 #tbl tr.ktr td{background:var(--acc2)}#tbl tr.ktr td.rn span{font-size:11px;color:var(--acc);font-weight:700}
-@media(max-width:420px){.ktc .kthd,.ktc .ktrow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 52px 34px;gap:4px}.ktc .ktrow input{padding:0 6px;font-size:14px}.ktc .ktit{flex-wrap:wrap}.ktc .ktit .ktt{flex:1 1 100%}.ktc .ktit .ktst{margin-right:auto}}
+@media(max-width:420px){.ktc .kthd{display:none}.ktc .ktrow{grid-template-columns:minmax(0,1fr) 56px 34px;gap:6px;margin-top:10px}.ktc .ktrow .ktcb{grid-column:1/-1}.ktc .ktrow input{padding:0 6px;font-size:14px}.ktc .ktit{flex-wrap:wrap}.ktc .ktit .ktt{flex:1 1 100%}.ktc .ktit .ktst{margin-right:auto}}
 .bmk{margin-left:6px;font-size:13px;color:var(--mute)}.hredate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#fdf3ea;color:#8a4a24;font-size:13px}.hredate span{flex:1;min-width:0}.hredate.hidden{display:none}html.dark .hredate{background:rgba(224,138,60,.14);color:#f0c39d}
 .hbak{margin-top:14px}
 #hbakmsg:empty,#histsave:empty{display:none}
@@ -9010,6 +9013,29 @@ function ktSheetRows(H) {
   return out;
 }
 function ktSyncSheet() { if (!result) return; try { if (edMode) edCollect(); renderSheetTabs(); renderSheet(); } catch (e) {} }
+function ktNameList() { const nm = new Set(); (((rules.summary || {}).order) || []).concat((rules.names || []).map(n => n.to)).forEach(n => { n = String(n || '').trim(); if (n && !/^★/.test(n)) nm.add(n); });
+  ktList.forEach(o => o.items.forEach(it => it.p && nm.add(it.p))); return [...nm]; }
+// 상품명 찾기: 몇 글자만 쳐도(예: '로즈' → 로즈마리) 관련 상품명이 아래에 떠요. ▾ 를 누르면 전체 목록
+let ktSugI = -1, ktSugSel = 0;
+function ktSugClose() { const d = document.querySelector('.ktsug'); if (d) d.remove(); document.querySelectorAll('.ktcb input[aria-expanded=true]').forEach(x => x.setAttribute('aria-expanded', 'false')); ktSugI = -1; }
+function ktSugOpen(i, all) { ktSugClose(); const inp = $('ktitems').querySelector(`input[data-kti="${i}"][data-ktk=p]`); if (!inp) return;
+  const q = all ? '' : inp.value.replace(/\s+/g, '').toLowerCase(), L = ktNameList(), nz = n => n.replace(/\s+/g, '').toLowerCase();
+  const hit = q ? L.filter(n => nz(n).includes(q)).sort((a, b) => (nz(a).startsWith(q) ? 0 : 1) - (nz(b).startsWith(q) ? 0 : 1) || a.length - b.length) : L.slice();
+  if (!hit.length || (hit.length === 1 && hit[0] === inp.value.trim())) return;
+  const d = document.createElement('div'); d.className = 'ktsug'; d.setAttribute('role', 'listbox'); ktSugI = i; ktSugSel = 0;
+  d.innerHTML = hit.slice(0, 40).map((n, k) => { let h = esc(n); if (q) { const at = n.toLowerCase().indexOf(inp.value.trim().toLowerCase()); if (at >= 0 && inp.value.trim()) { const t = inp.value.trim(); h = esc(n.slice(0, at)) + '<b>' + esc(n.slice(at, at + t.length)) + '</b>' + esc(n.slice(at + t.length)); } }
+    return `<button type="button" role="option" class="${k ? '' : 'on'}" data-ktsug="${esc(n)}">${h}</button>`; }).join('');
+  inp.closest('.ktcb').appendChild(d); inp.setAttribute('aria-expanded', 'true'); }
+function ktSugPick(n) { const i = ktSugI, inp = $('ktitems').querySelector(`input[data-kti="${i}"][data-ktk=p]`); ktSugClose(); if (!inp || !ktItems[i]) return; inp.value = n; ktItems[i].p = n; const op = inp.closest('.ktrow').querySelector('input[data-ktk=op]'); if (op) op.focus(); }
+$('ktitems').addEventListener('input', e => { if (e.target.matches('.ktcb input')) ktSugOpen(+e.target.dataset.kti, false); });
+$('ktitems').addEventListener('keydown', e => { if (!e.target.matches('.ktcb input')) return; const d = document.querySelector('.ktsug'); 
+  if (e.key === 'ArrowDown' && !d) { e.preventDefault(); ktSugOpen(+e.target.dataset.kti, !e.target.value.trim()); return; } if (!d) return; const bs = [...d.querySelectorAll('button')];
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); ktSugSel = (ktSugSel + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach((b, k) => b.classList.toggle('on', k === ktSugSel)); bs[ktSugSel].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key === 'Enter') { e.preventDefault(); if (bs[ktSugSel]) ktSugPick(bs[ktSugSel].dataset.ktsug); } else if (e.key === 'Escape') ktSugClose(); });
+$('ktitems').addEventListener('mousedown', e => { if (e.target.closest('.ktsug,.ktarr')) e.preventDefault(); });
+$('ktitems').addEventListener('click', e => { const s = e.target.closest('[data-ktsug]'); if (s) { ktSugPick(s.dataset.ktsug); return; }
+  const a = e.target.closest('[data-ktarr]'); if (a) { const i = +a.dataset.ktarr; if (ktSugI === i) ktSugClose(); else { ktSugOpen(i, true); const inp = a.parentElement.querySelector('input'); inp.focus(); } } });
+$('ktitems').addEventListener('focusout', e => { if (e.target.matches('.ktcb input')) setTimeout(() => { if (!document.activeElement || !document.activeElement.closest('.ktsug')) ktSugClose(); }, 150); });
 function ktLists() {
   const nm = new Set(); (((rules.summary || {}).order) || []).concat((rules.names || []).map(n => n.to)).forEach(n => { n = String(n || '').trim(); if (n && !/^★/.test(n)) nm.add(n); });
   ktList.forEach(o => o.items.forEach(it => it.p && nm.add(it.p)));
@@ -9026,7 +9052,7 @@ function ktRenderBiz(sel) {
   $('ktinfo').textContent = b ? ['받는 분 ' + (b.rcv || b.name), b.phone, [b.zip && '(' + b.zip + ')', b.addr].filter(Boolean).join(' ')].filter(Boolean).join(' · ') : '';
 }
 function ktRenderItems() {
-  $('ktitems').innerHTML = ktItems.map((it, i) => `<div class="ktrow"><input type="text" list="ktnames" data-kti="${i}" data-k="p" value="${esc(it.p)}" placeholder="예: 로즈마리" aria-label="주문상품명"><input type="text" list="ktops" data-kti="${i}" data-k="op" value="${esc(it.op)}" placeholder="예: 100g" aria-label="옵션"><input type="number" min="1" step="1" inputmode="numeric" data-kti="${i}" data-k="q" value="${esc(it.q)}" aria-label="수량"><button class="ibtn" type="button" data-ktdel="${i}" title="이 줄 빼기" aria-label="이 줄 빼기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('');
+  $('ktitems').innerHTML = ktItems.map((it, i) => `<div class="ktrow"><div class="ktcb"><input type="text" data-kti="${i}" data-ktk="p" value="${esc(it.p)}" placeholder="상품명 (예: 로즈)" aria-label="주문상품명" autocomplete="off" role="combobox" aria-expanded="false"><button type="button" class="ktarr" data-ktarr="${i}" tabindex="-1" title="상품명 목록" aria-label="상품명 목록"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div><input type="text" list="ktops" data-kti="${i}" data-ktk="op" value="${esc(it.op)}" placeholder="옵션 (예: 100g)" aria-label="옵션"><input type="number" min="1" step="1" inputmode="numeric" data-kti="${i}" data-ktk="q" value="${esc(it.q)}" aria-label="수량"><button class="ibtn" type="button" data-ktdel="${i}" title="이 줄 빼기" aria-label="이 줄 빼기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('');
 }
 function ktItemTxt(o) { return o.items.map(it => it.p + (it.op ? ' ' + it.op : '') + ' ×' + it.q).join(', '); }
 const KT_WD = ['일', '월', '화', '수', '목', '금', '토'];
@@ -9060,9 +9086,9 @@ $('ktbf').onsubmit = async e => { e.preventDefault(); const g = f => $('ktb-' + 
   try { await ktWriteBiz(L => { const x = L.find(b => b.id === id); if (x) Object.assign(x, v); else L.push(Object.assign({ id }, v)); }); } catch (er) { ktErr(er); return; }
   $('ktbf').classList.add('hidden'); ktRenderBiz(id); shareToast('업체를 저장했어요'); };
 $('ktb-del').onclick = async e => { const id = ktBizEd; if (!id || !confirmTap(e.currentTarget, id, '한 번 더 누르면 업체가 지워져요')) return; try { await ktWriteBiz(L => { const i = L.findIndex(b => b.id === id); if (i >= 0) L.splice(i, 1); }); } catch (er) { ktErr(er); return; } $('ktbf').classList.add('hidden'); ktRenderBiz(); };
-$('ktitems').addEventListener('input', e => { const t = e.target, i = +t.dataset.kti; if (!ktItems[i]) return; ktItems[i][t.dataset.k] = t.dataset.k === 'q' ? t.value : t.value; });
+$('ktitems').addEventListener('input', e => { const t = e.target, i = +t.dataset.kti; if (!ktItems[i]) return; ktItems[i][t.dataset.ktk] = t.dataset.ktk === 'q' ? t.value : t.value; });
 $('ktitems').addEventListener('click', e => { const b = e.target.closest('[data-ktdel]'); if (!b) return; ktItems.splice(+b.dataset.ktdel, 1); if (!ktItems.length) ktItems.push({ p: '', op: '', q: 1 }); ktRenderItems(); });
-$('ktrowadd').onclick = () => { ktItems.push({ p: '', op: '', q: 1 }); ktRenderItems(); const ins = $('ktitems').querySelectorAll('input[data-k=p]'); ins[ins.length - 1].focus(); };
+$('ktrowadd').onclick = () => { ktItems.push({ p: '', op: '', q: 1 }); ktRenderItems(); const ins = $('ktitems').querySelectorAll('input[data-ktk=p]'); ins[ins.length - 1].focus(); };
 $('ktcard').addEventListener('focusin', e => { if (e.target.matches('input[list]')) ktLists(); });
 $('ktdayadd').onclick = () => { const d = $('ktday').value; if (!d) { $('ktday').focus(); return; } ktDays.push(d); ktRenderDays(); };
 $('ktday').onchange = () => { const d = $('ktday').value; if (d && !ktEditId && !ktDays.includes(d)) { if (ktDays.length === 1 && ktDays[0] === isoDate(new Date()) && !$('ktchips').dataset.touched) ktDays = []; ktDays.push(d); ktRenderDays(); } };
