@@ -276,6 +276,7 @@ th{background:#eef3ec}
 .ktc .ktsug{position:absolute;left:0;top:calc(100% + 4px);z-index:30;width:max(100%,220px);max-width:calc(100vw - 40px);max-height:240px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px}
 html.dark .ktc .ktsug{background:#1d2622}.ktc .ktsug button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer;overflow-wrap:anywhere}.ktc .ktsug button.on,.ktc .ktsug button:hover{background:var(--acc2)}.ktc .ktsug b{color:var(--acc)}
 .ktauto{display:flex;flex-direction:column;gap:4px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--acc2);color:var(--acc);font-size:14px}.ktauto.hidden{display:none}.ktauto .kterr{color:var(--bad)}
+.ktc .ktchk{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:14px;color:var(--ink);cursor:pointer}.ktc .ktchk input{width:18px;height:18px;margin:1px 0 0;flex:none;accent-color:var(--acc)}.ktc .ktchk small{color:var(--mute);font-size:12px}
 .ktc .ktadd{margin-top:8px}.ktc .ktfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}.ktc .ktfoot .ktl{flex:0 1 170px}.ktc .ktfoot .ktnote{flex:1 1 240px}.ktc .ktdq{display:flex;gap:6px;flex-wrap:wrap}
 .ktc .ktchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.ktc .ktchip{display:inline-flex;align-items:center;gap:2px;height:30px;padding:0 4px 0 10px;border-radius:99px;background:var(--acc2);color:var(--acc);font-size:13px;font-weight:600;border:0}.ktc .ktchip button{width:24px;height:24px;border:0;background:none;color:inherit;font-size:15px;cursor:pointer;border-radius:50%;padding:0}
 .ktc .ktchips .ktnone{font-size:13px;color:var(--bad)}.ktc .ktsave .ktgo{width:46px;height:46px;background:var(--acc);border-color:var(--acc);color:#fff}.ktc .ktsave .ktgo svg{width:22px;height:22px}
@@ -2499,6 +2500,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
       <div class="ktfoot"><label class="ktl">배송일<input type="date" id="ktday"></label><div class="ktdq"><button class="btn sm" id="ktdayadd" type="button">+ 날짜 추가</button></div></div>
       <div class="ktchips" id="ktchips"></div>
       <div class="ktfoot"><label class="ktl ktnote">비고<input type="text" id="ktnote" maxlength="50"></label></div>
+      <label class="ktchk"><input type="checkbox" id="ktsplit" checked><span>상품마다 송장 따로 <small>(한진에서 합포장으로 안 합쳐져요)</small></span></label>
       <div class="ktbtns ktsave"><button class="ibtn ibtn-acc ktgo" id="ktgo" type="button" title="주문 저장" aria-label="주문 저장"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Z"/><path d="M8.5 4v5h6V4M8.5 20v-6h7v6"/></svg></button><button class="btn sm hidden" id="ktcancel" type="button">고치기 취소</button><span class="msg" id="ktmsg"></span></div>
       <div id="ktlist"></div>
       <datalist id="ktnames"></datalist><datalist id="ktops"></datalist>
@@ -8442,7 +8444,7 @@ function ktWx(o) { // 받는 주소의 예보로 예보기온 · 포장방법 �
 function ktSheetRows(H) {
   const fixed = new Map((rules.fixedValues || []).filter(f => String(f.col || '').trim()).map(f => [String(f.col).trim(), f.value])), out = [];
   ktOn().forEach(o => { const w = ktWx(o), [y, m, d] = String(o.day).split('-').map(Number), ph = o.phone || null;
-    o.items.forEach(it => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.no, '주문상품명': '●' + it.p + '●', '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': o.rcv || o.biz, '우편번호': o.zip || null, '주소': o.addr,
+    o.items.forEach((it, k) => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.split !== false && o.items.length > 1 ? o.no + '-' + (k + 1) : o.no, '주문상품명': '●' + it.p + '●', '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': o.rcv || o.biz, '우편번호': o.zip || null, '주소': o.addr,
       '수령지전화': null, '전화번호': ph && !/^01/.test(ph.replace(/\D/g, '')) ? ph : null, '핸드폰': ph && /^01/.test(ph.replace(/\D/g, '')) ? ph : null, '비고': o.note || null, '주문자': o.biz, '예보기온(최저/최고)': w.t };
       v[(rules.weather && rules.weather.col) || '포장방법'] = w.p;
       out.push(H.map(h => fixed.has(h) ? fixed.get(h) : (h in v ? v[h] : null))); }); });
@@ -8508,7 +8510,7 @@ function ktRenderList() {
   const row = o => { const isOn = on.has(o.id), cls = isOn ? 'in' : o.st === 'done' ? 'done' : 'saved', past = o.day < today && !isOn && o.st === 'saved';
     const st = isOn ? (o.st === 'done' ? '내려받음 · 다시 받으면 포함' : ktAuto(o) ? '배송일이라 자동으로 들어감' : '엑셀에 합침') : o.st === 'done' ? '내려받음 ' + tm(o.doneAt) : o.st === 'skip' ? '빼 둠' : past ? '배송일 지남 · 안 보냄' : '저장됨 · 배송일에 자동으로 들어가요';
     const act = isOn ? `<button class="btn sm" type="button" data-ktout="${esc(o.id)}">빼기</button>` : `<button class="btn sm pri" type="button" data-ktin="${esc(o.id)}">${o.st === 'done' ? '다시 합치기' : '합치기'}</button>`;
-    return `<div class="ktit ${cls}${past ? ' past' : ''}"><span class="ktt"><b>${esc(o.biz)}</b> · ${esc(ktItemTxt(o))}<small>${esc(o.no)}${o.note && o.note !== (rules.defaultNote || '') ? ' · ' + esc(o.note) : ''}</small></span><span class="ktst">${st}</span>${act}${ic('kted', o.id, '고치기', P_ED)}${ic('ktrm', o.id, '지우기', P_DEL)}</div>`; };
+    return `<div class="ktit ${cls}${past ? ' past' : ''}"><span class="ktt"><b>${esc(o.biz)}</b> · ${esc(ktItemTxt(o))}<small>${esc(o.no)}${o.items.length > 1 ? ' · 송장 ' + (o.split !== false ? o.items.length + '장' : '1장(합포장)') : ''}${o.note && o.note !== (rules.defaultNote || '') ? ' · ' + esc(o.note) : ''}</small></span><span class="ktst">${st}</span>${act}${ic('kted', o.id, '고치기', P_ED)}${ic('ktrm', o.id, '지우기', P_DEL)}</div>`; };
   const act = ktList.filter(o => o.st !== 'done' || on.has(o.id)), done = ktList.filter(o => o.st === 'done' && !on.has(o.id)).sort((a, b) => String(b.doneAt).localeCompare(String(a.doneAt))).slice(0, 30);
   const days = [...new Set(act.map(o => o.day))].sort(), n = ktOn().reduce((s, o) => s + o.items.length, 0);
   if (!act.length && !done.length) { $('ktlist').innerHTML = ''; return; }
@@ -8534,14 +8536,14 @@ $('ktcard').addEventListener('focusin', e => { if (e.target.matches('input[list]
 $('ktdayadd').onclick = () => { const d = $('ktday').value; if (!d) { $('ktday').focus(); return; } ktDays.push(d); ktRenderDays(); };
 $('ktday').onchange = () => { const d = $('ktday').value; if (d && !ktEditId && !ktDays.includes(d)) { if (ktDays.length === 1 && ktDays[0] === isoDate(new Date()) && !$('ktchips').dataset.touched) ktDays = []; ktDays.push(d); ktRenderDays(); } };
 $('ktchips').addEventListener('click', e => { const b = e.target.closest('[data-ktdayrm]'); if (!b) return; ktDays = ktDays.filter(d => d !== b.dataset.ktdayrm); $('ktchips').dataset.touched = '1'; ktRenderDays(); });
-function ktReset() { ktItems = [{ p: '', op: '', q: 1 }]; ktEditId = null; ktDays = [isoDate(new Date())]; delete $('ktchips').dataset.touched; $('ktday').value = ''; $('ktgo').title = '주문 저장'; $('ktgo').setAttribute('aria-label', '주문 저장'); $('ktcancel').classList.add('hidden'); $('ktnote').value = rules.defaultNote || ''; ktRenderItems(); ktRenderDays(); }
+function ktReset() { ktItems = [{ p: '', op: '', q: 1 }]; ktEditId = null; ktDays = [isoDate(new Date())]; delete $('ktchips').dataset.touched; $('ktday').value = ''; $('ktgo').title = '주문 저장'; $('ktgo').setAttribute('aria-label', '주문 저장'); $('ktcancel').classList.add('hidden'); $('ktnote').value = rules.defaultNote || ''; $('ktsplit').checked = true; ktRenderItems(); ktRenderDays(); }
 $('ktcancel').onclick = () => { ktReset(); $('ktmsg').textContent = ''; };
 $('ktgo').onclick = async () => { const m = $('ktmsg'), b = ktCurBiz(); m.className = 'msg';
   const items = ktItems.map(it => ({ p: String(it.p || '').trim().replace(/^●+|●+$/g, ''), op: String(it.op || '').trim(), q: Math.max(1, Math.round(Number(it.q) || 1)) })).filter(it => it.p);
   if (!b) { m.className = 'msg err'; m.textContent = '업체를 먼저 고르거나 등록해 주세요'; return; }
   if (!items.length) { m.className = 'msg err'; m.textContent = '주문상품명을 적어 주세요'; return; }
   if (!ktDays.length) { m.className = 'msg err'; m.textContent = '배송일을 골라 주세요'; return; }
-  const note = $('ktnote').value.trim(), base = { bizId: b.id, biz: b.name, rcv: b.rcv || '', phone: b.phone || '', zip: b.zip || '', addr: b.addr, note, items }, days = ktDays.slice(), eid = ktEditId;
+  const note = $('ktnote').value.trim(), base = { bizId: b.id, biz: b.name, rcv: b.rcv || '', phone: b.phone || '', zip: b.zip || '', addr: b.addr, note, items, split: $('ktsplit').checked }, days = ktDays.slice(), eid = ktEditId;
   try { await ktWriteOrd(L => { days.forEach((day, k) => {
       const o = k === 0 && eid ? L.find(x => x.id === eid) : null;
       if (o) { if (o.day !== day) { o.no = ktNo(L, day); } Object.assign(o, ktClone(base), { day }); return; }
@@ -8550,7 +8552,7 @@ $('ktgo').onclick = async () => { const m = $('ktmsg'), b = ktCurBiz(); m.classN
   m.className = 'msg ok'; m.textContent = eid ? '고친 내용을 저장했어요' : b.name + ' 주문을 ' + (days.length > 1 ? days.length + '개 날짜로 ' : '') + '저장했어요 · 배송일에 주문을 불러오면 엑셀에 자동으로 들어가요'; };
 function ktNo(L, day) { const pre = 'KT' + day.slice(2).replace(/-/g, '') + '-'; return pre + pad2(L.filter(o => String(o.no).startsWith(pre)).reduce((mx, o) => Math.max(mx, Number(String(o.no).slice(pre.length)) || 0), 0) + 1); }
 $('ktlist').addEventListener('click', async e => { const b = e.target.closest('button'); if (!b) return; const k = Object.keys(b.dataset).find(x => /^kt(out|in|inday|ed|rm)$/.test(x)); if (!k) return; const id = b.dataset[k];
-  if (k === 'kted') { const o = ktList.find(x => x.id === id); if (!o) return; ktEditId = id; ktItems = o.items.map(it => Object.assign({}, it)); if (ktBiz.some(x => x.id === o.bizId)) $('ktbiz').value = o.bizId; ktRenderBiz(); ktDays = [o.day]; $('ktchips').dataset.touched = '1'; $('ktnote').value = o.note || ''; ktRenderItems(); ktRenderDays();
+  if (k === 'kted') { const o = ktList.find(x => x.id === id); if (!o) return; ktEditId = id; ktItems = o.items.map(it => Object.assign({}, it)); if (ktBiz.some(x => x.id === o.bizId)) $('ktbiz').value = o.bizId; ktRenderBiz(); ktDays = [o.day]; $('ktchips').dataset.touched = '1'; $('ktnote').value = o.note || ''; $('ktsplit').checked = o.split !== false; ktRenderItems(); ktRenderDays();
     $('ktgo').title = '고친 내용 저장'; $('ktgo').setAttribute('aria-label', '고친 내용 저장'); $('ktcancel').classList.remove('hidden'); $('ktmsg').className = 'msg'; $('ktmsg').textContent = o.no + ' 고치는 중 · 저장 아이콘을 누르면 바뀌어요'; $('ktitems').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
   if (k === 'ktrm' && !confirmTap(b, id, '한 번 더 누르면 지워져요')) return;
   try { await ktWriteOrd(L => {
