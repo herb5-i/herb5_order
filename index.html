@@ -297,6 +297,8 @@ th{background:#eef3ec}
 .ktc .ktcb{position:relative;min-width:0;display:flex;align-items:center;height:38px;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;background:var(--card)}.ktc .ktcb:focus-within{border-color:var(--acc)}.ktc .ktrow .ktcb input{flex:1;height:36px;border:0;background:transparent;box-shadow:none;outline:0}.ktc .ktarr{flex:none;width:30px;height:36px;border:0;background:none;color:var(--mute);padding:0;cursor:pointer;display:grid;place-items:center}.ktc .ktarr svg{width:16px;height:16px}
 .ktc .ktsug{position:absolute;left:0;top:calc(100% + 4px);z-index:30;width:max(100%,220px);max-width:calc(100vw - 40px);max-height:240px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px}
 html.dark .ktc .ktsug{background:#1d2622}.ktc .ktsug button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer;overflow-wrap:anywhere}.ktc .ktsug button.on,.ktc .ktsug button:hover{background:var(--acc2)}.ktc .ktsug b{color:var(--acc)}
+.c24x .c24xr{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}.c24x label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}.c24x input[type=month]{height:38px;border-radius:10px;border:1px solid var(--line);padding:0 10px;font:inherit;color:var(--ink);min-width:0}
+.c24xbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}.c24xbar.hidden{display:none}.c24xbar i{display:block;height:100%;width:0;background:var(--acc);transition:width .3s}
 .ktauto{display:flex;flex-direction:column;gap:4px;margin:8px 0;padding:10px 12px;border-radius:10px;background:var(--acc2);color:var(--acc);font-size:14px}.ktauto.hidden{display:none}.ktauto .kterr{color:var(--bad)}
 .ktc .ktchk{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:14px;color:var(--ink);cursor:pointer}.ktc .ktchk input{width:18px;height:18px;margin:1px 0 0;flex:none;accent-color:var(--acc)}.ktc .ktchk small{color:var(--mute);font-size:12px}
 .ktc .ktadd{margin-top:8px}.ktc .ktfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}.ktc .ktfoot .ktl{flex:0 1 170px}.ktc .ktfoot .ktnote{flex:1 1 240px}.ktc .ktdq{display:flex;gap:6px;flex-wrap:wrap}
@@ -2921,6 +2923,14 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="card" id="hday"></div>
     </div>
     <div class="card" id="hstat" data-sub="days"></div>
+    <div class="card adm-only c24x" id="c24x" data-sub="days">
+      <div class="hh"><h2>카페24 전체 주문 엑셀로 받기</h2></div>
+      <p class="help">고른 기간의 카페24 주문을 한 달씩 모두 받아서 엑셀 한 파일로 정리해요. 결제가 끝난 주문만, 취소된 주문은 빼고 받아요. 받는 분 · 주문자 이름 · 전화 · 주소는 넣지 않아요.</p>
+      <div class="c24xr"><label>시작 달<input type="month" id="c24x-from" value="2016-01"></label><label>끝 달<input type="month" id="c24x-to"></label>
+        <button class="btn pri" id="c24x-go" type="button">받기 시작</button><button class="btn hidden" id="c24x-stop" type="button">멈추고 받은 것까지 저장</button></div>
+      <div class="c24xbar hidden" id="c24x-bar"><i id="c24x-fill"></i></div>
+      <p class="msg" id="c24x-msg"></p>
+    </div>
     <div class="card mall" id="hmall" data-sub="mall"></div>
   </section>
 
@@ -9045,6 +9055,51 @@ function buildXlsx() {
   });
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
+// ---------- 카페24 전체 주문 엑셀로 받기 (한 달씩 받아서 한 파일로) ----------
+let c24xStop = false, c24xBusy = false;
+$('c24x-to').value = ymOf(new Date());
+async function c24xMonth(ym) {
+  const [y, m] = ym.split('-').map(Number), from = new Date(isoDate(new Date(y, m - 1, 1)) + 'T00:00:00+09:00'), to = new Date(isoDate(new Date(y, m, 1)) + 'T00:00:00+09:00'), all = [];
+  let off = 0, guard = 0;
+  while (off !== null && guard++ < 100) { if (c24xStop) return null;
+    let d, tries = 0; for (;;) { try { d = await c24Call('/orders?lite=1&limit=500&offset=' + off + '&from=' + encodeURIComponent(from.toISOString()) + '&to=' + encodeURIComponent(to.toISOString())); break; } catch (e) { if (++tries >= 3) throw e; await new Promise(r => setTimeout(r, 1500 * tries)); } }
+    all.push(...(d.orders || [])); off = d.next === undefined ? null : d.next; }
+  return all;
+}
+function c24xSave(orders, fails, rg) {
+  const SN = { N00: '입금전', N10: '상품준비중', N20: '배송준비중', N21: '배송대기', N22: '배송보류', N30: '배송중', N40: '배송완료', N50: '구매확정' }, dt = v => v ? String(v).replace('T', ' ').slice(0, 16) : '';
+  const route = o => o.order_place_name || (o.market_id && o.market_id !== 'self' ? o.market_id : '자사몰');
+  const rows = [['주문번호', '주문일', '결제일', '결제 월', '주문 경로', '결제수단', '상품명', '옵션', '수량', '판매가', '옵션 추가금', '금액 합계', '주문 상태', '품목별 주문번호']], mon = new Map(), prod = new Map();
+  orders.slice().sort((a, b) => String(a.payment_date).localeCompare(String(b.payment_date))).forEach(o => (o.items || []).forEach(i => {
+    const sum = ((Number(i.product_price) || 0) + (Number(i.option_price) || 0)) * (Number(i.quantity) || 0), ym = String(o.payment_date || o.order_date || '').slice(0, 7);
+    rows.push([o.order_id, dt(o.order_date), dt(o.payment_date), ym, route(o), (o.payment_method_name || []).join(', '), i.product_name, i.option_value || '', Number(i.quantity) || 0, Number(i.product_price) || 0, Number(i.option_price) || 0, sum, SN[i.order_status] || i.order_status || '', i.order_item_code || '']);
+    const mm = mon.get(ym) || { o: new Set(), q: 0, w: 0 }; mm.o.add(o.order_id); mm.q += Number(i.quantity) || 0; mm.w += sum; mon.set(ym, mm);
+    const pk = i.product_name, pp = prod.get(pk) || { q: 0, w: 0, o: new Set() }; pp.q += Number(i.quantity) || 0; pp.w += sum; pp.o.add(o.order_id); prod.set(pk, pp); }));
+  const wb = XLSX.utils.book_new(), add = (aoa, name, cols) => { const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = cols.map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws, name); };
+  add(rows, '전체 주문', [18, 17, 17, 9, 14, 14, 34, 24, 6, 10, 10, 11, 11, 22]);
+  add([['월', '주문 수', '판매 수량', '판매 금액']].concat([...mon.entries()].sort().map(([k, v]) => [k, v.o.size, v.q, v.w])), '월별 합계', [10, 10, 10, 14]);
+  add([['상품명', '주문 수', '판매 수량', '판매 금액']].concat([...prod.entries()].sort((a, b) => b[1].q - a[1].q).map(([k, v]) => [k, v.o.size, v.q, v.w])), '상품별 합계', [40, 10, 10, 14]);
+  if (fails.length) add([['못 받은 달', '이유']].concat(fails), '못 받은 달', [12, 60]);
+  const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  return saveFile('카페24_전체주문_' + rg[0].replace('-', '') + '-' + rg[1].replace('-', '') + '.xlsx', new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+}
+$('c24x-stop').onclick = () => { c24xStop = true; $('c24x-msg').textContent = '멈추는 중… 받은 것까지 저장할게요'; };
+$('c24x-go').onclick = async () => {
+  if (c24xBusy) return; const m = $('c24x-msg'), a = $('c24x-from').value, b = $('c24x-to').value; m.className = 'msg';
+  if (!a || !b || a > b) { m.className = 'msg err'; m.textContent = '시작 달과 끝 달을 확인해 주세요'; return; }
+  const months = []; for (let d = dOf(a + '-01'); ymOf(d) <= b; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) months.push(ymOf(d));
+  c24xBusy = true; c24xStop = false; $('c24x-go').disabled = true; $('c24x-stop').classList.remove('hidden'); $('c24x-bar').classList.remove('hidden');
+  const all = [], fails = []; let k = 0, last = '';
+  try {
+    for (const ym of months) { if (c24xStop) break; m.textContent = `${ym} 받는 중… (${k + 1}/${months.length}달 · 지금까지 주문 ${all.length.toLocaleString()}건)`;
+      try { const r = await c24xMonth(ym); if (r === null) break; all.push(...r); last = ym; } catch (er) { fails.push([ym, er.message || String(er)]); if (/로그인|중계 서버 주소|연결/.test(er.message || '') && !k) throw er; }
+      k++; $('c24x-fill').style.width = Math.round(k / months.length * 100) + '%'; }
+    if (!all.length) { m.className = 'msg err'; m.textContent = '받은 주문이 없어요' + (fails.length ? ' · ' + fails[0][1] : ''); return; }
+    m.textContent = '엑셀 만드는 중…'; await c24xSave(all, fails, [a, c24xStop && last ? last : b]);
+    m.className = 'msg ok'; m.textContent = `주문 ${all.length.toLocaleString()}건을 엑셀로 저장했어요 (${a} ~ ${c24xStop && last ? last : b})` + (fails.length ? ` · 못 받은 달 ${fails.length}개는 엑셀 '못 받은 달' 시트에 적어 뒀어요` : '');
+  } catch (er) { if (er && er.code === 'declined') { m.textContent = '저장을 취소했어요'; return; } m.className = 'msg err'; m.textContent = '받지 못했어요: ' + ((er && er.message) || er); }
+  finally { c24xBusy = false; $('c24x-go').disabled = false; $('c24x-stop').classList.add('hidden'); setTimeout(() => $('c24x-bar').classList.add('hidden'), 1500); }
+};
 // ---------- 카톡 주문 넣기 ----------
 // 업체(받는 분 · 전화 · 주소)와 카톡 주문은 사용자 요청으로 공용 저장소(stock/kakaobiz, stock/kakaoorders)에 저장해요 → 로그인한 모든 기기에서 같이 보여요.
 // 저장 아이콘 → 목록에 '저장됨'. 목록에서 '합치기'를 누른 주문만 주문정리 표 맨 아래와 내려받는 엑셀 주문정리 시트에 들어가요 (수령인별 · 집계 제외).
