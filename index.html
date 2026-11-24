@@ -2707,7 +2707,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="ktfoot"><label class="ktl">배송일<input type="date" id="ktday"></label><div class="ktdq"><button class="btn sm" id="ktdayadd" type="button">+ 날짜 추가</button></div></div>
       <div class="ktchips" id="ktchips"></div>
       <div class="ktfoot"><label class="ktl ktnote">비고<input type="text" id="ktnote" maxlength="50"></label></div>
-      <label class="ktchk"><input type="checkbox" id="ktsplit" checked><span>상품마다 송장 따로 <small>(한진에서 합포장으로 안 합쳐져요)</small></span></label>
+      <label class="ktchk"><input type="checkbox" id="ktsplit" checked><span>상품마다 송장 따로 <small>(엑셀을 내려받을 때 두 번째 줄부터 받는 분 이름 앞에 * 가 붙어서 한진에서 합포장으로 안 합쳐져요)</small></span></label>
       <div class="ktbtns ktsave"><button class="ibtn ibtn-acc ktgo" id="ktgo" type="button" title="주문 저장" aria-label="주문 저장"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Z"/><path d="M8.5 4v5h6V4M8.5 20v-6h7v6"/></svg></button><button class="btn sm hidden" id="ktcancel" type="button">고치기 취소</button><span class="msg" id="ktmsg"></span></div>
       <div id="ktlist"></div>
       <datalist id="ktnames"></datalist><datalist id="ktops"></datalist>
@@ -8957,7 +8957,7 @@ function buildXlsx() {
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
     let full = result[key], ord = null;
-    if (si === 0) { full = full.concat(ktSheetRows(full[0])); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
+    if (si === 0) { full = full.concat(ktSheetRows(full[0], true)); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
       const loOf = r => { const m = String(tc >= 0 ? r[tc] ?? '' : '').match(/^\s*(-?\d+(?:\.\d+)?)/); return m ? '[' + Number(m[1]) + '도]' : ''; };
       if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
@@ -9010,10 +9010,10 @@ function ktWx(o) { // 받는 주소의 예보로 예보기온 · 포장방법 �
   try { const it = o.items[0] || {}, r = CORE.process([HIST_HEAD, [o.no, o.day, it.p || '-', it.op || '', 1, '', o.addr || '', '']], rules, wxCtx()), h = r.sheet1[0], row = r.sheet1[1] || [];
     const tc = h.indexOf('예보기온(최저/최고)'), pc = h.indexOf((rules.weather && rules.weather.col) || '포장방법'); return { t: tc >= 0 ? row[tc] : null, p: pc >= 0 ? row[pc] : null }; } catch (e) { return { t: null, p: null }; }
 }
-function ktSheetRows(H) {
+function ktSheetRows(H, xl) {
   const fixed = new Map((rules.fixedValues || []).filter(f => String(f.col || '').trim()).map(f => [String(f.col).trim(), f.value])), out = [];
   ktOn().forEach(o => { const w = ktWx(o), [y, m, d] = String(o.day).split('-').map(Number), ph = o.phone || null;
-    o.items.forEach((it, k) => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.split !== false && o.items.length > 1 ? o.no + '-' + (k + 1) : o.no, '주문상품명': '●' + it.p + '●', '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': o.rcv || o.biz, '우편번호': o.zip || null, '주소': o.addr,
+    o.items.forEach((it, k) => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.no, '주문상품명': '●' + it.p + '●', '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': (xl && o.split !== false ? '*'.repeat(k) : '') + (o.rcv || o.biz), '우편번호': o.zip || null, '주소': o.addr,
       '수령지전화': null, '전화번호': ph && !/^01/.test(ph.replace(/\D/g, '')) ? ph : null, '핸드폰': ph && /^01/.test(ph.replace(/\D/g, '')) ? ph : null, '비고': o.note || null, '주문자': o.biz, '예보기온(최저/최고)': w.t };
       v[(rules.weather && rules.weather.col) || '포장방법'] = w.p;
       out.push(H.map(h => fixed.has(h) ? fixed.get(h) : (h in v ? v[h] : null))); }); });
