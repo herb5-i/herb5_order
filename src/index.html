@@ -1266,6 +1266,10 @@ html.dark .iss-cdl{background:rgba(104,168,115,.12);border-color:rgba(104,168,11
 .iss-ct-p{background:#f6e7d2;color:#8a5418}html.dark .iss-ct-p{background:rgba(214,150,70,.2);color:#f0c58c}
 .iss-close{flex:none;width:36px;height:36px;border:0;border-radius:12px;background:#f1ece2;color:#8b7e70;cursor:pointer;font-size:14px}
 .iss-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.iss-ord{margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#f3f6fa;border:1px solid #dde4ee;font-size:14px}.iss-ord.hidden{display:none}.iss-oh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.iss-oh b{color:#2c5f86}.iss-oh span{color:var(--mute);font-size:13px;flex:1;min-width:0}.iss-oh .err{color:var(--bad)}
+.iss-og{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin-top:10px}.iss-og span{color:var(--mute);font-size:13px}.iss-og b{font-weight:600;overflow-wrap:anywhere}
+.iss-oi{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--card);border-left:4px solid #2c5f86}.iss-oi b{display:block;overflow-wrap:anywhere}.iss-oi small{display:block;color:var(--mute);font-size:12px}.iss-oi span{display:block;font-size:13px;margin-top:2px}
+html.dark .iss-ord{background:rgba(90,140,190,.10);border-color:rgba(255,255,255,.08)}html.dark .iss-oh b{color:#9cc3e6}html.dark .iss-oi{border-left-color:#6fa3d0}
 .iss-note{border-radius:16px;padding:13px 14px 8px;background:#fdf6ef;border:1px solid #f3e4d6}
 .iss-note.editing{outline:2px solid #e59a72}
 .iss-note p{margin:0 0 6px;font-size:14.5px;line-height:1.6;overflow-wrap:anywhere}
@@ -2679,6 +2683,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
     <div class="mbox iss-mbox">
       <div class="iss-mh"><div><p class="iss-dk" id="iss-md"></p><h2 id="iss-mt">이슈</h2></div><div class="iss-mhb"><button class="btn sm iss-pimg hidden" id="iss-pimg" type="button" title="사진과 메모를 한 장의 이미지로 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>이미지로 저장</span></button><button class="iss-close" id="iss-close" type="button" aria-label="닫기">✕</button></div></div>
       <div class="iss-list" id="iss-list"></div>
+      <div class="iss-ord hidden" id="iss-ord"></div>
       <form class="iss-form" id="iss-form" autocomplete="off">
         <input id="iss-item" data-ac="1" autocomplete="off" placeholder="품목 (예: 로즈마리)" required>
         <textarea id="iss-text" rows="3" placeholder="어떤 이슈였는지 적어 주세요 (예: 잎 끝 갈변 · 3팩 교환)"></textarea>
@@ -4082,14 +4087,55 @@ function renderIssList() {
   $('iss-list').innerHTML = arr.map(x => `<div class="iss-note ${issEditId === x.id ? 'editing' : ''}"><p>${esc(x.text).replace(/\n/g, '<br>')}</p>${x.ph && x.ph.length ? `<div class="iss-phs">${photoThumbs(x.ph)}</div>` : ''}<div class="iss-nf"><small>${esc(hhmm(x.at))}${x.by ? ' · ' + esc(x.by) : ''}</small><span><button class="ibtn sm" type="button" data-issedit="${x.id}" title="고치기" aria-label="고치기">${IC.edit}</button><button class="ibtn sm" type="button" data-issdel="${x.id}" title="지우기" aria-label="지우기">${IC.trash}</button></span></div></div>`).join('');
   $('iss-list').classList.toggle('hidden', !arr.length); photoFill($('iss-list'));
   const PC = issCat === 'parcel'; $('iss-pimg').classList.toggle('hidden', !(PC && arr.length));
+  try { renderIssOrd(); } catch (e) {}
   $('iss-text').placeholder = PC ? (arr.length ? '메모나 사진을 더 붙이기' : '메모 (예: 박스 한쪽 찌그러짐 · 내용물 젖음 · 사고접수 예정)') : arr.length ? '이 품목에 이슈를 더 적기' : '어떤 이슈였는지 적어 주세요 (예: 잎 끝 갈변 · 3팩 교환)';
 }
+// ---------- 택배 사고: 송장번호로 카페24 주문 찾기 → 모달에 보여주고, 저장 이미지에 같이 그려요 ----------
+// 카페24 관리자 화면 자체는 사이트에서 캡처할 수 없어서, 같은 내용을 카페24 주문 자료로 그려요. 이름 · 전화 · 주소는 안 가져와요.
+const issOrdTry = new Map();   // 송장번호(숫자만) → 'busy' | 'none' | 'err:…'
+const issTrackNo = it => String(it || '').replace(/[^0-9A-Za-z]/g, '');
+const issOrdOf = it => { const x = issOfDay(issDay).find(v => v.item === it && v.ord); return x ? x.ord : null; };
+const issWon = n => n === null || n === undefined ? '-' : Number(n).toLocaleString('ko-KR') + '원';
+async function issOrdFetch(it, force) {
+  const no = issTrackNo(it); if (no.length < 8) return null; if (!force && (issOrdOf(it) || issOrdTry.has(no))) return issOrdOf(it);
+  issOrdTry.set(no, 'busy'); try { renderIssOrd(); } catch (e) {}
+  try { const d = await c24Call('/bytrack?no=' + encodeURIComponent(no) + '&days=60');
+    if (!d || !d.found) { issOrdTry.set(no, 'none'); return null; }
+    const ord = Object.assign({}, d.order, { at: new Date().toISOString() }), day = issDay;
+    await issWrite(day, arr => { const x = arr.find(v => v.item === it && v.cat === 'parcel'); if (x) x.ord = ord; });
+    issOrdTry.delete(no); return ord;
+  } catch (er) { issOrdTry.set(no, 'err:' + (er.message || er)); return null; }
+  finally { try { renderIssOrd(); } catch (e) {} }
+}
+function issOrdLines(o) {   // 모달 · 이미지에 같이 쓰는 줄
+  const dt = v => v ? String(v).replace('T', ' ').slice(0, 16) : '-', items = (o.items || []).filter(i => i.hit).length ? (o.items || []).filter(i => i.hit) : (o.items || []);
+  return { head: [['주문번호', o.order_id], ['주문일', dt(o.order_date)], ['결제일', dt(o.payment_date)], ['주문 경로', o.order_place_name || (o.market_id ? o.market_id : '자사몰')]],
+    items: items.map(i => ({ name: i.product_name, opt: i.option_value, q: i.quantity, price: (i.product_price + (i.option_price || 0)) * i.quantity, st: i.status_name, tr: (i.shipping_company_name ? i.shipping_company_name + ' ' : '') + (i.tracking_no || '') })),
+    money: [['상품구매금액', issWon(o.price)], ['할인', o.discount ? '-' + issWon(o.discount) : '0원'], ['배송비', issWon(o.shipping_fee)], ['총 실결제금액', issWon(o.payment)], ['결제수단', (o.payment_method_name || []).join(', ') || '-']] };
+}
+function renderIssOrd() {
+  const box = $('iss-ord'); if (!box) return; const it = issModalItem;
+  if (issCat !== 'parcel' || !it || issTrackNo(it).length < 8) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+  box.classList.remove('hidden'); const o = issOrdOf(it), st = issOrdTry.get(issTrackNo(it));
+  const again = `<button class="btn sm" type="button" id="iss-ordgo">${o ? '다시 찾기' : '카페24에서 찾기'}</button>`;
+  if (o) { const L = issOrdLines(o);
+    box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span>이미지 저장 때 같이 들어가요</span>${again}</div><div class="iss-og">${L.head.map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join('')}</div>` +
+      L.items.map(i => `<div class="iss-oi"><b>${esc(i.name)}</b>${i.opt ? `<small>${esc(i.opt)}</small>` : ''}<span>${i.q}개 · ${issWon(i.price)}${i.st ? ' · ' + esc(i.st) : ''}</span></div>`).join('') +
+      `<div class="iss-og">${L.money.map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join('')}</div>`; }
+  else if (st === 'busy') box.innerHTML = '<div class="iss-oh"><b>카페24 주문</b><span>송장번호로 찾는 중…</span></div>';
+  else if (st === 'none') box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span>최근 60일 주문에서 이 송장번호를 못 찾았어요</span>${again}</div>`;
+  else if (st && st.startsWith('err:')) box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span class="err">${esc(st.slice(4))}</span>${again}</div>`;
+  else { box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span>송장번호로 주문을 찾아요</span>${again}</div>`; if (c24Cfg().worker && window.h5Fb) setTimeout(() => issOrdFetch(it), 0); }
+}
+document.addEventListener('click', e => { if (e.target.closest('#iss-ordgo') && issModalItem) issOrdFetch(issModalItem, true); });
 async function issParcelImg(it0, btn) {   // 택배 사고: 사진 + 메모를 한 장의 이미지로
   const it = it0 || issModalItem, arr = issOfDay(issDay).filter(x => x.item === it).slice().sort((a, b) => String(a.at).localeCompare(String(b.at)));
   if (!arr.length) return; const m = btn ? { set className(v) {}, set textContent(v) { btn.title = v; } } : $('iss-msg'); m.className = 'msg'; m.textContent = '이미지 만드는 중…'; if (btn) btn.classList.add('busy');
   try {
     const load = d => new Promise(r => { if (!d) return r(null); const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = d; });
     const ims = (await Promise.all(arr.flatMap(x => x.ph || []).map(async id => load(await photoGet(id))))).filter(Boolean);
+    let ord = issOrdOf(it); if (!ord && c24Cfg().worker && window.h5Fb) { m.textContent = '카페24 주문 찾는 중…'; ord = await Promise.race([issOrdFetch(it, true), new Promise(r => setTimeout(() => r(null), 20000))]); m.textContent = '이미지 만드는 중…'; }
+    const OL = ord ? issOrdLines(ord) : null;
     const W = 1080, P = 48, F = '"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif';
     const c = document.createElement('canvas'), g = c.getContext('2d');
     const wrap = (t, font, mw) => { g.font = font; const out = []; String(t || '').split('\n').forEach(line => { let cur = ''; for (const ch of line) { if (g.measureText(cur + ch).width > mw && cur) { out.push(cur); cur = ch; } else cur += ch; } out.push(cur); }); return out; };
@@ -4099,13 +4145,28 @@ async function issParcelImg(it0, btn) {   // 택배 사고: 사진 + 메모를 �
     const rows = []; for (let i = 0; i < cells.length; i += cols) rows.push(cells.slice(i, i + cols));
     const photoH = rows.reduce((s, r) => s + Math.max(...r.map(x => x.h)) + gap, 0);
     const memoH = notes.length ? 56 + notes.reduce((s, n) => s + n.t.length * 44 + 46, 0) : 0;
-    const H = P + 150 + (ims.length ? photoH + 24 : 0) + memoH + 70;
+    const itF = '600 28px ' + F, itLines = OL ? OL.items.map(i => wrap(i.name + (i.opt ? ' / ' + i.opt : ''), itF, W - P * 2 - 330)) : [];
+    const ordH = OL ? 56 + Math.ceil(OL.head.length / 2) * 52 + 16 + itLines.reduce((t, l) => t + Math.max(1, l.length) * 38 + 52, 0) + Math.ceil(OL.money.length / 2) * 52 + 40 : 0;
+    const H = P + 150 + ordH + (ims.length ? photoH + 24 : 0) + memoH + 70;
     c.width = W; c.height = Math.ceil(H); g.fillStyle = '#fff'; g.fillRect(0, 0, W, c.height); g.textBaseline = 'top';
     let y = P;
     g.fillStyle = '#8a5418'; g.font = '700 26px ' + F; g.fillText('택배 사고 접수용', P, y);
     g.fillStyle = '#7a7f70'; g.font = '500 26px ' + F; const dt = fmtDay(issDay); g.fillText(dt, W - P - g.measureText(dt).width, y); y += 44;
     g.fillStyle = '#1f2a1c'; g.font = '800 46px ' + F; const tl = wrap('송장번호 ' + it, '800 46px ' + F, W - P * 2)[0]; g.fillText(tl, P, y); y += 74;
     g.fillStyle = '#e4e0d4'; g.fillRect(P, y, W - P * 2, 2); y += 30;
+    if (OL) {   // 카페24 주문 정보 (관리자 주문 상세 화면 내용)
+      g.fillStyle = '#2c5f86'; g.font = '700 28px ' + F; g.fillText('카페24 주문 정보', P, y); y += 56;
+      const grid = (rows) => { const cw2 = (W - P * 2) / 2; for (let i = 0; i < rows.length; i += 2) { [rows[i], rows[i + 1]].forEach((r, j) => { if (!r) return; const x = P + j * cw2;
+        g.fillStyle = '#eef1f5'; g.fillRect(x, y, 170, 48); g.fillStyle = '#fff'; g.fillRect(x + 170, y, cw2 - 170, 48); g.strokeStyle = '#d5dae2'; g.lineWidth = 1; g.strokeRect(x + .5, y + .5, cw2 - 1, 47);
+        g.fillStyle = '#4a5260'; g.font = '500 22px ' + F; g.fillText(r[0], x + 14, y + 12); g.fillStyle = '#1f2630'; g.font = (r[0] === '총 실결제금액' ? '800 ' : '600 ') + '24px ' + F; g.fillText(wrap(r[1], g.font, cw2 - 196)[0], x + 184, y + 11); }); y += 52; } };
+      grid(OL.head); y += 16;
+      OL.items.forEach((i, k) => { const ln = itLines[k], bh = Math.max(1, ln.length) * 38 + 40; g.fillStyle = '#f7f9fc'; g.fillRect(P, y, W - P * 2, bh); g.fillStyle = '#2c5f86'; g.fillRect(P, y, 6, bh);
+        g.fillStyle = '#1f2630'; g.font = itF; ln.forEach((l, j) => g.fillText(l, P + 22, y + 18 + j * 38));
+        g.font = '700 26px ' + F; const rt = i.q + '개 · ' + issWon(i.price); g.fillText(rt, W - P - 20 - g.measureText(rt).width, y + 18);
+        g.fillStyle = '#6a7282'; g.font = '500 21px ' + F; const st2 = [i.st, i.tr].filter(Boolean).join(' · '); if (st2) g.fillText(st2, W - P - 20 - g.measureText(st2).width, y + 54);
+        y += bh + 12; });
+      grid(OL.money); y += 24; g.fillStyle = '#e4e0d4'; g.fillRect(P, y - 12, W - P * 2, 2); y += 8;
+    }
     for (const r of rows) { const rh = Math.max(...r.map(x => x.h)); r.forEach((x, i) => { const dx = P + i * (cw + gap); g.fillStyle = '#f2f0ea'; g.fillRect(dx, y, cw, rh); const s = Math.min(cw / x.im.naturalWidth, rh / x.im.naturalHeight), dw = x.im.naturalWidth * s, dh = x.im.naturalHeight * s; g.drawImage(x.im, dx + (cw - dw) / 2, y + (rh - dh) / 2, dw, dh); g.strokeStyle = '#ddd8cb'; g.lineWidth = 2; g.strokeRect(dx, y, cw, rh); }); y += rh + gap; }
     if (ims.length) y += 24;
     if (notes.length) {

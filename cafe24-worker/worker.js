@@ -22,6 +22,7 @@ export default {
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
+      if (url.pathname === '/bytrack') return json(await byTrack(env, url.searchParams), cors);
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
@@ -172,6 +173,35 @@ async function crm(env, q) {
   return { orders: out, next: list.length < lim || offset + lim > 15000 ? null : offset + lim };
 }
 // 고객 카드에서 [이름 · 연락처 보기]를 누를 때만: 그 주문의 주문자 · 수령인을 보여주고 어디에도 저장하지 않아요
+// ---------- 택배 사고: 송장번호로 카페24 주문 찾기 (받는 분 · 주문자 이름 · 전화 · 주소는 돌려주지 않아요) ----------
+const OST_NAME = { N00: '입금전', N10: '상품준비중', N20: '배송준비중', N21: '배송대기', N22: '배송보류', N30: '배송중', N40: '배송완료', N50: '구매확정' };
+async function byTrack(env, q) {
+  const no = String(q.get('no') || '').replace(/[^0-9A-Za-z]/g, ''); if (no.length < 8) throw fail(400, 'track', '송장번호를 확인해 주세요');
+  const days = Math.min(90, Math.max(7, Number(q.get('days')) || 45)), day = d => new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10);
+  const token = await accessToken(env), to = new Date(Date.now() + 864e5), from = new Date(Date.now() - days * 864e5), lim = 1000;
+  const num = v => (v === undefined || v === null || v === '' || isNaN(Number(v))) ? null : Number(v);
+  for (let offset = 0, n = 0; offset <= 15000 && n < 30; offset += lim, n++) {
+    const u = new URL(base(env) + '/admin/orders');
+    u.searchParams.set('date_type', 'pay_date'); u.searchParams.set('start_date', day(from)); u.searchParams.set('end_date', day(to));
+    u.searchParams.set('embed', 'items'); u.searchParams.set('limit', String(lim)); u.searchParams.set('offset', String(offset));
+    const r = await fetch(u, { headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION } });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw fail(r.status, 'cafe24', '카페24에서 주문을 가져오지 못했어요: ' + ((d.error && d.error.message) || r.status));
+    const list = d.orders || [];
+    const o = list.find(x => (x.items || []).some(i => String(i.tracking_no || '').replace(/[^0-9A-Za-z]/g, '') === no));
+    if (o) {
+      const a = o.actual_order_amount || o.initial_order_amount || {}, items = (o.items || []).map(i => ({
+        product_name: i.product_name || '', option_value: i.option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0,
+        order_status: i.order_status || '', status_name: OST_NAME[i.order_status] || (/^C/.test(i.order_status || '') ? '취소' : /^R/.test(i.order_status || '') ? '반품' : /^E/.test(i.order_status || '') ? '교환' : (i.order_status || '')),
+        tracking_no: i.tracking_no || '', shipping_company_name: i.shipping_company_name || '', order_item_code: i.order_item_code || '', hit: String(i.tracking_no || '').replace(/[^0-9A-Za-z]/g, '') === no }));
+      const price = num(a.order_price_amount) ?? items.reduce((t, i) => t + (i.product_price + i.option_price) * i.quantity, 0), ship = num(a.shipping_fee) ?? num(o.shipping_fee), pay = num(o.payment_amount) ?? num(a.payment_amount);
+      return { found: true, order: { order_id: o.order_id, order_date: o.order_date || '', payment_date: o.payment_date || '', order_place_name: o.order_place_name || '', market_id: o.market_id || '',
+        payment_method_name: o.payment_method_name || [], price, shipping_fee: ship, payment: pay, discount: price !== null && pay !== null ? Math.max(0, price + (ship || 0) - pay) : null, items } };
+    }
+    if (list.length < lim) break;
+  }
+  return { found: false, days };
+}
 async function whoIs(env, q) {
   const id = String(q.get('order_id') || '').replace(/[^0-9A-Za-z\-]/g, ''); if (!id) throw fail(400, 'order', '주문번호가 없어요');
   const token = await accessToken(env);
