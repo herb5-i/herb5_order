@@ -9014,7 +9014,7 @@ function ktWx(o) { // 받는 주소의 예보로 예보기온 · 포장방법 �
 function ktSheetRows(H, xl) {
   const fixed = new Map((rules.fixedValues || []).filter(f => String(f.col || '').trim()).map(f => [String(f.col).trim(), f.value])), out = [];
   ktOn().forEach(o => { const w = ktWx(o), [y, m, d] = String(o.day).split('-').map(Number), ph = o.phone || null;
-    o.items.forEach((it, k) => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.no, '주문상품명': '●' + it.p + '●', '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': (xl && o.split !== false ? '*'.repeat(k) : '') + (o.rcv || o.biz), '우편번호': o.zip || null, '주소': o.addr,
+    o.items.forEach((it, k) => { const v = { '발주일': new Date(y, m - 1, d), '주문번호': o.no, '주문상품명': it.p, '옵션': it.op || null, '수량': Number(it.q) || 1, '수령인': (xl && o.split !== false ? '*'.repeat(k) : '') + (o.rcv || o.biz), '우편번호': o.zip || null, '주소': o.addr,
       '수령지전화': null, '전화번호': ph && !/^01/.test(ph.replace(/\D/g, '')) ? ph : null, '핸드폰': ph && /^01/.test(ph.replace(/\D/g, '')) ? ph : null, '비고': o.note || null, '주문자': o.biz, '예보기온(최저/최고)': w.t };
       v[(rules.weather && rules.weather.col) || '포장방법'] = w.p;
       out.push(H.map(h => fixed.has(h) ? fixed.get(h) : (h in v ? v[h] : null))); }); });
