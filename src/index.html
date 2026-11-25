@@ -1688,6 +1688,14 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hmb-tip{font-size:12.5px;color:var(--mute);min-width:0}
 .hmb-btns{display:flex;gap:6px;flex-wrap:wrap}
 .hmbar .btn.danger{background:#fbe5e9;color:#b44a64}
+.hmfb{margin-bottom:24px}.hmfb .hm-lb small{display:block;font-weight:400;font-size:12.5px;margin-top:2px}.hmfb-pin{color:var(--acc);flex:none}.hmfb-pin svg{width:18px;height:18px;display:block}
+.hmfb-f textarea{width:100%;box-sizing:border-box;border-radius:14px;border:1px solid var(--line);padding:10px 12px;font:inherit;font-size:15px;color:var(--ink);background:var(--card);resize:vertical;min-height:64px}
+.hmfb-b{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.hmfb-mic{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--acc);display:grid;place-items:center;cursor:pointer;flex:none}.hmfb-mic svg{width:22px;height:22px}
+.hmfb-mic.on{background:#d9483b;border-color:#d9483b;color:#fff;animation:hmfbp 1.2s infinite}@keyframes hmfbp{0%{box-shadow:0 0 0 0 rgba(217,72,59,.45)}70%{box-shadow:0 0 0 12px rgba(217,72,59,0)}100%{box-shadow:0 0 0 0 rgba(217,72,59,0)}}
+.hmfb-b .msg{flex:1 1 160px;min-width:0}#hmfb-list{margin-top:12px}.hmfb-it{padding:10px 0;border-top:1px solid var(--line);font-size:14px}.hmfb-it p{margin:0 0 4px;white-space:pre-wrap;overflow-wrap:anywhere}
+.hmfb-it small{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--mute);font-size:12px}.hmfb-st{border:0;font:inherit;font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc);cursor:default}.hmfb-st.new{background:#fde8e4;color:#b04a33}.hmfb-st.done{background:var(--line);color:var(--mute)}
+body.is-admin .hmfb-st{cursor:pointer}.hmfb-more{border:0;background:none;color:var(--acc);font:inherit;font-size:13px;cursor:pointer;padding:6px 0}.hmfb-adm{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.hmfb-url{font-size:12px;color:var(--mute);overflow-wrap:anywhere;min-width:0;flex:1 1 200px}
+html.dark .hmfb-st.new{background:rgba(217,72,59,.18);color:#f0a093}
 .hmg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:84px;grid-auto-flow:row dense;gap:14px 12px;margin-bottom:24px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 @media(min-width:900px){.hmg{grid-template-columns:repeat(8,minmax(0,1fr));grid-auto-rows:90px;gap:16px}}
 .hmi{position:relative;min-width:0;grid-column:span 1;grid-row:span 1}
@@ -2418,6 +2426,13 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
     <div class="hm-w hm-bak hidden" id="hm-bak"></div>
     <div class="hmbar" id="hmbar"></div>
     <div class="hmg" id="hmg"></div>
+    <div class="hm-w hmfb" id="hmfb">
+      <div class="hm-wt"><span class="hm-lb">개선 메모 <small>불편한 점 · 고칠 점 · 바라는 기능을 적어 주세요. 모두 같이 봐요</small></span><span class="hmfb-pin" title="홈에 고정된 칸이에요"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span></div>
+      <form class="hmfb-f" id="hmfb-f" autocomplete="off"><textarea id="hmfb-t" rows="2" maxlength="1000" placeholder="예: 재고 화면에서 품목 찾기가 불편해요 · 마이크를 누르고 말해도 돼요" aria-label="개선 메모"></textarea>
+        <div class="hmfb-b"><button type="button" class="hmfb-mic" id="hmfb-mic" title="말로 적기" aria-label="말로 적기" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button><button type="submit" class="btn pri sm" id="hmfb-go">남기기</button><span class="msg" id="hmfb-msg"></span></div></form>
+      <div id="hmfb-list"></div>
+      <div class="hmfb-adm adm-only"><button class="btn sm" type="button" id="hmfb-link">Claude가 읽는 주소 보기</button><span class="hmfb-url" id="hmfb-url"></span></div>
+    </div>
     <div class="modal hidden" id="hmFold" role="dialog" aria-modal="true" aria-label="폴더"><div class="mbox hmfbox"><div class="hmf-h"><input id="hmf-name" maxlength="20" aria-label="폴더 이름"><button class="ibtn" type="button" id="hmf-close" aria-label="닫기">✕</button></div><div class="hmf-grid" id="hmf-grid"></div><div class="hmf-act" id="hmf-act"></div></div></div>
     <div class="modal hidden" id="hmAdd" role="dialog" aria-modal="true" aria-label="홈에 추가"><div class="mbox hmabox"><div class="hmf-h"><b>홈에 추가</b><button class="ibtn" type="button" id="hma-close" aria-label="닫기">✕</button></div><div id="hma-body"></div></div></div>
   </section>
@@ -4379,6 +4394,7 @@ function renderHome() {
   renderBakNote();
   const ym = today.slice(0, 7); let mrev = 0; rev.forEach((v, d) => { if (d.startsWith(ym)) mrev += v; });
   (($('hm-s-hist')||{}).textContent) = mrev ? (now.getMonth() + 1) + '월 ' + won(mrev) : '이번 달 기록 없음';
+  try { if (!hmfbL && hmfbOk()) hmfbLoad(); else if (!hmfbL) hmfbRender(); } catch (e) {}
   // 위젯 새로 그리기 (글을 쓰는 중인 위젯은 건드리지 않아요)
   (hmL ? hmL.items : []).forEach(x => { if (x.t !== 'w' || x.w === 'memo') return; const el = document.querySelector('#hmg .hmi[data-id="' + CSS.escape(x.id) + '"]'); if (!el) return;
     const a = document.activeElement; if (a && el.contains(a) && /INPUT|TEXTAREA/.test(a.tagName)) return; const h = hmWidget(x); if (el._h === h) return; const w = el.querySelector('.hm-w'); if (w) { w.outerHTML = h; el._h = h; } });
@@ -8486,6 +8502,42 @@ function buildXlsx() {
   });
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
+// ---------- 홈 개선 메모 (고정 칸 · 중계 서버에 모아 둬요 · 마이크로 말해서 적기) ----------
+let hmfbBusy = false, hmfbL = null, hmfbAll = false, hmfbT = null, hmfbRec = null, hmfbVoice = false;
+const hmfbOk = () => !!(c24Cfg().worker && window.h5Fb);
+function hmfbRender() {
+  const box = $('hmfb-list'); if (!box) return;
+  if (!hmfbOk()) { box.innerHTML = '<p class="hw-foot">로그인한 웹 버전에서 카페24 중계 서버가 연결되면 메모가 모여요</p>'; return; }
+  if (!hmfbL) { box.innerHTML = '<p class="hw-foot">메모 불러오는 중…</p>'; return; }
+  const L = hmfbL.slice().reverse(), show = hmfbAll ? L : L.slice(0, 5), ST = { new: '새 메모', seen: '확인함', done: '반영함' };
+  const tm = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  box.innerHTML = !L.length ? '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : show.map(x => `<div class="hmfb-it"><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}<button type="button" class="hmfb-st ${x.st}" data-hmfbst="${esc(x.id)}" title="관리자가 누르면 상태가 바뀌어요">${ST[x.st] || x.st}</button></small></div>`).join('') +
+    (L.length > 5 ? `<button type="button" class="hmfb-more" id="hmfb-more">${hmfbAll ? '줄이기' : '전체 ' + L.length + '건 보기'}</button>` : '');
+}
+async function hmfbLoad() { if (!hmfbOk()) { hmfbRender(); return; } if (hmfbBusy) return; hmfbBusy = true; try { const d = await c24Call('/fb'); hmfbL = d.list || []; } catch (e) { if (!hmfbL) { $('hmfb-list').innerHTML = '<p class="hw-foot warn">메모를 불러오지 못했어요: ' + esc(e.message || e) + '</p>'; return; } } finally { hmfbBusy = false; } hmfbRender(); }
+function hmfbTick() { clearTimeout(hmfbT); hmfbT = setTimeout(() => { if (!document.hidden && $('v-home') && !$('v-home').classList.contains('hidden')) hmfbLoad(); hmfbTick(); }, 60000); }
+$('hmfb-f').addEventListener('submit', async e => { e.preventDefault(); const t = $('hmfb-t').value.trim(), m = $('hmfb-msg'); m.className = 'msg';
+  if (!t) { m.className = 'msg err'; m.textContent = '메모를 적거나 마이크를 눌러 말해 주세요'; return; }
+  if (!hmfbOk()) { m.className = 'msg err'; m.textContent = '로그인한 웹 버전에서만 남길 수 있어요'; return; }
+  if (hmfbRec) hmfbRec.stop(); $('hmfb-go').disabled = true;
+  try { const d = await c24Call('/fb', { method: 'POST', body: JSON.stringify({ text: t, voice: hmfbVoice }) }); hmfbL = d.list || hmfbL; $('hmfb-t').value = ''; hmfbVoice = false; m.className = 'msg ok'; m.textContent = '#' + d.no + ' 메모를 남겼어요'; hmfbRender(); }
+  catch (er) { m.className = 'msg err'; m.textContent = '남기지 못했어요: ' + (er.message || er); } finally { $('hmfb-go').disabled = false; } });
+$('hmfb-mic').addEventListener('click', () => { const m = $('hmfb-msg'), SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (hmfbRec) { hmfbRec.stop(); return; }
+  if (!SR) { m.className = 'msg err'; m.textContent = '이 브라우저는 음성 입력을 못 해요. 휴대폰 키보드의 마이크 버튼을 써 주세요'; return; }
+  const r = new SR(), base = $('hmfb-t').value.replace(/\s+$/, ''); let fin = ''; r.lang = 'ko-KR'; r.interimResults = true; r.continuous = true;
+  r.onresult = ev => { let it = ''; for (let i = ev.resultIndex; i < ev.results.length; i++) { const tx = ev.results[i][0].transcript; if (ev.results[i].isFinal) fin += tx; else it += tx; } $('hmfb-t').value = (base ? base + ' ' : '') + (fin + it).trim(); hmfbVoice = true; };
+  r.onerror = ev => { m.className = 'msg err'; m.textContent = ev.error === 'not-allowed' || ev.error === 'service-not-allowed' ? '마이크 사용을 허락해 주세요 (주소창 옆 자물쇠 → 마이크 허용)' : ev.error === 'no-speech' ? '말소리가 들리지 않았어요. 다시 눌러 말해 주세요' : '음성 인식이 멈췄어요: ' + ev.error; };
+  r.onend = () => { hmfbRec = null; $('hmfb-mic').classList.remove('on'); $('hmfb-mic').setAttribute('aria-pressed', 'false'); $('hmfb-mic').title = '말로 적기'; if (m.textContent === '듣고 있어요… 다 말하면 마이크를 한 번 더 눌러 주세요') { m.className = 'msg'; m.textContent = $('hmfb-t').value.trim() ? '다 적혔으면 남기기를 눌러 주세요' : ''; } };
+  try { r.start(); } catch (er) { m.className = 'msg err'; m.textContent = '음성 인식을 시작하지 못했어요'; return; }
+  hmfbRec = r; $('hmfb-mic').classList.add('on'); $('hmfb-mic').setAttribute('aria-pressed', 'true'); $('hmfb-mic').title = '그만 듣기'; m.className = 'msg'; m.textContent = '듣고 있어요… 다 말하면 마이크를 한 번 더 눌러 주세요'; });
+document.addEventListener('click', async e => {
+  if (e.target.closest('#hmfb-more')) { hmfbAll = !hmfbAll; hmfbRender(); return; }
+  const st = e.target.closest('[data-hmfbst]'); if (st) { if (!document.body.classList.contains('is-admin')) return; const x = (hmfbL || []).find(v => v.id === st.dataset.hmfbst); if (!x) return; const nx = { new: 'seen', seen: 'done', done: 'new' }[x.st] || 'seen';
+    try { const d = await c24Call('/fb/st', { method: 'POST', body: JSON.stringify({ id: x.id, st: nx }) }); hmfbL = d.list || hmfbL; hmfbRender(); } catch (er) { $('hmfb-msg').className = 'msg err'; $('hmfb-msg').textContent = er.message || er; } return; }
+  if (e.target.closest('#hmfb-link')) { try { const d = await c24Call('/fb/link'); $('hmfb-url').textContent = d.url; try { await navigator.clipboard.writeText(d.url); $('hmfb-url').textContent = d.url + ' (복사했어요)'; } catch (er) {} } catch (er) { $('hmfb-url').textContent = '주소를 받지 못했어요: ' + (er.message || er); } return; }
+});
+setTimeout(() => { hmfbLoad(); hmfbTick(); }, 2500);
 // ---------- 카페24 전체 주문 엑셀로 받기 (한 달씩 받아서 한 파일로) ----------
 let c24xStop = false, c24xBusy = false;
 $('c24x-to').value = ymOf(new Date());

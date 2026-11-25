@@ -17,12 +17,17 @@ export default {
     try {
       const url = new URL(req.url);
       if (req.method === 'GET' && /^\/img\/[a-z0-9]{6,24}\.png$/.test(url.pathname)) return imgGet(env, url.pathname.slice(5, -4));   // 공지 이미지는 누구나 볼 수 있어요
+      if (req.method === 'GET' && url.pathname === '/fb/read') return fbRead(env, url.searchParams.get('k'));   // 개선 메모: 읽기 전용 주소(키가 맞을 때만) — Claude가 읽어요
       const who = await checkUser(req, env);                       // 로그인한 사람인지 확인
       if (url.pathname === '/status') return json(await status(env, who), cors);
       if (url.pathname === '/auth-url') { needAdmin(who); return json({ url: authUrl(env, url.searchParams.get('state') || '') }, cors); }
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
       if (url.pathname === '/bytrack') return json(await byTrack(env, url.searchParams), cors);
+      if (url.pathname === '/fb' && req.method === 'POST') return json(await fbAdd(env, await req.json(), who), cors);
+      if (url.pathname === '/fb') return json(await fbList(env), cors);
+      if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
+      if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
@@ -173,6 +178,36 @@ async function crm(env, q) {
   return { orders: out, next: list.length < lim || offset + lim > 15000 ? null : offset + lim };
 }
 // 고객 카드에서 [이름 · 연락처 보기]를 누를 때만: 그 주문의 주문자 · 수령인을 보여주고 어디에도 저장하지 않아요
+// ---------- 개선 메모 (홈 화면 고정 칸): 직원이 적은 불편한 점 · 바라는 점. KV 'fb'에 모아 둬요 ----------
+const FB_ST = { new: '새 메모', seen: '확인함', done: '반영함' };
+const fbGet = async env => JSON.parse((await env.TOKENS.get('fb')) || '[]');
+const fbKst = iso => new Date(new Date(iso).getTime() + 9 * 3600e3).toISOString().replace('T', ' ').slice(0, 16);
+async function fbAdd(env, body, who) {
+  const text = String((body && body.text) || '').trim().slice(0, 1000); if (!text) throw fail(400, 'empty', '메모를 적어 주세요');
+  const L = await fbGet(env), no = L.reduce((m, x) => Math.max(m, x.no || 0), 0) + 1;
+  L.push({ id: 'f' + Date.now().toString(36), no, text, by: who.email.split('@')[0], at: new Date().toISOString(), st: 'new', voice: !!(body && body.voice) });
+  await env.TOKENS.put('fb', JSON.stringify(L.slice(-500))); return { ok: true, no, list: L.slice(-500) };
+}
+async function fbList(env) { return { list: await fbGet(env) }; }
+async function fbSt(env, body) {
+  const L = await fbGet(env), x = L.find(v => v.id === (body && body.id)); if (!x) throw fail(404, 'none', '메모를 찾지 못했어요');
+  if (!FB_ST[body.st]) throw fail(400, 'st', '상태가 맞지 않아요'); x.st = body.st; x.stAt = new Date().toISOString();
+  await env.TOKENS.put('fb', JSON.stringify(L)); return { ok: true, list: L };
+}
+async function fbLink(env, url, renew) {
+  let k = await env.TOKENS.get('fbkey');
+  if (!k || renew) { const b = new Uint8Array(18); crypto.getRandomValues(b); k = [...b].map(x => x.toString(16).padStart(2, '0')).join(''); await env.TOKENS.put('fbkey', k); }
+  return { url: url.origin + '/fb/read?k=' + k };
+}
+async function fbRead(env, k) {
+  const key = await env.TOKENS.get('fbkey'), head = { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' };
+  if (!key || !k || k !== key) return new Response('주소가 맞지 않아요', { status: 403, headers: head });
+  const L = (await fbGet(env)).slice().reverse(), n = L.filter(x => x.st === 'new').length;
+  const txt = `허브아이 사이트 개선 메모 · 총 ${L.length}건 · 새 메모 ${n}건 · ${fbKst(new Date().toISOString())} 기준 (한국 시간)\n\n` +
+    L.map(x => `#${x.no} [${FB_ST[x.st] || x.st}] ${fbKst(x.at)} · ${x.by}${x.voice ? ' · 음성' : ''}\n${x.text}\n`).join('\n');
+  return new Response(txt || '아직 메모가 없어요', { headers: head });
+}
+
 // ---------- 택배 사고: 송장번호로 카페24 주문 찾기 (받는 분 · 주문자 이름 · 전화 · 주소는 돌려주지 않아요) ----------
 const OST_NAME = { N00: '입금전', N10: '상품준비중', N20: '배송준비중', N21: '배송대기', N22: '배송보류', N30: '배송중', N40: '배송완료', N50: '구매확정' };
 async function byTrack(env, q) {
