@@ -1690,6 +1690,8 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hmbar .btn.danger{background:#fbe5e9;color:#b44a64}
 .hm-noti{position:relative;white-space:nowrap}.hm-noti svg{flex:none;width:18px;height:18px}.hm-noti span{white-space:nowrap}.hm-noti .ntc{min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 12px/20px var(--body);text-align:center}.hm-noti .ntc.hidden{display:none}
 .tabs .tab{position:relative}.tbadge{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 10.5px/17px var(--body);text-align:center;pointer-events:none;z-index:2}
+.icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
+.subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
 .ntback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900;opacity:1;transition:opacity .2s}.ntback.hidden{display:none}
 .ntdrawer{position:fixed;top:0;right:0;bottom:0;width:min(380px,88vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
@@ -8513,12 +8515,87 @@ function buildXlsx() {
   });
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
+// ---------- 버튼 아이콘화: 글자 버튼을 아이콘으로 (기록·통계, 시장 탭은 그대로) ----------
+// 원래 글자는 마우스를 올리면 뜨는 이름(title)과 화면 읽기용 이름(aria-label)으로 남겨요. 중요한 버튼(.pri)은 아이콘 + 짧은 글자.
+// 숫자가 들어간 버튼(건수 · 개수 등 정보)과 고르는 버튼(오전/오후 같은 선택지)은 그대로 둬요.
+const ICZ_P = {
+  save: '<path d="M5 4h11l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Z"/><path d="M8.5 4v5h6V4M8.5 20v-6h7v6"/>',
+  down: '<path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5"/>',
+  up: '<path d="M12 15V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5"/>',
+  fetch: '<path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  trash: '<path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13M10 11v5M14 11v5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  search: '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  play: '<path d="M7 5v14l12-7Z"/>',
+  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M16 7l2 2M14 9l2 2"/>',
+  send: '<path d="M4 12 20 4l-6 16-3-7-7-1Z"/>',
+  image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-5 4 4 3-3 4 4"/>',
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/>',
+  edit: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/>',
+  cal: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  mega: '<path d="M4 10v4h3l7 4V6L7 10H4Z"/><path d="M17.5 9a4 4 0 0 1 0 6"/>',
+  stop: '<rect x="6.5" y="6.5" width="11" height="11" rx="2"/>',
+  filteroff: '<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"/><path d="m16 16 5 5M21 16l-5 5"/>',
+  install: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M12 7v5m0 0-2.5-2.5M12 12l2.5-2.5"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+  merge: '<path d="M6 4v5a5 5 0 0 0 5 5h7M15 11l3 3-3 3M6 20v-3"/>',
+  minus: '<path d="M5 12h14"/>',
+  reset: '<path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4.5h4.5"/>',
+  split: '<path d="M12 4v6M12 10 6 16v4M12 10l6 6v4"/>',
+  flag: '<path d="M5 21V4h11l-2 4 2 4H5"/>',
+  folder: '<path d="M3.5 7a2 2 0 0 1 2-2H10l2 2h6.5a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7Z"/>',
+  list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+};
+const ICZ_MAP = [   // [글자(앞 기호 · 끝 ▾ 뺀 것), 아이콘, 중요한 버튼일 때 짧은 글자]
+  [/^(설정 |업체 |규칙 |이대로 규칙 )?저장$/, 'save', '저장'], [/^남기기$|^메모 남기기$/, 'send', '남기기'],
+  [/^(엑셀 |이미지 )?내려받기$|^이미지(로)? 저장$|^지금 백업$|^카페24 송장 등록 파일 내려받기$|^배송 불가만 내려받기 \(엑셀\)$|^규칙 내보내기$/, 'down', '받기'],
+  [/^규칙 가져오기$|^올리기$|^카페24 공지로 올리기$/, 'up', '올리기'],
+  [/^주문 불러오기$|^카페24에서 지금 가져오기$|^새로 받기$|^이 기기에도 불러오기$|^비교 자료 받기$|^카페24 양식 불러오기$|^규칙 다시 적용$/, 'fetch', '불러오기'],
+  [/^(닫기|취소|고치기 취소)$/, 'x', '닫기'], [/^(되돌리기|방금 올린 것 되돌리기|다시 넣기)$/, 'undo', '되돌리기'],
+  [/^(목록 |표 |문구 |주소 )?복사$/, 'copy', '복사'], [/^(기록 |업체 |주소 )?지우기$/, 'trash', '지우기'], [/^(전체 설정 )?초기화$|^위치 처음대로$|^기본으로$/, 'reset', '처음대로'],
+  [/^\+ ?(상품 줄|날짜 추가|줄 추가)$|^＋ ?(추가|만들기|글 상자|반송 담기|폐기 담기|휴무 하나 더 묶기)$|^상품명 규칙에 추가$/, 'plus', '추가'],
+  [/^상품 찾기$/, 'search', '찾기'], [/^(확인|완료|처리 완료|폐기 완료)$/, 'check', '완료'], [/^카페24 연결$|^AI가 읽는 주소 보기$/, 'link', '연결'],
+  [/^미리 돌려보기$/, 'play', '돌려보기'], [/^잠그기$/, 'lock', '잠그기'], [/^비밀번호 바꾸기$/, 'key', '비밀번호'],
+  [/^오늘 요약 보내기$|^표 이미지 보내기 \(카톡 · 메일\)$/, 'send', '보내기'], [/^공지 이미지 만들기$|^표 이미지로 복사$|^이미지 내려받기$/, 'image', '이미지'],
+  [/^(연락처 · 주소 보기|전체 주문 보기|열기|전체 보기)$/, 'eye', '보기'], [/^(이슈 적기|홈 꾸미기|폴더 편집)$/, 'edit', '적기'],
+  [/^마감 · 휴무 설정$/, 'cal', '마감'], [/^공지 설정$/, 'mega', '공지'], [/^멈추기$/, 'stop', '멈추기'], [/^필터 해제$/, 'filteroff', '해제'],
+  [/^앱으로 설치$/, 'install', '설치'], [/^아이콘 숫자 켜기$/, 'bell', '켜기'], [/^(합치기|다시 합치기|이 날 모두 합치기)$/, 'merge', '합치기'], [/^빼기$/, 'minus', '빼기'],
+  [/^주문일로 다시 나누기$/, 'split', '나누기'], [/^담고 이슈 등록$/, 'flag', '등록'], [/^폴더 풀기$/, 'folder', '풀기'], [/^목록$/, 'list', '목록'],
+];
+const ICZ_SKIP = '#v-hist,#v-market,.seg,[role=tablist],.tabs,.stabs,.hm-w,.hma,[role=option],.ktsug,.hmnt-it,.ntd-h,.ktchip,.iczno';
+function iczOne(b) {
+  if (b.closest(ICZ_SKIP)) return; const ic = b.querySelector(':scope > svg.bic');
+  const txt = () => [...b.childNodes].filter(n => !(n.classList && (n.classList.contains('bit') || n.classList.contains('bic')))).map(n => n.textContent).join('').replace(/\s+/g, ' ').trim();
+  const raw = txt();
+  if (ic) { if (raw === b.dataset.iczRaw) return; ic.remove(); const bt = b.querySelector(':scope > .bit'); if (bt) bt.remove(); b.querySelectorAll(':scope > .icz-h').forEach(n => n.classList.remove('icz-h')); b.classList.remove('icz', 'icz-t', 'icz-o'); }
+  if (!ic && b.querySelector('[class]:not(svg):not(path):not(.icz-h), [id]')) return;   // 안에 따로 바뀌는 글자 칸이 있는 버튼은 그대로
+  if (!raw || /\d/.test(raw) || raw.length > 34) return;
+  const t = raw.replace(/^[⬇⬆↶↻＋⏰📢⚙✓]\s*/u, '').replace(/\s*[▾›]$/, '').trim(), hit = ICZ_MAP.find(([re]) => re.test(t)); if (!hit) return;
+  if (!b.title || b.dataset.iczTi) { b.title = raw; b.dataset.iczTi = '1'; } if (!b.getAttribute('aria-label') || b.dataset.iczAl) { b.setAttribute('aria-label', raw); b.dataset.iczAl = '1'; }
+  const short = b.classList.contains('pri') ? hit[2] : ''; b.dataset.iczRaw = raw;
+  [...b.childNodes].forEach(n => { if (n.nodeType === 3) { if (n.textContent.trim()) { const sp = document.createElement('span'); sp.className = 'icz-h'; n.replaceWith(sp); sp.appendChild(n); } } else if (n.nodeType === 1) n.classList.add('icz-h'); });
+  b.insertAdjacentHTML('afterbegin', `<svg class="bic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICZ_P[hit[1]]}</svg>`);
+  if (short) b.insertAdjacentHTML('beforeend', `<span class="bit">${short}</span>`);
+  b.classList.add('icz'); b.classList.toggle('icz-t', !!short); b.classList.toggle('icz-o', !short);
+}
+let iczQ = false;
+function iczAll() { iczQ = false; document.querySelectorAll('button').forEach(b => { try { iczOne(b); } catch (e) {} });
+  document.querySelectorAll('.subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo]').forEach(b => { const sp = b.querySelector('span'); if (sp && !b.title) { b.title = sp.textContent.trim(); b.setAttribute('aria-label', sp.textContent.trim()); } }); }
+new MutationObserver(ms => { if (iczQ) return; iczQ = true; requestAnimationFrame(iczAll); }).observe(document.body, { childList: true, subtree: true, characterData: true });
+iczAll();
 // ---------- 알림: 앱 아이콘 숫자(설치한 앱) · 홈 메뉴 숫자 · 홈 알림 목록 ----------
 // 사이트(앱)가 열려 있을 때 1분마다 다시 세요. 앱을 완전히 닫으면 숫자가 그때 값으로 멈춰 있어요.
 const NT_NEWS = [   // 중요한 업데이트 소식: 새로 넣으면 아직 안 본 사람에게 1로 떠요
   { v: '2026-11-24a', t: '카톡 주문 넣기가 생겼어요', d: '정리 → 주문 정리 ③ · 배송일에 엑셀에 자동으로 들어가요', go: 'run' },
   { v: '2026-11-24b', t: '택배 사고에 카페24 주문 정보가 같이 나와요', d: '이슈 관리 → 택배 사고 · 저장 이미지에도 들어가요', go: 'issue' },
   { v: '2026-11-25a', t: '홈에 개선 메모 칸이 생겼어요', d: '불편한 점을 적거나 마이크로 말해서 남겨 주세요', go: 'home' },
+  { v: '2026-11-25b', t: '버튼이 아이콘으로 바뀌었어요', d: 'PC는 마우스를 올리면, 휴대폰은 길게 누르면 이름이 보여요 (기기마다 달라요)', go: 'home' },
 ];
 const NT_SEEN = 'h5_nt_seen';
 const ntSeen = () => { try { return JSON.parse(localStorage.getItem(NT_SEEN) || '[]'); } catch (e) { return []; } };
