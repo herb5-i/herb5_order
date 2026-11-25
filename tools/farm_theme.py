@@ -83,7 +83,13 @@ def main():
     open(os.path.join(FARM, 'herbi-theme.css'), 'w', encoding='utf-8').write(LIGHT + '\n/* --- 원래 화면 색에서 자동으로 만든 다크 모드 색 --- */\n' + gen + '\n' + DARK_BASE)
     head = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">'
             '<link rel="stylesheet" href="herbi-theme.css?v=1">'
-            "<script>(function(){var m='auto';try{m=localStorage.getItem('herb5_theme')||'auto'}catch(e){}var d=m==='dark'||(m!=='light'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d)})();</script>")
+            "<script>(function(){var m='auto';try{m=localStorage.getItem('herb5_theme')||'auto'}catch(e){}var d=m==='dark'||(m!=='light'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d)})();</script>"
+            # 허브다섯메 로고를 누르면 첫 화면(허브아이 · 허브다섯메 고르기)으로 — 허브아이 쪽과 똑같이
+            "<style>img[alt=\"허브다섯메\"],.m-logo{cursor:pointer}</style>"
+            "<script>(function(){if(!/^https?:$/.test(location.protocol))return;var m=location.pathname.match(/^(.*\\/)farm\\/[^\\/]*$/);if(!m)return;var home=m[1];"
+            "document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('img[alt=\"허브다섯메\"],.m-logo');if(!t)return;e.preventDefault();e.stopPropagation();location.href=home;},true);"
+            "var tip=function(){document.querySelectorAll('img[alt=\"허브다섯메\"],.m-logo').forEach(function(x){x.title='처음 화면으로 (허브아이 · 허브다섯메 고르기)'})};"
+            "document.addEventListener('DOMContentLoaded',tip);setInterval(tip,2000);})();</script>")
     for f in ('admin.html', 'staff.html', 'index.html'):
         p = os.path.join(FARM, f); s = open(p, encoding='utf-8').read()
         s = re.sub(r'<!--herbi-theme-->.*?<!--/herbi-theme-->', '', s, flags=re.S)
