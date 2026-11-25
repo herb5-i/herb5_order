@@ -1721,10 +1721,10 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .svc-top{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.svc-l{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);flex:1 1 260px;min-width:0}.svc-l.svc-q{flex:0 1 160px}
 .svc-l select,.svc-l input{height:40px;border-radius:10px;border:1px solid var(--line);padding:0 10px;font:inherit;font-size:15px;color:var(--ink);background:var(--card);min-width:0;width:100%;box-sizing:border-box}
 .svc-prev{margin:10px 0 0;font-size:13.5px;color:var(--mute)}.svc-prev b{color:var(--acc)}.svc-warn{margin:10px 0 0;font-size:13px;color:var(--warn,#b86b00)}
-.svc-list{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:460px;overflow:auto}.svc-c{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer}
-.svc-c.rec{border-color:var(--acc)}.svc-c input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--acc)}.svc-nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.svc-nm b{font-size:14.5px;overflow-wrap:anywhere}
-.svc-nm em{font-style:normal;font-size:11px;font-weight:700;color:#fff;background:var(--acc);border-radius:99px;padding:1px 7px;align-self:flex-start}.svc-nm small{font-size:12px;color:var(--mute);overflow-wrap:anywhere}.svc-why{color:var(--ink)!important}
-.svc-sc{flex:none;font-weight:800;color:var(--acc);font-size:15px}.svc-st{flex:none;font-size:11.5px;background:var(--acc2);color:var(--acc);border-radius:99px;padding:2px 8px}
+.svc-list{margin-top:12px;display:flex;flex-direction:column;gap:4px;max-height:460px;overflow:auto}.svc-c{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
+.svc-c.in{border-color:var(--acc);background:var(--acc2)}.svc-c label{flex:1;min-width:0;display:flex;align-items:center;gap:10px;cursor:pointer}.svc-c input{width:18px;height:18px;flex:none;accent-color:var(--acc)}.svc-c b{font-size:14.5px;overflow-wrap:anywhere;min-width:0}
+.svc-dt{flex:none;font-size:13px}.svc-qw{display:flex;align-items:center;gap:6px}.svc-qw input{flex:1}.svc-qw em{font-style:normal;color:var(--mute);font-size:13px;flex:none}
+.svd-dl{margin:0;display:grid;gap:4px}.svd-dl dt{font-size:12.5px;color:var(--mute);margin-top:10px}.svd-dl dd{margin:0;font-size:14.5px;overflow-wrap:anywhere}.svd-dl ul{margin:0;padding-left:18px}.svd-note{white-space:pre-line}
 .svc-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}#tbl tr.svcr td{background:#fff3df}html.dark #tbl tr.svcr td{background:rgba(208,138,58,.15)}#tbl tr.svcr td.rn span{font-size:11px;color:#b86b00;font-weight:700}
 #ktinfo{white-space:pre-line}
 .lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
@@ -8918,11 +8918,17 @@ $('c24x-go').onclick = async () => {
   finally { c24xBusy = false; $('c24x-go').disabled = false; $('c24x-stop').classList.add('hidden'); setTimeout(() => $('c24x-bar').classList.add('hidden'), 1500); }
 };
 // ---------- 남는 재고 서비스 추천 ----------
-// 지금 불러온 주문(오전 · 오후 묶음)의 손님마다 고객 관리 과거 주문을 보고 점수를 매겨요. 고른 손님은 [엑셀에 합치기] → 엑셀에 "[서비스] 비올라 3팩" 줄이 그 주문 바로 아래 붙어요.
+// 지금 불러온 주문(오전 · 오후 묶음)의 손님마다 고객 관리 과거 주문을 보고 추천 순서로 보여줘요. 고른 손님은 [엑셀에 합치기] → 엑셀에 "[서비스] 비올라 3팩" 줄이 그 주문 바로 아래 붙고, 재고에서 (수량 × 손님 수)만큼 한 번에 빠져요.
 // 엑셀을 내려받으면 그 손님의 고객 관리 메모(카톡 업체는 업체 메모)에 "[서비스]비올라 3팩"이 자동으로 적혀요.
-let svcItem = '', svcQ = '', svcPick = new Map(), svcIn = new Map(), svcBatchK = '', svcMemoDone = new Set(), svcCrmTried = false;
+// 이 묶음에서 합친 내용 · 재고에서 뺀 양은 기기에 남겨 둬요 (새로고침해도 두 번 빠지지 않게)
+const SVC_KEY = 'herb5_svc';
+let svcItem = '', svcQ = '', svcPick = new Map(), svcIn = new Map(), svcBatchK = null, svcMemoDone = new Set(), svcCrmTried = false, svcDed = null, svcBusy = false, svcOff = new Set();
+const svcOn = o => (svcPick.has(o) || svcIn.has(o)) && !svcOff.has(o);
+const svcN = () => svcCandsCache.filter(c => svcOn(c.o)).length;
 const svcBatch = () => srcAt ? String(srcAt.getTime()) : '';
-function svcCheckBatch() { const b = svcBatch(); if (b !== svcBatchK) { svcBatchK = b; svcPick = new Map(); svcIn = new Map(); svcMemoDone = new Set(); } }
+function svcPersist() { try { localStorage.setItem(SVC_KEY, JSON.stringify({ b: svcBatchK, item: svcItem, q: svcQ, in: [...svcIn.entries()], ded: svcDed, memo: [...svcMemoDone] })); } catch (e) {} }
+function svcCheckBatch() { const b = svcBatch(); if (b === svcBatchK) return; svcBatchK = b; svcPick = new Map(); svcIn = new Map(); svcMemoDone = new Set(); svcDed = null; svcOff = new Set();
+  try { const o = JSON.parse(localStorage.getItem(SVC_KEY) || 'null'); if (o && o.b === b && b) { svcIn = new Map(o.in || []); svcDed = o.ded || null; svcMemoDone = new Set(o.memo || []); if (o.item) svcItem = o.item; if (o.q) svcQ = o.q; } } catch (e) {} }
 function svcSurplus() { let items = []; try { items = stkCompute().items; } catch (e) {}
   return items.filter(x => x.rec && x.cur !== null && x.cur > 0 && (x.days === null || x.days >= 7)).sort((a, b) => (b.days === null ? 1e9 : b.days) - (a.days === null ? 1e9 : a.days)); }
 const svcTok = k => String(k || '').replace(/\(.*?\)|\[.*?\]|\d+\s*(송이|잎|g|kg|팩|개)?/g, ' ').split(/\s+/).map(w => w.replace(/잎$/, '')).filter(w => w.length >= 2 && !/^(식용꽃|생잎|생화|허브|먹는꽃|장식용|랜덤|크기지정)$/.test(w));
@@ -8954,36 +8960,76 @@ function svcCands() {
   });
   return out.sort((a, b) => b.sc - a.sc || a.o.localeCompare(b.o));
 }
-const svcText = () => '[서비스] ' + svcName(svcItem) + ' ' + (svcQ || '1개');
+const svcAmt = () => { if (!svcItem) return null; const p = retParse(svcQ || '', svcItem); return p && !p.err ? p : p; };
+const svcText = () => { const p = svcAmt(); return '[서비스] ' + svcName(svcItem) + ' ' + (p && !p.err ? stkShow(p.unit, p.v) : (svcQ || '1개')); };
+let svcCandsCache = [];
 function renderSvc() {
   const box = $('svcbody'); if (!box) return; svcCheckBatch();
   if (!result) { box.innerHTML = '<p class="help">주문을 불러오면 추천이 나와요.</p>'; return; }
   if (!svcCrmTried) { svcCrmTried = true; crmInit().then(() => { renderSvc(); if (crmMem.size && c24Cfg().worker && window.h5Fb) crmLoad().then(() => renderSvc()).catch(() => {}); }).catch(() => {}); }
-  const sur = svcSurplus(); if (!svcItem && sur[0]) svcItem = sur[0].key;
-  let items = []; try { items = stkCompute().items.filter(x => x.rec); } catch (e) {}
+  const sur = svcSurplus(); let items = []; try { items = stkCompute().items.filter(x => x.rec); } catch (e) {}
+  if (!svcItem && sur[0]) svcItem = sur[0].key;
   const dTxt = x => x.days === null ? '최근 7일 안 나감' : Math.round(x.days) + '일치';
-  const opts = (sur.length ? `<optgroup label="남는 재고">${sur.map(x => `<option value="${esc(x.key)}">${esc(x.key)} · ${esc(stkShow(x.unit, x.cur))} · ${dTxt(x)}</option>`).join('')}</optgroup>` : '') + `<optgroup label="다른 품목">${items.filter(x => !sur.includes(x)).map(x => `<option value="${esc(x.key)}">${esc(x.key)}</option>`).join('')}</optgroup>`;
-  const L = svcCands(), crmOk = crmMem.size > 0, top = L.filter(c => c.sc >= 2), optsAll = (svcItem && !items.some(x => x.key === svcItem) ? `<option value="${esc(svcItem)}">${esc(svcItem)}</option>` : '') + opts;
-  const ins = [...svcIn.values()];
-  box.innerHTML = `<div class="svc-top"><label class="svc-l">서비스 품목<select id="svc-item">${optsAll || '<option value="">재고에 넣은 품목이 없어요</option>'}</select></label><label class="svc-l svc-q">수량<input id="svc-q" value="${esc(svcQ)}" placeholder="예: 3팩 · 1봉 · 50g"></label></div>
-    <p class="svc-prev">엑셀에 이렇게 들어가요: <b>${esc(svcText())}</b></p>
-    ${!sur.length ? '<p class="help">지금 남는 재고(7일 넘게 쓸 만큼 있는 품목)가 없어요. 위에서 다른 품목을 골라도 돼요.</p>' : ''}
+  const opt = (x, sub) => `<option value="${esc(x.key)}">${esc(x.key)} · 지금 ${esc(stkShow(x.unit, x.cur))}${sub ? ' · ' + sub : ''}</option>`;
+  const opts = '<option value="">품목을 골라 주세요</option>' + (sur.length ? `<optgroup label="남는 재고">${sur.map(x => opt(x, dTxt(x))).join('')}</optgroup>` : '') + `<optgroup label="다른 품목">${items.filter(x => !sur.includes(x)).map(x => opt(x)).join('')}</optgroup>`;
+  const it = items.find(x => x.key === svcItem), unit = it ? it.unit : '', isW = unit && stkIsW(unit);
+  const L = svcCands(); svcCandsCache = L; const crmOk = crmMem.size > 0, n = svcN();
+  const p = svcAmt(), tot = p && !p.err && n ? stkShow(p.unit, p.v * n) : '';
+  box.innerHTML = `<div class="svc-top"><label class="svc-l">서비스 품목<select id="svc-item">${opts}</select></label><label class="svc-l svc-q">수량 (한 분당)<span class="svc-qw"><input id="svc-q" value="${esc(svcQ)}" inputmode="decimal" placeholder="${isW ? '예: 50g' : '예: 3'}"><em>${esc(isW ? 'g · kg' : unit || '개')}</em></span></label></div>
+    <p class="svc-prev">엑셀에 이렇게 들어가요: <b>${esc(svcItem ? svcText() : '-')}</b>${tot ? ` · 재고에서 <b>${esc(tot)}</b> 빠져요 (${n}분)` : ''}</p>
     ${crmOk ? '' : '<p class="svc-warn">고객 관리의 과거 주문을 아직 안 받아서 오늘 주문만 보고 골랐어요. <button type="button" class="linkbtn iczno" data-go="crm">고객 관리 열기</button></p>'}
-    <div class="svc-list">${L.length ? L.map(c => `<label class="svc-c${c.sc >= 2 ? ' rec' : ''}"><input type="checkbox" data-svcpick="${esc(c.o)}" ${svcPick.has(c.o) || svcIn.has(c.o) ? 'checked' : ''}><span class="svc-nm"><b>${esc(c.label)}</b>${c.sc >= 4 ? '<em>추천</em>' : ''}<small>${esc(c.o)}${c.sub ? ' · ' + esc(c.sub) : ''}</small><small class="svc-why">${esc(c.why.join(' · '))}</small>${c.note ? `<small class="svc-note">메모: ${esc(c.note.slice(0, 60))}</small>` : ''}</span><span class="svc-sc">${Math.round(c.sc)}</span>${svcIn.has(c.o) ? '<span class="svc-st">엑셀에 합침</span>' : ''}</label>`).join('') : '<p class="help">이번 주문이 없어요.</p>'}</div>
-    <div class="svc-act"><button class="btn pri iczno" type="button" id="svc-go">엑셀에 합치기</button>${ins.length ? `<button class="btn sm iczno" type="button" id="svc-clear">합친 것 빼기</button>` : ''}<span class="msg" id="svc-msg">${ins.length ? '엑셀에 서비스 ' + ins.length + '줄이 들어가요 · 내려받으면 고객 메모에 적혀요' : top.length ? '추천 손님 ' + top.length + '명 (점수 2 이상)' : ''}</span></div>`;
-  const sel = $('svc-item'); if (sel && svcItem) sel.value = svcItem;
+    <div class="svc-list">${L.length ? L.map(c => `<div class="svc-c${svcIn.has(c.o) ? ' in' : ''}"><label><input type="checkbox" data-svcpick="${esc(c.o)}" ${svcOn(c.o) ? 'checked' : ''}><b>${esc(c.label)}</b></label><button type="button" class="linkbtn iczno svc-dt" data-svcdt="${esc(c.o)}">상세보기</button></div>`).join('') : '<p class="help">이번 주문이 없어요.</p>'}</div>
+    <div class="svc-act"><button class="btn pri iczno" type="button" id="svc-go">엑셀에 합치기</button>${svcIn.size ? `<button class="btn sm iczno" type="button" id="svc-clear">합친 것 빼기</button>` : ''}<span class="msg" id="svc-msg">${svcIn.size ? '엑셀에 서비스 ' + svcIn.size + '줄' + (svcDed ? ' · 재고에서 ' + esc(stkShow(svcDed.unit, -svcDed.d)) + ' 뺐어요' : '') : ''}</span></div>`;
+  const sel = $('svc-item'); if (sel) sel.value = svcItem || '';
 }
+// 재고 한 번에 빼기 / 돌려놓기 (d: 음수 = 빼기)
+async function svcStock(key, d, why) {
+  const x = retItemOf(key); if (!x || !x.rec) throw new Error(key + '는 재고에 없는 품목이에요');
+  const now = new Date().toISOString(), rec = JSON.parse(JSON.stringify(x.rec));
+  rec.adj = (rec.adj || []).concat([{ at: now, d, svc: 1 }]); rec.log = (rec.log || []).concat([{ at: now, t: d < 0 ? 'out' : 'in', d, why }]).slice(-300); rec.updatedAt = now; await stockWrite(x.id, rec);
+}
+async function svcUndoStock() { if (!svcDed) return; await svcStock(svcDed.key, -svcDed.d, '서비스 취소'); svcDed = null; svcPersist(); }
+function svcDetail(o) {
+  const c = svcCandsCache.find(x => x.o === o); if (!c) return;
+  $('svd-t').textContent = c.label;
+  $('svd-b').innerHTML = `<dl class="svd-dl"><dt>주문번호</dt><dd>${esc(c.o)}</dd>${c.sub ? `<dt>구분</dt><dd>${esc(c.sub)}</dd>` : ''}<dt>고른 이유</dt><dd><ul>${c.why.map(w => '<li>' + esc(w) + '</li>').join('')}</ul></dd>${c.note ? `<dt>고객 메모</dt><dd class="svd-note">${esc(c.note)}</dd>` : ''}</dl>`;
+  $('svdrawer').classList.add('on'); $('svdrawer').setAttribute('aria-hidden', 'false'); $('svdback').classList.remove('hidden');
+}
+function svdClose() { $('svdrawer').classList.remove('on'); $('svdrawer').setAttribute('aria-hidden', 'true'); $('svdback').classList.add('hidden'); }
 document.addEventListener('change', e => {
-  if (e.target.id === 'svc-item') { svcItem = e.target.value; svcPick = new Map(); renderSvc(); }
-  const pk = e.target.closest && e.target.closest('[data-svcpick]'); if (pk) { if (pk.checked) svcPick.set(pk.dataset.svcpick, 1); else { svcPick.delete(pk.dataset.svcpick); } }
+  if (e.target.id === 'svc-item') { svcItem = e.target.value; renderSvc(); renderSvcPrev(); }
+  const pk = e.target.closest && e.target.closest('[data-svcpick]'); if (pk) { const o = pk.dataset.svcpick; if (pk.checked) { svcPick.set(o, 1); svcOff.delete(o); } else { svcPick.delete(o); if (svcIn.has(o)) svcOff.add(o); } renderSvcPrev(); }
 });
-document.addEventListener('input', e => { if (e.target.id === 'svc-q') { svcQ = e.target.value.trim(); const pv = document.querySelector('.svc-prev b'); if (pv) pv.textContent = svcText(); } });
-document.addEventListener('click', e => {
-  if (e.target.closest('#svc-go')) { const L = svcCands(), m = $('svc-msg'); const chosen = L.filter(c => svcPick.has(c.o) || svcIn.has(c.o));
-    if (!chosen.length) { m.className = 'msg err'; m.textContent = '서비스를 줄 손님을 골라 주세요'; return; }
-    const txt = svcText(); svcIn = new Map(chosen.map(c => [c.o, { text: txt, cid: c.cid || null, kt: c.kt || null, label: c.label }])); svcPick = new Map();
-    renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} shareToast('서비스 ' + chosen.length + '줄을 엑셀에 합쳤어요'); return; }
-  if (e.target.closest('#svc-clear')) { svcIn = new Map(); renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} }
+function renderSvcPrev() { const pv = document.querySelector('.svc-prev'); if (!pv) return; const n = svcN(), p = svcAmt(), tot = p && !p.err && n ? stkShow(p.unit, p.v * n) : '';
+  pv.innerHTML = `엑셀에 이렇게 들어가요: <b>${esc(svcItem ? svcText() : '-')}</b>${tot ? ` · 재고에서 <b>${esc(tot)}</b> 빠져요 (${n}분)` : ''}${svcIn.size ? '<br><small>바꾼 내용은 [엑셀에 합치기]를 다시 눌러야 반영돼요</small>' : ''}`; }
+document.addEventListener('input', e => { if (e.target.id === 'svc-q') { svcQ = e.target.value.trim(); renderSvcPrev(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('svdrawer') && $('svdrawer').classList.contains('on')) svdClose(); });
+document.addEventListener('click', async e => {
+  if (!e.target.closest) return;
+  const dt = e.target.closest('[data-svcdt]'); if (dt) { e.preventDefault(); svcDetail(dt.dataset.svcdt); return; }
+  if (e.target.closest('#svd-x') || e.target.id === 'svdback') { svdClose(); return; }
+  const go = e.target.closest('#svc-go'), clr = e.target.closest('#svc-clear'); if (!go && !clr) return;
+  if (svcBusy) return; const m = $('svc-msg');
+  if (clr) { svcBusy = true; try { await svcUndoStock(); svcIn = new Map(); svcPick = new Map(); svcOff = new Set(); svcPersist(); renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} shareToast('서비스 줄을 빼고 재고를 돌려놨어요'); }
+    catch (er) { m.className = 'msg err'; m.textContent = '재고를 돌려놓지 못했어요: ' + (er.message || er); } svcBusy = false; return; }
+  const chosen = svcCandsCache.filter(c => svcOn(c.o));
+  if (!svcItem) { m.className = 'msg err'; m.textContent = '서비스 품목을 골라 주세요'; return; }
+  const p = svcAmt(); if (!p) { m.className = 'msg err'; m.textContent = '수량을 숫자로 적어 주세요 (예: 3, 50g)'; $('svc-q').focus(); return; }
+  if (p.err) { m.className = 'msg err'; m.textContent = p.err; return; }
+  if (!chosen.length) { m.className = 'msg err'; m.textContent = svcIn.size ? '모두 빼려면 [합친 것 빼기]를 눌러 주세요' : '서비스를 드릴 손님을 골라 주세요'; return; }
+  const total = p.v * chosen.length, x = retItemOf(svcItem);
+  if (!x || !x.rec) { m.className = 'msg err'; m.textContent = svcItem + '는 재고에 넣은 품목이 아니라 뺄 수 없어요'; return; }
+  const back = svcDed && svcDed.key === svcItem ? -svcDed.d : 0;
+  if (x.cur !== null && x.cur + back < total) { m.className = 'msg err'; m.textContent = '재고가 모자라요 (지금 ' + stkShow(x.unit, x.cur + back) + ', 필요 ' + stkShow(p.unit, total) + ')'; return; }
+  svcBusy = true; go.disabled = true;
+  try {
+    const txt = svcText(), why = '서비스 ' + chosen.length + '분 (' + chosen.map(c => c.label).join(', ').slice(0, 80) + ')';
+    if (svcDed) await svcUndoStock();
+    await svcStock(svcItem, -total, why); svcDed = { key: svcItem, d: -total, unit: p.unit };
+    svcIn = new Map(chosen.map(c => [c.o, { text: txt, cid: c.cid || null, kt: c.kt || null, label: c.label }])); svcPick = new Map(); svcOff = new Set(); svcPersist();
+    renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} shareToast('서비스 ' + chosen.length + '줄을 엑셀에 합치고 재고에서 ' + stkShow(p.unit, total) + ' 뺐어요');
+  } catch (er) { m.className = 'msg err'; m.textContent = '합치지 못했어요: ' + (er.message || er); go.disabled = false; }
+  svcBusy = false;
 });
 // 엑셀 주문정리 시트에 서비스 줄 넣기 (그 주문의 마지막 줄 바로 아래, 같은 받는 분 · 주소로)
 function svcApplyRows(full) {
@@ -9002,7 +9048,7 @@ async function svcAfterDl() {
   try {
     if (crm.length) await crmDocSave(d => { d.notes = d.notes || {}; crm.forEach(([, v]) => { const cur = (d.notes[v.cid] || {}).t || ''; d.notes[v.cid] = { t: (cur ? cur + '\n' : '') + line(v.text), at: new Date().toISOString(), by: retWho() }; }); });
     if (kt.length) await ktWriteBiz(B => kt.forEach(([, v]) => { const b = B.find(x => x.id === v.kt); if (b) b.memo = (b.memo ? b.memo + '\n' : '') + line(v.text); }));
-    todo.forEach(([o]) => svcMemoDone.add(o)); shareToast('서비스 ' + todo.length + '건을 고객 메모에 적었어요');
+    todo.forEach(([o]) => svcMemoDone.add(o)); svcPersist(); shareToast('서비스 ' + todo.length + '건을 고객 메모에 적었어요');
   } catch (er) { shareToast('고객 메모에 적지 못했어요: ' + (er.message || er)); }
 }
 // ---------- 카톡 주문 넣기 ----------
@@ -9260,6 +9306,7 @@ window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); 
 </script>
 <div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
 <div class="sdback hidden" id="stkdback"></div><aside class="sdrawer" id="stkdrawer" role="dialog" aria-modal="true" aria-label="재고 수정" aria-hidden="true"><div class="sd-h"><b id="stkd-t">재고 수정</b><button class="ibtn" type="button" id="stkd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="stkd-b"></div></aside>
+<div class="sdback hidden" id="svdback"></div><aside class="sdrawer" id="svdrawer" role="dialog" aria-modal="true" aria-label="손님 상세" aria-hidden="true"><div class="sd-h"><b id="svd-t">손님 상세</b><button class="ibtn iczno" type="button" id="svd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="svd-b"></div></aside>
 <div class="sdback hidden" id="shdback"></div><aside class="sdrawer" id="shdrawer" role="dialog" aria-modal="true" aria-label="복사 · 공유" aria-hidden="true"><div class="sd-h"><b id="shd-t">복사하기</b><button class="ibtn iczno" type="button" id="shd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="shd-b"></div></aside>
 </body>
 </html>
