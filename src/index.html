@@ -4443,9 +4443,14 @@ document.addEventListener('click', async e => {
   if (!e.target.closest) return;
   if (e.target.closest('#hm-inst')) { if (instEvt) { const ev = instEvt; instEvt = null; try { await ev.prompt(); const r = await ev.userChoice; if (r && r.outcome !== 'accepted') instEvt = null; } catch (er) { instGuide(); } instShow(); } else instGuide(); return; }
   const im = e.target.closest('#instModal'); if (im && (e.target.id === 'instModal' || e.target.closest('#inst-x,#inst-x2'))) { im.classList.add('hidden'); return; }
+  if (e.target.closest('.brand .mark,.authhero .mark') && h5Landing()) { location.href = h5Landing(); return; }
   if (e.target.closest('.brand .mark')) { const t = document.querySelector('.tab[data-t="home"]'); if (t) t.click(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 });
-document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.brand .mark')) { e.preventDefault(); e.target.click(); } if (e.key === 'Escape' && $('instModal')) $('instModal').classList.add('hidden'); });
+// 사이트(…/shop/)에서 허브아이 로고를 누르면 첫 화면(허브아이 · 허브다섯메 고르기)으로 돌아가요
+function h5Landing() { return /^https?:$/.test(location.protocol) && /\/shop\/(index\.html)?$/.test(location.pathname) ? location.pathname.replace(/shop\/(index\.html)?$/, '') : ''; }
+(function () { const set = () => { if (!h5Landing()) return; document.querySelectorAll('.brand .mark,.authhero .mark').forEach(m => { m.title = '처음 화면으로 (허브아이 · 허브다섯메 고르기)'; m.setAttribute('role', 'link'); m.tabIndex = 0; m.style.cursor = 'pointer'; m.setAttribute('aria-label', '처음 화면으로'); }); };
+  set(); document.addEventListener('DOMContentLoaded', set); setTimeout(set, 1500); })();
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.brand .mark,.authhero .mark')) { e.preventDefault(); e.target.click(); } if (e.key === 'Escape' && $('instModal')) $('instModal').classList.add('hidden'); });
 instShow();
 
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
