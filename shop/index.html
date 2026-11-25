@@ -1801,6 +1801,15 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .hshare{margin-left:auto}.shd-o{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:8px;cursor:pointer}
 .shd-o svg{width:22px;height:22px;flex:none;color:var(--acc)}.shd-o span{display:flex;flex-direction:column;gap:2px;min-width:0}.shd-o small{color:var(--mute);font-size:12.5px}.shd-o.all{border-color:var(--acc);background:var(--acc2)}.shd-o:hover{border-color:var(--acc)}
 .shd-h{margin:16px 2px 0;font-size:12.5px;color:var(--mute);font-weight:600}
+.svc-top{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.svc-l{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);flex:1 1 260px;min-width:0}.svc-l.svc-q{flex:0 1 160px}
+.svc-l select,.svc-l input{height:40px;border-radius:10px;border:1px solid var(--line);padding:0 10px;font:inherit;font-size:15px;color:var(--ink);background:var(--card);min-width:0;width:100%;box-sizing:border-box}
+.svc-prev{margin:10px 0 0;font-size:13.5px;color:var(--mute)}.svc-prev b{color:var(--acc)}.svc-warn{margin:10px 0 0;font-size:13px;color:var(--warn,#b86b00)}
+.svc-list{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:460px;overflow:auto}.svc-c{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.svc-c.rec{border-color:var(--acc)}.svc-c input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--acc)}.svc-nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.svc-nm b{font-size:14.5px;overflow-wrap:anywhere}
+.svc-nm em{font-style:normal;font-size:11px;font-weight:700;color:#fff;background:var(--acc);border-radius:99px;padding:1px 7px;align-self:flex-start}.svc-nm small{font-size:12px;color:var(--mute);overflow-wrap:anywhere}.svc-why{color:var(--ink)!important}
+.svc-sc{flex:none;font-weight:800;color:var(--acc);font-size:15px}.svc-st{flex:none;font-size:11.5px;background:var(--acc2);color:var(--acc);border-radius:99px;padding:2px 8px}
+.svc-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}#tbl tr.svcr td{background:#fff3df}html.dark #tbl tr.svcr td{background:rgba(208,138,58,.15)}#tbl tr.svcr td.rn span{font-size:11px;color:#b86b00;font-weight:700}
+#ktinfo{white-space:pre-line}
 .lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
@@ -2752,6 +2761,10 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
     <div class="card step ph4 fold-c" data-sub="order" data-fold="out">
       <div class="sh"><span class="num">2</span><div><h2>결과 확인 · 내려받기</h2><p>1번에서 원본을 올리면 여기에 결과가 나와요</p></div></div>
+    </div>
+    <div class="card step svcc fold-c" data-sub="order" id="svccard" data-fold="svc">
+      <div class="sh"><span class="num">3</span><div><h2>남는 재고 서비스 추천</h2><p>남는 재고를 이번 주문 손님 중 잘 쓸 것 같은 분께 서비스로 넣어요 · 고객 관리의 과거 주문을 보고 골라요</p></div></div>
+      <div id="svcbody"></div>
     </div>
     <div class="card step ktc fold-c" data-sub="order" id="ktcard" data-fold="kt">
       <div class="sh"><span class="num">3</span><div><h2>카톡 주문 넣기</h2><p>배송일을 정해 저장하면 그날 엑셀 주문정리에 자동으로 들어가요 · 집계에는 안 들어가요</p></div></div>
@@ -6189,7 +6202,7 @@ function runProcess() {
       (w.flags.includes('미등록 상품') ? ` <button class="btn sm" data-reg="${esc(w.product)}">상품명 규칙에 추가</button>` : '') + '</li>').join('') + '</ul></div>';
   }
   $('warns').innerHTML = wh + noShipHtml();
-  renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack(); try { ktRenderList(); ktLists(); ktAutoNote(); } catch (e) {}
+  renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack(); try { ktRenderList(); ktLists(); ktAutoNote(); } catch (e) {} try { renderSvc(); } catch (e) {}
   try { if (srcAt && runProcess._at !== srcAt) { runProcess._at = srcAt; document.querySelectorAll('.fold-c[data-fold="out"]').forEach(c => foldSet(c, false, false)); } } catch (e) {}
 }
 // 배송 불가 지역 (날씨 기준에 '경고'가 있는 포장 방법) 따로 모아 보기
@@ -6447,6 +6460,7 @@ function renderSheet() {
       return `<td class="${ch ? 'ch' : ''}${ed ? ' ed' : ''}"${col ? ` style="background:#${esc(col)}"` : ''}${edMode && oi >= 0 && !delDraft ? ` contenteditable="plaintext-only" spellcheck="false" data-ek="${esc(ek)}" data-orig="${esc(fmt(v))}"` : ''}>${esc(fmt(edDraft.has(ek) ? edDraft.get(ek) : v))}</td>`;
     }).join('') + '</tr>';
   }
+  if (curSheet === 0 && svcIn.size) { svcCheckBatch(); const H = aoa[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'); svcIn.forEach((v, o) => { const src = aoa.find((r, i) => i && String(r[oc] ?? '').trim() === o) || ktSheetRows(H).find(r => String(r[oc] ?? '').trim() === o); if (!src) return; const c = src.slice(); c[pc] = v.text; h += '<tr class="svcr"><td class="msg rn"><span>서비스</span></td>' + c.map(x => '<td>' + esc(fmt(x)) + '</td>').join('') + '</tr>'; }); }
   if (curSheet === 0) ktSheetRows(aoa[0]).forEach(r => { h += '<tr class="ktr"><td class="msg rn"><span>카톡</span></td>' + r.map(v => '<td>' + esc(fmt(v)) + '</td>').join('') + '</tr>'; });
   $('tbl').innerHTML = h + '</tbody>';
   $('tbl').classList.toggle('editing', edMode); edButtons();
@@ -9185,14 +9199,14 @@ function buildXlsx() {
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
     let full = result[key], ord = null;
-    if (si === 0) { const nBase = full.length; full = full.concat(ktSheetRows(full[0], true)); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
+    if (si === 0) { const nBase = full.length; full = full.concat(ktSheetRows(full[0], true).map(r => { r.__kt = 1; return r; })); full = svcApplyRows(full); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
       const loOf = r => { const m = String(tc >= 0 ? r[tc] ?? '' : '').match(/^\s*(-?\d+(?:\.\d+)?)/); return m ? '[' + Number(m[1]) + '도]' : ''; };
       if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
       // 카톡 주문은 맨 위로, 그다음 포장 방법끼리
       if ((pc >= 0 || full.length > nBase) && full.length > 2) { const bl = ((rules.weather && rules.weather.bands) || []).map(b => String(b.label || '').trim());
         const rk = r => { if (pc < 0) return 0; const ls = String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => bl.indexOf(l.trim())).filter(i => i >= 0); return ls.length ? Math.min(...ls) : 1e9; };
-        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: i + 1 >= nBase ? 0 : 1 })).sort((x, y) => x.kt - y.kt || x.k - y.k || x.i - y.i);
+        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: r.__kt ? 0 : 1 })).sort((x, y) => x.kt - y.kt || x.k - y.k || x.i - y.i);
         ord = [0, ...idx.map(o => o.i)]; full = ord.map(i => full[i]); } }
     const drop = new Set(full[0].map((h, c) => wxHeads.has(String(h)) ? c : -1).filter(c => c >= 0));
     const aoa = drop.size ? full.map(r => r.filter((_, c) => !drop.has(c))) : full;
@@ -9288,7 +9302,7 @@ new MutationObserver(ms => { if (iczQ) return; iczQ = true; requestAnimationFram
 iczAll();
 // ---------- 탭 화면 구성 (규칙 관리 → 설정): 탭마다 칸 순서 바꾸기 · 빼기 · 다시 넣기 ----------
 const LAY = {
-  run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
+  run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['svc', '남는 재고 서비스 추천', '#svccard'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
   sum: { n: '집계 보기', sec: 'v-sum', items: [['body', '집계 품목', '#sumbody'], ['top', '달력 · 올린 파일', '.sumtop']] },
   stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard']] },
   hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
@@ -9482,6 +9496,94 @@ $('c24x-go').onclick = async () => {
   } catch (er) { if (er && er.code === 'declined') { m.textContent = '저장을 취소했어요'; return; } m.className = 'msg err'; m.textContent = '받지 못했어요: ' + ((er && er.message) || er); }
   finally { c24xBusy = false; $('c24x-go').disabled = false; $('c24x-stop').classList.add('hidden'); setTimeout(() => $('c24x-bar').classList.add('hidden'), 1500); }
 };
+// ---------- 남는 재고 서비스 추천 ----------
+// 지금 불러온 주문(오전 · 오후 묶음)의 손님마다 고객 관리 과거 주문을 보고 점수를 매겨요. 고른 손님은 [엑셀에 합치기] → 엑셀에 "[서비스] 비올라 3팩" 줄이 그 주문 바로 아래 붙어요.
+// 엑셀을 내려받으면 그 손님의 고객 관리 메모(카톡 업체는 업체 메모)에 "[서비스]비올라 3팩"이 자동으로 적혀요.
+let svcItem = '', svcQ = '', svcPick = new Map(), svcIn = new Map(), svcBatchK = '', svcMemoDone = new Set(), svcCrmTried = false;
+const svcBatch = () => srcAt ? String(srcAt.getTime()) : '';
+function svcCheckBatch() { const b = svcBatch(); if (b !== svcBatchK) { svcBatchK = b; svcPick = new Map(); svcIn = new Map(); svcMemoDone = new Set(); } }
+function svcSurplus() { let items = []; try { items = stkCompute().items; } catch (e) {}
+  return items.filter(x => x.rec && x.cur !== null && x.cur > 0 && (x.days === null || x.days >= 7)).sort((a, b) => (b.days === null ? 1e9 : b.days) - (a.days === null ? 1e9 : a.days)); }
+const svcTok = k => String(k || '').replace(/\(.*?\)|\[.*?\]|\d+\s*(송이|잎|g|kg|팩|개)?/g, ' ').split(/\s+/).map(w => w.replace(/잎$/, '')).filter(w => w.length >= 2 && !/^(식용꽃|생잎|생화|허브|먹는꽃|장식용|랜덤|크기지정)$/.test(w));
+const svcHas = (key, name) => { const n = String(name || '').replace(/\s+/g, ''); return svcTok(key).some(t => n.includes(t)); };
+function svcName(key) { const t = svcTok(key); return t.length ? t[t.length - 1] : key; }
+function svcCands() {
+  if (!result || !svcItem) return [];
+  const H = result.sheet1[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'), rc = H.indexOf('수령인'), groups = new Map();
+  result.sheet1.slice(1).forEach(r => { const o = String(r[oc] ?? '').trim(); if (!o) return; if (!groups.has(o)) groups.set(o, { o, rn: String(r[rc] ?? ''), items: [] }); groups.get(o).items.push(String(r[pc] ?? '')); });
+  try { ktOn().filter(x => x.st !== 'done' || true).forEach(k => { if (!groups.has(k.no)) groups.set(k.no, { o: k.no, rn: k.rcv || k.biz, items: k.items.map(i => i.p), kt: k }); }); } catch (e) {}
+  let D = null; try { D = crmMem.size ? crmData() : null; } catch (e) {}
+  const byOrder = new Map(); if (D) D.list.forEach(c => c.orders.forEach(o => byOrder.set(o.i, c)));
+  const out = [];
+  groups.forEach(g => { let sc = 0; const why = []; const nowHas = g.items.some(n => svcHas(svcItem, n));
+    if (g.kt) { const past = ktList.filter(x => x.bizId === g.kt.bizId && x.no !== g.kt.no); const used = past.filter(x => x.items.some(i => svcHas(svcItem, i.p))).length;
+      if (used) { sc += 2 + Math.min(used, 3); why.push('예전에 ' + used + '번 주문한 품목'); } if (past.length >= 2) { sc += 2; why.push('자주 주문하는 업체'); } sc += 1; why.push('카톡 거래 업체');
+      if (nowHas) { sc += 1; why.push('이번에도 이 품목 주문'); }
+      out.push({ o: g.o, label: g.kt.biz, sub: '카톡 주문', sc, why, kt: g.kt.bizId }); return; }
+    const c = byOrder.get(g.o);
+    if (c) { let bought = 0; c.items.forEach((q, k) => { if (svcHas(svcItem, k)) bought += (c.icnt && c.icnt.get(k)) || 1; });
+      if (bought) { sc += 2 + Math.min(bought, 3); why.push('예전에 ' + bought + '번 산 품목'); }
+      if (c.n >= 3) { sc += 2; why.push('단골 · ' + c.n + '번 주문'); } else if (c.n === 2) { sc += 1; why.push('두 번째 주문'); } else { sc += .5; why.push('첫 주문 손님'); }
+      if (c.tags.includes('거래처')) { sc += 2; why.push('거래처'); }
+      if (c.claims && c.claims.length) { sc += 1; why.push('예전에 취소 · 반품 이력 (마음 달래기)'); }
+      if (nowHas) { sc += 1; why.push('이번에도 이 품목 주문'); }
+      out.push({ o: g.o, label: c.label || g.rn, sub: c.sub || '', sc, why, cid: c.id, note: c.note });
+    } else { if (nowHas) { sc += 2; why.push('이번에 이 품목 주문'); } else { sc += .5; why.push('고객 관리 기록 없음 (오늘 주문만 봤어요)'); }
+      out.push({ o: g.o, label: g.rn || g.o, sub: '고객 관리에서 못 찾음', sc, why }); }
+  });
+  return out.sort((a, b) => b.sc - a.sc || a.o.localeCompare(b.o));
+}
+const svcText = () => '[서비스] ' + svcName(svcItem) + ' ' + (svcQ || '1개');
+function renderSvc() {
+  const box = $('svcbody'); if (!box) return; svcCheckBatch();
+  if (!result) { box.innerHTML = '<p class="help">주문을 불러오면 추천이 나와요.</p>'; return; }
+  if (!svcCrmTried) { svcCrmTried = true; crmInit().then(() => { renderSvc(); if (crmMem.size && c24Cfg().worker && window.h5Fb) crmLoad().then(() => renderSvc()).catch(() => {}); }).catch(() => {}); }
+  const sur = svcSurplus(); if (!svcItem && sur[0]) svcItem = sur[0].key;
+  let items = []; try { items = stkCompute().items.filter(x => x.rec); } catch (e) {}
+  const dTxt = x => x.days === null ? '최근 7일 안 나감' : Math.round(x.days) + '일치';
+  const opts = (sur.length ? `<optgroup label="남는 재고">${sur.map(x => `<option value="${esc(x.key)}">${esc(x.key)} · ${esc(stkShow(x.unit, x.cur))} · ${dTxt(x)}</option>`).join('')}</optgroup>` : '') + `<optgroup label="다른 품목">${items.filter(x => !sur.includes(x)).map(x => `<option value="${esc(x.key)}">${esc(x.key)}</option>`).join('')}</optgroup>`;
+  const L = svcCands(), crmOk = crmMem.size > 0, top = L.filter(c => c.sc >= 2), optsAll = (svcItem && !items.some(x => x.key === svcItem) ? `<option value="${esc(svcItem)}">${esc(svcItem)}</option>` : '') + opts;
+  const ins = [...svcIn.values()];
+  box.innerHTML = `<div class="svc-top"><label class="svc-l">서비스 품목<select id="svc-item">${optsAll || '<option value="">재고에 넣은 품목이 없어요</option>'}</select></label><label class="svc-l svc-q">수량<input id="svc-q" value="${esc(svcQ)}" placeholder="예: 3팩 · 1봉 · 50g"></label></div>
+    <p class="svc-prev">엑셀에 이렇게 들어가요: <b>${esc(svcText())}</b></p>
+    ${!sur.length ? '<p class="help">지금 남는 재고(7일 넘게 쓸 만큼 있는 품목)가 없어요. 위에서 다른 품목을 골라도 돼요.</p>' : ''}
+    ${crmOk ? '' : '<p class="svc-warn">고객 관리의 과거 주문을 아직 안 받아서 오늘 주문만 보고 골랐어요. <button type="button" class="linkbtn iczno" data-go="crm">고객 관리 열기</button></p>'}
+    <div class="svc-list">${L.length ? L.map(c => `<label class="svc-c${c.sc >= 2 ? ' rec' : ''}"><input type="checkbox" data-svcpick="${esc(c.o)}" ${svcPick.has(c.o) || svcIn.has(c.o) ? 'checked' : ''}><span class="svc-nm"><b>${esc(c.label)}</b>${c.sc >= 4 ? '<em>추천</em>' : ''}<small>${esc(c.o)}${c.sub ? ' · ' + esc(c.sub) : ''}</small><small class="svc-why">${esc(c.why.join(' · '))}</small>${c.note ? `<small class="svc-note">메모: ${esc(c.note.slice(0, 60))}</small>` : ''}</span><span class="svc-sc">${Math.round(c.sc)}</span>${svcIn.has(c.o) ? '<span class="svc-st">엑셀에 합침</span>' : ''}</label>`).join('') : '<p class="help">이번 주문이 없어요.</p>'}</div>
+    <div class="svc-act"><button class="btn pri iczno" type="button" id="svc-go">엑셀에 합치기</button>${ins.length ? `<button class="btn sm iczno" type="button" id="svc-clear">합친 것 빼기</button>` : ''}<span class="msg" id="svc-msg">${ins.length ? '엑셀에 서비스 ' + ins.length + '줄이 들어가요 · 내려받으면 고객 메모에 적혀요' : top.length ? '추천 손님 ' + top.length + '명 (점수 2 이상)' : ''}</span></div>`;
+  const sel = $('svc-item'); if (sel && svcItem) sel.value = svcItem;
+}
+document.addEventListener('change', e => {
+  if (e.target.id === 'svc-item') { svcItem = e.target.value; svcPick = new Map(); renderSvc(); }
+  const pk = e.target.closest && e.target.closest('[data-svcpick]'); if (pk) { if (pk.checked) svcPick.set(pk.dataset.svcpick, 1); else { svcPick.delete(pk.dataset.svcpick); } }
+});
+document.addEventListener('input', e => { if (e.target.id === 'svc-q') { svcQ = e.target.value.trim(); const pv = document.querySelector('.svc-prev b'); if (pv) pv.textContent = svcText(); } });
+document.addEventListener('click', e => {
+  if (e.target.closest('#svc-go')) { const L = svcCands(), m = $('svc-msg'); const chosen = L.filter(c => svcPick.has(c.o) || svcIn.has(c.o));
+    if (!chosen.length) { m.className = 'msg err'; m.textContent = '서비스를 줄 손님을 골라 주세요'; return; }
+    const txt = svcText(); svcIn = new Map(chosen.map(c => [c.o, { text: txt, cid: c.cid || null, kt: c.kt || null, label: c.label }])); svcPick = new Map();
+    renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} shareToast('서비스 ' + chosen.length + '줄을 엑셀에 합쳤어요'); return; }
+  if (e.target.closest('#svc-clear')) { svcIn = new Map(); renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} }
+});
+// 엑셀 주문정리 시트에 서비스 줄 넣기 (그 주문의 마지막 줄 바로 아래, 같은 받는 분 · 주소로)
+function svcApplyRows(full) {
+  svcCheckBatch(); if (!svcIn.size) return full;
+  const H = full[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'), opc = H.indexOf('옵션'), qc = H.indexOf('수량'), out = [H];
+  const zero = H.map((h, i) => /판매가|금액|가격|결제/.test(String(h)) ? i : -1).filter(i => i >= 0);
+  const last = new Map(); full.slice(1).forEach((r, i) => last.set(String(r[oc] ?? '').trim(), i + 1));
+  full.slice(1).forEach((r, i) => { out.push(r); const o = String(r[oc] ?? '').trim(), sv = svcIn.get(o);
+    if (sv && last.get(o) === i + 1) { const c = r.slice(); if (r.__kt) c.__kt = 1; c[pc] = sv.text; if (opc >= 0) c[opc] = null; if (qc >= 0) c[qc] = 1; zero.forEach(z => { c[z] = 0; }); c.__svc = 1; out.push(c); } });
+  return out;
+}
+async function svcAfterDl() {
+  svcCheckBatch(); const todo = [...svcIn.entries()].filter(([o]) => !svcMemoDone.has(o)); if (!todo.length) return;
+  const md = (() => { const d = new Date(); return (d.getMonth() + 1) + '/' + d.getDate(); })(), line = t => t.replace('[서비스] ', '[서비스]') + ' (' + md + ')';
+  const crm = todo.filter(([, v]) => v.cid), kt = todo.filter(([, v]) => v.kt);
+  try {
+    if (crm.length) await crmDocSave(d => { d.notes = d.notes || {}; crm.forEach(([, v]) => { const cur = (d.notes[v.cid] || {}).t || ''; d.notes[v.cid] = { t: (cur ? cur + '\n' : '') + line(v.text), at: new Date().toISOString(), by: retWho() }; }); });
+    if (kt.length) await ktWriteBiz(B => kt.forEach(([, v]) => { const b = B.find(x => x.id === v.kt); if (b) b.memo = (b.memo ? b.memo + '\n' : '') + line(v.text); }));
+    todo.forEach(([o]) => svcMemoDone.add(o)); shareToast('서비스 ' + todo.length + '건을 고객 메모에 적었어요');
+  } catch (er) { shareToast('고객 메모에 적지 못했어요: ' + (er.message || er)); }
+}
 // ---------- 카톡 주문 넣기 ----------
 // 업체(받는 분 · 전화 · 주소)와 카톡 주문은 사용자 요청으로 공용 저장소(stock/kakaobiz, stock/kakaoorders)에 저장해요 → 로그인한 모든 기기에서 같이 보여요.
 // 저장 아이콘 → 목록에 '저장됨'. 목록에서 '합치기'를 누른 주문만 주문정리 표 맨 아래와 내려받는 엑셀 주문정리 시트에 들어가요 (수령인별 · 집계 제외).
@@ -9560,7 +9662,7 @@ function ktRenderBiz(sel) {
   $('ktbiz').innerHTML = ktBiz.length ? ktBiz.map(b => `<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('') : '<option value="">업체를 먼저 등록해 주세요 (+)</option>';
   if (ktBiz.some(b => b.id === s0)) $('ktbiz').value = s0;
   const b = ktCurBiz(); $('ktbized').disabled = !b;
-  $('ktinfo').textContent = b ? ['받는 분 ' + (b.rcv || b.name), b.phone, [b.zip && '(' + b.zip + ')', b.addr].filter(Boolean).join(' ')].filter(Boolean).join(' · ') : '';
+  $('ktinfo').textContent = b ? ['받는 분 ' + (b.rcv || b.name), b.phone, [b.zip && '(' + b.zip + ')', b.addr].filter(Boolean).join(' ')].filter(Boolean).join(' · ') + (b.memo ? '\n메모: ' + b.memo.split('\n').slice(-3).join(' / ') : '') : '';
 }
 function ktRenderItems() {
   $('ktitems').innerHTML = ktItems.map((it, i) => `<div class="ktrow"><div class="ktcb"><input type="text" data-kti="${i}" data-ktk="p" value="${esc(it.p)}" placeholder="상품명 (예: 로즈)" aria-label="주문상품명" autocomplete="off" role="combobox" aria-expanded="false"><button type="button" class="ktarr" data-ktarr="${i}" tabindex="-1" title="상품명 목록" aria-label="상품명 목록"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div><input type="text" list="ktops" data-kti="${i}" data-ktk="op" value="${esc(it.op)}" placeholder="옵션 (예: 100g)" aria-label="옵션"><input type="number" min="1" step="1" inputmode="numeric" data-kti="${i}" data-ktk="q" value="${esc(it.q)}" aria-label="수량"><button class="ibtn" type="button" data-ktdel="${i}" title="이 줄 빼기" aria-label="이 줄 빼기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('');
@@ -9679,7 +9781,7 @@ $('dl').onclick = async () => {
     const buf = buildXlsx();
     await saveFile(dlName() + '.xlsx', new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     m.className = 'msg ok'; m.textContent = dlName() + '.xlsx 로 내려받았어요';
-    ktAfterDl();
+    ktAfterDl(); svcAfterDl();
   } catch (e) {
     if (e && e.code === 'declined') { m.textContent = '내려받기를 취소했어요'; return; }
     m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + ((e && (e.message || e.code)) || e);
