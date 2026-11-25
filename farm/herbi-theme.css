@@ -1,0 +1,263 @@
+
+/* ===== 허브아이 디자인 (밝은 화면) ===== */
+:root{--green:#2f7d55;--green-d:#256645;--green-l:#e8f3ec;--green-m:#bcdcc9;--bg:#f6f7f8;--line:#e8eaed;--ink:#1d2329;--muted:#6a737c;--gray-l:#eef0ee;--navy:#1f2a24;--navy-2:#2f3a33;--r:16px;--r-sm:10px;--shadow:none;
+  font-family:"IBM Plex Sans KR","Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+html,body{background:var(--bg)}
+.btn{border-radius:10px}.btn.primary{background:var(--green);border-color:var(--green)}
+input,select,textarea{border-radius:10px}
+.panel,.kpi{border-radius:16px;border-color:var(--line);box-shadow:none}
+.kpi{border-top-width:3px}
+/* PC: 왼쪽 메뉴를 허브아이처럼 떠 있는 흰 칸으로 */
+.app-admin{background:var(--bg)}
+.admin{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;gap:16px}
+.side{background:#fff!important;border:1px solid var(--line)!important;border-radius:24px;padding:16px 10px!important}
+.side button{color:var(--muted)!important;border-radius:12px}
+.side button:hover{color:var(--ink)!important;background:#f2f4f1!important}
+.side button.on{color:var(--green)!important;background:var(--green-l)!important;box-shadow:none!important}
+.side-foot b{color:var(--ink)!important}.side-logout{color:#b3261e!important}.side-reset{color:var(--muted)!important}
+.admin-main{background:transparent}
+.admin-head{background:#fff!important;border:1px solid var(--line)!important;border-radius:24px;margin-bottom:14px!important}
+/* 관리자용 · 직원용 고르는 첫 화면 */
+body > main{border-radius:24px!important;border:1px solid var(--line);box-shadow:0 18px 36px -22px rgba(40,60,30,.4)}
+body > main > a{border-radius:14px!important}body > main > a.a{background:var(--navy)!important}body > main > a.s{background:var(--green)!important}
+/* 휴대폰: 아래 메뉴를 허브아이처럼 떠 있는 둥근 막대로 */
+.m-head{background:#fff!important;color:var(--ink)!important}
+.m-tabs{margin:0 10px max(10px,env(safe-area-inset-bottom));border:1px solid var(--line)!important;border-radius:24px;box-shadow:0 8px 24px -12px rgba(30,40,30,.35);padding:6px!important;background:#fff}
+.m-tabs button{border-radius:16px;position:relative}
+.m-tabs button.on{color:var(--green)!important;background:var(--green-l)}
+.m-tabs button.on:before{display:none!important}
+
+/* --- 원래 화면 색에서 자동으로 만든 다크 모드 색 --- */
+html.dark .btn{background:var(--card)}
+html.dark .btn.danger{border-color:var(--line)}
+html.dark .btn.ghost{border-color:var(--line)}
+html.dark .chk-unchecked{color:var(--ink)}
+html.dark .iss-acknowledged{background:rgba(255,241,201,.12)}
+html.dark .iss-action_done{background:rgba(229,224,250,.12)}
+html.dark .iss-recheck{background:rgba(222,243,241,.12)}
+html.dark .preview-note{background:rgba(255,248,225,.12)}
+html.dark .seg button.on{background:var(--card)}
+html.dark .seg.dark{background:var(--card)}
+html.dark .seg.dark button.on{background:var(--card)}
+html.dark .phone{background:var(--card)}
+html.dark .lang-chip{background:var(--card);border-color:var(--line)}
+html.dark .m-tabs{background:var(--card)}
+html.dark .m-card{background:var(--card)}
+html.dark .k-recheck{background:rgba(222,243,241,.12)}
+html.dark .m-form textarea,html.dark .m-form input{background:var(--card)}
+html.dark .qr-card{background:var(--card)}
+html.dark .auto-fill{background:var(--card)}
+html.dark .sp{background:var(--card)}
+html.dark .reply{background:var(--card)}
+html.dark .lang-opt{background:var(--card)}
+html.dark .admin{background:var(--card)}
+html.dark .side{background:var(--card)}
+html.dark .side button{color:var(--ink)}
+html.dark .side button.on{background:var(--card)}
+html.dark .panel{background:var(--card)}
+html.dark .kpi{background:var(--card)}
+html.dark .lg-unchecked{color:var(--ink)}
+html.dark .tbl td{border-bottom-color:var(--line)}
+html.dark .mx-unchecked{color:var(--ink)}
+html.dark .chip{background:var(--card)}
+html.dark .stepper li.next .dot{background:rgba(229,224,250,.12)}
+html.dark .next-box{background:rgba(247,250,244,.12)}
+html.dark .next-box textarea,html.dark .reply-box textarea,html.dark .form-grid input,html.dark .form-grid select{background:var(--card)}
+html.dark .tv-ko{background:var(--card)}
+html.dark .howto{color:var(--ink)}
+html.dark .search{background:var(--card)}
+html.dark .ht-edible{background:rgba(253,238,224,.12)}
+html.dark .ht-fragrant{background:rgba(241,232,251,.12)}
+html.dark .ht-hardy{background:rgba(227,240,251,.12)}
+html.dark .m-search{background:var(--card)}
+html.dark .searchbox input{background:var(--card)}
+html.dark .sb-list{background:var(--card)}
+html.dark mark{background:rgba(255,241,168,.12)}
+html.dark .detail-search{background:var(--card)}
+html.dark .ds-label{color:var(--ink)}
+html.dark .ds-row select{background:var(--card)}
+html.dark .m-detail{background:var(--card)}
+html.dark .m-check{background:var(--card)}
+html.dark .m-note{background:rgba(255,248,225,.12)}
+html.dark .k-custom{background:rgba(239,233,251,.12)}
+html.dark .m-label{color:var(--ink)}
+html.dark .about-box{background:var(--card)}
+html.dark .sb-vlang{background:var(--card)}
+html.dark .sb-voice.warn{background:rgba(255,248,225,.12)}
+html.dark .memo-box{background:rgba(255,250,235,.12)}
+html.dark .memo-box textarea{background:var(--card)}
+html.dark .ev-text{background:var(--card)}
+html.dark .cal-box{background:var(--card)}
+html.dark .cal-cell{background:var(--card)}
+html.dark .cal-entry{background:var(--card)}
+html.dark .ev-chip-action{background:rgba(236,230,251,.12)}
+html.dark .issue-modal-card{background:var(--card)}
+html.dark .insp-todo{background:var(--card)}
+html.dark .insp-todo:hover{background:rgba(247,250,244,.12)}
+html.dark .zone-card{background:var(--card)}
+html.dark .chip{color:var(--ink);background:var(--card)}
+html.dark .seg{background:rgba(230,234,240,.12)}
+html.dark .seg button{color:var(--muted)}
+html.dark .m-head{background:var(--card)}
+html.dark .lang-chip{color:var(--ink)}
+html.dark .m-sec{color:var(--muted)}
+html.dark .empty{background:var(--card)}
+html.dark .tk{background:var(--card)}
+html.dark .tk-recheck .tk-ico{background:rgba(230,244,242,.12)}
+html.dark .tk-kind{color:var(--ink)}
+html.dark .tk-add{background:var(--card)}
+html.dark .help-box{color:var(--ink);background:var(--card)}
+html.dark .zone-item:hover{background:rgba(248,250,252,.12)}
+html.dark .target-head{background:var(--card)}
+html.dark .sp{color:var(--ink);background:var(--card)}
+html.dark .field-lbl,html.dark .m-label{color:var(--ink)}
+html.dark .picked{background:var(--card)}
+html.dark .rp{background:var(--card)}
+html.dark .rp-bar i{background:rgba(227,231,237,.12)}
+html.dark .cal-cell.sel{background:rgba(238,242,247,.12)}
+html.dark .im-now{background:rgba(238,242,247,.12)}
+html.dark .side button:hover{background:var(--card)}
+html.dark .admin-head{background:var(--card)}
+html.dark .admin-main{background:var(--card)}
+html.dark .tbl th{color:var(--muted);background:var(--card)}
+html.dark .tbl.hover tbody tr:hover{background:rgba(246,249,252,.12)}
+html.dark .tbl tr.sel{background:rgba(238,242,247,.12)}
+html.dark .next-box{background:rgba(246,249,252,.12);border-color:var(--line)}
+html.dark .issue-detail{background:var(--card)}
+html.dark .role-chip{background:rgba(230,236,244,.12)}
+html.dark .am-date{color:var(--muted)}
+html.dark .am-kpi{background:var(--card)}
+html.dark .am-kpi span{color:var(--muted)}
+html.dark .am-farms{background:var(--card)}
+html.dark .am-rate{color:var(--ink)}
+html.dark .am-report{background:var(--card)}
+html.dark .aphone .timeline{background:var(--card)}
+html.dark .m-logo{background:var(--card)}
+html.dark .m-more-row{background:var(--card)}
+html.dark .m-more-row .mm-ico{background:var(--card)}
+html.dark .m-more-row .mm-txt small{color:var(--muted)}
+html.dark .m-more-row.danger .mm-ico{background:rgba(251,233,231,.12)}
+html.dark .m-desk .set-tbl tr{background:var(--card)}
+html.dark .aphone .m-sec{color:var(--ink)}
+html.dark .am-hello .am-date{color:var(--muted)}
+html.dark .aphone .am-kpi span{color:var(--muted)}
+html.dark .aphone .am-kpi.zero{background:var(--card)}
+html.dark .aphone .am-kpi.zero span:before{background:rgba(213,219,227,.12)}
+html.dark .aphone .month-watch{background:var(--card)}
+html.dark .aphone .mw-row{background:rgba(255,248,239,.12)}
+html.dark .aphone .am-issue .target-head{background:var(--card)}
+html.dark .aphone .m-more{background:var(--card)}
+html.dark .aphone .m-more-row{border-top-color:var(--line)}
+html.dark .login-card{background:var(--card)}
+html.dark .login-field{color:var(--ink)}
+html.dark .login-field input{background:var(--card)}
+html.dark .pw-toggle{color:var(--ink)}
+html.dark .account-card{background:var(--card)}
+html.dark .logout-btn{border-color:var(--line)}
+html.dark .logout-chip{color:var(--ink)}
+html.dark .brand{background:var(--card)}
+html.dark .dlg{background:var(--card)}
+html.dark .login-for.for-admin{background:rgba(230,236,244,.12)}
+html.dark .sync-loading{color:var(--ink);background:var(--card)}
+html.dark .sync-loading small{color:var(--muted)}
+html.dark .sync-spin{border-color:var(--line)}
+html.dark .set-toolbar select,html.dark .set-form select,html.dark .set-form input,html.dark .set-form textarea,html.dark .place-row select,html.dark .place-row input,html.dark .zone-edit input,html.dark .lang-search .search{background:var(--card)}
+html.dark .set-tbl tr.clickable:hover td{background:var(--card)}
+html.dark .care-tag{background:rgba(255,244,223,.12)}
+html.dark .care-tag.full{background:rgba(227,243,234,.12)}
+html.dark .care-tag.none{background:var(--card)}
+html.dark .me-tag,html.dark .off-tag{color:var(--ink);background:rgba(232,238,246,.12)}
+html.dark .off-tag{background:rgba(251,233,231,.12)}
+html.dark .role-pill{color:var(--ink);background:var(--card)}
+html.dark .role-pill.r-manager{background:rgba(227,236,247,.12)}
+html.dark .role-pill.r-staff{background:rgba(227,243,234,.12)}
+html.dark .set-modal-foot{background:var(--card)}
+html.dark .list-chip{background:var(--card)}
+html.dark .farm-card{background:var(--card)}
+html.dark .zone-pill{background:var(--card)}
+html.dark .lang-card{background:var(--card)}
+html.dark .lang-card.is-on{background:rgba(244,250,246,.12)}
+html.dark .lc-group{color:var(--muted);background:var(--card)}
+html.dark .lc-group.g-eps{background:rgba(227,243,234,.12)}
+html.dark .lc-group.g-seasonal{background:rgba(255,244,223,.12)}
+html.dark .lc-group.g-resident{background:rgba(227,236,247,.12)}
+html.dark .lc-sub{color:var(--muted)}
+html.dark .src-tag{color:var(--ink);background:var(--card)}
+html.dark .src-tag.src-machine{background:rgba(255,244,223,.12)}
+html.dark .src-tag.src-library,html.dark .src-tag.src-custom{background:rgba(227,243,234,.12)}
+html.dark .care-hint{background:rgba(244,250,246,.12);border-color:var(--line)}
+html.dark .care-hint-list span{background:var(--card);border-color:var(--line)}
+html.dark .care-hint-list span.pest{background:rgba(255,248,239,.12)}
+html.dark .set-seg .seg-n{color:var(--ink);background:rgba(230,234,239,.12)}
+html.dark .pw-first{background:rgba(255,244,223,.12)}
+html.dark .mf-box textarea{background:var(--card)}
+html.dark .mf-mic{background:var(--card)}
+html.dark .mf-thumb{background:var(--card)}
+html.dark .mf-thumb.uploading{color:var(--ink)}
+html.dark .bulk-box{background:var(--card);border-color:var(--line)}
+html.dark .bulk-opts select,html.dark .bulk-opts input,html.dark .bulk-search select,html.dark .bulk-search .search{background:var(--card)}
+html.dark .pick-list{background:var(--card)}
+html.dark .pick-row{border-bottom-color:var(--line)}
+html.dark .pick-row.on{background:rgba(238,247,241,.12)}
+html.dark .pick-name small{color:var(--muted)}
+html.dark .zp-chip{background:var(--card)}
+html.dark .zp-chip button{color:var(--muted)}
+html.dark .hf-wait{color:var(--ink)}
+html.dark .hf-sum div{background:var(--card)}
+html.dark .hf-sum span{color:var(--muted)}
+html.dark .hf-list{background:var(--card)}
+html.dark .hf-list li{border-bottom-color:var(--line)}
+html.dark .hf-list li span{color:var(--muted)}
+html.dark .sdash-mine{background:rgba(227,243,234,.12)}
+html.dark .chip.on .sdash-mine{background:var(--card)}
+html.dark .sdash-date{color:var(--muted)}
+html.dark .sdash-card{background:var(--card)}
+html.dark .sdash-card.warn{background:rgba(255,248,241,.12)}
+html.dark .sdash-bar{background:var(--card)}
+html.dark .sdash-two .sdash-card span:last-child{color:var(--muted)}
+html.dark .sdash-zone{background:var(--card)}
+html.dark .past-cases{background:var(--card);border-color:var(--line)}
+html.dark .pc-head{color:var(--ink)}
+html.dark .pc-line{border-left-color:var(--line)}
+html.dark .pc-line.pc-now{background:rgba(255,247,237,.12)}
+html.dark .pc-item{color:var(--muted)}
+html.dark .pc-solved{background:rgba(227,243,234,.12)}
+html.dark .pc-unsolved{background:rgba(253,232,231,.12)}
+html.dark .pc-unknown{color:var(--muted);background:var(--card)}
+html.dark .pc-progress{background:rgba(255,237,213,.12)}
+html.dark .pc-tag.sim{background:rgba(224,239,231,.12)}
+html.dark .pc-tag.month{background:rgba(232,238,252,.12)}
+html.dark .pc-tag.sys{background:rgba(241,238,252,.12)}
+html.dark .care-note{background:var(--card);border-color:var(--line)}
+html.dark .hist-kpis>div{background:var(--card)}
+html.dark .hist-kpis span{color:var(--muted)}
+html.dark .yr-chips i{background:var(--card)}
+html.dark .heat th{color:var(--muted)}
+html.dark .heat tbody th{color:var(--ink)}
+html.dark .heat td{background:var(--card)}
+html.dark .sol-bar{background:var(--card)}
+html.dark .sol-list small{color:var(--muted)}
+html.dark .mw-row{background:rgba(255,250,242,.12);border-color:var(--line)}
+html.dark .hi-side button.on{background:rgba(227,243,234,.12)}
+html.dark .month-bars .mb span{color:var(--muted)}
+html.dark .up-card{background:rgba(246,251,248,.12)}
+html.dark .up-card span{color:var(--muted)}
+html.dark .job-ico{color:var(--muted);background:var(--card)}
+html.dark .job-st{color:var(--muted)}
+html.dark .demo-lead{color:var(--ink)}
+html.dark .demo-accounts code,html.dark .demo-form code{background:var(--card)}
+html.dark .demo-form label{color:var(--muted)}
+
+/* ===== 다크 모드 (허브아이와 같은 설정을 따라가요) ===== */
+html.dark{color-scheme:dark;--green:#3f9a6c;--green-d:#5bb486;--green-l:rgba(63,154,108,.18);--green-m:rgba(63,154,108,.4);--bg:#121614;--card:#1a1f1c;--line:#2a322d;--ink:#e4e9e5;--muted:#98a29b;--gray-l:#232a26;--navy:#1a1f1c;--navy-2:#232a26;
+  --blue-l:rgba(80,130,200,.16);--orange-l:rgba(200,112,30,.16);--red-l:rgba(194,59,51,.18);--yellow-l:rgba(184,134,11,.18);color:var(--ink)}
+html.dark,html.dark body{background:var(--bg)!important;color:var(--ink)}
+html.dark .side,html.dark .admin-head,html.dark .m-head,html.dark .m-tabs,html.dark .panel{background:var(--card)!important;border-color:var(--line)!important}
+html.dark .kpi{background:var(--card)!important;border-left-color:var(--line)!important;border-right-color:var(--line)!important;border-bottom-color:var(--line)!important}
+html.dark .chk-unchecked,html.dark .lg-unchecked,html.dark .mx-unchecked,html.dark .unchk-cell{color:var(--muted)!important;background:repeating-linear-gradient(135deg,#232a26 0 4px,#1c221e 4px 8px)!important;border-color:#4a544e!important}
+html.dark .side button:hover{background:#232a26!important}
+html.dark input,html.dark select,html.dark textarea{background:#151a17!important;color:var(--ink)!important;border-color:var(--line)!important}
+html.dark .btn{background:#232a26;color:var(--ink);border-color:var(--line)}html.dark .btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+html.dark body > main{background:var(--card)!important;border-color:var(--line)}html.dark body > main > a.a{background:#2f3a33!important}
+html.dark img[src*="logo"]{background:#fff;border-radius:10px;padding:2px 6px}
+html.dark img[src="logo.gif"]{content:url(logo-dark.png);background:none;padding:0}
