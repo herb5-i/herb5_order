@@ -1776,7 +1776,7 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
 .subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
-.fold-c{position:relative}@media(min-width:900px){.calcard.fold-c .cal{margin-right:48px}}.fold-c > .sh{padding-right:52px}.foldt{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mute);display:grid;place-items:center;cursor:pointer}
+.fold-c{position:relative}.fold-c > .sh{cursor:pointer}.fold-c > .sh:focus-visible{outline:2px solid var(--acc);outline-offset:4px;border-radius:8px}.foldt{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mute);display:grid;place-items:center;cursor:pointer}
 .foldt svg{width:20px;height:20px;transition:transform .2s;transform:rotate(180deg)}.fold-c.folded .foldt svg{transform:none}.fold-c.folded .foldt{color:var(--acc);border-color:var(--acc)}
 .fold-c.folded > :not(.sh){display:none!important}.calcard.fold-c.folded{display:block}.fold-c.folded > .sh{margin-bottom:0;cursor:pointer}.fold-c.folded{padding-bottom:18px}
 .hw-mapbox{flex:1;min-height:0;display:flex;justify-content:center}.hw-wmap{height:100%;width:auto;max-width:100%;aspect-ratio:340/500}
@@ -1785,7 +1785,7 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hw-pin b{font-weight:700;color:#1f2a24}.hw-pin i{font-style:normal;color:#4a5550}
 html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e5}html.dark .hw-pin i{color:#aab4ad}
 .hw-wxbig{display:flex;flex-direction:column}.hw-wxrow{flex:1;min-height:0;display:flex;gap:12px}.hw-wxrow .hw-mapbox{flex:0 0 auto;max-width:48%}.hw-wxrow .hm-list{flex:1;min-width:0;overflow:auto;margin:0}.hw-wxrow .hw-wx li{flex-wrap:wrap;row-gap:4px}.hw-wxrow .hw-wx .nm{flex:1;min-width:0}.hw-wxrow .hw-chips{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}
-.mfold-c > .uf-h,.mfold-c > .ut-h{position:relative;padding-right:48px;cursor:pointer}.foldt.mini{top:50%;right:0;transform:translateY(-50%);width:34px;height:34px}.foldt.mini svg{width:18px;height:18px}
+.mfold-c > .uf-h,.mfold-c > .ut-h{cursor:pointer}.foldt.mini{top:50%;right:0;transform:translateY(-50%);width:34px;height:34px}.foldt.mini svg{width:18px;height:18px}
 .mfold-c.mfolded > :not(.uf-h):not(.ut-h){display:none!important}.mfold-c.mfolded .foldt.mini svg{transform:none}.mfold-c.mfolded .foldt.mini{color:var(--acc);border-color:var(--acc)}.ut-h b small{font-weight:400;color:var(--mute);margin-left:4px}
 .subtabs[data-subfor=stock]{display:none!important}.histrow.hcalfull{display:block}.hcalfull #hcal .hd{position:relative}
 @media(min-width:900px){.hcalfull #hcal .hd{min-height:64px}.hcalfull #hcal .hd .n{font-size:15px}}
@@ -1798,6 +1798,9 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .sd-sent{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.sd-sent h4{margin:0 0 8px;font-size:14px}.sd-sblk{border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:8px}
 .sd-sh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.sd-sh span{font-size:12px;color:var(--mute)}.sd-sblk ul{margin:6px 0;padding-left:18px;font-size:13.5px}.sd-sblk li small{color:var(--mute)}
 #hcal .sdots .dr{background:#d08a3a}#hcal .hd.on .sdots .dr{background:#ffe0b8}
+.hshare{margin-left:auto}.shd-o{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:8px;cursor:pointer}
+.shd-o svg{width:22px;height:22px;flex:none;color:var(--acc)}.shd-o span{display:flex;flex-direction:column;gap:2px;min-width:0}.shd-o small{color:var(--mute);font-size:12.5px}.shd-o.all{border-color:var(--acc);background:var(--acc2)}.shd-o:hover{border-color:var(--acc)}
+.shd-h{margin:16px 2px 0;font-size:12.5px;color:var(--mute);font-weight:600}
 .lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
@@ -2963,7 +2966,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <div class="card mrep" id="mrep" data-sub="report"></div>
     <div class="histrow hcalfull" data-sub="days">
       <div class="card">
-        <div class="hh"><h2>날짜별 기록</h2><span class="msg" id="histmsg"></span></div>
+        <div class="hh"><h2>날짜별 기록</h2><span class="msg" id="histmsg"></span><span class="sharebtns hshare"><button class="ibtn iczno" type="button" data-sharepick="hist" title="복사하기 (하나로 합쳐서 · 칸별로)" aria-label="복사하기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button><button class="ibtn iczno" type="button" data-sharepick="hist" data-sharevia="1" title="보내기 · 공유 (하나로 합쳐서 · 칸별로)" aria-label="보내기 · 공유"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg></button></span></div>
         <p class="help">올린 원본은 <b>주문이 들어온 날짜</b>별로 자동 저장돼요(집계 보기는 정리한 날 기준). 날짜를 누르면 그날 주문이 나와요. 숫자는 그날 주문 수예요.</p>
         <div class="hredate hidden" id="hredate"></div>
         <div id="hcal" class="hcal"></div>
@@ -4425,7 +4428,7 @@ function renderTrash() {
   const a = trashList(); if (!a.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   const tm = iso => { const d = new Date(iso); return isNaN(d) ? '' : (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
   box.classList.remove('hidden');
-  mfoldInit(box, 'utrash'); box.innerHTML = `<div class="ut-h" data-mfold="utrash"><b>최근 지운 파일 <small>${a.length}개</small></b><span>잘못 지웠으면 되돌려요 · 이 기기에서 7일 동안</span><button type="button" class="foldt mini iczno" data-mfold="utrash" aria-label="펼치기 · 접기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>` + a.slice(0, 5).map(p =>
+  mfoldInit(box, 'utrash'); box.innerHTML = `<div class="ut-h" data-mfold="utrash"><b>최근 지운 파일 <small>${a.length}개</small></b><span>잘못 지웠으면 되돌려요 · 이 기기에서 7일 동안</span></div>` + a.slice(0, 5).map(p =>
     `<div class="ut-row"><span class="ut-nm">${esc(fmtDay(p.day))} ${esc(p.files.map(f => (f.slot === 'am' ? '오전 ' : '오후 ') + f.name).join(', ') || '파일')}<small>${esc(tm(p.at))}에 지움 · ${p.n || 0}줄</small></span><button class="urestore" type="button" data-urestore="${p.id}">↶ 되돌리기</button></div>`).join('') + '<p class="msg" id="trashmsg" style="margin:4px 0 0"></p>';
 }
 document.addEventListener('click', async e => {
@@ -6048,7 +6051,7 @@ function renderHistDay() {
   const regs = new Map(); e.rows.filter(x => !x.del).forEach(x => { const r = regionOf(x.a); if (!regs.has(r)) regs.set(r, new Set()); regs.get(r).add(x.o); });
   const regTxt = [...regs.entries()].sort((a, b) => b[1].size - a[1].size).map(([r, s]) => `<span>${esc(r)} <b>${s.size}</b></span>`).join('');
   const cards = res ? sumCards(res.sheet3) : { html: '<p class="msg err">이 날 기록을 지금 규칙으로 정리하지 못했어요.</p>', total: 0 };
-  el.innerHTML = `<div class="hh"><h2>${fmtDay(d)} 집계</h2>${shareBtns('histday')}<button class="ibtn ibtn-bad" id="hdel" data-d="${d}" title="이 날 기록 지우기" aria-label="이 날 기록 지우기">${IC.trash}</button></div>
+  el.innerHTML = `<div class="hh"><h2>${fmtDay(d)} 집계</h2><button class="ibtn ibtn-bad" id="hdel" data-d="${d}" title="이 날 기록 지우기" aria-label="이 날 기록 지우기">${IC.trash}</button></div>
     <div class="kpis sm"><div><b>${ords}</b><span>주문</span></div><div><b>${e.rows.length}</b><span>상품 줄</span></div><div><b>${cards.total}</b><span>집계 수량</span></div></div>
     <div class="regchips">${regTxt}</div>
     ${cards.html}
@@ -6082,7 +6085,7 @@ function renderHistStat() {
   // 지역별
   const rl = [...S.regions.entries()].map(([r, s]) => [r, s.size]).sort((a, b) => b[1] - a[1]), rmax = Math.max(1, ...rl.map(x => x[1]));
   const regHtml = rl.length ? rl.map(([r, n]) => `<div class="rrow"><span class="rn">${esc(r)}</span><span class="pbar"><i style="width:${n / rmax * 100}%"></i></span><span class="rq">${n}건</span><span class="rp">${Math.round(n / S.orders * 100)}%</span></div>`).join('') : '<p class="msg">이 기간에는 기록이 없어요.</p>';
-  el.innerHTML = `<div class="hh"><h2>품목 · 지역 통계</h2>${shareBtns('histstat')}
+  el.innerHTML = `<div class="hh"><h2>품목 · 지역 통계</h2>
       <div class="row"><div class="seg" role="group" aria-label="기간"><button data-smode="week" class="${statMode === 'week' ? 'on' : ''}">주간</button><button data-smode="month" class="${statMode === 'month' ? 'on' : ''}">월간</button></div>
       <button class="calnav" data-snav="-1" aria-label="이전 기간">‹</button><span class="ympick"><button class="ymbtn plabel" data-ymopen="stat" aria-haspopup="true">${P.label} <i>▾</i></button></span><button class="calnav" data-snav="1" aria-label="다음 기간">›</button></div></div>
     <div class="kpis"><div><b>${S.orders}</b><span>주문</span>${delta(S.orders, Sp.orders)}</div><div><b>${S.qty}</b><span>상품 수량</span>${delta(S.qty, Sp.qty)}</div><div><b>${S.days.length}</b><span>기록된 날</span></div><div><b>${S.regions.size}</b><span>주문 들어온 지역</span></div></div>
@@ -6267,7 +6270,7 @@ function renderUFiles() {
   ufPick = new Set([...ufPick].filter(k => list.some(f => f.slot + '|' + f.id === k)));
   if (!sumSel || !list.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   box.classList.remove('hidden');
-  mfoldInit(box, 'ufiles'); box.innerHTML = `<div class="uf-h" data-mfold="ufiles"><b>올린 파일</b><span>${list.length}개 · 지울 파일을 골라요</span><button type="button" class="foldt mini iczno" data-mfold="ufiles" aria-label="펼치기 · 접기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div><div class="uf-list">` + list.map(f => {
+  mfoldInit(box, 'ufiles'); box.innerHTML = `<div class="uf-h" data-mfold="ufiles"><b>올린 파일</b><span>${list.length}개 · 지울 파일을 골라요</span></div><div class="uf-list">` + list.map(f => {
     const k = f.slot + '|' + f.id;
     return `<label class="uf ${ufPick.has(k) ? 'on' : ''}"><input type="checkbox" data-ufile="${esc(k)}" ${ufPick.has(k) ? 'checked' : ''}><span class="uf-slot ${f.old ? 'old' : f.slot}">${f.old ? '예전' : f.slot === 'am' ? '오전' : '오후'}</span><span class="uf-nm"><b>${esc(f.name || '파일')}</b><small>${esc(tm(f.at))}${f.n ? ' · 주문 ' + f.n + '건' : ''}${f.lines ? ' · ' + f.lines + '줄' : ''}</small></span></label>`;
   }).join('') + `</div><div class="uf-act"><span class="msg" id="ufmsg"></span><button class="btn uf-del" id="ufdel" type="button" ${ufPick.size ? '' : 'disabled'}>${IC.trash}<span>${ufPick.size ? '고른 파일 ' + ufPick.size + '개 지우기' : '지울 파일을 골라 주세요'}</span></button></div>`;
@@ -7558,7 +7561,7 @@ function renderStock() {
     }).join('') + '</div></section>').join('') : '<div class="stkempty">정리 탭에서 원본을 올리면 집계에 나온 품목이 여기에 자동으로 생겨요.<br>아직 주문이 없는 품목은 아래 재고 수정에서 이름을 적고 ＋로 넣으면 돼요.</div>';
   $('stksum').textContent = items.length ? items.filter(x => x.rec).length + ' / ' + items.length + '개 품목 입력됨' : '';
   $('stk-names').innerHTML = items.map(x => `<option value="${esc(x.key)}">`).join('');
-  if (!$('stkshare').innerHTML) { $('stkshare').innerHTML = shareBtns('stock'); $('stkdayshare').innerHTML = shareBtns('stockday'); }
+  if (!$('stkshare').innerHTML) { $('stkshare').innerHTML = shareBtns('stock');  }
   stkRenderUnits();
   stkRenderMemo();
   stkCurLine(items);
@@ -7632,7 +7635,7 @@ function stkSentHtml(day) {
   if (!R.length && !W.length) return '';
   const tm = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
   const li = (r, ty) => `<li><em class="rt-${ty}">${ty === 'in' ? '입고' : ty === 'wst' ? '폐기' : '반송'}</em> ${esc(r.key)} <b>${esc(stkShow(r.unit, r.v))}</b>${r.why ? ' <small>' + esc(r.why) + '</small>' : ''}</li>`;
-  const blk = (h, kind) => `<div class="sd-sblk"><div class="sd-sh"><b>${kind === 'w' ? '폐기' : [h.items.some(r => retTy(r) === 'in') ? '입고' : '', h.items.some(r => retTy(r) === 'ret') ? '반송' : ''].filter(Boolean).join(' · ')} ${h.items.length}품목</b><span>${esc(tm(h.at))}${h.by ? ' · ' + esc(h.by) : ''}${h.deducted || h.applied ? ' · 재고에 반영' : ''}</span></div><ul>${h.items.map(r => li(r, kind === 'w' ? 'wst' : retTy(r))).join('')}</ul><div class="ret-hact"><button class="btn sm iczno" type="button" data-${kind === 'w' ? 'wst' : 'ret'}copyh="${esc(h.id)}">복사</button><button class="btn sm iczno" type="button" data-${kind === 'w' ? 'wst' : 'ret'}delh="${esc(h.id)}">기록 지우기</button></div></div>`;
+  const blk = (h, kind) => `<div class="sd-sblk"><div class="sd-sh"><b>${kind === 'w' ? '폐기' : [h.items.some(r => retTy(r) === 'in') ? '입고' : '', h.items.some(r => retTy(r) === 'ret') ? '반송' : ''].filter(Boolean).join(' · ')} ${h.items.length}품목</b><span>${esc(tm(h.at))}${h.by ? ' · ' + esc(h.by) : ''}${h.deducted || h.applied ? ' · 재고에 반영' : ''}</span></div><ul>${h.items.map(r => li(r, kind === 'w' ? 'wst' : retTy(r))).join('')}</ul><div class="ret-hact"><button class="btn sm iczno" type="button" data-${kind === 'w' ? 'wst' : 'ret'}delh="${esc(h.id)}">기록 지우기</button></div></div>`;
   return `<div class="sd-sent"><h4>입고 · 반송 · 폐기</h4>${R.map(h => blk(h, 'r')).join('')}${W.map(h => blk(h, 'w')).join('')}</div>`;
 }
 document.addEventListener('click', e => { if (e.target.closest('[data-go2hist]')) subSet('stock', 'chg'); });
@@ -7986,6 +7989,35 @@ document.addEventListener('click', e => {
   shareImage(b.dataset.share, b, !!b.dataset.sharevia).catch(err => shareToast('이미지를 만들지 못했어요: ' + (err.message || err)));
 });
 
+// ---------- 날짜별 기록: 복사 · 공유를 하나로 → 사이드 창에서 '하나로 합쳐서' 또는 '칸별로' 고르기 ----------
+function tblSent() {
+  const day = histSel, rows = []; let R = [], W = []; try { R = (retDoc().sent || []).filter(h => h.day === day); W = (wstDoc().sent || []).filter(h => h.day === day); } catch (e) {}
+  R.forEach(h => h.items.forEach(r => rows.push({ cells: [retTy(r) === 'in' ? '입고' : '반송', r.key, stkShow(r.unit, r.v), r.why || ''] })));
+  W.forEach(h => h.items.forEach(r => rows.push({ cells: ['폐기', r.key, stkShow(r.unit, r.v), r.why || ''] })));
+  if (!rows.length) rows.push({ cells: ['', '처리한 입고 · 반송 · 폐기 없음', '', ''] });
+  return { title: '허브아이 입고 · 반송 · 폐기', sub: fmtDay(day), sections: [{ cols: [['구분', 'l'], ['품목', 'l'], ['수량', 'r'], ['사유 · 메모', 'l']], rows }] };
+}
+const HIST_PARTS = [['histday', '그날 집계', () => tblHistDay()], ['stockday', '재고 변동', () => { stkDay = histSel || stkDay; return tblStockDay(); }], ['histsent', '입고 · 반송 · 폐기', () => tblSent()], ['histstat', '품목 · 지역 통계', () => tblHistStat()]];
+function tblHistAll() {
+  const sections = [];
+  HIST_PARTS.forEach(([k, nm, fn]) => { let sp; try { sp = fn(); } catch (e) { return; } (sp.sections || []).forEach((sec, i) => sections.push(Object.assign({}, sec, { title: i ? sec.title : (sec.title ? nm + ' · ' + sec.title : nm) }))); });
+  return { title: '허브아이 ' + fmtDay(histSel) + ' 기록', sub: shareTime() + ' 기준', sections };
+}
+SHARE_TBL.histsent = tblSent; SHARE_TBL.histall = tblHistAll;
+let shdVia = false;
+function shdOpen(via) { shdVia = via; $('shd-t').textContent = via ? '보내기 · 공유' : '복사하기';
+  const ic = via ? '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>';
+  $('shd-b').innerHTML = `<p class="help">${esc(fmtDay(histSel))} 기록을 표 이미지로 ${via ? '보내요 (카톡 · 메일)' : '복사해요 (카톡 · 메일에 붙여넣기)'}</p>` +
+    `<button type="button" class="shd-o all iczno" data-shdgo="histall">${ic}<span><b>전부 하나로 합쳐서</b><small>그날 집계 · 재고 변동 · 입고 · 반송 · 폐기 · 통계를 이미지 한 장으로</small></span></button><div class="shd-h">칸별로</div>` +
+    HIST_PARTS.map(([k, nm]) => `<button type="button" class="shd-o iczno" data-shdgo="${k}">${ic}<span><b>${esc(nm)}</b></span></button>`).join('');
+  $('shdrawer').classList.add('on'); $('shdrawer').setAttribute('aria-hidden', 'false'); $('shdback').classList.remove('hidden'); }
+function shdClose() { $('shdrawer').classList.remove('on'); $('shdrawer').setAttribute('aria-hidden', 'true'); $('shdback').classList.add('hidden'); }
+document.addEventListener('click', e => {
+  const p = e.target.closest('[data-sharepick]'); if (p) { shdOpen(!!p.dataset.sharevia); return; }
+  if (e.target.closest('#shd-x') || e.target.closest('#shdback')) { shdClose(); return; }
+  const g = e.target.closest('[data-shdgo]'); if (g) { const k = g.dataset.shdgo; if (k === 'stockday') stkDay = histSel || stkDay; shdClose(); shareImage(k, null, shdVia).catch(err => shareToast('이미지를 만들지 못했어요: ' + (err.message || err))); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('shdrawer').classList.contains('on')) shdClose(); });
 // ---------- 월간 보고서 (기록·통계 · 관리자) ----------
 let mrepMonth = null, mrepPicked = false; // 'YYYY-MM' · 직접 고르기 전에는 늘 '지난달'
 const ymOf = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
@@ -9391,14 +9423,15 @@ setTimeout(() => { hmfbLoad(); hmfbTick(); }, 2500);
 const FOLD_KEY = 'herb5_fold';
 const foldGet = () => { try { return JSON.parse(localStorage.getItem(FOLD_KEY) || '{}'); } catch (e) { return {}; } };
 function foldSet(card, folded, save = true) {
-  card.classList.toggle('folded', folded); const b = card.querySelector(':scope > .sh .foldt, :scope > .sh > .foldt'); if (b) { b.setAttribute('aria-expanded', String(!folded)); b.title = folded ? '펼치기' : '접기'; b.setAttribute('aria-label', (folded ? '펼치기: ' : '접기: ') + (card.querySelector('h2') || {}).textContent); }
+  card.classList.toggle('folded', folded); const sh0 = card.querySelector(':scope > .sh'); if (sh0) { sh0.setAttribute('aria-expanded', String(!folded)); sh0.title = folded ? '눌러서 펼치기' : '눌러서 접기'; } const b = null; if (b) { b.setAttribute('aria-expanded', String(!folded)); b.title = folded ? '펼치기' : '접기'; b.setAttribute('aria-label', (folded ? '펼치기: ' : '접기: ') + (card.querySelector('h2') || {}).textContent); }
   if (save && card.dataset.fold) { const m = foldGet(); m[card.dataset.fold] = folded ? 1 : 0; try { localStorage.setItem(FOLD_KEY, JSON.stringify(m)); } catch (e) {} document.querySelectorAll('.fold-c[data-fold="' + card.dataset.fold + '"]').forEach(c => { if (c !== card) foldSet(c, folded, false); }); }
 }
 (() => { const m = foldGet(); document.querySelectorAll('.fold-c').forEach(c => { const sh = c.querySelector(':scope > .sh'); if (!sh) return;
-  const b = document.createElement('button'); b.type = 'button'; b.className = 'foldt iczno'; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'; sh.appendChild(b);
+  sh.setAttribute('role', 'button'); sh.tabIndex = 0;
   foldSet(c, m[c.dataset.fold] !== 0, false); }); })();
 document.addEventListener('click', e => { const b = e.target.closest('.foldt'); if (b) { const c = b.closest('.fold-c'); foldSet(c, !c.classList.contains('folded')); return; }
-  const h = e.target.closest('.fold-c.folded > .sh'); if (h && !e.target.closest('button,a,input,select,label,.shinfo')) foldSet(h.closest('.fold-c'), false); });
+  const h = e.target.closest('.fold-c > .sh'); if (h && !e.target.closest('button,a,input,select,label,.shinfo,.shact')) { const c = h.closest('.fold-c'); foldSet(c, !c.classList.contains('folded')); } });
+document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.fold-c > .sh')) { e.preventDefault(); const c = e.target.closest('.fold-c'); foldSet(c, !c.classList.contains('folded')); } });
 // 집계 보기의 [올린 파일] · [최근 지운 파일]: 제목이나 ▼를 누르면 펼치고 접어요 (처음엔 접혀 있어요)
 function mfoldInit(box, k) { if (box._mf) return; box._mf = 1; box.classList.add('mfold-c'); box.classList.toggle('mfolded', foldGet()[k] !== 0); }
 document.addEventListener('click', e => { const h = e.target.closest('[data-mfold]'); if (!h || (e.target.closest('button,input,label') && !e.target.closest('.foldt'))) return;
@@ -9707,5 +9740,6 @@ window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); 
 </script>
 <div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
 <div class="sdback hidden" id="stkdback"></div><aside class="sdrawer" id="stkdrawer" role="dialog" aria-modal="true" aria-label="재고 수정" aria-hidden="true"><div class="sd-h"><b id="stkd-t">재고 수정</b><button class="ibtn" type="button" id="stkd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="stkd-b"></div></aside>
+<div class="sdback hidden" id="shdback"></div><aside class="sdrawer" id="shdrawer" role="dialog" aria-modal="true" aria-label="복사 · 공유" aria-hidden="true"><div class="sd-h"><b id="shd-t">복사하기</b><button class="ibtn iczno" type="button" id="shd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="shd-b"></div></aside>
 </body>
 </html>
