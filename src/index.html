@@ -1718,7 +1718,11 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .hshare{margin-left:auto}.shd-o{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:8px;cursor:pointer}
 .shd-o svg{width:22px;height:22px;flex:none;color:var(--acc)}.shd-o span{display:flex;flex-direction:column;gap:2px;min-width:0}.shd-o small{color:var(--mute);font-size:12.5px}.shd-o.all{border-color:var(--acc);background:var(--acc2)}.shd-o:hover{border-color:var(--acc)}
 .shd-h{margin:16px 2px 0;font-size:12.5px;color:var(--mute);font-weight:600}
-.svc-top{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.svc-l{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);flex:1 1 260px;min-width:0}.svc-l.svc-q{flex:0 1 160px}
+.svcb{position:relative;display:flex;align-items:center}.svcb input{padding-right:40px!important}.svarr{position:absolute;right:4px;top:4px;width:32px;height:32px;border:0;background:none;color:var(--mute);display:grid;place-items:center;cursor:pointer;border-radius:8px}.svarr svg{width:18px;height:18px}
+.svsug{position:absolute;left:0;top:calc(100% + 4px);z-index:30;width:100%;max-height:260px;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px;box-sizing:border-box}html.dark .svsug{background:#1d2622}
+.svsug button{display:flex;justify-content:space-between;gap:10px;align-items:baseline;width:100%;text-align:left;border:0;background:none;color:var(--ink);font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;cursor:pointer}.svsug button span{min-width:0;overflow-wrap:anywhere}.svsug button small{flex:none;color:var(--mute);font-size:12px}
+.svsug button.on,.svsug button:hover{background:var(--acc2)}.svsug b{color:var(--acc)}.svsug p{margin:0;padding:9px 10px;color:var(--mute);font-size:13.5px}.svc-cur{font-size:12px;color:var(--mute)}
+.svc-top{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}.svc-l{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);flex:1 1 260px;min-width:0}.svc-l.svc-q{flex:0 1 160px}
 .svc-l select,.svc-l input{height:40px;border-radius:10px;border:1px solid var(--line);padding:0 10px;font:inherit;font-size:15px;color:var(--ink);background:var(--card);min-width:0;width:100%;box-sizing:border-box}
 .svc-prev{margin:10px 0 0;font-size:13.5px;color:var(--mute)}.svc-prev b{color:var(--acc)}.svc-warn{margin:10px 0 0;font-size:13px;color:var(--warn,#b86b00)}
 .svc-list{margin-top:12px;display:flex;flex-direction:column;gap:4px;max-height:460px;overflow:auto}.svc-c{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
@@ -8700,7 +8704,7 @@ const ICZ_MAP = [   // [글자(앞 기호 · 끝 ▾ 뺀 것), 아이콘, 중요
   [/^앱으로 설치$/, 'install', '설치'], [/^아이콘 숫자 켜기$/, 'bell', '켜기'], [/^(합치기|다시 합치기|이 날 모두 합치기)$/, 'merge', '합치기'], [/^빼기$/, 'minus', '빼기'],
   [/^주문일로 다시 나누기$/, 'split', '나누기'], [/^담고 이슈 등록$/, 'flag', '등록'], [/^폴더 풀기$/, 'folder', '풀기'], [/^목록$/, 'list', '목록'],
 ];
-const ICZ_SKIP = '#v-hist,#v-market,.seg,[role=tablist],.tabs,.stabs,.hm-w,.hma,[role=option],.ktsug,.hmnt-it,.ntd-h,.ktchip,.iczno';
+const ICZ_SKIP = '#v-hist,#v-market,.seg,[role=tablist],.tabs,.stabs,.hm-w,.hma,[role=option],.ktsug,.svsug,.hmnt-it,.ntd-h,.ktchip,.iczno';
 function iczOne(b) {
   if (b.closest(ICZ_SKIP)) return; const ic = b.querySelector(':scope > svg.bic');
   const txt = () => [...b.childNodes].filter(n => !(n.classList && (n.classList.contains('bit') || n.classList.contains('bic')))).map(n => n.textContent).join('').replace(/\s+/g, ' ').trim();
@@ -8970,17 +8974,14 @@ function renderSvc() {
   const sur = svcSurplus(); let items = []; try { items = stkCompute().items.filter(x => x.rec); } catch (e) {}
   if (!svcItem && sur[0]) svcItem = sur[0].key;
   const dTxt = x => x.days === null ? '최근 7일 안 나감' : Math.round(x.days) + '일치';
-  const opt = (x, sub) => `<option value="${esc(x.key)}">${esc(x.key)} · 지금 ${esc(stkShow(x.unit, x.cur))}${sub ? ' · ' + sub : ''}</option>`;
-  const opts = '<option value="">품목을 골라 주세요</option>' + (sur.length ? `<optgroup label="남는 재고">${sur.map(x => opt(x, dTxt(x))).join('')}</optgroup>` : '') + `<optgroup label="다른 품목">${items.filter(x => !sur.includes(x)).map(x => opt(x)).join('')}</optgroup>`;
   const it = items.find(x => x.key === svcItem), unit = it ? it.unit : '', isW = unit && stkIsW(unit);
   const L = svcCands(); svcCandsCache = L; const crmOk = crmMem.size > 0, n = svcN();
   const p = svcAmt(), tot = p && !p.err && n ? stkShow(p.unit, p.v * n) : '';
-  box.innerHTML = `<div class="svc-top"><label class="svc-l">서비스 품목<select id="svc-item">${opts}</select></label><label class="svc-l svc-q">수량 (한 분당)<span class="svc-qw"><input id="svc-q" value="${esc(svcQ)}" inputmode="decimal" placeholder="${isW ? '예: 50g' : '예: 3'}"><em>${esc(isW ? 'g · kg' : unit || '개')}</em></span></label></div>
+  box.innerHTML = `<div class="svc-top"><div class="svc-l"><span>서비스 품목</span><div class="svcb"><input id="svc-item" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" value="${esc(svcItem)}" placeholder="품목 이름 검색 (예: 비올)"><button type="button" class="svarr iczno" aria-label="품목 목록 열기" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div>${it ? `<small class="svc-cur">지금 재고 ${esc(stkShow(it.unit, it.cur))}${sur.some(y => y.key === it.key) ? ' · 남는 재고 · ' + dTxt(it) : ''}</small>` : ''}</div><label class="svc-l svc-q">수량 (한 분당)<span class="svc-qw"><input id="svc-q" value="${esc(svcQ)}" inputmode="decimal" placeholder="${isW ? '예: 50g' : '예: 3'}"><em>${esc(isW ? 'g · kg' : unit || '개')}</em></span></label></div>
     <p class="svc-prev">엑셀에 이렇게 들어가요: <b>${esc(svcItem ? svcText() : '-')}</b>${tot ? ` · 재고에서 <b>${esc(tot)}</b> 빠져요 (${n}분)` : ''}</p>
     ${crmOk ? '' : '<p class="svc-warn">고객 관리의 과거 주문을 아직 안 받아서 오늘 주문만 보고 골랐어요. <button type="button" class="linkbtn iczno" data-go="crm">고객 관리 열기</button></p>'}
     <div class="svc-list">${L.length ? L.map(c => `<div class="svc-c${svcIn.has(c.o) ? ' in' : ''}"><label><input type="checkbox" data-svcpick="${esc(c.o)}" ${svcOn(c.o) ? 'checked' : ''}><b>${esc(c.label)}</b></label><button type="button" class="linkbtn iczno svc-dt" data-svcdt="${esc(c.o)}">상세보기</button></div>`).join('') : '<p class="help">이번 주문이 없어요.</p>'}</div>
     <div class="svc-act"><button class="btn pri iczno" type="button" id="svc-go">엑셀에 합치기</button>${svcIn.size ? `<button class="btn sm iczno" type="button" id="svc-clear">합친 것 빼기</button>` : ''}<span class="msg" id="svc-msg">${svcIn.size ? '엑셀에 서비스 ' + svcIn.size + '줄' + (svcDed ? ' · 재고에서 ' + esc(stkShow(svcDed.unit, -svcDed.d)) + ' 뺐어요' : '') : ''}</span></div>`;
-  const sel = $('svc-item'); if (sel) sel.value = svcItem || '';
 }
 // 재고 한 번에 빼기 / 돌려놓기 (d: 음수 = 빼기)
 async function svcStock(key, d, why) {
@@ -8997,7 +8998,6 @@ function svcDetail(o) {
 }
 function svdClose() { $('svdrawer').classList.remove('on'); $('svdrawer').setAttribute('aria-hidden', 'true'); $('svdback').classList.add('hidden'); }
 document.addEventListener('change', e => {
-  if (e.target.id === 'svc-item') { svcItem = e.target.value; renderSvc(); renderSvcPrev(); }
   const pk = e.target.closest && e.target.closest('[data-svcpick]'); if (pk) { const o = pk.dataset.svcpick; if (pk.checked) { svcPick.set(o, 1); svcOff.delete(o); } else { svcPick.delete(o); if (svcIn.has(o)) svcOff.add(o); } renderSvcPrev(); }
 });
 function renderSvcPrev() { const pv = document.querySelector('.svc-prev'); if (!pv) return; const n = svcN(), p = svcAmt(), tot = p && !p.err && n ? stkShow(p.unit, p.v * n) : '';
@@ -9031,6 +9031,27 @@ document.addEventListener('click', async e => {
   } catch (er) { m.className = 'msg err'; m.textContent = '합치지 못했어요: ' + (er.message || er); go.disabled = false; }
   svcBusy = false;
 });
+// 서비스 품목 검색 (글자 일부만 쳐도 아래에 뜨기)
+let svSugSel = 0;
+function svSugList(q) { let items = []; try { items = stkCompute().items.filter(x => x.rec); } catch (e) {} const sur = new Set(svcSurplus().map(y => y.key)), nz = t => String(t).replace(/\s+/g, '').toLowerCase(); q = nz(q);
+  const L = items.filter(x => !q || nz(x.key).includes(q)); return L.sort((a, b) => (q ? (nz(a.key).startsWith(q) ? 0 : 1) - (nz(b.key).startsWith(q) ? 0 : 1) : 0) || (sur.has(b.key) - sur.has(a.key)) || a.key.localeCompare(b.key, 'ko')); }
+function svSugClose() { const d = document.querySelector('.svsug'); if (d) d.remove(); const i = $('svc-item'); if (i) i.setAttribute('aria-expanded', 'false'); }
+function svSugOpen(all) { svSugClose(); const inp = $('svc-item'); if (!inp) return; const raw = all ? '' : inp.value.trim(), hit = svSugList(raw), sur = new Set(svcSurplus().map(y => y.key));
+  if (!hit.length) { const d = document.createElement('div'); d.className = 'svsug'; d.innerHTML = '<p>맞는 품목이 없어요</p>'; inp.parentNode.appendChild(d); return; }
+  const d = document.createElement('div'); d.className = 'svsug'; d.setAttribute('role', 'listbox'); svSugSel = 0;
+  d.innerHTML = hit.slice(0, 40).map((x, k) => { let h = esc(x.key); const at = raw ? x.key.toLowerCase().indexOf(raw.toLowerCase()) : -1; if (at >= 0) h = esc(x.key.slice(0, at)) + '<b>' + esc(x.key.slice(at, at + raw.length)) + '</b>' + esc(x.key.slice(at + raw.length));
+    return `<button type="button" role="option" class="${k ? '' : 'on'}" data-svsug="${esc(x.key)}"><span>${h}</span><small>${esc(stkShow(x.unit, x.cur))}${sur.has(x.key) ? ' · 남음' : ''}</small></button>`; }).join('');
+  inp.parentNode.appendChild(d); inp.setAttribute('aria-expanded', 'true'); }
+function svSugPick(k) { svSugClose(); svcItem = k; renderSvc(); renderSvcPrev(); const q = $('svc-q'); if (q) q.focus(); }
+document.addEventListener('input', e => { if (e.target.id === 'svc-item') svSugOpen(); });
+document.addEventListener('focusin', e => { if (e.target.id === 'svc-item') { e.target.select(); svSugOpen(true); } });
+document.addEventListener('focusout', e => { if (e.target.id === 'svc-item') setTimeout(() => { if (!document.activeElement || !document.activeElement.closest('.svsug')) { svSugClose(); const i = $('svc-item'); if (i && i.value.trim() !== svcItem) { const h = svSugList(i.value.trim()); if (i.value.trim() && h.length === 1) svSugPick(h[0].key); else i.value = svcItem; } } }, 150); });
+document.addEventListener('mousedown', e => { if (e.target.closest && e.target.closest('.svsug,.svarr')) e.preventDefault(); });
+document.addEventListener('click', e => { if (!e.target.closest) return; const s = e.target.closest('[data-svsug]'); if (s) { svSugPick(s.dataset.svsug); return; }
+  if (e.target.closest('.svarr')) { if (document.querySelector('.svsug')) svSugClose(); else { $('svc-item').focus(); svSugOpen(true); } } });
+document.addEventListener('keydown', e => { if (e.target.id !== 'svc-item') return; const d = document.querySelector('.svsug'), bs = d ? [...d.querySelectorAll('button')] : [];
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!d) { svSugOpen(true); return; } svSugSel = (svSugSel + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length; bs.forEach((b, i) => b.classList.toggle('on', i === svSugSel)); if (bs[svSugSel]) bs[svSugSel].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key === 'Enter') { e.preventDefault(); if (bs[svSugSel]) svSugPick(bs[svSugSel].dataset.svsug); } else if (e.key === 'Escape') svSugClose(); });
 // 엑셀 주문정리 시트에 서비스 줄 넣기 (그 주문의 마지막 줄 바로 아래, 같은 받는 분 · 주소로)
 function svcApplyRows(full) {
   svcCheckBatch(); if (!svcIn.size) return full;
