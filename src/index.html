@@ -1709,6 +1709,12 @@ html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e
 #hcal .sdots{display:flex;gap:3px;justify-content:center;height:6px;margin-top:1px}#hcal .sdots i{width:6px;height:6px;border-radius:50%}#hcal .sdots .di{background:#4c8a5b}#hcal .sdots .do{background:#e7859c}#hcal .hd.on .sdots .di{background:#d9f2cf}#hcal .hd.on .sdots .do{background:#ffd3de}
 .hdrow{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start;margin:16px 0}.hdrow > .card{margin:0;min-width:0}.hdrow .stkhistrow{display:block}
 @media(max-width:860px){.hdrow{grid-template-columns:minmax(0,1fr)}}
+#v-stock .ret-past{display:none}.ret-moved{font-size:12.5px;color:var(--mute);margin:10px 0 0}.linkbtn{border:0;background:none;padding:0;font:inherit;color:var(--acc);text-decoration:underline;cursor:pointer}
+.sd-sblk li em{font-style:normal;font-size:11.5px;font-weight:700;border-radius:6px;padding:1px 6px;margin-right:2px}.sd-sblk li em.rt-in{background:#e8f3ec;color:#2f7d55}.sd-sblk li em.rt-ret{background:#fdf2f3;color:#b0384c}.sd-sblk li em.rt-wst{background:#f1ede6;color:#7a5a2e}
+html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html.dark .sd-sblk li em.rt-ret{background:rgba(176,56,76,.2);color:#f0a0ae}html.dark .sd-sblk li em.rt-wst{background:rgba(160,120,60,.22);color:#e3c28f}
+.sd-sent{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.sd-sent h4{margin:0 0 8px;font-size:14px}.sd-sblk{border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:8px}
+.sd-sh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.sd-sh span{font-size:12px;color:var(--mute)}.sd-sblk ul{margin:6px 0;padding-left:18px;font-size:13.5px}.sd-sblk li small{color:var(--mute)}
+#hcal .sdots .dr{background:#d08a3a}#hcal .hd.on .sdots .dr{background:#ffe0b8}
 .lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
@@ -2677,7 +2683,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
       <div class="ret-list" id="ret-body"></div>
       <div class="ret-foot"><label class="ret-ded"><input type="checkbox" id="ret-deduct" checked> 완료할 때 재고에도 반영 (입고 ＋ · 반송 −)</label><span class="sp"></span><button class="btn pri" type="button" id="ret-send" disabled>처리 완료</button></div>
       <p class="msg" id="ret-msg"></p>
-      <div class="ret-past"><h3>지난 입고 · 반송</h3><div id="ret-hist"></div></div>
+      <div class="ret-past"><h3>지난 입고 · 반송</h3><div id="ret-hist"></div></div><p class="ret-moved">지난 기록은 <button type="button" class="linkbtn iczno" data-go2hist="1">기록 · 통계 → 날짜별 기록</button>에서 날짜를 누르면 봐요</p>
     </div>
     <div class="card stkret stkwst" data-sub="cur" id="stkwstcard">
       <div class="hh"><h2>폐기</h2><span class="msg" id="wst-sum"></span><span class="sp"></span><button class="btn sm" type="button" id="wst-copy">목록 복사</button></div>
@@ -2691,7 +2697,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
       <div class="ret-list" id="wst-body"></div>
       <div class="ret-foot"><label class="ret-ded"><input type="checkbox" id="wst-deduct" checked> 완료할 때 재고에서 빼기</label><span class="sp"></span><button class="btn pri" type="button" id="wst-send" disabled>폐기 완료</button></div>
       <p class="msg" id="wst-msg"></p>
-      <div class="ret-past"><h3>지난 폐기</h3><div id="wst-hist"></div></div>
+      <div class="ret-past"><h3>지난 폐기</h3><div id="wst-hist"></div></div><p class="ret-moved">지난 기록은 <button type="button" class="linkbtn iczno" data-go2hist="1">기록 · 통계 → 날짜별 기록</button>에서 날짜를 누르면 봐요</p>
     </div>
   </section>
 
@@ -5446,12 +5452,12 @@ function renderHistCal() {
   g += WDK.map((w, i) => `<div class="wd ${i === 0 ? 'sun' : i === 6 ? 'sat' : ''}">${w}</div>`).join('');
   for (let i = 0; i < first.getDay(); i++) g += '<div></div>';
   const counts = []; for (let d = 1; d <= n; d++) counts.push(dayOrders(isoDate(new Date(y, m, d))));
-  const mx = Math.max(1, ...counts); let sdm = null; try { sdm = stkDayMap(stkCompute().items); } catch (e) {}
+  const mx = Math.max(1, ...counts); let sdm = null; try { sdm = stkDayMap(stkCompute().items); } catch (e) {} const sent = stkSentDays();
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, m, d), iso = isoDate(dt), c = counts[d - 1], sr = sdm && sdm.get(iso);
     const sIn = sr && [...sr.values()].some(v => v.in || v.set !== null), sOut = sr && [...sr.values()].some(v => v.out);
     const lvl = c ? Math.min(4, Math.ceil(c / mx * 4)) : 0;
-    g += `<button class="hd ${c ? 'has l' + lvl : ''} ${iso === histSel ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-hday="${iso}"><span class="n">${d}</span><span class="c">${c ? c + '건' : ''}</span>${sIn || sOut ? `<span class="sdots">${sIn ? '<i class="di" title="재고 들어옴"></i>' : ''}${sOut ? '<i class="do" title="재고 직접 뺌"></i>' : ''}</span>` : ''}</button>`;
+    g += `<button class="hd ${c ? 'has l' + lvl : ''} ${iso === histSel ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-hday="${iso}"><span class="n">${d}</span><span class="c">${c ? c + '건' : ''}</span>${sIn || sOut || sent.has(iso) ? `<span class="sdots">${sIn ? '<i class="di" title="재고 들어옴"></i>' : ''}${sOut ? '<i class="do" title="재고 직접 뺌"></i>' : ''}${sent.has(iso) ? '<i class="dr" title="입고 · 반송 · 폐기 처리"></i>' : ''}</span>` : ''}</button>`;
   }
   const mt = counts.reduce((a, b) => a + b, 0), md = counts.filter(Boolean).length;
   $('hcal').innerHTML = g + `</div><p class="msg hmsum">${m + 1}월 기록 ${md}일 · 주문 ${mt}건</p>`;
@@ -7041,6 +7047,17 @@ function stkDayMap(items) {
   });
   return m;
 }
+// 날짜별 기록 → 재고 변동 칸: 그날 처리 완료한 입고 · 반송 · 폐기 기록 (예전엔 재고 화면의 '지난 입고 · 반송' · '지난 폐기'에 있던 것)
+function stkSentHtml(day) {
+  let R = [], W = []; try { R = (retDoc().sent || []).filter(h => h.day === day); W = (wstDoc().sent || []).filter(h => h.day === day); } catch (e) {}
+  if (!R.length && !W.length) return '';
+  const tm = iso => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
+  const li = (r, ty) => `<li><em class="rt-${ty}">${ty === 'in' ? '입고' : ty === 'wst' ? '폐기' : '반송'}</em> ${esc(r.key)} <b>${esc(stkShow(r.unit, r.v))}</b>${r.why ? ' <small>' + esc(r.why) + '</small>' : ''}</li>`;
+  const blk = (h, kind) => `<div class="sd-sblk"><div class="sd-sh"><b>${kind === 'w' ? '폐기' : [h.items.some(r => retTy(r) === 'in') ? '입고' : '', h.items.some(r => retTy(r) === 'ret') ? '반송' : ''].filter(Boolean).join(' · ')} ${h.items.length}품목</b><span>${esc(tm(h.at))}${h.by ? ' · ' + esc(h.by) : ''}${h.deducted || h.applied ? ' · 재고에 반영' : ''}</span></div><ul>${h.items.map(r => li(r, kind === 'w' ? 'wst' : retTy(r))).join('')}</ul><div class="ret-hact"><button class="btn sm iczno" type="button" data-${kind === 'w' ? 'wst' : 'ret'}copyh="${esc(h.id)}">복사</button><button class="btn sm iczno" type="button" data-${kind === 'w' ? 'wst' : 'ret'}delh="${esc(h.id)}">기록 지우기</button></div></div>`;
+  return `<div class="sd-sent"><h4>입고 · 반송 · 폐기</h4>${R.map(h => blk(h, 'r')).join('')}${W.map(h => blk(h, 'w')).join('')}</div>`;
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-go2hist]')) subSet('stock', 'chg'); });
+function stkSentDays() { const S = new Set(); try { (retDoc().sent || []).forEach(h => S.add(h.day)); (wstDoc().sent || []).forEach(h => S.add(h.day)); } catch (e) {} return S; }
 function renderStkCal(items) {
   const el = $('stkcal'); if (!el) return; if (histSel) stkDay = histSel;
   const dm = stkDayMap(items), today = isoDate(new Date()), memos = stkMemos();
@@ -7059,10 +7076,10 @@ function renderStkCal(items) {
   const r = dm.get(stkDay);
   $('stkdayh').textContent = fmtDay(stkDay) + (stkDay === today ? ' · 오늘' : '');
   const memo = memos[stkDay], memoHtml = memo ? `<div class="sd-memo"><div class="sd-mh"><b>비고</b><button class="ibtn sm" data-memoedit="${stkDay}" title="메모 고치기" aria-label="메모 고치기">${IC.edit}</button></div><p>${esc(memo).replace(/\n/g, '<br>')}</p></div>` : `<div class="sd-memo empty"><span>메모 없음</span><button class="ibtn sm" data-memoedit="${stkDay}" title="메모 쓰기" aria-label="메모 쓰기">${IC.plus}</button></div>`;
-  if (!r) { $('stkday').innerHTML = memoHtml + '<p class="stkempty sm">이 날은 들어오거나 빠진 재고가 없어요</p>'; return; }
+  if (!r) { const sh = stkSentHtml(stkDay); $('stkday').innerHTML = memoHtml + sh + (sh ? '' : '<p class="stkempty sm">이 날은 들어오거나 빠진 재고가 없어요</p>'); return; }
   const rows = [...r.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko'));
   const sum = (f) => rows.reduce((a, [, v]) => a + (v[f] ? 1 : 0), 0);
-  $('stkday').innerHTML = memoHtml + `<div class="sd-sum"><span class="sd-in">들어옴 ${sum('in')}품목</span><span class="sd-out">빠짐 ${rows.filter(([, v]) => v.out || v.order).length}품목</span></div><table class="sd-tbl"><thead><tr><th>품목</th><th>들어옴</th><th>빠짐</th></tr></thead><tbody>` + rows.map(([k, v]) => {
+  $('stkday').innerHTML = memoHtml + stkSentHtml(stkDay) + `<div class="sd-sum"><span class="sd-in">들어옴 ${sum('in')}품목</span><span class="sd-out">빠짐 ${rows.filter(([, v]) => v.out || v.order).length}품목</span></div><table class="sd-tbl"><thead><tr><th>품목</th><th>들어옴</th><th>빠짐</th></tr></thead><tbody>` + rows.map(([k, v]) => {
     const inTxt = [v.in ? '+' + stkShow(v.unit, v.in) : '', v.set !== null ? '= ' + stkShow(v.unit, v.set) + ' 맞춤' : ''].filter(Boolean).join(' · ');
     const outBits = []; if (v.am) outBits.push('오전 ' + stkShow(v.unit, v.am)); if (v.pm) outBits.push('오후 ' + stkShow(v.unit, v.pm)); if (v.out) outBits.push('직접 ' + stkShow(v.unit, v.out));
     const outTot = v.order + v.out;
