@@ -1776,6 +1776,9 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
 .subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
+.fold-c{position:relative}@media(min-width:900px){.calcard.fold-c .cal{margin-right:48px}}.fold-c > .sh{padding-right:52px}.foldt{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mute);display:grid;place-items:center;cursor:pointer}
+.foldt svg{width:20px;height:20px;transition:transform .2s;transform:rotate(180deg)}.fold-c.folded .foldt svg{transform:none}.fold-c.folded .foldt{color:var(--acc);border-color:var(--acc)}
+.fold-c.folded > :not(.sh){display:none!important}.calcard.fold-c.folded{display:block}.fold-c.folded > .sh{margin-bottom:0;cursor:pointer}.fold-c.folded{padding-bottom:18px}
 .appicon{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.ai-h{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}.ai-h b{font-size:15px}
 .ai-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:460px}.ai-o{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
 .ai-o img{width:72px;height:72px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.12)}.ai-o.on{border-color:var(--acc);background:var(--acc2);font-weight:700}
@@ -2666,7 +2669,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-run" class="hidden" data-cur="order">
-    <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>송장 등록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="wx"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 2.5v1.4M9 14.1v1.4M2.5 9h1.4M14.1 9h1.4M4.4 4.4l1 1M12.6 12.6l1 1M4.4 13.6l1-1M12.6 5.4l1-1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.5 20h8a3 3 0 0 0 .4-6 4.5 4.5 0 0 0-8.6-.6A3.3 3.3 0 0 0 10.5 20z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>날씨</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ship"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 9h3.2l3.3 3.6V16H15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2" fill="currentColor"/></svg><span>배송</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ship"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 9h3.2l3.3 3.6V16H15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2" fill="currentColor"/></svg><span>배송</span><i class="sdot"></i></button></nav>
     <div class="card step upcard" data-sub="order">
       <div class="sh"><span class="num">1</span><div><h2>원본 엑셀 올리기</h2><p>Cafe24에서 내려받은 주문 파일 (.xlsx · .csv)</p></div></div>
       <div class="c24" id="c24">
@@ -2702,7 +2705,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     </div>
 
     <div id="out" class="hidden" data-sub="order">
-      <div class="card step">
+      <div class="card step fold-c" data-fold="out">
         <div class="sh"><span class="num">2</span><div><h2>결과 확인 · 내려받기</h2><p>확인이 필요한 줄을 먼저 보고 내려받으세요</p></div>
           <div class="row shact">
             <button class="btn" id="rerun">규칙 다시 적용</button>
@@ -2721,10 +2724,10 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         <div class="tblwrap"><table id="tbl"></table></div>
       </div>
     </div>
-    <div class="card step ph4" data-sub="order">
+    <div class="card step ph4 fold-c" data-sub="order" data-fold="out">
       <div class="sh"><span class="num">2</span><div><h2>결과 확인 · 내려받기</h2><p>1번에서 원본을 올리면 여기에 결과가 나와요</p></div></div>
     </div>
-    <div class="card step ktc" data-sub="order" id="ktcard">
+    <div class="card step ktc fold-c" data-sub="order" id="ktcard" data-fold="kt">
       <div class="sh"><span class="num">3</span><div><h2>카톡 주문 넣기</h2><p>배송일을 정해 저장하면 그날 엑셀 주문정리에 자동으로 들어가요 · 집계에는 안 들어가요</p></div></div>
       <div class="ktbiz"><label class="ktl">업체<select id="ktbiz"></select></label>
         <button class="ibtn" id="ktbizadd" type="button" title="업체 등록" aria-label="업체 등록"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -2755,14 +2758,14 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <datalist id="ktnames"></datalist><datalist id="ktops"></datalist>
     </div>
 
-    <div class="card step calcard" data-sub="wx">
-        <div class="sh"><span class="num">3</span><div><h2>배송일 고르기</h2><p>이 날의 예보로 포장 방법을 정해요</p></div></div>
+    <div class="card step calcard fold-c" data-sub="order" id="wxcal" data-fold="wxcal">
+        <div class="sh"><span class="num">4</span><div><h2>배송일 고르기</h2><p>이 날의 예보로 포장 방법을 정해요</p></div></div>
         <div class="wsel" id="wsel"></div>
         <div class="cal" id="wcal"></div>
     </div>
 
-    <div class="card step" data-sub="wx">
-      <div class="sh"><span class="num">4</span><div><h2>지역별 기온 · 포장 확인</h2><p>지역을 누르면 기온을 직접 고칠 수 있어요</p></div>
+    <div class="card step fold-c" data-sub="order" id="wxcard" data-fold="wxcard">
+      <div class="sh"><span class="num">5</span><div><h2>지역별 기온 · 포장 확인</h2><p>지역을 누르면 기온을 직접 고칠 수 있어요</p></div>
         <div class="row shact"><span class="msg" id="wmsg"></span><button class="ibtn" id="wrefresh" title="날씨 새로고침" aria-label="날씨 새로고침"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5A8 8 0 1 0 17.6 17"/><path d="M20 5v6.5h-6.5"/></svg></button><button class="ibtn ibtn-acc" id="wsave" title="고친 기온 저장" aria-label="고친 기온 저장"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Z"/><path d="M8.5 4v5h6V4M8.5 20v-6h7v6"/></svg></button></div>
       </div>
       <div class="wmaprow" id="wgrid">
@@ -2780,8 +2783,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <div class="ship-top" data-sub="ship"><div class="hmi ship-cal" data-s="L" id="ship-cal"></div><div class="ship-side"><div class="hmi" data-s="M" id="ship-next"></div><div class="hmi ship-hol" data-s="M" id="ship-hol"></div></div></div>
     <div class="ship-nwrap" data-sub="ship"><div class="ship-acts"><button class="btn ship-nbtn" type="button" id="ship-cbtn">⏰ 마감 · 휴무 설정</button><button class="btn ship-nbtn" type="button" id="ship-nbtn" aria-expanded="false">📢 공지 설정 <i>▾</i></button></div>
       <div class="card ship-nbox hidden" id="ship-nbox"><div class="ship-nsel" id="ship-nsel"></div><div id="ship-nhost"></div></div></div>
-    <div class="card step invcard" data-sub="inv">
-      <div class="sh"><span class="num">5</span><div><h2>송장번호 등록 파일 만들기</h2><p>택배사에서 받은 송장 엑셀을 올리면 카페24 엑셀 일괄배송에 바로 올릴 파일로 바꿔요</p></div></div>
+    <div class="card step invcard" data-sub="order" id="invcard">
+      <div class="sh"><span class="num">6</span><div><h2>송장번호 등록 파일 만들기</h2><p>택배사에서 받은 송장 엑셀을 올리면 카페24 엑셀 일괄배송에 바로 올릴 파일로 바꿔요</p></div></div>
       <div class="drop invdrop" id="invdrop">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
         <b>택배사 송장 파일을 여기에 끌어다 놓기</b>
@@ -4962,6 +4965,7 @@ instShow();
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
 function subSet(tab, key, noScroll) {
   const sec = $('v-' + tab); if (!sec) return;
+  if (tab === 'run' && (key === 'wx' || key === 'inv')) { const tgt = key === 'wx' ? 'wxcard' : 'invcard'; key = 'order'; setTimeout(() => { const c = $(tgt); if (!c) return; if (c.classList.contains('folded')) foldSet(c, false); if (!noScroll || true) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); }
   sec.dataset.cur = key; try { sessionStorage.setItem('herb5_sub_' + tab, key); } catch (e) {}
   sec.querySelectorAll('[data-subgo]').forEach(b => { const on = b.dataset.subgo === key; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   if (!noScroll) { const t = sec.querySelector('.subtabs'); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView({ block: 'start' }); }
@@ -4969,7 +4973,7 @@ function subSet(tab, key, noScroll) {
 document.addEventListener('click', e => { const b = e.target.closest('[data-subgo]'); if (!b) return; subSet(b.closest('.subtabs').dataset.subfor, b.dataset.subgo); });
 ['run', 'hist', 'stock', 'rules'].forEach(t => { let k = null; try { k = sessionStorage.getItem('herb5_sub_' + t); } catch (e) {} if (k && !$('v-' + t).querySelector('[data-subgo="' + k + '"]')) k = null; subSet(t, k || $('v-' + t).dataset.cur, true); });
 // 배송일 · 날씨에 확인할 게 있으면 작은 점으로 알려줘요
-(() => { const w = $('wneed'), dot = () => { const b = document.querySelector('[data-subgo="wx"]'); if (b && w) b.classList.toggle('alert', !w.classList.contains('hidden')); };
+(() => { const w = $('wneed'), dot = () => { const b = document.querySelector('[data-subfor="run"] [data-subgo="order"]'); if (b && w) b.classList.toggle('alert', !w.classList.contains('hidden')); };
   if (w) { try { new MutationObserver(dot).observe(w, { attributes: true, attributeFilter: ['class'] }); } catch (e) {} dot(); } })();
 // ---------- 홈 ----------
 let homeTimer = null;
@@ -6140,6 +6144,7 @@ function runProcess() {
   }
   $('warns').innerHTML = wh + noShipHtml();
   renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack(); try { ktRenderList(); ktLists(); ktAutoNote(); } catch (e) {}
+  try { if (srcAt && runProcess._at !== srcAt) { runProcess._at = srcAt; document.querySelectorAll('.fold-c[data-fold="out"]').forEach(c => foldSet(c, false, false)); } } catch (e) {}
 }
 // 배송 불가 지역 (날씨 기준에 '경고'가 있는 포장 방법) 따로 모아 보기
 function noShipRows() {
@@ -9294,6 +9299,18 @@ document.addEventListener('click', async e => {
   if (e.target.closest('#hmfb-link')) { try { const d = await c24Call('/fb/link'); $('hmfb-url').textContent = d.url; try { await navigator.clipboard.writeText(d.url); $('hmfb-url').textContent = d.url + ' (복사했어요)'; } catch (er) {} } catch (er) { $('hmfb-url').textContent = '주소를 받지 못했어요: ' + (er.message || er); } return; }
 });
 setTimeout(() => { hmfbLoad(); hmfbTick(); }, 2500);
+// ---------- 정리 탭: 칸 접기 · 펼치기 (원본 올리기 · 송장 등록은 늘 펼쳐 둬요) ----------
+const FOLD_KEY = 'herb5_fold';
+const foldGet = () => { try { return JSON.parse(localStorage.getItem(FOLD_KEY) || '{}'); } catch (e) { return {}; } };
+function foldSet(card, folded, save = true) {
+  card.classList.toggle('folded', folded); const b = card.querySelector(':scope > .sh .foldt, :scope > .sh > .foldt'); if (b) { b.setAttribute('aria-expanded', String(!folded)); b.title = folded ? '펼치기' : '접기'; b.setAttribute('aria-label', (folded ? '펼치기: ' : '접기: ') + (card.querySelector('h2') || {}).textContent); }
+  if (save && card.dataset.fold) { const m = foldGet(); m[card.dataset.fold] = folded ? 1 : 0; try { localStorage.setItem(FOLD_KEY, JSON.stringify(m)); } catch (e) {} document.querySelectorAll('.fold-c[data-fold="' + card.dataset.fold + '"]').forEach(c => { if (c !== card) foldSet(c, folded, false); }); }
+}
+(() => { const m = foldGet(); document.querySelectorAll('.fold-c').forEach(c => { const sh = c.querySelector(':scope > .sh'); if (!sh) return;
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'foldt iczno'; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'; sh.appendChild(b);
+  foldSet(c, m[c.dataset.fold] !== 0, false); }); })();
+document.addEventListener('click', e => { const b = e.target.closest('.foldt'); if (b) { const c = b.closest('.fold-c'); foldSet(c, !c.classList.contains('folded')); return; }
+  const h = e.target.closest('.fold-c.folded > .sh'); if (h && !e.target.closest('button,a,input,select,label,.shinfo')) foldSet(h.closest('.fold-c'), false); });
 // ---------- 카페24 전체 주문 엑셀로 받기 (한 달씩 받아서 한 파일로) ----------
 let c24xStop = false, c24xBusy = false;
 $('c24x-to').value = ymOf(new Date());
