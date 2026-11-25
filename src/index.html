@@ -1704,7 +1704,12 @@ html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e
 .hw-wxbig{display:flex;flex-direction:column}.hw-wxrow{flex:1;min-height:0;display:flex;gap:12px}.hw-wxrow .hw-mapbox{flex:0 0 auto;max-width:48%}.hw-wxrow .hm-list{flex:1;min-width:0;overflow:auto;margin:0}.hw-wxrow .hw-wx li{flex-wrap:wrap;row-gap:4px}.hw-wxrow .hw-wx .nm{flex:1;min-width:0}.hw-wxrow .hw-chips{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}
 .mfold-c > .uf-h,.mfold-c > .ut-h{position:relative;padding-right:48px;cursor:pointer}.foldt.mini{top:50%;right:0;transform:translateY(-50%);width:34px;height:34px}.foldt.mini svg{width:18px;height:18px}
 .mfold-c.mfolded > :not(.uf-h):not(.ut-h){display:none!important}.mfold-c.mfolded .foldt.mini svg{transform:none}.mfold-c.mfolded .foldt.mini{color:var(--acc);border-color:var(--acc)}.ut-h b small{font-weight:400;color:var(--mute);margin-left:4px}
-.subtabs[data-subfor=stock]{display:none!important}.lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
+.subtabs[data-subfor=stock]{display:none!important}.histrow.hcalfull{display:block}.hcalfull #hcal .hd{position:relative}
+@media(min-width:900px){.hcalfull #hcal .hd{min-height:64px}.hcalfull #hcal .hd .n{font-size:15px}}
+#hcal .sdots{display:flex;gap:3px;justify-content:center;height:6px;margin-top:1px}#hcal .sdots i{width:6px;height:6px;border-radius:50%}#hcal .sdots .di{background:#4c8a5b}#hcal .sdots .do{background:#e7859c}#hcal .hd.on .sdots .di{background:#d9f2cf}#hcal .hd.on .sdots .do{background:#ffd3de}
+.hdrow{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start;margin:16px 0}.hdrow > .card{margin:0;min-width:0}.hdrow .stkhistrow{display:block}
+@media(max-width:860px){.hdrow{grid-template-columns:minmax(0,1fr)}}
+.lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
 .lay-r.off .lay-n{color:var(--mute);text-decoration:line-through}.lay-r .ibtn:disabled{opacity:.3}.lay-r .ibtn.on{color:var(--acc)}
@@ -2742,7 +2747,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
   <section id="v-hist" class="hidden" data-cur="report">
     <nav class="subtabs" data-subfor="hist" role="tablist"><button type="button" role="tab" data-subgo="report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 16v-3M12 16v-6M15.5 16v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>월간 보고서</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="days"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>날짜별 기록</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="mall"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5 5.5 4h13L20 9.5M4 9.5h16M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0M5.5 12v8h13v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span>쇼핑몰 비교</span><i class="sdot"></i></button></nav>
     <div class="card mrep" id="mrep" data-sub="report"></div>
-    <div class="histrow" data-sub="days">
+    <div class="histrow hcalfull" data-sub="days">
       <div class="card">
         <div class="hh"><h2>날짜별 기록</h2><span class="msg" id="histmsg"></span></div>
         <p class="help">올린 원본은 <b>주문이 들어온 날짜</b>별로 자동 저장돼요(집계 보기는 정리한 날 기준). 날짜를 누르면 그날 주문이 나와요. 숫자는 그날 주문 수예요.</p>
@@ -2755,13 +2760,15 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
         </div>
         <p class="msg" id="hbakmsg"></p>
       </div>
-      <div class="card" id="hday"></div>
     </div>
-    <div class="card stkhist" data-sub="days" id="stkhistcard">
-      <div class="hh"><h2>날짜별 재고 변동</h2></div>
-      <div class="stkhistrow">
-        <div class="hcal" id="stkcal"></div>
-        <div class="stkdaybox"><div class="sdh"><h3 id="stkdayh"></h3><span id="stkdayshare"></span></div><div id="stkday"></div></div>
+    <div class="hdrow" data-sub="days" id="hdrow">
+      <div class="card" id="hday"></div>
+      <div class="card stkhist" id="stkhistcard">
+        <div class="hh"><h2>재고 변동</h2></div>
+        <div class="stkhistrow">
+          <div class="hcal hidden" id="stkcal"></div>
+          <div class="stkdaybox"><div class="sdh"><h3 id="stkdayh"></h3><span id="stkdayshare"></span></div><div id="stkday"></div></div>
+        </div>
       </div>
     </div>
     <div class="card" id="hstat" data-sub="days"></div>
@@ -5439,11 +5446,12 @@ function renderHistCal() {
   g += WDK.map((w, i) => `<div class="wd ${i === 0 ? 'sun' : i === 6 ? 'sat' : ''}">${w}</div>`).join('');
   for (let i = 0; i < first.getDay(); i++) g += '<div></div>';
   const counts = []; for (let d = 1; d <= n; d++) counts.push(dayOrders(isoDate(new Date(y, m, d))));
-  const mx = Math.max(1, ...counts);
+  const mx = Math.max(1, ...counts); let sdm = null; try { sdm = stkDayMap(stkCompute().items); } catch (e) {}
   for (let d = 1; d <= n; d++) {
-    const dt = new Date(y, m, d), iso = isoDate(dt), c = counts[d - 1];
+    const dt = new Date(y, m, d), iso = isoDate(dt), c = counts[d - 1], sr = sdm && sdm.get(iso);
+    const sIn = sr && [...sr.values()].some(v => v.in || v.set !== null), sOut = sr && [...sr.values()].some(v => v.out);
     const lvl = c ? Math.min(4, Math.ceil(c / mx * 4)) : 0;
-    g += `<button class="hd ${c ? 'has l' + lvl : ''} ${iso === histSel ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-hday="${iso}" ${c ? '' : 'disabled'}><span class="n">${d}</span><span class="c">${c ? c + '건' : ''}</span></button>`;
+    g += `<button class="hd ${c ? 'has l' + lvl : ''} ${iso === histSel ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-hday="${iso}"><span class="n">${d}</span><span class="c">${c ? c + '건' : ''}</span>${sIn || sOut ? `<span class="sdots">${sIn ? '<i class="di" title="재고 들어옴"></i>' : ''}${sOut ? '<i class="do" title="재고 직접 뺌"></i>' : ''}</span>` : ''}</button>`;
   }
   const mt = counts.reduce((a, b) => a + b, 0), md = counts.filter(Boolean).length;
   $('hcal').innerHTML = g + `</div><p class="msg hmsum">${m + 1}월 기록 ${md}일 · 주문 ${mt}건</p>`;
@@ -5501,7 +5509,7 @@ document.addEventListener('click', async e => {
   const t = e.target.closest('[data-hnav],[data-hday],[data-smode],[data-snav],#hdel');
   if (!t) return;
   if (t.dataset.hnav) { histMonth = new Date(histMonth.getFullYear(), histMonth.getMonth() + Number(t.dataset.hnav), 1); renderHistCal(); return; }
-  if (t.dataset.hday) { histSel = t.dataset.hday; statAnchor = histSel; renderHist(); return; }
+  if (t.dataset.hday) { histSel = t.dataset.hday; statAnchor = histSel; renderHist(); try { stkDay = histSel; renderStkCal(stkCompute().items); } catch (er) {} return; }
   if (t.dataset.smode) { statMode = t.dataset.smode; renderHistStat(); return; }
   if (t.dataset.snav) { statAnchor = shiftAnchor(statMode, statAnchor, Number(t.dataset.snav)); renderHistStat(); return; }
   if (t.id === 'hdel') {
@@ -7034,7 +7042,7 @@ function stkDayMap(items) {
   return m;
 }
 function renderStkCal(items) {
-  const el = $('stkcal'); if (!el) return;
+  const el = $('stkcal'); if (!el) return; if (histSel) stkDay = histSel;
   const dm = stkDayMap(items), today = isoDate(new Date()), memos = stkMemos();
   if (!stkDay) stkDay = today;
   if (!stkCalMonth) { const d = dOf(stkDay); stkCalMonth = new Date(d.getFullYear(), d.getMonth(), 1); }
@@ -8655,7 +8663,7 @@ const LAY = {
   run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
   sum: { n: '집계 보기', sec: 'v-sum', items: [['body', '집계 품목', '#sumbody'], ['top', '달력 · 올린 파일', '.sumtop']] },
   stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard']] },
-  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록', '.histrow'], ['stkchg', '날짜별 재고 변동', '#stkhistcard'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
+  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
 };
 const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
 function layApply() {
