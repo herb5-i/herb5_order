@@ -26,6 +26,7 @@ export default {
       if (url.pathname === '/bytrack') return json(await byTrack(env, url.searchParams), cors);
       if (url.pathname === '/fb' && req.method === 'POST') return json(await fbAdd(env, await req.json(), who), cors);
       if (url.pathname === '/fb') return json(await fbList(env), cors);
+      if (url.pathname === '/fb/del' && req.method === 'POST') return json(await fbDel(env, await req.json(), who), cors);   // 개선 메모 지우기: 쓴 사람 또는 관리자
       if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
@@ -189,6 +190,11 @@ async function fbAdd(env, body, who) {
   await env.TOKENS.put('fb', JSON.stringify(L.slice(-500))); return { ok: true, no, list: L.slice(-500) };
 }
 async function fbList(env) { return { list: await fbGet(env) }; }
+async function fbDel(env, body, who) {
+  const L = await fbGet(env), i = L.findIndex(v => v.id === (body && body.id)); if (i < 0) throw fail(404, 'none', '메모를 찾지 못했어요');
+  if (who.role !== 'admin' && L[i].by !== who.email.split('@')[0]) throw fail(403, 'own', '내가 쓴 메모만 지울 수 있어요');
+  L.splice(i, 1); await env.TOKENS.put('fb', JSON.stringify(L)); return { ok: true, list: L };
+}
 async function fbSt(env, body) {
   const L = await fbGet(env), x = L.find(v => v.id === (body && body.id)); if (!x) throw fail(404, 'none', '메모를 찾지 못했어요');
   if (!FB_ST[body.st]) throw fail(400, 'st', '상태가 맞지 않아요'); x.st = body.st; x.stAt = new Date().toISOString();
