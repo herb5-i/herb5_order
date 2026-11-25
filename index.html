@@ -16,6 +16,10 @@
 // 카페24 연결(동의 화면)에서 돌아온 주소는 허브아이로 그대로 넘겨요
 (function () { var q = location.search; if (/[?&]code=/.test(q) && /[?&]state=/.test(q)) location.replace('shop/' + q + location.hash); })();
 </script>
+<script>
+// 다크 모드: 허브아이와 같은 설정(herb5_theme: auto · dark · light)을 써요
+(function () { var m = 'auto'; try { m = localStorage.getItem('herb5_theme') || 'auto'; } catch (e) {} var d = m === 'dark' || (m !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.classList.toggle('dark', d); })();
+</script>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -50,12 +54,14 @@ main{width:100%;max-width:880px;display:flex;flex-direction:column;align-items:c
   .farm .lg img{width:230px;height:74px}
   .nm{font-size:18px}.ds{font-size:13.5px}
 }
-@media(prefers-color-scheme:dark){
-  body{background:#141a16;color:#eef2ec}
-  .hd p,.ft{color:#9aa596}
-  .hi{background:#1f2821;border-color:rgba(255,255,255,.06)}.hi .nm{color:#eef2ec}.hi .ds{color:#a9b3a5}
-  .farm{background:#1c2430;border-color:rgba(255,255,255,.06)}.farm .nm{color:#e8eef6}.farm .ds{color:#a7b2c0}
-}
+/* 다크 모드: html.dark (허브아이와 같은 설정값 herb5_theme을 써요) */
+html.dark body{background:#141a16;color:#eef2ec}
+html.dark .hd p,html.dark .ft{color:#9aa596}
+html.dark .hi{background:#1f2821;border-color:rgba(255,255,255,.06)}html.dark .hi .nm{color:#eef2ec}html.dark .hi .ds{color:#a9b3a5}
+html.dark .farm{background:#1c2430;border-color:rgba(255,255,255,.06)}html.dark .farm .nm{color:#e8eef6}html.dark .farm .ds{color:#a7b2c0}
+.thm{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));width:48px;height:48px;border-radius:50%;border:1px solid #e4e0d4;background:#fffdf8;color:#3b4a3a;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px -10px rgba(40,60,30,.45)}
+.thm svg{width:22px;height:22px}.thm:focus-visible{outline:3px solid #2e7d4f;outline-offset:3px}
+html.dark .thm{background:#1f2821;border-color:rgba(255,255,255,.1);color:#eef2ec}
 </style>
 </head>
 <body>
@@ -67,20 +73,27 @@ main{width:100%;max-width:880px;display:flex;flex-direction:column;align-items:c
   </div>
   <div class="cards">
     <a class="card hi" href="shop/" aria-label="허브아이 주문 관리로 들어가기">
-      <span class="lg"><picture><source srcset="logo-hi-dark.png" media="(prefers-color-scheme: dark)"><img src="logo-hi.png" alt="허브아이 로고"></picture></span>
+      <span class="lg"><img src="logo-hi.png" data-l="logo-hi.png" data-d="logo-hi-dark.png" alt="허브아이 로고"></span>
       <span class="nm">허브아이</span>
       <span class="ds">쇼핑몰 주문 · 재고 · 고객 관리</span>
     </a>
     <a class="card farm" href="farm/" aria-label="허브다섯메 농장 관리로 들어가기">
-      <span class="lg"><picture><source srcset="farm/logo-dark.png" media="(prefers-color-scheme: dark)"><img src="farm/logo.gif" alt="허브다섯메 로고"></picture></span>
+      <span class="lg"><img src="farm/logo.gif" data-l="farm/logo.gif" data-d="farm/logo-dark.png" alt="허브다섯메 로고"></span>
       <span class="nm">허브다섯메</span>
       <span class="ds">농장 재배 · 병해충 · 작업 관리</span>
     </a>
   </div>
   <p class="ft">허브아이 · since 1983</p>
 </main>
+<button type="button" class="thm" id="thm" aria-label="다크 모드로 바꾸기" title="다크 모드로 바꾸기"></button>
 <script>
 (function () { var d = new Date(); document.getElementById('today').textContent = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일'; })();
+function thmApply() { var d = document.documentElement.classList.contains('dark'), b = document.getElementById('thm');
+  document.querySelectorAll('img[data-d]').forEach(function (im) { im.src = d ? im.dataset.d : im.dataset.l; });
+  b.innerHTML = d ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/></svg>';
+  var t = d ? '밝은 화면으로 바꾸기' : '다크 모드로 바꾸기'; b.title = t; b.setAttribute('aria-label', t); }
+document.getElementById('thm').onclick = function () { var d = !document.documentElement.classList.contains('dark'); document.documentElement.classList.toggle('dark', d); try { localStorage.setItem('herb5_theme', d ? 'dark' : 'light'); } catch (e) {} thmApply(); };
+thmApply();
 if ('serviceWorker' in navigator && location.protocol === 'https:') { try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {} }
 </script>
 </body>
