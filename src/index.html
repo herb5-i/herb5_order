@@ -1688,6 +1688,11 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hmb-tip{font-size:12.5px;color:var(--mute);min-width:0}
 .hmb-btns{display:flex;gap:6px;flex-wrap:wrap}
 .hmbar .btn.danger{background:#fbe5e9;color:#b44a64}
+.hm-noti{position:relative;white-space:nowrap}.hm-noti svg{flex:none;width:18px;height:18px}.hm-noti span{white-space:nowrap}.hm-noti .ntc{min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 12px/20px var(--body);text-align:center}.hm-noti .ntc.hidden{display:none}
+.tabs .tab{position:relative}.tbadge{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 10.5px/17px var(--body);text-align:center;pointer-events:none;z-index:2}
+.hmnt{margin-bottom:18px}.hmnt.hidden{display:none}.hmnt-it{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:var(--ink);background:none;border:0;border-top:1px solid var(--line);padding:11px 2px;cursor:pointer}.hmnt-it:first-of-type{border-top:0}
+.hmnt-it i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--acc)}.hmnt-it.bad i{background:#d9483b}.hmnt-it.warn i{background:#e0a03a}.hmnt-it span{flex:1;min-width:0;overflow-wrap:anywhere}.hmnt-it small{display:block;color:var(--mute);font-size:12.5px}.hmnt-it em{font-style:normal;color:var(--mute);flex:none}
+.hmnt-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--mute)}
 .hmfb{margin-bottom:24px}.hmfb .hm-lb small{display:block;font-weight:400;font-size:12.5px;margin-top:2px}.hmfb-pin{color:var(--acc);flex:none}.hmfb-pin svg{width:18px;height:18px;display:block}
 .hmfb-f textarea{width:100%;box-sizing:border-box;border-radius:14px;border:1px solid var(--line);padding:10px 12px;font:inherit;font-size:15px;color:var(--ink);background:var(--card);resize:vertical;min-height:64px}
 .hmfb-b{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.hmfb-mic{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--acc);display:grid;place-items:center;cursor:pointer;flex:none}.hmfb-mic svg{width:22px;height:22px}
@@ -2418,11 +2423,13 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
     <div class="ph-cta" id="phcta">
       <button class="hm-ghost hm-share hidden" id="ph-share" type="button" data-share="today" data-sharevia="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>오늘 요약 보내기</button>
       <button class="hm-ghost hm-bakcta hidden" type="button" id="hm-bakgo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bk-t">지금 백업</span><small class="bk-s"></small></button>
+      <button class="hm-ghost hm-noti" type="button" id="hm-notib" aria-expanded="false" title="알림 보기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>알림</span><b class="ntc hidden" id="hm-notic">0</b></button>
       <button class="hm-ghost hm-inst hidden" type="button" id="hm-inst" title="바탕화면 · 홈 화면에 앱처럼 설치해요"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 20h8M12 16v4M12 7v5m0 0-2.5-2.5M12 12l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>앱으로 설치</span></button>
     </div>
   </div>
 
   <section id="v-home">
+    <div class="hm-w hmnt hidden" id="hm-nt"></div>
     <div class="hm-w hm-bak hidden" id="hm-bak"></div>
     <div class="hm-w hmfb" id="hmfb">
       <div class="hm-wt"><span class="hm-lb">개선 메모 <small>불편한 점 · 고칠 점 · 바라는 기능을 적어 주세요. 모두 같이 봐요</small></span><span class="hmfb-pin" title="홈에 고정된 칸이에요"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span></div>
@@ -4395,6 +4402,7 @@ function renderHome() {
   const ym = today.slice(0, 7); let mrev = 0; rev.forEach((v, d) => { if (d.startsWith(ym)) mrev += v; });
   (($('hm-s-hist')||{}).textContent) = mrev ? (now.getMonth() + 1) + '월 ' + won(mrev) : '이번 달 기록 없음';
   try { if (!hmfbL && hmfbOk()) hmfbLoad(); else if (!hmfbL) hmfbRender(); } catch (e) {}
+  try { ntRender(); } catch (e) {}
   // 위젯 새로 그리기 (글을 쓰는 중인 위젯은 건드리지 않아요)
   (hmL ? hmL.items : []).forEach(x => { if (x.t !== 'w' || x.w === 'memo') return; const el = document.querySelector('#hmg .hmi[data-id="' + CSS.escape(x.id) + '"]'); if (!el) return;
     const a = document.activeElement; if (a && el.contains(a) && /INPUT|TEXTAREA/.test(a.tagName)) return; const h = hmWidget(x); if (el._h === h) return; const w = el.querySelector('.hm-w'); if (w) { w.outerHTML = h; el._h = h; } });
@@ -8502,6 +8510,49 @@ function buildXlsx() {
   });
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
+// ---------- 알림: 앱 아이콘 숫자(설치한 앱) · 홈 메뉴 숫자 · 홈 알림 목록 ----------
+// 사이트(앱)가 열려 있을 때 1분마다 다시 세요. 앱을 완전히 닫으면 숫자가 그때 값으로 멈춰 있어요.
+const NT_NEWS = [   // 중요한 업데이트 소식: 새로 넣으면 아직 안 본 사람에게 1로 떠요
+  { v: '2026-11-24a', t: '카톡 주문 넣기가 생겼어요', d: '정리 → 주문 정리 ③ · 배송일에 엑셀에 자동으로 들어가요', go: 'run' },
+  { v: '2026-11-24b', t: '택배 사고에 카페24 주문 정보가 같이 나와요', d: '이슈 관리 → 택배 사고 · 저장 이미지에도 들어가요', go: 'issue' },
+  { v: '2026-11-25a', t: '홈에 개선 메모 칸이 생겼어요', d: '불편한 점을 적거나 마이크로 말해서 남겨 주세요', go: 'home' },
+];
+const NT_SEEN = 'h5_nt_seen';
+const ntSeen = () => { try { return JSON.parse(localStorage.getItem(NT_SEEN) || '[]'); } catch (e) { return []; } };
+let ntOpen = false, ntLast = [];
+function ntItems() {
+  const L = [], now = new Date(), today = isoDate(now), seen = ntSeen();
+  NT_NEWS.filter(n => !seen.includes(n.v)).forEach(n => L.push({ k: 'news', n: 1, cls: '', t: '새 소식 · ' + n.t, d: n.d, go: n.go }));
+  try { const { out } = hwStk(); if (out.length) L.push({ k: 'out', n: out.length, cls: 'bad', t: '품절 ' + out.length + '품목', d: out.slice(0, 4).map(x => x.key).join(', ') + (out.length > 4 ? ' 외' : ''), go: 'stock' }); } catch (e) {}
+  try { const c = c24Cfg(), cut = c24PmCut(c, today), U = upl[today] || {};
+    if (cut && hcShip(today) && !U.pm) { const [h, m] = String(cut).split(':').map(Number), ct = new Date(now); ct.setHours(h, m || 0, 0, 0); const min = Math.round((ct - now) / 60e3);
+      if (min <= 60 && min > 0) L.push({ k: 'pm', n: 1, cls: 'warn', t: '오후 주문 마감 ' + cut + ' · ' + min + '분 남았어요', d: '마감 뒤에 오후 주문을 불러와 정리해 주세요', go: 'run' });
+      else if (min <= 0 && min > -240) L.push({ k: 'pm', n: 1, cls: 'warn', t: '오후 주문 받을 시간이에요 (마감 ' + cut + ')', d: '아직 오후 주문을 안 불러왔어요', go: 'run' }); } } catch (e) {}
+  try { const miss = (ktList || []).filter(o => o.st === 'saved' && o.day < today); if (miss.length) L.push({ k: 'kt', n: miss.length, cls: 'bad', t: '안 보낸 카톡 주문 ' + miss.length + '건', d: '배송일이 지났어요 · 정리 → 주문 정리 ③에서 확인', go: 'run' }); } catch (e) {}
+  try { if (document.body.classList.contains('is-admin') && hmfbL) { const nw = hmfbL.filter(x => x.st === 'new').length; if (nw) L.push({ k: 'fb', n: nw, cls: '', t: '새 개선 메모 ' + nw + '건', d: '확인하면 상태를 "확인함"으로 바꿔 주세요', go: 'home' }); } } catch (e) {}
+  return L;
+}
+function ntRender() {
+  const L = ntItems(), n = L.reduce((t, x) => t + x.n, 0); ntLast = L;
+  const c = $('hm-notic'); if (c) { c.textContent = n > 99 ? '99+' : n; c.classList.toggle('hidden', !n); }
+  const tab = document.querySelector('.tab[data-t="home"]'); if (tab) { let b = tab.querySelector('.tbadge'); if (n) { if (!b) { b = document.createElement('span'); b.className = 'tbadge'; tab.appendChild(b); } b.textContent = n > 99 ? '99+' : n; } else if (b) b.remove(); }
+  try { if (navigator.setAppBadge) { if (n) navigator.setAppBadge(n).catch(() => {}); else navigator.clearAppBadge().catch(() => {}); } } catch (e) {}
+  const box = $('hm-nt'); if (!box) return; box.classList.toggle('hidden', !ntOpen);
+  if (!ntOpen) return;
+  const canBadge = 'setAppBadge' in navigator, needPerm = canBadge && 'Notification' in window && Notification.permission === 'default';
+  box.innerHTML = `<div class="hm-wt"><span class="hm-lb">알림 ${n ? n + '개' : ''}</span></div>` + (L.length ? L.map((x, i) => `<button type="button" class="hmnt-it ${x.cls}" data-ntgo="${i}"><i></i><span>${esc(x.t)}<small>${esc(x.d || '')}</small></span><em>›</em></button>`).join('') : '<p class="hw-foot">새 알림이 없어요</p>') +
+    `<div class="hmnt-foot">${canBadge ? '설치한 앱 아이콘에도 같은 숫자가 떠요' + (needPerm ? ' <button class="btn sm" type="button" id="nt-perm">아이콘 숫자 켜기</button>' : '') : '앱으로 설치하면 앱 아이콘에도 숫자가 떠요 (지원하는 기기만)'}</div>`;
+}
+document.addEventListener('click', async e => {
+  if (e.target.closest('#hm-notib')) { ntOpen = !ntOpen; $('hm-notib').setAttribute('aria-expanded', String(ntOpen)); ntRender();
+    if (ntOpen) { try { localStorage.setItem(NT_SEEN, JSON.stringify(NT_NEWS.map(n => n.v).concat(ntSeen()).filter((v, i, a) => a.indexOf(v) === i))); } catch (er) {} } return; }
+  if (e.target.closest('#nt-perm')) { try { await Notification.requestPermission(); } catch (er) {} ntRender(); return; }
+  const g = e.target.closest('[data-ntgo]'); if (g) { const x = ntLast[+g.dataset.ntgo]; if (!x) return; ntOpen = false; ntRender();
+    if (x.go === 'home') { $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    const t = document.querySelector('.tab[data-t="' + x.go + '"]'); if (t) t.click(); if (x.go === 'run') subSet('run', 'order', true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+});
+setInterval(() => { try { ntRender(); } catch (e) {} }, 60000);
+setTimeout(() => { try { ntRender(); } catch (e) {} }, 3000);
 // ---------- 홈 개선 메모 (고정 칸 · 중계 서버에 모아 둬요 · 마이크로 말해서 적기) ----------
 let hmfbBusy = false, hmfbL = null, hmfbAll = false, hmfbT = null, hmfbRec = null, hmfbVoice = false;
 const hmfbOk = () => !!(c24Cfg().worker && window.h5Fb);
@@ -8514,7 +8565,7 @@ function hmfbRender() {
   box.innerHTML = !L.length ? '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : show.map(x => `<div class="hmfb-it"><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}<button type="button" class="hmfb-st ${x.st}" data-hmfbst="${esc(x.id)}" title="관리자가 누르면 상태가 바뀌어요">${ST[x.st] || x.st}</button></small></div>`).join('') +
     (L.length > 3 ? `<button type="button" class="hmfb-more" id="hmfb-more">${hmfbAll ? '줄이기' : '전체 ' + L.length + '건 보기'}</button>` : '');
 }
-async function hmfbLoad() { if (!hmfbOk()) { hmfbRender(); return; } if (hmfbBusy) return; hmfbBusy = true; try { const d = await c24Call('/fb'); hmfbL = d.list || []; } catch (e) { if (!hmfbL) { $('hmfb-list').innerHTML = '<p class="hw-foot warn">메모를 불러오지 못했어요: ' + esc(e.message || e) + '</p>'; return; } } finally { hmfbBusy = false; } hmfbRender(); }
+async function hmfbLoad() { if (!hmfbOk()) { hmfbRender(); return; } if (hmfbBusy) return; hmfbBusy = true; try { const d = await c24Call('/fb'); hmfbL = d.list || []; } catch (e) { if (!hmfbL) { $('hmfb-list').innerHTML = '<p class="hw-foot warn">메모를 불러오지 못했어요: ' + esc(e.message || e) + '</p>'; return; } } finally { hmfbBusy = false; } hmfbRender(); try { ntRender(); } catch (e) {} }
 function hmfbTick() { clearTimeout(hmfbT); hmfbT = setTimeout(() => { if (!document.hidden && $('v-home') && !$('v-home').classList.contains('hidden')) hmfbLoad(); hmfbTick(); }, 60000); }
 $('hmfb-f').addEventListener('submit', async e => { e.preventDefault(); const t = $('hmfb-t').value.trim(), m = $('hmfb-msg'); m.className = 'msg';
   if (!t) { m.className = 'msg err'; m.textContent = '메모를 적거나 마이크를 눌러 말해 주세요'; return; }
