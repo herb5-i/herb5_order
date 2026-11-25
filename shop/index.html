@@ -1821,6 +1821,8 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .svp-r{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:5px}.svp-r.on{border-color:var(--acc);background:var(--acc2)}
 .svp-r label{flex:1;min-width:0;display:flex;align-items:center;gap:10px;cursor:pointer}.svp-r input{width:18px;height:18px;flex:none;accent-color:var(--acc)}.svp-r b{font-size:14.5px;overflow-wrap:anywhere;min-width:0}.svp-r .linkbtn{flex:none;font-size:13px}
 .svp-why{flex-basis:100%;font-size:13px;color:var(--mute);padding-left:28px}.svp-why ul{margin:4px 0 0;padding-left:16px;color:var(--ink)}.svp-why p{margin:4px 0 0;white-space:pre-line}
+.svp-all{margin-bottom:8px;background:var(--bg)}.svp-all small{margin-left:auto;color:var(--mute);font-size:12.5px;flex:none}.svp-in{font-style:normal;font-size:11px;font-weight:700;color:var(--acc);background:var(--card);border:1px solid var(--acc);border-radius:99px;padding:1px 7px;flex:none}
+.svp-unm{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:#fff3df;margin-bottom:10px;font-size:13.5px}.svp-unm span{flex:1;min-width:0}.svp-unm .btn.danger{background:#c0392b;color:#fff;border-color:#c0392b}html.dark .svp-unm{background:rgba(208,138,58,.15)}
 .svp-done{position:sticky;bottom:0;padding:12px 0 4px;background:var(--card)}.svp-done .btn{width:100%}html.dark .svp-done{background:inherit}
 .svc-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}#tbl tr.svcr td{background:#fff3df}html.dark #tbl tr.svcr td{background:rgba(208,138,58,.15)}#tbl tr.svcr td.rn span{font-size:11px;color:#b86b00;font-weight:700}
 .svd-dl{margin:0;display:grid;gap:4px}.svd-dl dt{font-size:12.5px;color:var(--mute);margin-top:10px}.svd-dl dd{margin:0;font-size:14.5px;overflow-wrap:anywhere}.svd-dl ul{margin:0;padding-left:18px}.svd-note{white-space:pre-line}
@@ -6482,7 +6484,7 @@ function renderSheet() {
       return `<td class="${ch ? 'ch' : ''}${ed ? ' ed' : ''}"${col ? ` style="background:#${esc(col)}"` : ''}${edMode && oi >= 0 && !delDraft ? ` contenteditable="plaintext-only" spellcheck="false" data-ek="${esc(ek)}" data-orig="${esc(fmt(v))}"` : ''}>${esc(fmt(edDraft.has(ek) ? edDraft.get(ek) : v))}</td>`;
     }).join('') + '</tr>';
   }
-  if (curSheet === 0 && svcIn.size) { svcCheckBatch(); const H = aoa[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'); svcIn.forEach((v, o) => { const src = aoa.find((r, i) => i && String(r[oc] ?? '').trim() === o) || ktSheetRows(H).find(r => String(r[oc] ?? '').trim() === o); if (!src) return; v.texts.forEach(tx => { const c = src.slice(); c[pc] = tx; h += '<tr class="svcr"><td class="msg rn"><span>서비스</span></td>' + c.map(x => '<td>' + esc(fmt(x)) + '</td>').join('') + '</tr>';  })}); }
+  if (curSheet === 0 && svcIn.size) { svcCheckBatch(); const H = aoa[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'); svcIn.forEach((v, o) => { const src = aoa.find((r, i) => i && String(r[oc] ?? '').trim() === o) || ktSheetRows(H).find(r => String(r[oc] ?? '').trim() === o); if (!src) return; v.texts.forEach(tx => { const c = src.slice(); c[pc] = tx; H.forEach((hh, z) => { if (/옵션/.test(String(hh))) c[z] = null; }); h += '<tr class="svcr"><td class="msg rn"><span>서비스</span></td>' + c.map(x => '<td>' + esc(fmt(x)) + '</td>').join('') + '</tr>';  })}); }
   if (curSheet === 0) ktSheetRows(aoa[0]).forEach(r => { h += '<tr class="ktr"><td class="msg rn"><span>카톡</span></td>' + r.map(v => '<td>' + esc(fmt(v)) + '</td>').join('') + '</tr>'; });
   $('tbl').innerHTML = h + '</tbody>';
   $('tbl').classList.toggle('editing', edMode); edButtons();
@@ -9602,13 +9604,26 @@ function svcPickOpen(gi) { svcPickG = gi; svcOpenWhy = new Set(); svcPickRender(
 function svcPickRender() {
   const g = svcG[svcPickG]; if (!g) return svdClose(); const L = svcCandsOf(g.key), top = L.filter(c => c.sc >= 4), rest = L.filter(c => c.sc < 4);
   $('svd-t').textContent = svcName(g.key) + ' · 손님 고르기';
-  const row = c => `<div class="svp-r${g.sel.includes(c.o) ? ' on' : ''}"><label><input type="checkbox" data-svpk="${esc(c.o)}" ${g.sel.includes(c.o) ? 'checked' : ''}><b>${esc(c.label)}</b></label><button type="button" class="linkbtn iczno" data-svpwhy="${esc(c.o)}">${svcOpenWhy.has(c.o) ? '접기' : '상세보기'}</button>
+  const row = c => `<div class="svp-r${g.sel.includes(c.o) ? ' on' : ''}"><label><input type="checkbox" data-svpk="${esc(c.o)}" ${g.sel.includes(c.o) ? 'checked' : ''}><b>${esc(c.label)}</b>${inK(c.o) ? '<em class="svp-in">엑셀에 합침</em>' : ''}</label><button type="button" class="linkbtn iczno" data-svpwhy="${esc(c.o)}">${svcOpenWhy.has(c.o) ? '접기' : '상세보기'}</button>
     ${svcOpenWhy.has(c.o) ? `<div class="svp-why"><span>${esc(c.o)}${c.sub ? ' · ' + esc(c.sub) : ''}</span><ul>${c.why.map(w => '<li>' + esc(w) + '</li>').join('')}</ul>${c.note ? `<p>메모: ${esc(c.note)}</p>` : ''}</div>` : ''}</div>`;
-  $('svd-b').innerHTML = `<p class="svp-n">${g.sel.length}분 골랐어요</p>${top.length ? `<h4 class="svp-h">추천 손님</h4>${top.map(row).join('')}` : ''}${rest.length ? `<h4 class="svp-h">${top.length ? '다른 손님' : '이번 주문 손님'}</h4>${rest.map(row).join('')}` : ''}${L.length ? '' : '<p class="help">이번 주문이 없어요.</p>'}<div class="svp-done"><button type="button" class="btn pri iczno" id="svp-ok">다 골랐어요</button></div>`;
+  const inK = o => { const v = svcIn.get(o); return !!(v && (v.keys || []).includes(g.key)); }, nIn = L.filter(c => inK(c.o)).length, nSel = L.filter(c => g.sel.includes(c.o)).length;
+  const all = `<div class="svp-r svp-all${nSel && nSel === L.length ? ' on' : ''}"><label><input type="checkbox" id="svp-all" ${nSel && nSel === L.length ? 'checked' : ''}><b>전체 선택</b></label><small>${L.length}분</small></div>`;
+  $('svd-b').innerHTML = (L.length ? all : '') + `<p class="svp-n">${g.sel.length}분 골랐어요</p>${top.length ? `<h4 class="svp-h">추천 손님</h4>${top.map(row).join('')}` : ''}${rest.length ? `<h4 class="svp-h">${top.length ? '다른 손님' : '이번 주문 손님'}</h4>${rest.map(row).join('')}` : ''}${L.length ? '' : '<p class="help">이번 주문이 없어요.</p>'}<div class="svp-done"><button type="button" class="btn pri iczno" id="svp-ok">다 골랐어요</button></div>`; svpAllSync();
+}
+function svpAllSync() { const g = svcG[svcPickG], a = $('svp-all'); if (!g || !a) return; const L = svcCandsOf(g.key), n = L.filter(c => g.sel.includes(c.o)).length;
+  a.checked = n > 0 && n === L.length; a.indeterminate = n > 0 && n < L.length; a.closest('.svp-r').classList.toggle('on', a.checked); }
+// 이 품목만 엑셀에서 빼기: 서비스 줄을 지우고 이 품목에서 뺀 재고를 돌려놔요
+async function svcUnmergeKey(key) {
+  for (const d of svcDed.filter(x => x.key === key)) if (d.d) await svcStock(d.key, -d.d, '서비스 취소');
+  svcDed = svcDed.filter(x => x.key !== key);
+  svcIn.forEach((v, o) => { const ks = v.keys || []; const keep = ks.map((k, i) => k !== key); v.texts = v.texts.filter((t, i) => keep[i]); v.keys = ks.filter(k => k !== key); if (!v.texts.length) svcIn.delete(o); });
+  const g = svcG.find(x => x.key === key); if (g) g.sel = [];
+  svcSig = svcIn.size ? svcCurSig() : ''; svcPersist();
 }
 function svdClose() { $('svdrawer').classList.remove('on'); $('svdrawer').setAttribute('aria-hidden', 'true'); $('svdback').classList.add('hidden'); if (svcPickG >= 0) { svcPickG = -1; svcPersist(); renderSvc(); } }
 document.addEventListener('change', e => {
-  const pk = e.target.closest && e.target.closest('[data-svpk]'); if (pk) { const g = svcG[svcPickG]; if (!g) return; const o = pk.dataset.svpk; g.sel = g.sel.filter(x => x !== o); if (pk.checked) g.sel.push(o); pk.closest('.svp-r').classList.toggle('on', pk.checked); const n = document.querySelector('.svp-n'); if (n) n.textContent = g.sel.length + '분 골랐어요'; }
+  if (e.target.id === 'svp-all') { const g = svcG[svcPickG]; if (!g) return; const L = svcCandsOf(g.key); g.sel = e.target.checked ? L.map(c => c.o) : []; svcPersist(); svcPickRender(); return; }
+  const pk = e.target.closest && e.target.closest('[data-svpk]'); if (pk) { const g = svcG[svcPickG]; if (!g) return; const o = pk.dataset.svpk; g.sel = g.sel.filter(x => x !== o); if (pk.checked) g.sel.push(o); pk.closest('.svp-r').classList.toggle('on', pk.checked); const n = document.querySelector('.svp-n'); if (n) n.textContent = g.sel.length + '분 골랐어요'; svpAllSync(); }
 });
 document.addEventListener('input', e => { const q = e.target.closest && e.target.closest('[data-svgq]'); if (q) { const g = svcG[+q.dataset.svgq]; if (!g) return; g.q = q.value.trim(); svcPersist();
   const card = q.closest('.svg-c'), it = retItemOf(g.key), p = svcAmtOf(g), n = g.sel.length, tot = p && !p.err && n ? stkShow(p.unit, p.v * n) : '', short = it && p && !p.err && it.cur !== null && p.v * n > it.cur + svcDedOf(g.key);
@@ -9641,7 +9656,7 @@ document.addEventListener('click', async e => {
     const IN = new Map();
     for (const g of G) { const p = svcAmtOf(g), L = svcCandsOf(g.key), total = p.v * g.sel.length, txt = svcTextOf(g);
       await svcStock(g.key, -total, '서비스 ' + g.sel.length + '분'); svcDed.push({ key: g.key, d: -total, unit: p.unit }); svcPersist();
-      g.sel.forEach(o => { const c = L.find(x => x.o === o) || { label: o }; const v = IN.get(o) || { texts: [], cid: c.cid || null, kt: c.kt || null, label: c.label }; v.texts.push(txt); IN.set(o, v); }); }
+      g.sel.forEach(o => { const c = L.find(x => x.o === o) || { label: o }; const v = IN.get(o) || { texts: [], keys: [], cid: c.cid || null, kt: c.kt || null, label: c.label }; v.texts.push(txt); v.keys.push(g.key); IN.set(o, v); }); }
     svcIn = IN; svcSig = svcCurSig(); svcPersist();
     renderSvc(); try { renderSheetTabs(); renderSheet(); } catch (er) {} shareToast('서비스 ' + [...IN.values()].reduce((a, v) => a + v.texts.length, 0) + '줄을 엑셀에 합치고 재고에서 뺐어요');
   } catch (er) { renderSvc(); const m2 = $('svc-msg'); if (m2) { m2.className = 'msg err'; m2.textContent = '합치지 못했어요: ' + (er.message || er); } }
@@ -9675,10 +9690,10 @@ document.addEventListener('keydown', e => { if (e.target.id !== 'svc-item') retu
 function svcApplyRows(full) {
   svcCheckBatch(); if (!svcIn.size) return full;
   const H = full[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'), opc = H.indexOf('옵션'), qc = H.indexOf('수량'), out = [H];
-  const zero = H.map((h, i) => /판매가|금액|가격|결제/.test(String(h)) ? i : -1).filter(i => i >= 0);
+  const optc = H.map((h, i) => /옵션/.test(String(h)) ? i : -1).filter(i => i >= 0), zero = H.map((h, i) => /판매가|금액|가격|결제/.test(String(h)) && !/옵션/.test(String(h)) ? i : -1).filter(i => i >= 0);
   const last = new Map(); full.slice(1).forEach((r, i) => last.set(String(r[oc] ?? '').trim(), i + 1));
   full.slice(1).forEach((r, i) => { out.push(r); const o = String(r[oc] ?? '').trim(), sv = svcIn.get(o);
-    if (sv && last.get(o) === i + 1) sv.texts.forEach(tx => { const c = r.slice(); if (r.__kt) c.__kt = 1; c[pc] = tx; if (opc >= 0) c[opc] = null; if (qc >= 0) c[qc] = 1; zero.forEach(z => { c[z] = 0; }); c.__svc = 1; out.push(c); }); });
+    if (sv && last.get(o) === i + 1) sv.texts.forEach(tx => { const c = r.slice(); if (r.__kt) c.__kt = 1; c[pc] = tx; optc.forEach(z => { c[z] = null; }); if (qc >= 0) c[qc] = 1; zero.forEach(z => { c[z] = 0; }); c.__svc = 1; out.push(c); }); });
   return out;
 }
 async function svcAfterDl() {
