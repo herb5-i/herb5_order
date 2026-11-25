@@ -1690,7 +1690,11 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hmbar .btn.danger{background:#fbe5e9;color:#b44a64}
 .hm-noti{position:relative;white-space:nowrap}.hm-noti svg{flex:none;width:18px;height:18px}.hm-noti span{white-space:nowrap}.hm-noti .ntc{min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 12px/20px var(--body);text-align:center}.hm-noti .ntc.hidden{display:none}
 .tabs .tab{position:relative}.tbadge{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 10.5px/17px var(--body);text-align:center;pointer-events:none;z-index:2}
-.hmnt{margin-bottom:18px}.hmnt.hidden{display:none}.hmnt-it{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:var(--ink);background:none;border:0;border-top:1px solid var(--line);padding:11px 2px;cursor:pointer}.hmnt-it:first-of-type{border-top:0}
+.hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
+.ntback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900;opacity:1;transition:opacity .2s}.ntback.hidden{display:none}
+.ntdrawer{position:fixed;top:0;right:0;bottom:0;width:min(380px,88vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
+.ntdrawer.on{transform:none}.ntd-h{display:flex;align-items:center;gap:8px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}.ntd-h b{font-size:18px}.ntd-h span{flex:1;color:var(--mute);font-size:13px}.ntd-b{overflow:auto;flex:1;padding-top:4px}
+html.dark .ntdrawer{background:#1b221d}.hmnt-it{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:var(--ink);background:none;border:0;border-top:1px solid var(--line);padding:11px 2px;cursor:pointer}.hmnt-it:first-of-type{border-top:0}
 .hmnt-it i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--acc)}.hmnt-it.bad i{background:#d9483b}.hmnt-it.warn i{background:#e0a03a}.hmnt-it span{flex:1;min-width:0;overflow-wrap:anywhere}.hmnt-it small{display:block;color:var(--mute);font-size:12.5px}.hmnt-it em{font-style:normal;color:var(--mute);flex:none}
 .hmnt-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--mute)}
 .hmfb{margin-bottom:24px}.hmfb .hm-lb small{display:block;font-weight:400;font-size:12.5px;margin-top:2px}.hmfb-pin{color:var(--acc);flex:none}.hmfb-pin svg{width:18px;height:18px;display:block}
@@ -2423,13 +2427,12 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
     <div class="ph-cta" id="phcta">
       <button class="hm-ghost hm-share hidden" id="ph-share" type="button" data-share="today" data-sharevia="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>오늘 요약 보내기</button>
       <button class="hm-ghost hm-bakcta hidden" type="button" id="hm-bakgo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bk-t">지금 백업</span><small class="bk-s"></small></button>
-      <button class="hm-ghost hm-noti" type="button" id="hm-notib" aria-expanded="false" title="알림 보기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>알림</span><b class="ntc hidden" id="hm-notic">0</b></button>
+      <button class="hm-ghost hm-noti" type="button" id="hm-notib" aria-expanded="false" aria-controls="ntdrawer" title="알림" aria-label="알림"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b class="ntc hidden" id="hm-notic">0</b></button>
       <button class="hm-ghost hm-inst hidden" type="button" id="hm-inst" title="바탕화면 · 홈 화면에 앱처럼 설치해요"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 20h8M12 16v4M12 7v5m0 0-2.5-2.5M12 12l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>앱으로 설치</span></button>
     </div>
   </div>
 
   <section id="v-home">
-    <div class="hm-w hmnt hidden" id="hm-nt"></div>
     <div class="hm-w hm-bak hidden" id="hm-bak"></div>
     <div class="hm-w hmfb" id="hmfb">
       <div class="hm-wt"><span class="hm-lb">개선 메모 <small>불편한 점 · 고칠 점 · 바라는 기능을 적어 주세요. 모두 같이 봐요</small></span><span class="hmfb-pin" title="홈에 고정된 칸이에요"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span></div>
@@ -8537,20 +8540,23 @@ function ntRender() {
   const c = $('hm-notic'); if (c) { c.textContent = n > 99 ? '99+' : n; c.classList.toggle('hidden', !n); }
   const tab = document.querySelector('.tab[data-t="home"]'); if (tab) { let b = tab.querySelector('.tbadge'); if (n) { if (!b) { b = document.createElement('span'); b.className = 'tbadge'; tab.appendChild(b); } b.textContent = n > 99 ? '99+' : n; } else if (b) b.remove(); }
   try { if (navigator.setAppBadge) { if (n) navigator.setAppBadge(n).catch(() => {}); else navigator.clearAppBadge().catch(() => {}); } } catch (e) {}
-  const box = $('hm-nt'); if (!box) return; box.classList.toggle('hidden', !ntOpen);
+  const box = $('hm-nt'); if (!box) return; $('ntd-n').textContent = n ? n + '개' : '';
   if (!ntOpen) return;
   const canBadge = 'setAppBadge' in navigator, needPerm = canBadge && 'Notification' in window && Notification.permission === 'default';
-  box.innerHTML = `<div class="hm-wt"><span class="hm-lb">알림 ${n ? n + '개' : ''}</span></div>` + (L.length ? L.map((x, i) => `<button type="button" class="hmnt-it ${x.cls}" data-ntgo="${i}"><i></i><span>${esc(x.t)}<small>${esc(x.d || '')}</small></span><em>›</em></button>`).join('') : '<p class="hw-foot">새 알림이 없어요</p>') +
+  box.innerHTML = (L.length ? L.map((x, i) => `<button type="button" class="hmnt-it ${x.cls}" data-ntgo="${i}"><i></i><span>${esc(x.t)}<small>${esc(x.d || '')}</small></span><em>›</em></button>`).join('') : '<p class="hw-foot">새 알림이 없어요</p>') +
     `<div class="hmnt-foot">${canBadge ? '설치한 앱 아이콘에도 같은 숫자가 떠요' + (needPerm ? ' <button class="btn sm" type="button" id="nt-perm">아이콘 숫자 켜기</button>' : '') : '앱으로 설치하면 앱 아이콘에도 숫자가 떠요 (지원하는 기기만)'}</div>`;
 }
 document.addEventListener('click', async e => {
-  if (e.target.closest('#hm-notib')) { ntOpen = !ntOpen; $('hm-notib').setAttribute('aria-expanded', String(ntOpen)); ntRender();
+  if (e.target.closest('#ntd-x') || e.target.closest('#ntback')) { ntShow(false); return; }
+  if (e.target.closest('#hm-notib')) { ntShow(!ntOpen);
     if (ntOpen) { try { localStorage.setItem(NT_SEEN, JSON.stringify(NT_NEWS.map(n => n.v).concat(ntSeen()).filter((v, i, a) => a.indexOf(v) === i))); } catch (er) {} } return; }
   if (e.target.closest('#nt-perm')) { try { await Notification.requestPermission(); } catch (er) {} ntRender(); return; }
-  const g = e.target.closest('[data-ntgo]'); if (g) { const x = ntLast[+g.dataset.ntgo]; if (!x) return; ntOpen = false; ntRender();
+  const g = e.target.closest('[data-ntgo]'); if (g) { const x = ntLast[+g.dataset.ntgo]; if (!x) return; ntShow(false);
     if (x.go === 'home') { $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const t = document.querySelector('.tab[data-t="' + x.go + '"]'); if (t) t.click(); if (x.go === 'run') subSet('run', 'order', true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 });
+function ntShow(on) { ntOpen = on; $('ntdrawer').classList.toggle('on', on); $('ntdrawer').setAttribute('aria-hidden', String(!on)); $('ntback').classList.toggle('hidden', !on); $('hm-notib').setAttribute('aria-expanded', String(on)); ntRender(); if (on) setTimeout(() => $('ntd-x').focus(), 50); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && ntOpen) ntShow(false); });
 setInterval(() => { try { ntRender(); } catch (e) {} }, 60000);
 setTimeout(() => { try { ntRender(); } catch (e) {} }, 3000);
 // ---------- 홈 개선 메모 (고정 칸 · 중계 서버에 모아 둬요 · 마이크로 말해서 적기) ----------
@@ -8887,5 +8893,6 @@ srcLabel('규칙을 불러오는 중…');
 })();
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 </script>
+<div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
 </body>
 </html>
