@@ -240,7 +240,7 @@ h1{font:400 23px/1.25 var(--display);margin:0;letter-spacing:-.2px;text-wrap:bal
 #dlmsg:empty{display:none}
 .stats{gap:10px}
 .stat{background:#f4f7f2;border:1px solid var(--line);border-radius:12px;min-width:110px}
-.stat .n{font-variant-numeric:tabular-nums}
+.stat .n{font-variant-numeric:tabular-nums}.stat-kt{font:inherit;color:inherit;text-align:left;cursor:pointer}.stat-kt:hover{border-color:var(--acc)}.stat-kt.k .n{color:#3a1d1d}.stat-kt.k{background:#fff7c2;border-color:#f2d64b}html.dark .stat-kt.k{background:rgba(250,225,0,.12);border-color:rgba(250,225,0,.35)}html.dark .stat-kt.k .n{color:#f5e27a}
 .stat.w{background:var(--warnbg);border-color:#f0d9b0}
 .stab.on{background:var(--acc);border-color:var(--acc)}
 .tblwrap{border-radius:12px}
@@ -6212,7 +6212,7 @@ function runProcess() {
   const W = result.warnings, orders = new Set(result.sheet1.slice(1).map(r => r[result.sheet1[0].indexOf('주문번호')]));
   const unreg = W.filter(w => w.flags.includes('미등록 상품'));
   $('stats').innerHTML = [['주문', orders.size], ['상품 줄', result.sheet1.length - 1], ['집계 품목', result.sheet3.length - 1], ['확인 필요', W.length, 1]]
-    .map(s => `<div class="stat ${s[2] && s[1] ? 'w' : ''}"><div class="n">${s[1]}</div><div class="l">${s[0]}</div></div>`).join('');
+    .map(s => `<div class="stat ${s[2] && s[1] ? 'w' : ''}"><div class="n">${s[1]}</div><div class="l">${s[0]}</div></div>`).join('') + '<button type="button" class="stat stat-kt iczno" id="stat-kt" title="카톡 주문 보기"></button>'; statKt();
   let wh = '';
   if (W.length) {
     wh = '<div class="warnbox"><h3>확인이 필요한 줄 ' + W.length + '개</h3><ul>' + W.map(w =>
@@ -9752,7 +9752,13 @@ $('ktitems').addEventListener('mousedown', e => { if (e.target.closest('.ktsug,.
 $('ktitems').addEventListener('click', e => { const s = e.target.closest('[data-ktsug]'); if (s) { ktSugPick(s.dataset.ktsug); return; }
   const a = e.target.closest('[data-ktarr]'); if (a) { const i = +a.dataset.ktarr; if (ktSugI === i) ktSugClose(); else { ktSugOpen(i, true); const inp = a.parentElement.querySelector('input'); inp.focus(); } } });
 $('ktitems').addEventListener('focusout', e => { if (e.target.matches('.ktcb input')) setTimeout(() => { if (!document.activeElement || !document.activeElement.closest('.ktsug')) ktSugClose(); }, 150); });
+// 결과 확인 칸의 [카톡 주문] 숫자: 이번 엑셀에 들어가는 카톡 주문 수 · 누르면 카톡 주문 칸으로
+function statKt() { const b = $('stat-kt'); if (!b) return; let L = []; try { L = ktOn(); } catch (e) {} const it = L.reduce((a, o) => a + (o.items || []).length, 0);
+  b.innerHTML = `<div class="n">${L.length}</div><div class="l">카톡 주문${it ? ' · ' + it + '줄' : ''}</div>`; b.classList.toggle('k', L.length > 0); }
+document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#stat-kt')) return; const c = $('ktcard'); if (!c) return; if (c.classList.contains('folded')) foldSet(c, false);
+  const L = $('ktlist') || c; L.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 function ktLists() {
+  try { statKt(); } catch (e) {}
   const nm = new Set(); (((rules.summary || {}).order) || []).concat((rules.names || []).map(n => n.to)).forEach(n => { n = String(n || '').trim(); if (n && !/^★/.test(n)) nm.add(n); });
   ktList.forEach(o => o.items.forEach(it => it.p && nm.add(it.p)));
   $('ktnames').innerHTML = [...nm].map(n => `<option value="${esc(n)}">`).join('');
@@ -9777,6 +9783,7 @@ const ktAddDay = (d, n) => { const [y, m, dd] = d.split('-').map(Number); return
 function ktRenderDays() { ktDays = [...new Set(ktDays)].sort();
   $('ktchips').innerHTML = ktDays.length ? ktDays.map(d => `<span class="ktchip">${ktDayTxt(d)}<button type="button" data-ktdayrm="${d}" title="이 날짜 빼기" aria-label="${ktDayTxt(d)} 빼기">×</button></span>`).join('') + (ktDays.length > 1 ? `<span class="ktchip">${ktDays.length}번 배송</span>` : '') : '<span class="ktnone">배송일을 골라 주세요</span>'; }
 function ktRenderList() {
+  try { statKt(); } catch (e) {}
   const today = isoDate(new Date()), on = new Set(ktOn().map(o => o.id)), tm = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
   const ic = (k, id, t, path) => `<button class="ibtn" type="button" data-${k}="${esc(id)}" title="${t}" aria-label="${t}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${path}</svg></button>`;
   const P_DEL = '<path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"/>', P_ED = '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/>';
