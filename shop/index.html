@@ -1785,7 +1785,9 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hw-pin b{font-weight:700;color:#1f2a24}.hw-pin i{font-style:normal;color:#4a5550}
 html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e5}html.dark .hw-pin i{color:#aab4ad}
 .hw-wxbig{display:flex;flex-direction:column}.hw-wxrow{flex:1;min-height:0;display:flex;gap:12px}.hw-wxrow .hw-mapbox{flex:0 0 auto;max-width:48%}.hw-wxrow .hm-list{flex:1;min-width:0;overflow:auto;margin:0}.hw-wxrow .hw-wx li{flex-wrap:wrap;row-gap:4px}.hw-wxrow .hw-wx .nm{flex:1;min-width:0}.hw-wxrow .hw-chips{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}
-.lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
+.mfold-c > .uf-h,.mfold-c > .ut-h{position:relative;padding-right:48px;cursor:pointer}.foldt.mini{top:50%;right:0;transform:translateY(-50%);width:34px;height:34px}.foldt.mini svg{width:18px;height:18px}
+.mfold-c.mfolded > :not(.uf-h):not(.ut-h){display:none!important}.mfold-c.mfolded .foldt.mini svg{transform:none}.mfold-c.mfolded .foldt.mini{color:var(--acc);border-color:var(--acc)}.ut-h b small{font-weight:400;color:var(--mute);margin-left:4px}
+.subtabs[data-subfor=stock]{display:none!important}.lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
 .lay-r.off .lay-n{color:var(--mute);text-decoration:line-through}.lay-r .ibtn:disabled{opacity:.3}.lay-r .ibtn.on{color:var(--acc)}
@@ -2839,7 +2841,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </div>
 
   <section id="v-stock" class="hidden" data-cur="cur">
-    <nav class="subtabs" data-subfor="stock" role="tablist"><button type="button" role="tab" data-subgo="cur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>재고</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="chg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>변동</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="stock" role="tablist"><button type="button" role="tab" data-subgo="cur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>재고</span><i class="sdot"></i></button></nav>
     <div class="card stkcur" data-sub="cur">
       <div class="hh"><h2>현재 재고</h2><span class="msg" id="stksum"></span><button class="retchip hidden" type="button" id="ret-chip" data-subgo2="ret"></button><span id="stkshare"></span><button class="ibtn ibtn-acc" id="stk-editbtn" aria-pressed="false" title="편집 (재고 수정 · 순서 바꾸기)" aria-label="편집"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
       <div class="stkpanel hidden" id="stkedit">
@@ -2864,13 +2866,6 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="hh"><h2>비고</h2><span class="msg" id="memo-date"></span></div>
       <textarea id="stk-memo" rows="3" placeholder="메모를 적어 두세요 (예: 로즈마리 2kg 내일 입고 예정 · 비올라 상태 확인)"></textarea>
       <div class="row memofoot"><span class="msg" id="memo-msg"></span><span class="sp"></span><button class="ibtn" id="memo-today" hidden title="오늘 메모로" aria-label="오늘 메모로"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6" fill="currentColor"/></svg></button><button class="ibtn ibtn-acc" id="memo-save" title="저장" aria-label="저장"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4Z"/><path d="M8.5 4v5h6V4M8.5 20v-6h7v6"/></svg></button></div>
-    </div>
-    <div class="card stkhist" data-sub="chg">
-      <div class="hh"><h2>날짜별 재고 변동</h2></div>
-      <div class="stkhistrow">
-        <div class="hcal" id="stkcal"></div>
-        <div class="stkdaybox"><div class="sdh"><h3 id="stkdayh"></h3><span id="stkdayshare"></span></div><div id="stkday"></div></div>
-      </div>
     </div>
     <div class="card stkret" data-sub="cur" id="stkretcard">
       <div class="hh"><h2>입고 · 반송</h2><span class="msg" id="ret-sum"></span><span class="sp"></span><button class="btn sm" type="button" id="ret-copy">목록 복사</button></div>
@@ -2970,6 +2965,13 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         <p class="msg" id="hbakmsg"></p>
       </div>
       <div class="card" id="hday"></div>
+    </div>
+    <div class="card stkhist" data-sub="days" id="stkhistcard">
+      <div class="hh"><h2>날짜별 재고 변동</h2></div>
+      <div class="stkhistrow">
+        <div class="hcal" id="stkcal"></div>
+        <div class="stkdaybox"><div class="sdh"><h3 id="stkdayh"></h3><span id="stkdayshare"></span></div><div id="stkday"></div></div>
+      </div>
     </div>
     <div class="card" id="hstat" data-sub="days"></div>
     <div class="card adm-only c24x" id="c24x" data-sub="days">
@@ -3464,7 +3466,7 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'issue') renderIssue();
   if (b.dataset.t === 'stock') renderStock();
   if (b.dataset.t === 'sum') renderSum();
-  if (b.dataset.t === 'hist') renderHist();
+  if (b.dataset.t === 'hist') { renderHist(); try { if (stkOpen()) renderStock(); } catch (e) {} }
   if (b.dataset.t === 'market') renderMarket();
 });
 
@@ -4410,7 +4412,7 @@ function renderTrash() {
   const a = trashList(); if (!a.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   const tm = iso => { const d = new Date(iso); return isNaN(d) ? '' : (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
   box.classList.remove('hidden');
-  box.innerHTML = `<div class="ut-h"><b>최근 지운 파일</b><span>잘못 지웠으면 되돌려요 · 이 기기에서 7일 동안</span></div>` + a.slice(0, 5).map(p =>
+  mfoldInit(box, 'utrash'); box.innerHTML = `<div class="ut-h" data-mfold="utrash"><b>최근 지운 파일 <small>${a.length}개</small></b><span>잘못 지웠으면 되돌려요 · 이 기기에서 7일 동안</span><button type="button" class="foldt mini iczno" data-mfold="utrash" aria-label="펼치기 · 접기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div>` + a.slice(0, 5).map(p =>
     `<div class="ut-row"><span class="ut-nm">${esc(fmtDay(p.day))} ${esc(p.files.map(f => (f.slot === 'am' ? '오전 ' : '오후 ') + f.name).join(', ') || '파일')}<small>${esc(tm(p.at))}에 지움 · ${p.n || 0}줄</small></span><button class="urestore" type="button" data-urestore="${p.id}">↶ 되돌리기</button></div>`).join('') + '<p class="msg" id="trashmsg" style="margin:4px 0 0"></p>';
 }
 document.addEventListener('click', async e => {
@@ -4981,11 +4983,13 @@ instShow();
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
 function subSet(tab, key, noScroll) {
   const sec = $('v-' + tab); if (!sec) return;
+  if (tab === 'stock' && key === 'chg') { key = 'cur'; setTimeout(() => { const t = document.querySelector('.tab[data-t="hist"]'); if (t) t.click(); subSet('hist', 'days', true); setTimeout(() => { try { renderStock(); } catch (e) {} const c = $('stkhistcard'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80); }, 0); }
   if (tab === 'stock' && key === 'ret') { key = 'cur'; setTimeout(() => { const c = $('stkretcard'); if (c && !c.classList.contains('lay-off')) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); }
   if (tab === 'run' && (key === 'wx' || key === 'inv')) { const tgt = key === 'wx' ? 'wxcard' : 'invcard'; key = 'order'; setTimeout(() => { const c = $(tgt); if (!c) return; if (c.classList.contains('folded')) foldSet(c, false); if (!noScroll || true) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); }
   sec.dataset.cur = key; try { sessionStorage.setItem('herb5_sub_' + tab, key); } catch (e) {}
   sec.querySelectorAll('[data-subgo]').forEach(b => { const on = b.dataset.subgo === key; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   if (!noScroll) { const t = sec.querySelector('.subtabs'); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView({ block: 'start' }); }
+  if (tab === 'hist' && key === 'days') setTimeout(() => { try { if (stkOpen()) renderStock(); } catch (e) {} }, 0);
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-subgo]'); if (!b) return; subSet(b.closest('.subtabs').dataset.subfor, b.dataset.subgo); });
 ['run', 'hist', 'stock', 'rules'].forEach(t => { let k = null; try { k = sessionStorage.getItem('herb5_sub_' + t); } catch (e) {} if (k && !$('v-' + t).querySelector('[data-subgo="' + k + '"]')) k = null; subSet(t, k || $('v-' + t).dataset.cur, true); });
@@ -6249,7 +6253,7 @@ function renderUFiles() {
   ufPick = new Set([...ufPick].filter(k => list.some(f => f.slot + '|' + f.id === k)));
   if (!sumSel || !list.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   box.classList.remove('hidden');
-  box.innerHTML = `<div class="uf-h"><b>올린 파일</b><span>${list.length}개 · 지울 파일을 골라요</span></div><div class="uf-list">` + list.map(f => {
+  mfoldInit(box, 'ufiles'); box.innerHTML = `<div class="uf-h" data-mfold="ufiles"><b>올린 파일</b><span>${list.length}개 · 지울 파일을 골라요</span><button type="button" class="foldt mini iczno" data-mfold="ufiles" aria-label="펼치기 · 접기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div><div class="uf-list">` + list.map(f => {
     const k = f.slot + '|' + f.id;
     return `<label class="uf ${ufPick.has(k) ? 'on' : ''}"><input type="checkbox" data-ufile="${esc(k)}" ${ufPick.has(k) ? 'checked' : ''}><span class="uf-slot ${f.old ? 'old' : f.slot}">${f.old ? '예전' : f.slot === 'am' ? '오전' : '오후'}</span><span class="uf-nm"><b>${esc(f.name || '파일')}</b><small>${esc(tm(f.at))}${f.n ? ' · 주문 ' + f.n + '건' : ''}${f.lines ? ' · ' + f.lines + '줄' : ''}</small></span></label>`;
   }).join('') + `</div><div class="uf-act"><span class="msg" id="ufmsg"></span><button class="btn uf-del" id="ufdel" type="button" ${ufPick.size ? '' : 'disabled'}>${IC.trash}<span>${ufPick.size ? '고른 파일 ' + ufPick.size + '개 지우기' : '지울 파일을 골라 주세요'}</span></button></div>`;
@@ -6503,7 +6507,7 @@ document.addEventListener('keydown', e => { const td = e.target.closest && e.tar
 // 품목 = 집계 보기에 나온 상품 (무게·송이 같은 세부 옵션은 빼고). 예: 식용꽃 혼합, 애플민트 랜덤, 로즈마리
 // 지금 재고 = 넣은 양(+ / − / 맞추기) − 그 뒤 올라온 주문 (업로드마다 집계 수량, 무게는 100g 단위 올림)
 let stock = {}, stockDb = null, stkCalMonth = null, stkDay = null;
-const stkOpen = () => $('v-stock') && !$('v-stock').classList.contains('hidden');
+const stkOpen = () => ($('v-stock') && !$('v-stock').classList.contains('hidden')) || ($('v-hist') && !$('v-hist').classList.contains('hidden') && $('v-hist').dataset.cur === 'days');
 const stkIsW = u => u === 'g';
 const stkShow = (u, v) => {
   if (v === null || v === undefined) return '—';
@@ -9230,7 +9234,7 @@ const LAY = {
   run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
   sum: { n: '집계 보기', sec: 'v-sum', items: [['body', '집계 품목', '#sumbody'], ['top', '달력 · 올린 파일', '.sumtop']] },
   stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard']] },
-  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록', '.histrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
+  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록', '.histrow'], ['stkchg', '날짜별 재고 변동', '#stkhistcard'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
 };
 const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
 function layApply() {
@@ -9370,6 +9374,11 @@ function foldSet(card, folded, save = true) {
   foldSet(c, m[c.dataset.fold] !== 0, false); }); })();
 document.addEventListener('click', e => { const b = e.target.closest('.foldt'); if (b) { const c = b.closest('.fold-c'); foldSet(c, !c.classList.contains('folded')); return; }
   const h = e.target.closest('.fold-c.folded > .sh'); if (h && !e.target.closest('button,a,input,select,label,.shinfo')) foldSet(h.closest('.fold-c'), false); });
+// 집계 보기의 [올린 파일] · [최근 지운 파일]: 제목이나 ▼를 누르면 펼치고 접어요 (처음엔 접혀 있어요)
+function mfoldInit(box, k) { if (box._mf) return; box._mf = 1; box.classList.add('mfold-c'); box.classList.toggle('mfolded', foldGet()[k] !== 0); }
+document.addEventListener('click', e => { const h = e.target.closest('[data-mfold]'); if (!h || (e.target.closest('button,input,label') && !e.target.closest('.foldt'))) return;
+  const box = h.closest('.mfold-c'); if (!box) return; const f = !box.classList.contains('mfolded'); box.classList.toggle('mfolded', f);
+  const m = foldGet(); m[h.dataset.mfold] = f ? 1 : 0; try { localStorage.setItem(FOLD_KEY, JSON.stringify(m)); } catch (er) {} });
 // ---------- 카페24 전체 주문 엑셀로 받기 (한 달씩 받아서 한 파일로) ----------
 let c24xStop = false, c24xBusy = false;
 $('c24x-to').value = ymOf(new Date());
