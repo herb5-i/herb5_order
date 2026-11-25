@@ -2631,8 +2631,6 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
 
   <section id="v-home">
     <div class="hm-w hm-bak hidden" id="hm-bak"></div>
-    <div class="hmbar" id="hmbar"></div>
-    <div class="hmg" id="hmg"></div>
     <div class="hm-w hmfb" id="hmfb">
       <div class="hm-wt"><span class="hm-lb">개선 메모 <small>불편한 점 · 고칠 점 · 바라는 기능을 적어 주세요. 모두 같이 봐요</small></span><span class="hmfb-pin" title="홈에 고정된 칸이에요"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span></div>
       <form class="hmfb-f" id="hmfb-f" autocomplete="off"><textarea id="hmfb-t" rows="2" maxlength="1000" placeholder="예: 재고 화면에서 품목 찾기가 불편해요 · 마이크를 누르고 말해도 돼요" aria-label="개선 메모"></textarea>
@@ -2640,6 +2638,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div id="hmfb-list"></div>
       <div class="hmfb-adm adm-only"><button class="btn sm" type="button" id="hmfb-link">AI가 읽는 주소 보기</button><span class="hmfb-url" id="hmfb-url"></span></div>
     </div>
+    <div class="hmbar" id="hmbar"></div>
+    <div class="hmg" id="hmg"></div>
     <div class="modal hidden" id="hmFold" role="dialog" aria-modal="true" aria-label="폴더"><div class="mbox hmfbox"><div class="hmf-h"><input id="hmf-name" maxlength="20" aria-label="폴더 이름"><button class="ibtn" type="button" id="hmf-close" aria-label="닫기">✕</button></div><div class="hmf-grid" id="hmf-grid"></div><div class="hmf-act" id="hmf-act"></div></div></div>
     <div class="modal hidden" id="hmAdd" role="dialog" aria-modal="true" aria-label="홈에 추가"><div class="mbox hmabox"><div class="hmf-h"><b>홈에 추가</b><button class="ibtn" type="button" id="hma-close" aria-label="닫기">✕</button></div><div id="hma-body"></div></div></div>
   </section>
@@ -9078,10 +9078,10 @@ function hmfbRender() {
   const box = $('hmfb-list'); if (!box) return;
   if (!hmfbOk()) { box.innerHTML = '<p class="hw-foot">로그인한 웹 버전에서 카페24 중계 서버가 연결되면 메모가 모여요</p>'; return; }
   if (!hmfbL) { box.innerHTML = '<p class="hw-foot">메모 불러오는 중…</p>'; return; }
-  const L = hmfbL.slice().reverse(), show = hmfbAll ? L : L.slice(0, 5), ST = { new: '새 메모', seen: '확인함', done: '반영함' };
+  const L = hmfbL.slice().reverse(), show = hmfbAll ? L : L.slice(0, 3), ST = { new: '새 메모', seen: '확인함', done: '반영함' };
   const tm = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
   box.innerHTML = !L.length ? '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : show.map(x => `<div class="hmfb-it"><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}<button type="button" class="hmfb-st ${x.st}" data-hmfbst="${esc(x.id)}" title="관리자가 누르면 상태가 바뀌어요">${ST[x.st] || x.st}</button></small></div>`).join('') +
-    (L.length > 5 ? `<button type="button" class="hmfb-more" id="hmfb-more">${hmfbAll ? '줄이기' : '전체 ' + L.length + '건 보기'}</button>` : '');
+    (L.length > 3 ? `<button type="button" class="hmfb-more" id="hmfb-more">${hmfbAll ? '줄이기' : '전체 ' + L.length + '건 보기'}</button>` : '');
 }
 async function hmfbLoad() { if (!hmfbOk()) { hmfbRender(); return; } if (hmfbBusy) return; hmfbBusy = true; try { const d = await c24Call('/fb'); hmfbL = d.list || []; } catch (e) { if (!hmfbL) { $('hmfb-list').innerHTML = '<p class="hw-foot warn">메모를 불러오지 못했어요: ' + esc(e.message || e) + '</p>'; return; } } finally { hmfbBusy = false; } hmfbRender(); }
 function hmfbTick() { clearTimeout(hmfbT); hmfbT = setTimeout(() => { if (!document.hidden && $('v-home') && !$('v-home').classList.contains('hidden')) hmfbLoad(); hmfbTick(); }, 60000); }
