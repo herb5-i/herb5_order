@@ -1779,6 +1779,16 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .fold-c{position:relative}@media(min-width:900px){.calcard.fold-c .cal{margin-right:48px}}.fold-c > .sh{padding-right:52px}.foldt{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mute);display:grid;place-items:center;cursor:pointer}
 .foldt svg{width:20px;height:20px;transition:transform .2s;transform:rotate(180deg)}.fold-c.folded .foldt svg{transform:none}.fold-c.folded .foldt{color:var(--acc);border-color:var(--acc)}
 .fold-c.folded > :not(.sh){display:none!important}.calcard.fold-c.folded{display:block}.fold-c.folded > .sh{margin-bottom:0;cursor:pointer}.fold-c.folded{padding-bottom:18px}
+.hw-mapbox{flex:1;min-height:0;display:flex;justify-content:center}.hw-wmap{height:100%;width:auto;max-width:100%;aspect-ratio:340/500}
+.hw-wxmap{display:flex;flex-direction:column}.hw-wxmap .hw-mapbox{margin-top:2px}
+.hw-pin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;padding:1px 5px;border-radius:7px;background:rgba(255,255,255,.94);border:2px solid #b9c6bd;font-size:9.5px;line-height:1.2;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.12);pointer-events:auto}
+.hw-pin b{font-weight:700;color:#1f2a24}.hw-pin i{font-style:normal;color:#4a5550}
+html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e5}html.dark .hw-pin i{color:#aab4ad}
+.hw-wxbig{display:flex;flex-direction:column}.hw-wxrow{flex:1;min-height:0;display:flex;gap:12px}.hw-wxrow .hw-mapbox{flex:0 0 auto;max-width:48%}.hw-wxrow .hm-list{flex:1;min-width:0;overflow:auto;margin:0}.hw-wxrow .hw-wx li{flex-wrap:wrap;row-gap:4px}.hw-wxrow .hw-wx .nm{flex:1;min-width:0}.hw-wxrow .hw-chips{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}
+.lay-off{display:none!important}
+.lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
+.lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
+.lay-r.off .lay-n{color:var(--mute);text-decoration:line-through}.lay-r .ibtn:disabled{opacity:.3}.lay-r .ibtn.on{color:var(--acc)}
 .appicon{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.ai-h{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}.ai-h b{font-size:15px}
 .ai-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:460px}.ai-o{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
 .ai-o img{width:72px;height:72px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.12)}.ai-o.on{border-color:var(--acc);background:var(--acc2);font-weight:700}
@@ -2993,6 +3003,12 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <div class="card rbar" data-sub="set">
       <span class="msg">규칙 관리가 열려 있어요</span>
       <div class="row"><button class="btn sm danger" id="reset">전체 설정 초기화</button><button class="btn sm" id="rpwchange">비밀번호 바꾸기</button><button class="btn sm" id="rlockbtn">잠그기</button></div>
+    </div>
+    <div class="card laycard" data-sub="set" id="laycard">
+      <div class="hh"><h2>탭 화면 구성</h2><span class="msg">순서 바꾸기 · 빼기 · 다시 넣기</span></div>
+      <p class="help">탭마다 보이는 칸의 순서를 ↑ ↓ 로 바꾸고, 쓰지 않는 칸은 눈 아이콘으로 빼 둘 수 있어요. 뺀 칸은 지워지지 않고 숨겨지기만 해서 언제든 다시 넣을 수 있어요. 바꾸면 바로 저장되고 모든 기기에 같이 적용돼요.</p>
+      <div id="laylist"></div>
+      <div class="row"><button class="btn sm iczno" type="button" id="layreset">처음 순서로</button><span class="msg" id="laymsg"></span></div>
     </div>
     <div class="card fbonly adminpane" style="display:block" id="memcard" data-sub="admin">
       <div class="hh"><h2>계정 관리</h2><span class="msg">관리자만 보여요</span></div>
@@ -5052,6 +5068,7 @@ const HM_W = {
   recent: { app: 'run', n: '최근 올린 파일', d: '정리 · 집계에 올린 파일', s: ['S', 'M', 'L', 'W'], def: 'M' },
   wxtemp: { app: 'wx', n: '배송일 지역 기온', d: '권역마다 최저 · 최고 기온과 포장', s: ['M', 'L', 'W'], def: 'M' },
   wxpack: { app: 'wx', n: '포장 요약', d: '보온 · 아이스팩이 필요한 지역 수', s: ['S', 'M'], def: 'S' },
+  wxmap: { app: 'wx', n: '날씨 지도', d: '지도 위에 권역마다 최저 · 최고 기온과 포장 색', s: ['L'], def: 'L' },
   wxdays: { app: 'wx', n: '앞으로 날씨', d: '날마다 전국에서 가장 추운 · 더운 값', s: ['M', 'L', 'W'], def: 'M' },
   alert: { app: 'stock', n: '재고 알림', d: '품절 · 부족 · 곧 부족한 품목', s: ['M', 'L', 'W'], def: 'W' },
   stkcnt: { app: 'stock', n: '재고 한눈에', d: '품절 · 부족 · 곧 부족 개수', s: ['S', 'M'], def: 'S' },
@@ -5162,8 +5179,10 @@ const HW = {
   recent() { const ups = []; Object.keys(upl).forEach(d => ['am', 'pm'].forEach(k => { const e = upl[d] && upl[d][k]; if (e) ups.push({ d, k, at: e.at || '', name: e.name || '', n: new Set((e.rows || []).filter(x => !x.del).map(x => x.o)).size }); }));
     ups.sort((a, b) => String(b.at).localeCompare(String(a.at)) || b.d.localeCompare(a.d));
     return `<div class="hm-w hm-recent">${hwHead('최근 올린 파일', 'run', '올리기')}<ul class="hm-list">${ups.length ? ups.slice(0, 6).map(u => `<li><span class="hm-tag ${u.k}">${u.k === 'am' ? '오전' : '오후'}</span><span class="nm">${esc(fmtDay(u.d))}<small>${esc(u.name)}</small></span><b>${u.n}건</b></li>`).join('') : '<li class="hm-empty">아직 올린 파일이 없어요</li>'}</ul></div>`; },
-  wxtemp() { const day = isoOf(dayOff), regs = regionList().filter(r => temps[r] && temps[r].min !== undefined);
-    return `<div class="hm-w">${hwHead('배송일 기온 · ' + esc(fmtDay(day)), 'wx', '날씨')}${!regs.length ? hwEmpty(wdata ? '이 날짜 예보가 아직 없어요' : '날씨를 불러오는 중…') : `<ul class="hm-list hw-wx">${regs.map(r => { const t = temps[r], bs = bandsFor(t); return `<li><span class="nm">${esc(r)}</span><span class="hw-tp"><i class="lo">${t.min}°</i><i class="hi">${t.max}°</i></span><span class="hw-chips">${bs.map(b => `<span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span>`).join('')}</span></li>`; }).join('')}</ul>`}</div>`; },
+  wxtemp(x) { const day = isoOf(dayOff), regs = regionList().filter(r => temps[r] && temps[r].min !== undefined), big = x && (x.s === 'L');
+    return `<div class="hm-w${big ? ' hw-wxbig' : ''}">${hwHead('배송일 기온 · ' + esc(fmtDay(day)), 'wx', '날씨')}${!regs.length ? hwEmpty(wdata ? '이 날짜 예보가 아직 없어요' : '날씨를 불러오는 중…') : (big ? '<div class="hw-wxrow">' + hwMap(regs) : '') + `<ul class="hm-list hw-wx">${regs.map(r => { const t = temps[r], bs = bandsFor(t); return `<li><span class="nm">${esc(r)}</span><span class="hw-tp"><i class="lo">${t.min}°</i><i class="hi">${t.max}°</i></span><span class="hw-chips">${bs.map(b => `<span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span>`).join('')}</span></li>`; }).join('')}</ul>${big ? '</div>' : ''}`}</div>`; },
+  wxmap() { const day = isoOf(dayOff), regs = regionList().filter(r => temps[r] && temps[r].min !== undefined);
+    return `<div class="hm-w hw-wxmap">${hwHead('날씨 지도 · ' + esc(fmtDay(day)), 'wx', '날씨')}${!regs.length ? hwEmpty(wdata ? '이 날짜 예보가 아직 없어요' : '날씨를 불러오는 중…') : hwMap(regs)}</div>`; },
   wxpack() { const regs = regionList().filter(r => temps[r] && temps[r].min !== undefined), m = new Map(); regs.forEach(r => bandsFor(temps[r]).forEach(b => { const e = m.get(b.label) || { b, n: 0 }; e.n++; m.set(b.label, e); }));
     const L = [...m.values()].sort((a, b) => b.n - a.n);
     return `<div class="hm-w hw-sm">${hwHead('포장 · ' + esc(fmtDay(isoOf(dayOff)).replace(/ \(.\)$/, '')), 'wx', '날씨')}${!regs.length ? hwEmpty(wdata ? '예보가 아직 없어요' : '불러오는 중…') : `<div class="hw-packs">${L.map(e => `<div><span class="chip" style="background:#${esc(e.b.color)}">${esc(e.b.label)}</span><b>${e.n}<small>곳</small></b></div>`).join('') || '<p class="msg">포장 기준에 걸리는 지역이 없어요</p>'}</div>`}</div>`; },
@@ -5738,6 +5757,11 @@ document.addEventListener('click', async e => {
   if (e.target.closest('#ship-cbtn')) { if (!hcCanEdit()) { alert('관리자 아이디로 로그인해야 바꿀 수 있어요'); return; } const sel = hmCalSel.ship, t = isoDate(new Date()); hcOpen(sel && sel > t ? sel : hcAdd(t, 7)); return; }
   if (e.target.closest('#ship-nbtn')) { const b = $('ship-nbox'); if (b.classList.contains('hidden')) shipNoticeOpen(); else { b.classList.add('hidden'); $('ship-nbtn').setAttribute('aria-expanded', 'false'); } return; }
 });
+function hwMap(regs) {   // 홈 위젯용 작은 날씨 지도 (권역마다 최저 · 최고와 포장 색)
+  let extra = 0;
+  return `<div class="hw-mapbox"><div class="wmap hw-wmap">${KOR_LAND}${regs.map(r => { const t = temps[r], pos = MAPPOS[r] || [92, 6 + 9 * (extra++)], b = bandsFor(t)[0];
+    return `<span class="hw-pin" style="left:${pos[0]}%;top:${pos[1]}%;${b ? 'border-color:#' + esc(b.color) : ''}" title="${esc(r)} ${t.min}° / ${t.max}°${b ? ' · ' + esc(b.label) : ''}"><b>${esc(r)}</b><i>${t.min}°/${t.max}°</i></span>`; }).join('')}</div></div>`;
+}
 function hmWidget(x) { const f = HW[x.w]; try { return f ? f(x) : ''; } catch (e) { return `<div class="hm-w">${hwHead(esc(HM_W[x.w] ? HM_W[x.w].n : '위젯'))}${hwEmpty('지금은 보여 줄 수 없어요')}</div>`; } }
 const hmDefault = () => ({ v: 1, items: [
   { id: 'w-ost', t: 'w', w: 'ost', s: 'W' }, { id: 'w-today', t: 'w', w: 'today', s: 'W' }, { id: 'w-alert', t: 'w', w: 'alert', s: 'W' },
@@ -9200,6 +9224,38 @@ function iczAll() { iczQ = false; document.querySelectorAll('button').forEach(b 
   document.querySelectorAll('.subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo]').forEach(b => { const sp = b.querySelector('span'); if (sp && !b.title) { b.title = sp.textContent.trim(); b.setAttribute('aria-label', sp.textContent.trim()); } }); }
 new MutationObserver(ms => { if (iczQ) return; iczQ = true; requestAnimationFrame(iczAll); }).observe(document.body, { childList: true, subtree: true, characterData: true });
 iczAll();
+// ---------- 탭 화면 구성 (규칙 관리 → 설정): 탭마다 칸 순서 바꾸기 · 빼기 · 다시 넣기 ----------
+const LAY = {
+  run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
+  stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['memo', '비고', '#stkmemocard']] },
+  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록', '.histrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
+};
+const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
+function layApply() {
+  Object.entries(LAY).forEach(([t, L]) => { const sec = $(L.sec); if (!sec) return; const c = layCfg(t), els = {};
+    L.items.forEach(([k, , sel]) => { els[k] = [...sec.querySelectorAll(sel)].filter(e => e.parentNode === sec); });
+    let mark = sec._layMark; if (!mark) { const first = L.items.map(i => els[i[0]][0]).filter(Boolean).sort((a, b) => a.compareDocumentPosition(b) & 4 ? -1 : 1)[0]; if (!first) return; mark = document.createComment('lay'); sec.insertBefore(mark, first); sec._layMark = mark; }
+    let at = mark; c.order.forEach(k => (els[k] || []).forEach(e => { at.parentNode.insertBefore(e, at.nextSibling); at = e; }));
+    L.items.forEach(([k]) => (els[k] || []).forEach(e => e.classList.toggle('lay-off', c.hide.includes(k))));
+    if (t === 'run') { let n = 0; c.order.filter(k => !c.hide.includes(k)).forEach(k => { n++; (els[k] || []).forEach(e => e.querySelectorAll(':scope > .sh .num, :scope > .card > .sh .num').forEach(x => { x.textContent = n; })); }); }
+  });
+  layRender();
+}
+function layRender() {
+  const box = $('laylist'); if (!box) return;
+  const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYEX = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 6.1A9 9 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-3 3.6M6.3 7.6A16 16 0 0 0 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4-.9"/></svg>';
+  const UP = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>', DN = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  box.innerHTML = Object.entries(LAY).map(([t, L]) => { const c = layCfg(t), nm = Object.fromEntries(L.items.map(i => [i[0], i[1]]));
+    return `<div class="lay-t"><b>${esc(L.n)}</b>${c.order.map((k, i) => { const off = c.hide.includes(k);
+      return `<div class="lay-r${off ? ' off' : ''}"><span class="lay-n">${esc(nm[k])}${off ? ' <small>빠짐</small>' : ''}</span><button class="ibtn iczno" type="button" data-lay="${t}:${k}:up" ${i ? '' : 'disabled'} title="위로" aria-label="${esc(nm[k])} 위로">${UP}</button><button class="ibtn iczno" type="button" data-lay="${t}:${k}:down" ${i < c.order.length - 1 ? '' : 'disabled'} title="아래로" aria-label="${esc(nm[k])} 아래로">${DN}</button><button class="ibtn iczno${off ? '' : ' on'}" type="button" data-lay="${t}:${k}:vis" title="${off ? '다시 넣기' : '빼기 (숨기기)'}" aria-label="${esc(nm[k])} ${off ? '다시 넣기' : '빼기'}" aria-pressed="${!off}">${off ? EYEX : EYE}</button></div>`; }).join('')}</div>`; }).join('');
+}
+async function laySave(fn) { const keep = JSON.stringify(rules.layout || {}); rules.layout = JSON.parse(keep); fn(rules.layout); layApply(); const m = $('laymsg');
+  try { await saveRules(); if (m) { m.className = 'msg ok'; m.textContent = '저장했어요'; } } catch (er) { rules.layout = JSON.parse(keep); layApply(); if (m) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er); } } }
+document.addEventListener('click', e => { const b = e.target.closest('[data-lay]'); if (b) { const [t, k, act] = b.dataset.lay.split(':');
+    laySave(Lo => { const c = layCfg(t); if (act === 'vis') { c.hide = c.hide.includes(k) ? c.hide.filter(x => x !== k) : c.hide.concat(k); } else { const i = c.order.indexOf(k), j = act === 'up' ? i - 1 : i + 1; if (j >= 0 && j < c.order.length) [c.order[i], c.order[j]] = [c.order[j], c.order[i]]; } Lo[t] = c; }); return; }
+  if (e.target.closest('#layreset')) laySave(Lo => { Object.keys(LAY).forEach(t => delete Lo[t]); }); });
+layApply();
 // ---------- 앱 아이콘 고르기 (규칙 관리 → 계정 관리, 관리자) ----------
 // rules.appIcon(hi · farm · both)에 맞춰 이 화면의 앱 설치 파일 · 아이콘 링크를 바꿔요. 첫 화면(맨 앞 주소)도 이 기기에 적어 둔 값을 따라가요.
 const APPICON = { hi: '허브아이', farm: '허브다섯메', both: '두 로고 함께' };
@@ -9222,6 +9278,7 @@ const NT_NEWS = [   // 중요한 업데이트 소식: 새로 넣으면 아직 �
   { v: '2026-11-24a', t: '카톡 주문 넣기가 생겼어요', d: '정리 → 주문 정리 ③ · 배송일에 엑셀에 자동으로 들어가요', go: 'run' },
   { v: '2026-11-24b', t: '택배 사고에 카페24 주문 정보가 같이 나와요', d: '이슈 관리 → 택배 사고 · 저장 이미지에도 들어가요', go: 'issue' },
   { v: '2026-11-25a', t: '홈에 개선 메모 칸이 생겼어요', d: '불편한 점을 적거나 마이크로 말해서 남겨 주세요', go: 'home' },
+  { v: '2026-11-25c', t: '탭 화면 구성을 바꿀 수 있어요', d: '규칙 관리 → 설정 → 탭 화면 구성에서 칸 순서 바꾸기 · 빼기', go: 'home' },
   { v: '2026-11-25b', t: '버튼이 아이콘으로 바뀌었어요', d: 'PC는 마우스를 올리면, 휴대폰은 길게 누르면 이름이 보여요 (기기마다 달라요)', go: 'home' },
 ];
 const NT_SEEN = 'h5_nt_seen';
@@ -9592,7 +9649,7 @@ srcLabel('규칙을 불러오는 중…');
   rulesDoc.onSnapshot(snap => {
     if (!snap.metadata.fromCache) clearTimeout(timer);
     if (snap.exists && snap.data().rules) {
-      if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); rulesSavedJ = JSON.stringify(rules); renderRules(); try { appIconApply(); } catch (e) {} if (srcRows && first) runProcess(); }
+      if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); rulesSavedJ = JSON.stringify(rules); renderRules(); try { appIconApply(); } catch (e) {} try { layApply(); } catch (e) {} if (srcRows && first) runProcess(); }
       const u = snap.data().updatedAt; srcLabel('저장된 규칙 사용 중' + (u ? ' · 마지막 저장 ' + new Date(u).toLocaleString('ko-KR') : ''));
     } else if (!snap.metadata.fromCache) srcLabel('저장된 규칙이 없어 기본 규칙을 보여드려요. 고친 뒤 [규칙 저장]을 누르세요.');
     first = false;
