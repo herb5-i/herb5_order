@@ -31,7 +31,7 @@ main{width:100%;max-width:880px;display:flex;flex-direction:column;align-items:c
 .hi{background:#fffdf8;border:1px solid #e4e0d4;box-shadow:0 18px 36px -22px rgba(40,60,30,.45)}
 .farm{background:#fff;border:1px solid #dfe3ea;box-shadow:0 18px 36px -22px rgba(30,42,58,.45)}
 .lg{height:170px;display:flex;align-items:center;justify-content:center}
-.lg img{display:block;object-fit:contain}
+.lg picture{display:block}.lg img{display:block;object-fit:contain}
 .hi .lg img{width:160px;height:160px}
 .farm .lg img{width:300px;max-width:100%;height:96px}
 .nm{font-size:22px;font-weight:800}
@@ -54,9 +54,7 @@ main{width:100%;max-width:880px;display:flex;flex-direction:column;align-items:c
   body{background:#141a16;color:#eef2ec}
   .hd p,.ft{color:#9aa596}
   .hi{background:#1f2821;border-color:rgba(255,255,255,.06)}.hi .nm{color:#eef2ec}.hi .ds{color:#a9b3a5}
-  .hi .lg{background:#fffdf8;border-radius:18px;padding:8px}
   .farm{background:#1c2430;border-color:rgba(255,255,255,.06)}.farm .nm{color:#e8eef6}.farm .ds{color:#a7b2c0}
-  .farm .lg{background:#fff;border-radius:18px;padding:8px 14px}
 }
 </style>
 </head>
@@ -69,12 +67,12 @@ main{width:100%;max-width:880px;display:flex;flex-direction:column;align-items:c
   </div>
   <div class="cards">
     <a class="card hi" href="shop/" aria-label="허브아이 주문 관리로 들어가기">
-      <span class="lg"><img src="logo-hi.png" alt="허브아이 로고"></span>
+      <span class="lg"><picture><source srcset="logo-hi-dark.png" media="(prefers-color-scheme: dark)"><img src="logo-hi.png" alt="허브아이 로고"></picture></span>
       <span class="nm">허브아이</span>
       <span class="ds">쇼핑몰 주문 · 재고 · 고객 관리</span>
     </a>
     <a class="card farm" href="farm/" aria-label="허브다섯메 농장 관리로 들어가기">
-      <span class="lg"><img src="farm/logo.gif" alt="허브다섯메 로고"></span>
+      <span class="lg"><picture><source srcset="farm/logo-dark.png" media="(prefers-color-scheme: dark)"><img src="farm/logo.gif" alt="허브다섯메 로고"></picture></span>
       <span class="nm">허브다섯메</span>
       <span class="ds">농장 재배 · 병해충 · 작업 관리</span>
     </a>
