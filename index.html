@@ -13,6 +13,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <script>
+// 앱 아이콘: 허브아이 규칙 관리에서 고른 아이콘(이 기기에 적어 둔 값)을 따라가요
+(function () { var k = 'hi'; try { k = localStorage.getItem('herb5_appicon') || 'hi'; } catch (e) {} if (!/^(hi|farm|both)$/.test(k)) k = 'hi';
+  document.querySelector('link[rel="manifest"]').setAttribute('href', 'manifest-' + k + '.webmanifest');
+  document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', 'icon-' + k + '-180.png');
+  document.querySelector('link[rel="icon"]').setAttribute('href', 'icon-' + k + '-192.png'); })();
+</script>
+<script>
 // 카페24 연결(동의 화면)에서 돌아온 주소는 허브아이로 그대로 넘겨요
 (function () { var q = location.search; if (/[?&]code=/.test(q) && /[?&]state=/.test(q)) location.replace('shop/' + q + location.hash); })();
 </script>

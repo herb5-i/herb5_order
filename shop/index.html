@@ -1776,6 +1776,9 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
 .subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
+.appicon{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.ai-h{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}.ai-h b{font-size:15px}
+.ai-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:460px}.ai-o{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
+.ai-o img{width:72px;height:72px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.12)}.ai-o.on{border-color:var(--acc);background:var(--acc2);font-weight:700}
 .sdback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900}.sdback.hidden{display:none}
 .sdrawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));box-sizing:border-box}
 .sdrawer.on{transform:none}.sd-h{display:flex;align-items:center;gap:8px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}.sd-h b{font-size:18px;flex:1;min-width:0;overflow-wrap:anywhere}.sd-b{overflow:auto;flex:1;padding-top:10px}
@@ -3000,6 +3003,16 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       </form>
       <p class="cardnote">빼기를 누르면 그 아이디로는 더 못 들어와요. 비밀번호를 바꾸려면 새 아이디를 만들고 예전 아이디를 빼 주세요.</p>
       <p class="msg" id="mmsg"></p>
+      <div class="appicon" id="appicon">
+        <div class="ai-h"><b>앱 아이콘</b><span class="msg">휴대폰 · PC에 설치하는 앱의 아이콘이에요. 고르면 모든 기기에 같이 적용돼요</span></div>
+        <div class="ai-g" role="radiogroup" aria-label="앱 아이콘">
+          <button type="button" class="ai-o" role="radio" data-appicon="hi" aria-checked="false"><img src="icon-hi-192.png" alt=""><span>허브아이</span></button>
+          <button type="button" class="ai-o" role="radio" data-appicon="farm" aria-checked="false"><img src="icon-farm-192.png" alt=""><span>허브다섯메</span></button>
+          <button type="button" class="ai-o" role="radio" data-appicon="both" aria-checked="false"><img src="icon-both-192.png" alt=""><span>두 로고 함께</span></button>
+        </div>
+        <p class="cardnote">이미 설치한 앱은 바로 안 바뀔 수 있어요. 바로 바꾸려면 앱을 지우고 다시 설치해 주세요 (아이폰은 꼭 다시 설치해야 해요).</p>
+        <p class="msg" id="aimsg"></p>
+      </div>
     </div>
     <div class="card rbak" data-sub="set">
       <div>
@@ -9182,6 +9195,22 @@ function iczAll() { iczQ = false; document.querySelectorAll('button').forEach(b 
   document.querySelectorAll('.subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo]').forEach(b => { const sp = b.querySelector('span'); if (sp && !b.title) { b.title = sp.textContent.trim(); b.setAttribute('aria-label', sp.textContent.trim()); } }); }
 new MutationObserver(ms => { if (iczQ) return; iczQ = true; requestAnimationFrame(iczAll); }).observe(document.body, { childList: true, subtree: true, characterData: true });
 iczAll();
+// ---------- 앱 아이콘 고르기 (규칙 관리 → 계정 관리, 관리자) ----------
+// rules.appIcon(hi · farm · both)에 맞춰 이 화면의 앱 설치 파일 · 아이콘 링크를 바꿔요. 첫 화면(맨 앞 주소)도 이 기기에 적어 둔 값을 따라가요.
+const APPICON = { hi: '허브아이', farm: '허브다섯메', both: '두 로고 함께' };
+function appIconApply() {
+  const k = APPICON[rules.appIcon] ? rules.appIcon : 'hi'; try { localStorage.setItem('herb5_appicon', k); } catch (e) {}
+  const man = document.querySelector('link[rel="manifest"]'); if (man && /manifest/.test(man.getAttribute('href') || '')) man.setAttribute('href', 'manifest-' + k + '.webmanifest');
+  const ap = document.querySelector('link[rel="apple-touch-icon"]'); if (ap) ap.setAttribute('href', 'icon-' + k + '-180.png');
+  document.querySelectorAll('link[rel="icon"]').forEach(l => l.setAttribute('href', 'icon-' + k + '-192.png'));
+  document.querySelectorAll('[data-appicon]').forEach(b => { const on = b.dataset.appicon === k; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); });
+}
+document.addEventListener('click', async e => { const b = e.target.closest('[data-appicon]'); if (!b) return; const m = $('aimsg');
+  if (!document.body.classList.contains('is-admin')) { if (m) { m.className = 'msg err'; m.textContent = '관리자만 바꿀 수 있어요'; } return; }
+  const keep = rules.appIcon; rules.appIcon = b.dataset.appicon; appIconApply();
+  try { await saveRules(); if (m) { m.className = 'msg ok'; m.textContent = '앱 아이콘을 "' + APPICON[rules.appIcon] + '"(으)로 바꿨어요'; } }
+  catch (er) { rules.appIcon = keep; appIconApply(); if (m) { m.className = 'msg err'; m.textContent = '바꾸지 못했어요: ' + (er.message || er); } } });
+appIconApply();
 // ---------- 알림: 앱 아이콘 숫자(설치한 앱) · 홈 메뉴 숫자 · 홈 알림 목록 ----------
 // 사이트(앱)가 열려 있을 때 1분마다 다시 세요. 앱을 완전히 닫으면 숫자가 그때 값으로 멈춰 있어요.
 const NT_NEWS = [   // 중요한 업데이트 소식: 새로 넣으면 아직 안 본 사람에게 1로 떠요
@@ -9546,7 +9575,7 @@ srcLabel('규칙을 불러오는 중…');
   rulesDoc.onSnapshot(snap => {
     if (!snap.metadata.fromCache) clearTimeout(timer);
     if (snap.exists && snap.data().rules) {
-      if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); rulesSavedJ = JSON.stringify(rules); renderRules(); if (srcRows && first) runProcess(); }
+      if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); rulesSavedJ = JSON.stringify(rules); renderRules(); try { appIconApply(); } catch (e) {} if (srcRows && first) runProcess(); }
       const u = snap.data().updatedAt; srcLabel('저장된 규칙 사용 중' + (u ? ' · 마지막 저장 ' + new Date(u).toLocaleString('ko-KR') : ''));
     } else if (!snap.metadata.fromCache) srcLabel('저장된 규칙이 없어 기본 규칙을 보여드려요. 고친 뒤 [규칙 저장]을 누르세요.');
     first = false;

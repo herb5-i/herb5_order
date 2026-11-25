@@ -1,3 +1,4 @@
+import json
 # index.html → Netlify 웹사이트 (Firebase 로그인 + Firestore 실시간 동기화)
 # 결과: site_fb/index.html, site_fb/firebase-config.js, firestore.rules
 import re, os, sys, shutil
@@ -56,6 +57,16 @@ rep('''    <div class="card rbak" data-sub="set">''', '''    <div class="card fb
       </form>
       <p class="cardnote">빼기를 누르면 그 아이디로는 더 못 들어와요. 비밀번호를 바꾸려면 새 아이디를 만들고 예전 아이디를 빼 주세요.</p>
       <p class="msg" id="mmsg"></p>
+      <div class="appicon" id="appicon">
+        <div class="ai-h"><b>앱 아이콘</b><span class="msg">휴대폰 · PC에 설치하는 앱의 아이콘이에요. 고르면 모든 기기에 같이 적용돼요</span></div>
+        <div class="ai-g" role="radiogroup" aria-label="앱 아이콘">
+          <button type="button" class="ai-o" role="radio" data-appicon="hi" aria-checked="false"><img src="icon-hi-192.png" alt=""><span>허브아이</span></button>
+          <button type="button" class="ai-o" role="radio" data-appicon="farm" aria-checked="false"><img src="icon-farm-192.png" alt=""><span>허브다섯메</span></button>
+          <button type="button" class="ai-o" role="radio" data-appicon="both" aria-checked="false"><img src="icon-both-192.png" alt=""><span>두 로고 함께</span></button>
+        </div>
+        <p class="cardnote">이미 설치한 앱은 바로 안 바뀔 수 있어요. 바로 바꾸려면 앱을 지우고 다시 설치해 주세요 (아이폰은 꼭 다시 설치해야 해요).</p>
+        <p class="msg" id="aimsg"></p>
+      </div>
     </div>
     <div class="card rbak" data-sub="set">''')
 _hm = re.search(r'<button class="ibtn" id="himport"[^>]*>.*?</button>', s).group(0)
@@ -114,6 +125,14 @@ open(os.path.join(out, 'manifest.webmanifest'), 'w', encoding='utf8').write('''{
   ]
 }
 ''')
+# 앱 아이콘 고르기 (규칙 관리 → 계정 관리): 아이콘 3종과 그 아이콘을 쓰는 앱 설치 파일(manifest-종류.webmanifest)
+for _k in ('hi', 'farm', 'both'):
+    for _s in (180, 192, 512): shutil.copy(f'icons/icon-{_k}-{_s}.png', os.path.join(out, f'icon-{_k}-{_s}.png'))
+    open(os.path.join(out, f'manifest-{_k}.webmanifest'), 'w', encoding='utf8').write(json.dumps({
+      "name": "Herb5 - 허브아이", "short_name": "허브아이", "start_url": "./", "display": "standalone", "scope": "./", "id": "./",
+      "background_color": "#ffffff", "theme_color": "#0f8584",
+      "icons": [{"src": f"icon-{_k}-192.png", "sizes": "192x192", "type": "image/png"}, {"src": f"icon-{_k}-512.png", "sizes": "512x512", "type": "image/png"},
+                {"src": f"icon-{_k}-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}, ensure_ascii=False, indent=2) + '\n')
 open(os.path.join(out, 'sw.js'), 'w', encoding='utf8').write("""// 허브아이 앱 설치용 서비스 워커: 화면 문서만 네트워크 우선, 끊겼을 때만 저장본을 보여 줘요. 데이터 요청은 건드리지 않아요.
 const C = 'herb5-shell-v1';
 self.addEventListener('install', e => self.skipWaiting());

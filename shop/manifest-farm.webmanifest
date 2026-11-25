@@ -1,0 +1,28 @@
+{
+  "name": "Herb5 - 허브아이",
+  "short_name": "허브아이",
+  "start_url": "./",
+  "display": "standalone",
+  "scope": "./",
+  "id": "./",
+  "background_color": "#ffffff",
+  "theme_color": "#0f8584",
+  "icons": [
+    {
+      "src": "icon-farm-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-farm-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-farm-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

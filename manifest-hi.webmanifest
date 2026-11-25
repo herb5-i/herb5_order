@@ -1,0 +1,28 @@
+{
+  "name": "허브아이 · 허브다섯메",
+  "short_name": "허브아이",
+  "start_url": "./",
+  "display": "standalone",
+  "scope": "./",
+  "id": "./",
+  "background_color": "#f4f2ec",
+  "theme_color": "#f4f2ec",
+  "icons": [
+    {
+      "src": "icon-hi-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-hi-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-hi-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
