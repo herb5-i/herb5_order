@@ -69,6 +69,16 @@ html.dark .farm{background:#1c2430;border-color:rgba(255,255,255,.06)}html.dark 
 .thm{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));width:48px;height:48px;border-radius:50%;border:1px solid #e4e0d4;background:#fffdf8;color:#3b4a3a;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px -10px rgba(40,60,30,.45)}
 .thm svg{width:22px;height:22px}.thm:focus-visible{outline:3px solid #2e7d4f;outline-offset:3px}
 html.dark .thm{background:#1f2821;border-color:rgba(255,255,255,.1);color:#eef2ec}
+.inst{align-self:center;margin-top:6px;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;border-radius:999px;border:1px solid #2e7d4f;background:#2e7d4f;color:#fff;font:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px -10px rgba(46,125,79,.7)}
+.inst svg{width:19px;height:19px}.inst:hover{background:#276b43}.inst:focus-visible{outline:3px solid #2e7d4f;outline-offset:3px}.inst[hidden]{display:none}
+.im{position:fixed;inset:0;background:rgba(20,25,20,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}.im[hidden]{display:none}
+.im-box{width:100%;max-width:440px;max-height:86vh;overflow:auto;background:#fffdf8;color:#1f2620;border-radius:22px;padding:20px 20px 18px;box-shadow:0 24px 48px -20px rgba(0,0,0,.4)}
+.im-h{display:flex;align-items:center;gap:8px}.im-h b{font-size:18px}.im-h span{font-size:13px;color:#6a7266;flex:1}.im-x{width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:#3b4a3a;display:grid;place-items:center;cursor:pointer;flex:none}.im-x svg{width:18px;height:18px}
+.im ol{margin:14px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:9px;font-size:15px;line-height:1.5}.im-a{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.im-a:empty{display:none}
+.im-a a,.im-a button{display:inline-flex;align-items:center;height:42px;padding:0 16px;border-radius:12px;border:1px solid #d8d3c4;background:#fff;color:#1f2620;font:inherit;font-size:14.5px;font-weight:700;text-decoration:none;cursor:pointer}.im-a .pri{background:#2e7d4f;border-color:#2e7d4f;color:#fff}
+.im-n{margin:14px 0 0;font-size:13px;color:#6a7266;line-height:1.5}
+html.dark .im-box{background:#1f2821;color:#eef2ec}html.dark .im-h span,html.dark .im-n{color:#a9b3a5}html.dark .im-x{color:#eef2ec}html.dark .im-a a,html.dark .im-a button{background:#2a352c;border-color:rgba(255,255,255,.1);color:#eef2ec}html.dark .im-a .pri{background:#2e7d4f;color:#fff}
+@media(max-width:640px){.inst{align-self:flex-start}}
 </style>
 </head>
 <body>
@@ -77,6 +87,7 @@ html.dark .thm{background:#1f2821;border-color:rgba(255,255,255,.1);color:#eef2e
     <p id="today"></p>
     <h1>어디로 들어갈까요?</h1>
     <p>로고를 누르면 그 사이트 로그인 화면이 열려요</p>
+    <button type="button" class="inst" id="inst" hidden><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7.5v7M9 11.5l3 3 3-3M10 18.5h4"/></svg>앱으로 설치</button>
   </div>
   <div class="cards">
     <a class="card hi" href="shop/" aria-label="허브아이 주문 관리로 들어가기">
@@ -92,6 +103,7 @@ html.dark .thm{background:#1f2821;border-color:rgba(255,255,255,.1);color:#eef2e
   </div>
   <p class="ft">허브아이 · since 1983</p>
 </main>
+<div class="im" id="im" hidden role="dialog" aria-modal="true" aria-labelledby="im-t"><div class="im-box"><div class="im-h"><b id="im-t">앱으로 설치하기</b><span id="im-b"></span><button type="button" class="im-x" id="im-x" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><ol id="im-s"></ol><div class="im-a" id="im-a"></div><p class="im-n">설치하면 바탕화면 · 홈 화면에서 이 첫 화면이 바로 열려요. 허브아이 · 허브다섯메 둘 다 이 앱 하나로 들어가요.</p></div></div>
 <button type="button" class="thm" id="thm" aria-label="다크 모드로 바꾸기" title="다크 모드로 바꾸기"></button>
 <script>
 (function () { var d = new Date(); document.getElementById('today').textContent = d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'[d.getDay()] + '요일'; })();
@@ -101,6 +113,42 @@ function thmApply() { var d = document.documentElement.classList.contains('dark'
   var t = d ? '밝은 화면으로 바꾸기' : '다크 모드로 바꾸기'; b.title = t; b.setAttribute('aria-label', t); }
 document.getElementById('thm').onclick = function () { var d = !document.documentElement.classList.contains('dark'); document.documentElement.classList.toggle('dark', d); try { localStorage.setItem('herb5_theme', d ? 'dark' : 'light'); } catch (e) {} thmApply(); };
 thmApply();
+// 앱으로 설치: 설치 창을 띄울 수 있으면 바로 띄우고, 아니면 지금 브라우저에 맞는 방법을 보여줘요. 이미 앱으로 열었으면 버튼을 숨겨요
+(function () {
+  var ev = null, btn = document.getElementById('inst'), im = document.getElementById('im');
+  function done() { try { return matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: window-controls-overlay)').matches || navigator.standalone === true; } catch (e) { return false; } }
+  btn.hidden = done();
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); ev = e; });
+  window.addEventListener('appinstalled', function () { ev = null; btn.hidden = true; });
+  function env() { var ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1), and = /Android/.test(ua);
+    var b = /KAKAOTALK/i.test(ua) ? 'kakao' : (/NAVER\(inapp|NAVER\//.test(ua) && !/Whale/.test(ua)) ? 'naver' : /Instagram|FBAN|FBAV|FB_IAB|Line\/|DaumApps|BAND\/|; wv\)/.test(ua) ? 'inapp'
+      : /SamsungBrowser/.test(ua) ? 'samsung' : /Whale\//.test(ua) ? 'whale' : /EdgA\/|EdgiOS\/|Edg\//.test(ua) ? 'edge' : /FxiOS|Firefox\//.test(ua) ? 'firefox' : /CriOS/.test(ua) ? 'chrome' : ios ? 'safari' : /Chrome\//.test(ua) ? 'chrome' : 'other';
+    return { ios: ios, and: and, b: b }; }
+  var NM = { kakao: '카카오톡 안', naver: '네이버 앱 안', inapp: '다른 앱 안', samsung: '삼성 인터넷', whale: '네이버 웨일', edge: '엣지', firefox: '파이어폭스', chrome: '크롬', safari: '사파리', other: '' };
+  function guide() {
+    var E = env(), url = location.origin + location.pathname, st, act = '';
+    if (E.b === 'kakao' || E.b === 'naver' || E.b === 'inapp') {
+      st = ['지금은 <b>' + NM[E.b] + '</b>에서 열려 있어서 바로 설치가 안 돼요.', '아래 버튼으로 ' + (E.ios ? '사파리' : '크롬') + '에서 열어 주세요.', '열린 화면에서 <b>앱으로 설치</b>를 다시 눌러 주세요.'];
+      if (E.and) act = '<a class="pri" href="intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end">크롬으로 열기</a>';
+      else if (E.b === 'kakao') act = '<a class="pri" href="kakaotalk://web/openExternal?url=' + encodeURIComponent(url) + '">사파리로 열기</a>';
+      act += '<button type="button" id="im-copy">주소 복사</button>';
+    }
+    else if (E.ios) st = E.b === 'safari' ? ['사파리 아래쪽(아이패드는 위쪽) <b>공유 버튼</b>(네모에 위 화살표)을 눌러요.', '목록을 올려 <b>홈 화면에 추가</b>를 눌러요.', '오른쪽 위 <b>추가</b>를 누르면 끝이에요.']
+      : [NM[E.b] + ' 주소창 옆(또는 ⋯ 메뉴)의 <b>공유 버튼</b>을 눌러요.', '<b>홈 화면에 추가</b>를 눌러요. 목록에 없으면 사파리에서 열어 주세요.'];
+    else if (E.b === 'samsung') st = ['주소창 오른쪽의 <b>다운로드(↓) 모양 아이콘</b>이 보이면 눌러 <b>설치</b>해요.', '안 보이면 아래쪽 <b>☰ 메뉴</b> → <b>현재 페이지 추가</b> → <b>홈 화면</b>을 눌러요.'];
+    else if (E.b === 'whale') st = E.and ? ['아래쪽 <b>☰ 메뉴</b>를 눌러요.', '<b>홈 화면에 추가</b>를 눌러요.'] : ['주소창 오른쪽의 <b>설치 아이콘</b>을 눌러요.', '없으면 <b>⋯ 메뉴</b> → <b>앱</b> → <b>설치</b>를 눌러요.'];
+    else if (E.b === 'edge') st = E.and ? ['아래쪽 <b>⋯ 메뉴</b>를 눌러요.', '<b>휴대폰에 추가</b> 또는 <b>홈 화면에 추가</b>를 눌러요.'] : ['주소창 오른쪽의 <b>앱 설치 아이콘</b>을 눌러요.', '없으면 <b>⋯ 메뉴</b> → <b>앱</b> → <b>이 사이트를 앱으로 설치</b>를 눌러요.'];
+    else if (E.b === 'firefox') st = E.and ? ['<b>⋮ 메뉴</b>를 눌러요.', '<b>설치</b> 또는 <b>홈 화면에 추가</b>를 눌러요.'] : ['PC 파이어폭스는 앱 설치가 안 돼요.', '크롬이나 엣지에서 이 주소를 열고 <b>앱으로 설치</b>를 눌러 주세요.'];
+    else st = E.and ? ['크롬 오른쪽 위 <b>⋮ 메뉴</b>를 눌러요.', '<b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 눌러요.'] : ['크롬 주소창 오른쪽의 <b>설치 아이콘</b>(모니터에 아래 화살표)을 눌러요.', '없으면 <b>⋮ 메뉴</b> → <b>저장 및 공유</b> → <b>앱 설치</b>를 눌러요.'];
+    document.getElementById('im-b').textContent = NM[E.b] || '';
+    document.getElementById('im-s').innerHTML = st.map(function (x) { return '<li>' + x + '</li>'; }).join('');
+    document.getElementById('im-a').innerHTML = act; im.hidden = false; document.getElementById('im-x').focus();
+  }
+  btn.onclick = function () { if (ev) { var e = ev; ev = null; e.prompt(); e.userChoice.then(function (r) { if (r && r.outcome === 'accepted') btn.hidden = true; }).catch(function () {}); } else guide(); };
+  im.addEventListener('click', function (e) { if (e.target === im || e.target.closest('#im-x')) { im.hidden = true; btn.focus(); return; }
+    if (e.target.closest('#im-copy')) { var u = location.origin + location.pathname; (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { e.target.textContent = '복사했어요'; }).catch(function () { prompt('이 주소를 복사해 주세요', u); }); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !im.hidden) { im.hidden = true; btn.focus(); } });
+})();
 if ('serviceWorker' in navigator && location.protocol === 'https:') { try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {} }
 </script>
 </body>

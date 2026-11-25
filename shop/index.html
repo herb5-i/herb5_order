@@ -2701,7 +2701,6 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <button class="hm-ghost hm-share hidden" id="ph-share" type="button" data-share="today" data-sharevia="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>오늘 요약 보내기</button>
       <button class="hm-ghost hm-bakcta hidden" type="button" id="hm-bakgo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bk-t">지금 백업</span><small class="bk-s"></small></button>
       <button class="hm-ghost hm-noti" type="button" id="hm-notib" aria-expanded="false" aria-controls="ntdrawer" title="알림" aria-label="알림"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b class="ntc hidden" id="hm-notic">0</b></button>
-      <button class="hm-ghost hm-inst hidden" type="button" id="hm-inst" title="바탕화면 · 홈 화면에 앱처럼 설치해요"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 20h8M12 16v4M12 7v5m0 0-2.5-2.5M12 12l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>앱으로 설치</span></button>
     </div>
   </div>
 
@@ -4982,7 +4981,7 @@ document.addEventListener('click', async e => {
 let instEvt = null;
 const instDone = () => { try { return matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: window-controls-overlay)').matches || navigator.standalone === true; } catch (e) { return false; } };
 function instShow() { const b = $('hm-inst'); if (b) b.classList.toggle('hidden', instDone()); }
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instEvt = e; instShow(); });
+// 앱 설치 버튼은 첫 화면(로고 고르기)으로 옮겼어요
 window.addEventListener('appinstalled', () => { instEvt = null; instShow(); shareToast('앱으로 설치했어요 · 바탕화면이나 홈 화면에서 열어요'); });
 function instEnv() {
   const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1), and = /Android/.test(ua);

@@ -1,6 +1,6 @@
 // 첫 화면(허브아이 · 허브다섯메) 서비스 워커: 화면 문서만 네트워크 우선, 끊겼을 때만 그 주소의 저장본을 보여 줘요. 데이터 요청은 건드리지 않아요.
 // 허브아이(shop/)는 자기 서비스 워커가 따로 있어요.
-const C = 'herb5-root-v2';
+const C = 'herb5-root-v3';
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k === 'herb5-shell-v1').map(k => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', e => {
