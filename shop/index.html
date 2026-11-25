@@ -1776,6 +1776,12 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
 .subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
+.sdback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900}.sdback.hidden{display:none}
+.sdrawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));box-sizing:border-box}
+.sdrawer.on{transform:none}.sd-h{display:flex;align-items:center;gap:8px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}.sd-h b{font-size:18px;flex:1;min-width:0;overflow-wrap:anywhere}.sd-b{overflow:auto;flex:1;padding-top:10px}
+.sd-b .stkform2{grid-template-columns:minmax(0,1fr) 84px}.sd-b .stkform2 .f-n,.sd-b .stkform2 .f-b{grid-column:1/-1}.sd-b .stkpm{flex:1}
+.sd-b .stkpanel{margin:0;border:0;box-shadow:none;padding:0;background:none}.sd-b .stkpanel .sp-h b{display:none}.sd-b .stkpanel .sp-h{margin-bottom:8px}
+html.dark .sdrawer{background:#1b221d}
 .ntback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900;opacity:1;transition:opacity .2s}.ntback.hidden{display:none}
 .ntdrawer{position:fixed;top:0;right:0;bottom:0;width:min(380px,88vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
 .ntdrawer.on{transform:none}.ntd-h{display:flex;align-items:center;gap:8px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}.ntd-h b{font-size:18px}.ntd-h span{flex:1;color:var(--mute);font-size:13px}.ntd-b{overflow:auto;flex:1;padding-top:4px}
@@ -2826,16 +2832,16 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
           <label class="f-n">품목<input id="stk-n" data-ac="1" placeholder="위에서 누르거나 찾기 (예: 로즈마리)" autocomplete="off"></label>
           <label class="f-q">수량<input id="stk-q" inputmode="decimal" placeholder="0" autocomplete="off"></label>
           <label class="f-u">단위<select id="stk-u"><option>개</option><option>kg</option><option>g</option></select></label>
-          <div class="f-b"><button class="stkpm plus" id="stk-plus" aria-label="재고 더하기">＋</button><button class="stkpm minus" id="stk-minus" aria-label="재고 빼기">−</button><button class="stkpm retb" id="stk-ret" type="button" title="이 품목 · 수량을 농장 반송 목록에 담기" aria-label="반송에 담기">반송</button><button class="stkpm set" id="stk-set" title="실제로 센 수량으로 맞추기">＝</button></div>
+          <div class="f-b"><button class="stkpm plus" id="stk-plus" aria-label="재고 더하기">＋</button><button class="stkpm minus" id="stk-minus" aria-label="재고 빼기">−</button></div>
         </div>
         <datalist id="stk-names"></datalist>
         <p class="msg" id="stkmsg"></p>
         <label class="stknote hidden" id="stknotebox"><span>품목 메모 <small id="stknote-st"></small></span><textarea id="stk-note" rows="2" placeholder="이 품목에 남길 메모 (예: 하우스 2번 · 다음 주 수확 많음 · 잎 작음)"></textarea></label>
         <div class="stkunits hidden" id="stkunits"><div class="su-h">단위 편집 <small>단위를 넣거나 지워요. kg·g 는 무게(주문 g 만큼 빠짐), 나머지는 개수로 세요.</small></div><div class="su-list"></div><div class="su-add"><input id="su-new" placeholder="새 단위 (예: 송이, 팩, 박스)" maxlength="8" autocomplete="off"><button class="ibtn ibtn-acc" id="su-addbtn" title="단위 추가" aria-label="단위 추가"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="ibtn" id="su-reset" title="처음 단위로 (개 · kg · g)" aria-label="처음 단위로"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button></div><p class="msg" id="su-msg"></p></div>
-        <p class="help">＋ 들어온 만큼 더하기 · − 따로 나간 만큼 빼기 · ＝ 실제로 센 수량으로 맞추기. 재고를 넣은 뒤에 올린 원본(오전·오후)부터 집계 수량만큼 실시간으로 빠져요. 이미 올라와 있던 주문은 빼지 않아요 (무게는 100g 단위 올림, 예: 560g → 600g).</p>
+        <p class="help">＋ 들어온 만큼 더하기 · − 따로 나간 만큼 빼기. 재고를 넣은 뒤에 올린 원본(오전·오후)부터 집계 수량만큼 실시간으로 빠져요. 이미 올라와 있던 주문은 빼지 않아요 (무게는 100g 단위 올림, 예: 560g → 600g).</p>
         <div class="stkeditfoot"><button class="ibtn ibtn-bad" id="stk-del" title="품목 지우기" aria-label="품목 지우기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M10 11v5.5M14 11v5.5"/><path d="M6.5 7l.8 11.2A2 2 0 0 0 9.3 20h5.4a2 2 0 0 0 2-1.8L17.5 7M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2"/></svg></button><span class="sp"></span><button class="ibtn" id="stk-unitbtn" title="단위 편집" aria-label="단위 편집"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 15.5 15.5 3.5l5 5-12 12-5-5Z"/><path d="m7.5 11.5 2 2M10.5 8.5l2 2M13.5 5.5l2 2"/></svg></button></div>
       </div>
-      <p class="help stkhint" id="stkhint">품목을 길게 누르면 그 품목 재고를 고칠 수 있어요 · ✎ 를 누르면 재고 수정과 순서 바꾸기</p>
+      <p class="help stkhint" id="stkhint">품목을 길게 누르면 옆 창에서 그 품목 재고를 고칠 수 있어요 · ✎ 를 누르면 재고 수정과 순서 바꾸기</p>
       <div class="stklist" id="stklist"></div>
     </div>
     <div class="card stkmemo" id="stkmemocard" data-sub="cur">
@@ -6730,11 +6736,29 @@ function stkDragEnd(save) {
   if (save) stkSaveLayout();
 }
 let stkEditMode = false, stkPress = null;
+// 길게 누르면 오른쪽 사이드 창에서 그 품목 재고를 고쳐요 (✎ 편집 모드의 수정칸을 창으로 옮겨 써요)
+let stkDrawer = false;
+function stkDrawerOpen(key) {
+  const p = $('stkedit'); if (!p._home) p._home = { parent: p.parentNode, next: p.nextSibling };
+  $('stkd-b').appendChild(p); p.classList.remove('hidden'); stkDrawer = true;
+  $('stkd-t').textContent = key ? key + ' 재고' : '재고 수정';
+  $('stkdrawer').classList.add('on'); $('stkdrawer').setAttribute('aria-hidden', 'false'); $('stkdback').classList.remove('hidden');
+  if (key) { $('stk-n').value = key; $('stkmsg').textContent = ''; }
+  stkCurLine(); setTimeout(() => $('stk-q').focus({ preventScroll: true }), 260);
+}
+function stkDrawerClose() {
+  if (!stkDrawer) return; stkDrawer = false; const p = $('stkedit');
+  $('stkdrawer').classList.remove('on'); $('stkdrawer').setAttribute('aria-hidden', 'true'); $('stkdback').classList.add('hidden');
+  if (p._home) p._home.parent.insertBefore(p, p._home.next); p.classList.toggle('hidden', !stkEditMode); $('stkunits').classList.add('hidden');
+}
+document.addEventListener('click', e => { if (e.target.closest('#stkd-x') || e.target.closest('#stkdback')) stkDrawerClose(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && stkDrawer) stkDrawerClose(); });
 function stkSetEdit(on, key) {
+  if (stkDrawer) stkDrawerClose();
   stkEditMode = on; $('v-stock').classList.toggle('editing', on);
   $('stkedit').classList.toggle('hidden', !on);
   const b = $('stk-editbtn'); b.innerHTML = on ? IC.check : IC.edit; b.title = on ? '완료' : '편집 (재고 수정 · 순서 바꾸기)'; b.setAttribute('aria-label', on ? '완료' : '편집'); b.setAttribute('aria-pressed', on); b.classList.toggle('on', on);
-  $('stkhint').innerHTML = on ? '품목을 누르면 수정칸에 들어가요 · 품목이나 묶음 제목을 끌어서 순서를 바꿔요 · 다 했으면 ✓' : '품목을 길게 누르면 그 품목 재고를 고칠 수 있어요 · ✎ 를 누르면 재고 수정과 순서 바꾸기';
+  $('stkhint').innerHTML = on ? '품목을 누르면 수정칸에 들어가요 · 품목이나 묶음 제목을 끌어서 순서를 바꿔요 · 다 했으면 ✓' : '품목을 길게 누르면 옆 창에서 그 품목 재고를 고칠 수 있어요 · ✎ 를 누르면 재고 수정과 순서 바꾸기';
   if (!on) { $('stkunits').classList.add('hidden'); $('stk-unitbtn').classList.remove('on'); return; }
   if (key) { $('stk-n').value = key; $('stkmsg').textContent = ''; }
   stkCurLine();
@@ -6747,7 +6771,7 @@ document.addEventListener('pointerdown', e => {
   if (!stkEditMode) { // 길게 누르면 그 품목 수정
     if (!tile) return;
     tile.classList.add('pressing');
-    stkPress = { tile, x: e.clientX, y: e.clientY, timer: setTimeout(() => { tile.classList.remove('pressing'); stkPress = null; stkNoClick = Date.now(); if (navigator.vibrate) try { navigator.vibrate(15); } catch (er) {} stkSetEdit(true, tile.dataset.stkpick); }, 480) };
+    stkPress = { tile, x: e.clientX, y: e.clientY, timer: setTimeout(() => { tile.classList.remove('pressing'); stkPress = null; stkNoClick = Date.now(); if (navigator.vibrate) try { navigator.vibrate(15); } catch (er) {} stkDrawerOpen(tile.dataset.stkpick); }, 480) };
     return;
   }
   const el = grip ? grip.closest('.sg-group') : tile;
@@ -9543,5 +9567,6 @@ srcLabel('규칙을 불러오는 중…');
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 </script>
 <div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
+<div class="sdback hidden" id="stkdback"></div><aside class="sdrawer" id="stkdrawer" role="dialog" aria-modal="true" aria-label="재고 수정" aria-hidden="true"><div class="sd-h"><b id="stkd-t">재고 수정</b><button class="ibtn" type="button" id="stkd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="stkd-b"></div></aside>
 </body>
 </html>
