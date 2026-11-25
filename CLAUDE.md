@@ -3,6 +3,10 @@
 이 저장소는 허브 · 식용꽃 쇼핑몰 **허브아이**의 업무용 웹사이트예요.
 GitHub Pages로 열려요: https://herb5-i.github.io/herb5_order/
 
+- 맨 앞 주소는 **첫 화면**(허브아이 · 허브다섯메 로고 고르기)이에요.
+- 허브아이: https://herb5-i.github.io/herb5_order/shop/
+- 허브다섯메 농장: https://herb5-i.github.io/herb5_order/farm/ (원본은 `herbfive-farm` 저장소, `sh sync_farm.sh`로 가져와요)
+
 사용자는 개발자가 아닌 가게 운영자예요. **설명과 화면 문구는 쉬운 한국어(해요체)** 로 써 주세요.
 전문 용어(API, 배포, 커밋 등)는 꼭 필요할 때만 쓰고, 쓰면 짧게 풀어서 설명해요.
 
@@ -16,7 +20,9 @@ GitHub Pages로 열려요: https://herb5-i.github.io/herb5_order/
 | `src/audit_all.js` | 화면 점검 (모바일 · PC 폭마다 넘침 · 글자 잘림 · 오류) |
 | `src/test/` | 점검용 가짜 데이터 (실제 고객 정보 아님) |
 | `src/build_shared.py`, `rules_live.json`, `weather_doc.json` | 예전 "공용 html 파일" 만들기 (지금은 거의 안 써요) |
-| `index.html`, `manifest.webmanifest`, `sw.js`, `icon-*.png` (맨 위) | **완성본. 직접 고치지 말고 빌드로만 만들어요.** |
+| `index.html`, `manifest.webmanifest`, `sw.js`, `logo-hi.png`, `icon-*.png` (맨 위) | **첫 화면** (로고 두 개). 이건 직접 고쳐요. 카페24 연결에서 돌아온 주소(`?code=`)는 `shop/`으로 넘겨요 |
+| `shop/` | **허브아이 완성본. 직접 고치지 말고 빌드로만 만들어요.** |
+| `farm/`, `sync_farm.sh` | 허브다섯메 농장 사이트 (herbfive-farm 저장소에서 가져온 완성본) |
 | `firebase-config.js` | Firebase 연결값 (공개돼도 되는 값) |
 | `cafe24-worker/worker.js` | Cloudflare 워커 (카페24 · 네이버 API 중계). 사용자가 Cloudflare에 직접 붙여 넣어 배포해요 |
 | `firestore.rules` | Firestore 보안 규칙 |
@@ -26,9 +32,9 @@ GitHub Pages로 열려요: https://herb5-i.github.io/herb5_order/
 1. `src/index.html`을 고쳐요. 큰 수정 전에는 백업을 떠 두면 좋아요.
 2. 완성본 만들기:
    ```
-   cd src && python3 build_web.py ..
+   cd src && python3 build_web.py ../shop
    ```
-   (맨 위 `index.html`, `manifest.webmanifest`, `sw.js`, 아이콘이 새로 만들어져요)
+   (`shop/` 안의 `index.html`, `manifest.webmanifest`, `sw.js`, 아이콘이 새로 만들어져요. 맨 위 첫 화면은 건드리지 않아요)
 3. **화면 점검 — 수정할 때마다 꼭 해요.** 사용자가 요청한 규칙이에요: 모바일 · PC에서 넘침, 크기 변화 같은 문제가 없는지 확인하고 고치기.
    ```
    cd src
