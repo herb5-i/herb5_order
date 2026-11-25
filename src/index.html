@@ -1690,7 +1690,7 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hmbar .btn.danger{background:#fbe5e9;color:#b44a64}
 .hm-noti{position:relative;white-space:nowrap}.hm-noti svg{flex:none;width:18px;height:18px}.hm-noti span{white-space:nowrap}.hm-noti .ntc{min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 12px/20px var(--body);text-align:center}.hm-noti .ntc.hidden{display:none}
 .tabs .tab{position:relative}.tbadge{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 10.5px/17px var(--body);text-align:center;pointer-events:none;z-index:2}
-.icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
+.icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none;pointer-events:none}button svg,a.btn svg{pointer-events:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
 .subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
 .fold-c{position:relative}.fold-c > .sh{cursor:pointer}.fold-c > .sh:focus-visible{outline:2px solid var(--acc);outline-offset:4px;border-radius:8px}.foldt{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mute);display:grid;place-items:center;cursor:pointer}
@@ -3316,10 +3316,11 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('click', e => {
   const t = e.target;
-  if (t.dataset && t.dataset.del) { TABLES[t.dataset.del].get().splice(+t.dataset.i, 1); renderTable(t.dataset.del); markDirty(); if (t.dataset.del === 'stockAlias' || t.dataset.del === 'stockUnits') saPreviewSoon(); }
-  if (t.dataset && t.dataset.add) {
-    const k = t.dataset.add, o = {}; TABLES[k].cols.forEach(c => o[c[0]] = ''); TABLES[k].get().push(o); renderTable(k); markDirty();
-    const ins = $('ed-' + k).querySelectorAll('tr:last-child input'); if (ins[0]) ins[0].focus();
+  const dB = t.closest && t.closest('[data-del]'), aB = t.closest && t.closest('[data-add]');
+  if (dB && TABLES[dB.dataset.del]) { TABLES[dB.dataset.del].get().splice(+dB.dataset.i, 1); renderTable(dB.dataset.del); markDirty(); if (dB.dataset.del === 'stockAlias' || dB.dataset.del === 'stockUnits') saPreviewSoon(); }
+  if (aB && TABLES[aB.dataset.add]) {
+    const k = aB.dataset.add, o = {}; TABLES[k].cols.forEach(c => o[c[0]] = ''); TABLES[k].get().push(o); renderTable(k); markDirty();
+    const ins = $('ed-' + k).querySelectorAll('tr:last-child input'); if (ins[0]) { ins[0].focus(); ins[0].scrollIntoView({ block: 'nearest' }); }
   }
 });
 const LISTS = { checkWords: [() => rules.checkWords, v => rules.checkWords = v], dropColumns: [() => rules.dropColumns, v => rules.dropColumns = v],
