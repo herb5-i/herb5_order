@@ -1702,7 +1702,7 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hw-pin b{font-weight:700;color:#1f2a24}.hw-pin i{font-style:normal;color:#4a5550}
 html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e5}html.dark .hw-pin i{color:#aab4ad}
 .hw-wxbig{display:flex;flex-direction:column}.hw-wxrow{flex:1;min-height:0;display:flex;gap:12px}.hw-wxrow .hw-mapbox{flex:0 0 auto;max-width:48%}.hw-wxrow .hm-list{flex:1;min-width:0;overflow:auto;margin:0}.hw-wxrow .hw-wx li{flex-wrap:wrap;row-gap:4px}.hw-wxrow .hw-wx .nm{flex:1;min-width:0}.hw-wxrow .hw-chips{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}
-.lay-off{display:none!important}
+.lay-off{display:none!important}#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
 .lay-r.off .lay-n{color:var(--mute);text-decoration:line-through}.lay-r .ibtn:disabled{opacity:.3}.lay-r .ibtn.on{color:var(--acc)}
@@ -2606,6 +2606,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
   </section>
 
   <section id="v-sum" class="hidden">
+    <div id="sumbody"><div class="card sumempty">정리 탭에서 원본 엑셀을 올리면 여기에 집계가 나와요.</div></div>
     <div class="card sumtop">
       <div class="hcal scal" id="scal"></div>
       <div class="sslot" id="sslot"></div>
@@ -2619,7 +2620,6 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
       <div class="utrash hidden" id="utrash"></div>
       <div class="sdel"><span id="sumshare"></span><button class="ibtn ibtn-bad hidden" id="sdel" title="이 날 기록 지우기" aria-label="이 날 기록 지우기"></button><span class="msg" id="sdelmsg"></span></div>
     </div>
-    <div id="sumbody"><div class="card sumempty">정리 탭에서 원본 엑셀을 올리면 여기에 집계가 나와요.</div></div>
   </section>
 
   <div class="modal hidden" id="resetModal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
@@ -2632,7 +2632,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
   </div>
 
   <section id="v-stock" class="hidden" data-cur="cur">
-    <nav class="subtabs" data-subfor="stock" role="tablist"><button type="button" role="tab" data-subgo="cur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>재고</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ret"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5 4.5 9.5 9 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 9.5h9.5a5 5 0 0 1 0 10H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>입고 · 반송</span><b class="sbadge hidden" id="ret-badge"></b></button><button type="button" role="tab" data-subgo="chg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>변동</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="stock" role="tablist"><button type="button" role="tab" data-subgo="cur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>재고</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="chg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>변동</span><i class="sdot"></i></button></nav>
     <div class="card stkcur" data-sub="cur">
       <div class="hh"><h2>현재 재고</h2><span class="msg" id="stksum"></span><button class="retchip hidden" type="button" id="ret-chip" data-subgo2="ret"></button><span id="stkshare"></span><button class="ibtn ibtn-acc" id="stk-editbtn" aria-pressed="false" title="편집 (재고 수정 · 순서 바꾸기)" aria-label="편집"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
       <div class="stkpanel hidden" id="stkedit">
@@ -2665,7 +2665,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
         <div class="stkdaybox"><div class="sdh"><h3 id="stkdayh"></h3><span id="stkdayshare"></span></div><div id="stkday"></div></div>
       </div>
     </div>
-    <div class="card stkret" data-sub="ret">
+    <div class="card stkret" data-sub="cur" id="stkretcard">
       <div class="hh"><h2>입고 · 반송</h2><span class="msg" id="ret-sum"></span><span class="sp"></span><button class="btn sm" type="button" id="ret-copy">목록 복사</button></div>
       <div class="ret-seg" role="radiogroup" aria-label="구분"><button type="button" data-rett="in" role="radio">입고 <small>농장 → 가게</small></button><button type="button" data-rett="ret" role="radio" class="on">반송 <small>가게 → 농장</small></button></div>
       <div class="ret-add">
@@ -2679,7 +2679,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
       <p class="msg" id="ret-msg"></p>
       <div class="ret-past"><h3>지난 입고 · 반송</h3><div id="ret-hist"></div></div>
     </div>
-    <div class="card stkret stkwst" data-sub="ret">
+    <div class="card stkret stkwst" data-sub="cur" id="stkwstcard">
       <div class="hh"><h2>폐기</h2><span class="msg" id="wst-sum"></span><span class="sp"></span><button class="btn sm" type="button" id="wst-copy">목록 복사</button></div>
       <p class="msg wst-lead">상하거나 팔 수 없어 버리는 품목을 따로 적어 둬요. 농장으로 돌려보내는 반송과는 따로 기록돼요.</p>
       <div class="ret-add wst-add">
@@ -4402,6 +4402,7 @@ instShow();
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
 function subSet(tab, key, noScroll) {
   const sec = $('v-' + tab); if (!sec) return;
+  if (tab === 'stock' && key === 'ret') { key = 'cur'; setTimeout(() => { const c = $('stkretcard'); if (c && !c.classList.contains('lay-off')) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); }
   if (tab === 'run' && (key === 'wx' || key === 'inv')) { const tgt = key === 'wx' ? 'wxcard' : 'invcard'; key = 'order'; setTimeout(() => { const c = $(tgt); if (!c) return; if (c.classList.contains('folded')) foldSet(c, false); if (!noScroll || true) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); }
   sec.dataset.cur = key; try { sessionStorage.setItem('herb5_sub_' + tab, key); } catch (e) {}
   sec.querySelectorAll('[data-subgo]').forEach(b => { const on = b.dataset.subgo === key; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
@@ -8648,7 +8649,8 @@ iczAll();
 // ---------- 탭 화면 구성 (규칙 관리 → 설정): 탭마다 칸 순서 바꾸기 · 빼기 · 다시 넣기 ----------
 const LAY = {
   run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
-  stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['memo', '비고', '#stkmemocard']] },
+  sum: { n: '집계 보기', sec: 'v-sum', items: [['body', '집계 품목', '#sumbody'], ['top', '달력 · 올린 파일', '.sumtop']] },
+  stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard']] },
   hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록', '.histrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
 };
 const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
