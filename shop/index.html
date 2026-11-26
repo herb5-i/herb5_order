@@ -1903,7 +1903,7 @@ html.dark .tipbub{background:#eef2ea;color:#1b221d}
 .hwi-seg{display:flex;gap:3px;padding:3px;border-radius:10px;background:var(--soft,var(--bg));border:1px solid var(--line)}
 .hwi-seg button{height:28px;padding:0 11px;border:0;border-radius:7px;background:none;color:var(--mute);font:800 12.5px var(--body,inherit);cursor:pointer}.hwi-seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .hwi-box{flex:1;min-height:110px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:14px;background:var(--soft,var(--bg));-webkit-overflow-scrolling:touch}
-.hmi[data-s]:has(.hwi){grid-row:span 6}.hwi{flex:1;min-height:0}
+.hmi[data-s]:has(.hwi){grid-row:span 6}.hmi[data-s]:has(.mv){grid-row:span 9}@media(max-width:700px){.hmi[data-s]:has(.mv){grid-row:span 10}}.hwi{flex:1;min-height:0}
 .hwi-r{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;padding:9px 12px;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;cursor:default;box-sizing:border-box}.hwi-r:first-child{border-top:0}
 .hwi-r.bad{background:#fdf5f3}html.dark .hwi-r.bad{background:#2a1f1e}
 .hwi-h{display:flex;align-items:center;gap:6px;min-width:0}.hwi-h b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.hwi-h .sp{flex:1}.hwi-h small{font-size:11.5px;color:var(--mute)}
@@ -1918,6 +1918,17 @@ html.dark .tipbub{background:#eef2ea;color:#1b221d}
 .hwi-i .nm .op{font-weight:500;color:var(--mute);font-size:12px}
 @media(max-width:700px){.hwi-seg{display:flex}.hwi-cols{grid-template-columns:minmax(0,1fr)}.hwi-ch{display:none}.hwi[data-v=o] .hwi-col.i,.hwi[data-v=i] .hwi-col.o{display:none}}
 .hwi-empty{margin:0;padding:18px 12px;font-size:13px;color:var(--mute);text-align:center}
+.ost-c.mvc.sel{box-shadow:inset 0 0 0 2px var(--acc)}.ost-c .mva{font-style:normal;color:var(--acc);font-weight:800;margin-left:3px}
+.mv{border:1px solid var(--line,#e3e7e1);border-radius:16px;background:var(--bg2,#f8fbf8);padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-top:6px}
+html.dark .mv{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.1)}html.dark .mv-list{border-color:rgba(255,255,255,.1)}
+.mv-h{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}.mv-h>b{font-size:14px}.mv-h .sp{flex:1}.mv-sub{font-size:12px;color:var(--mute)}.mv-all{display:flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.mv input[type=checkbox]{width:17px;height:17px;margin:0;accent-color:var(--acc);flex-shrink:0;padding:0;min-height:0}
+.mv-list{max-height:300px;overflow-y:auto;border:1px solid var(--line,#e3e7e1);border-radius:12px;background:var(--card,#fff)}
+.mv-r{display:flex;gap:10px;padding:10px 12px;cursor:pointer;align-items:flex-start}.mv-r+.mv-r{border-top:1px solid var(--line,#eef0ec)}.mv-r.on{background:var(--acc2,#eef6f1)}.mv-r input{margin-top:2px!important}
+.mv-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.mv-t{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px}.mv-t b{font-size:13.5px}.mv-t .sp{flex:1}.mv-t small{font-size:11.5px;color:var(--mute)}
+.mv-pay{font-size:11.5px;color:#8a5a12;background:#fdf3e2;border-radius:6px;padding:1px 6px}html.dark .mv-pay{color:#f0c987;background:#3a2f1c}
+.mv-i{font-size:12.5px;color:var(--mute);overflow-wrap:anywhere}.mv-warn{margin:0;font-size:12px;color:#a05a00;line-height:1.6}html.dark .mv-warn{color:#f0b46a}
+.mv-act{display:flex;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:wrap}.mv-act .msg{flex:1;min-width:160px}
 .ost-hb{display:flex;align-items:center;gap:6px;flex-shrink:0}.ost-mk{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;border-radius:99px;border:1px solid var(--acc);background:var(--acc2,#eef6f1);color:var(--acc);font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap}.ost-mk i{font-style:normal;font-size:13px}.ost-mk:hover{filter:brightness(.97)}.ost-mk.on{background:var(--acc);color:#fff}.ost-mk:disabled{opacity:.5;cursor:default}.ost-c.ng{cursor:default}.ost-c.ng:hover{filter:none}.hwi-new{font-size:10.5px;font-weight:800;color:#fff;background:#e67e22;border-radius:99px;padding:1px 7px;white-space:nowrap}
 @media(max-width:380px){.ost-mk{padding:0 9px;font-size:12px}}
 .hwi-f{display:flex;align-items:center;gap:6px}.hwi-f small{font-size:11.5px;color:var(--mute);line-height:1.5}#inc-msg{white-space:pre-line}
@@ -5432,6 +5443,60 @@ document.addEventListener('click', async e => {
 document.addEventListener('contextmenu', e => { const g = e.target.closest && e.target.closest('[data-ostgo]'); if (g) { e.preventDefault(); ostUrlSet(g.dataset.ostgo); return; } if (e.target.closest && e.target.closest('[data-ostmk]')) { e.preventDefault(); ostUrlSet('mkt'); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('ostUrlModal')) $('ostUrlModal').classList.add('hidden'); });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ostTimer && ostD && Date.now() - new Date(ostD.at).getTime() > 600e3) ostLoad(); });
+// 입금전 · 상품준비중 주문을 골라 배송준비중으로 넘겨요 (관리자만, 카페24에 바로 반영). 손님 이름 · 입금자명은 화면에만 보여 주고 저장하지 않아요
+let mvOpen = '', mvD = {}, mvSel = new Set(), mvBusy = false, mvErr = '', mvTop = 0;
+const MV_N = { N00: '입금전', N10: '상품준비중' };
+async function mvLoad(k) { mvErr = ''; mvD[k] = null; homeSoon();
+  try { const d = await c24Call('/ostorders?code=' + k); mvD[k] = { orders: d.orders || [], at: Date.now() }; if (k === 'N10' && mvOpen === k) mvSel = new Set(mvD[k].orders.map(o => String(o.order_id))); }
+  catch (e) { mvErr = e && e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포하면 보여요' : ((e && e.message) || String(e)); }
+  homeSoon(); }
+const mvAmt = o => { const a = Number(o.payment_amount); if (a > 0) return a; return (o.items || []).reduce((t, i) => t + ((Number(i.product_price) || 0) + (Number(i.option_price) || 0)) * (Number(i.quantity) || 0), 0); };
+function mvBox() {
+  const k = mvOpen, D = mvD[k], isPay = k === 'N00', admin = bakCanSee();
+  setTimeout(() => { const b = document.querySelector('.mv-list'); if (b) b.scrollTop = mvTop; }, 0);
+  const head = n => `<div class="mv-h"><b>${MV_N[k]} 주문</b><small class="mv-sub">${n}</small><span class="sp"></span>${D && D.orders.length ? `<label class="mv-all"><input type="checkbox" data-mvall="1"${D.orders.every(o => mvSel.has(String(o.order_id))) ? ' checked' : ''}>모두 고르기</label>` : ''}</div>`;
+  if (!D) return `<div class="mv">${head('')}<p class="hwi-empty">${mvErr ? '⚠ ' + esc(mvErr) : '카페24에서 불러오는 중…'}</p><div class="mv-act"><button class="btn" type="button" data-mvx="1">닫기</button></div></div>`;
+  const L = D.orders, picked = L.filter(o => mvSel.has(String(o.order_id))).length;
+  const rows = L.map(o => { const id = String(o.order_id), ch = mallChOf(o), C = MALL_CH.find(m => m[0] === ch) || MALL_CH[MALL_CH.length - 1], t = new Date(o.order_date || o.payment_date || ''), td = isNaN(t) ? '' : (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5);
+    const who = (o.buyer && o.buyer.name) || (o.receiver && o.receiver.name) || '이름 없음', on = mvSel.has(id);
+    return `<label class="mv-r${on ? ' on' : ''}"><input type="checkbox" data-mvck="${esc(id)}"${on ? ' checked' : ''}><span class="mv-b"><span class="mv-t"><b>${esc(who)}</b><span class="inc-ch" style="background:${C[2]}">${esc(C[1])}</span>${isPay ? `<span class="mv-pay">${esc(c24Pay(o) || '결제')} · ${mvAmt(o).toLocaleString('ko-KR')}원${o.payer_name && o.payer_name !== who ? ' · 입금자 ' + esc(o.payer_name) : ''}</span>` : ''}<span class="sp"></span><small>${td}</small></span><span class="mv-i">${(o.items || []).map(i => esc(i.product_name + (i.option_value ? ' ' + incOpt(i.option_value) : '')) + ' × ' + (Number(i.quantity) || 0)).join(' · ')}</span></span></label>`; }).join('');
+  return `<div class="mv">${head(L.length + '건 · <span data-mvn>' + picked + '</span>건 고름')}
+    ${L.length ? `<div class="mv-list" tabindex="0" aria-label="${MV_N[k]} 주문 목록">${rows}</div>` : `<p class="hwi-empty">지금 ${MV_N[k]} 주문이 없어요</p>`}
+    ${isPay && L.length ? '<p class="mv-warn">⚠ 통장에 돈이 들어온 주문만 골라 주세요. 입금확인을 하면 카페24에서 결제 완료로 바뀌어요.</p>' : ''}
+    ${mvErr ? `<p class="mv-warn">⚠ ${esc(mvErr)}</p>` : ''}
+    <div class="mv-act">${admin ? '' : '<small class="msg">배송준비중으로 넘기기는 관리자 계정만 할 수 있어요</small>'}<button class="btn" type="button" data-mvx="1">닫기</button>${L.length ? `<button class="btn pri" type="button" data-mvgo="1"${!picked || !admin || mvBusy ? ' disabled' : ''}>${mvLbl(isPay, picked)}</button>` : ''}</div></div>`;
+}
+const mvLbl = (isPay, n) => mvBusy ? '넘기는 중…' : !n ? '주문을 골라 주세요' : (isPay ? '입금확인하고 배송준비중으로' : '배송준비중으로 넘기기') + ` (${n}건)`;
+function mvSync(box) { const D = mvD[mvOpen]; if (!D || !box) return; const L = D.orders, n = L.filter(o => mvSel.has(String(o.order_id))).length;
+  box.querySelectorAll('[data-mvck]').forEach(c => { c.checked = mvSel.has(c.dataset.mvck); c.closest('.mv-r').classList.toggle('on', c.checked); });
+  const a = box.querySelector('[data-mvall]'); if (a) a.checked = L.length > 0 && n === L.length; const sp = box.querySelector('[data-mvn]'); if (sp) sp.textContent = n;
+  const g = box.querySelector('[data-mvgo]'); if (g) { g.textContent = mvLbl(mvOpen === 'N00', n); g.disabled = !n || !bakCanSee() || mvBusy; } }
+document.addEventListener('scroll', e => { if (e.target.classList && e.target.classList.contains('mv-list')) mvTop = e.target.scrollTop; }, true);
+document.addEventListener('change', e => { const t = e.target; if (!t.closest) return; const box = t.closest('.mv'); if (!box) return;
+  if (t.dataset.mvck) { if (t.checked) mvSel.add(t.dataset.mvck); else mvSel.delete(t.dataset.mvck); mvSync(box); }
+  else if (t.dataset.mvall) { const L = (mvD[mvOpen] || {}).orders || []; L.forEach(o => { if (t.checked) mvSel.add(String(o.order_id)); else mvSel.delete(String(o.order_id)); }); mvSync(box); } });
+document.addEventListener('click', e => { if (!e.target.closest) return; let b;
+  if ((b = e.target.closest('[data-ostmv]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; const k = b.dataset.ostmv; mvErr = ''; mvTop = 0; mvSel = new Set();
+    if (mvOpen === k) { mvOpen = ''; homeSoon(); return; } mvOpen = k; mvLoad(k); return; }
+  if (e.target.closest('[data-mvx]')) { mvOpen = ''; mvErr = ''; homeSoon(); return; }
+  if (e.target.closest('[data-mvgo]')) { const k = mvOpen, D = mvD[k]; if (!D || mvBusy || !bakCanSee()) return; const P = D.orders.filter(o => mvSel.has(String(o.order_id))); if (!P.length) return;
+    if (P.length > 40) { shareToast('한 번에 40건까지 넘길 수 있어요'); return; }
+    const isPay = k === 'N00', who = o => (o.buyer && o.buyer.name) || (o.receiver && o.receiver.name) || '이름 없음';
+    saleAsk(P.length + '건을 배송준비중으로 넘길까요?', P.slice(0, 12).map(o => '· ' + who(o) + ' · ' + MALL_CH.concat([[0, '']]).find(m => m[0] === mallChOf(o))[1] + (isPay ? ' · ' + mvAmt(o).toLocaleString('ko-KR') + '원' : '')).concat(P.length > 12 ? ['· 그 밖에 ' + (P.length - 12) + '건'] : [], [isPay ? '입금확인을 한 뒤 배송준비중으로 바뀌어요. 카페24에 바로 반영돼요.' : '카페24에 바로 반영돼요.']), '넘기기', false, () => mvGo(k, P.map(o => String(o.order_id))));
+  } });
+async function mvGo(k, ids) {
+  mvBusy = true; mvErr = ''; homeSoon(); let d = null;
+  try { d = await c24Call('/ostmove', { method: 'POST', body: JSON.stringify({ from: k, ids }) }); }
+  catch (e) { mvErr = e && e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포해야 넘길 수 있어요' : ((e && e.message) || String(e)); }
+  mvBusy = false;
+  if (d) { const bad = ids.filter(i => !(d.res && d.res[i] && d.res[i].ok)), n = ids.length - bad.length;
+    if (n) { try { await saleLog([{ at: new Date().toISOString(), who: saleMe(), no: 0, pn: '주문 상태', on: '', k: 'mv', t: MV_N[k] + ' ' + n + '건 → 배송준비중' + (k === 'N00' ? ' (입금확인)' : ''), src: 'site' }]); } catch (e) {} }
+    bad.forEach(i => mvSel.delete(i)); ids.filter(i => !bad.includes(i)).forEach(i => mvSel.delete(i));
+    if (bad.length) mvErr = bad.length + '건은 넘기지 못했어요: ' + ((d.res[bad[0]] && d.res[bad[0]].msg) || '');
+    shareToast(n ? '✓ ' + n + '건을 배송준비중으로 넘겼어요' : '넘기지 못했어요');
+    ostErr = ''; ostLoad(true); incErr = ''; incLoad(); const keep = mvErr; await mvLoad(k); mvErr = keep; }
+  homeSoon();
+}
 // 마켓 주문 수집: 카페24 마켓플러스 주문 수집 화면을 작은 새 창(휴대폰은 새 탭)으로 열고, 닫고 돌아오면 주문을 새로 받아요
 let mkWin = null, mkTab = false, mkTimer = 0, incNew = new Set(), incNewAt = 0;
 function mkAfter() { mkWin = null; mkTab = false; clearInterval(mkTimer); mkTimer = 0;
@@ -5498,12 +5563,12 @@ document.addEventListener('click', e => { if (!e.target.closest) return; let b;
   if ((b = e.target.closest('[data-inchgo]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; const id = b.dataset.inchgo; incView = id ? 'order' : 'item'; incQ = id; if (!id) incShort = false; hmOpenApp('inc'); } });
 const HW = {
   ost() { ostEnsure(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
-    const U = c24Cfg().ostUrl || {}, NOGO = { N10: 1, N20: 1, N21: 1 }, cell = (k, n) => NOGO[k] ? `<div class="ost-c ng${C && C[k] ? ' on' : ''}"><span>${n}</span><b>${v(k)}</b></div>` : `<button type="button" class="ost-c${C && C[k] ? ' on' : ''}${U[k] ? ' lk' : ''}" data-ostgo="${k}" title="${U[k] ? '카페24 ' + n + ' 화면 열기 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : n + ' 화면 주소 넣기'}"><span>${n}</span><b>${v(k)}</b></button>`;
+    const U = c24Cfg().ostUrl || {}, NOGO = { N20: 1, N21: 1 }, cell = (k, n) => (k === 'N00' || k === 'N10') && C && C[k] ? `<button type="button" class="ost-c on mvc${mvOpen === k ? ' sel' : ''}" data-ostmv="${k}" aria-expanded="${mvOpen === k}" title="${n} 주문 보기 · 배송준비중으로 넘기기"><span>${n}<i class="mva" aria-hidden="true">${mvOpen === k ? '▴' : '▾'}</i></span><b>${v(k)}</b></button>` : NOGO[k] || k === 'N10' ? `<div class="ost-c ng${C && C[k] ? ' on' : ''}"><span>${n}</span><b>${v(k)}</b></div>` : `<button type="button" class="ost-c${C && C[k] ? ' on' : ''}${U[k] ? ' lk' : ''}" data-ostgo="${k}" title="${U[k] ? '카페24 ' + n + ' 화면 열기 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : n + ' 화면 주소 넣기'}"><span>${n}</span><b>${v(k)}</b></button>`;
     const t = ostD ? new Date(ostD.at) : null, tm = t ? String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') : '';
     const foot = !ostOn() ? '로그인하는 웹 버전에서 카페24에 연결되면 보여요' : ostErr ? '⚠ ' + esc(ostErr) : ostBusy && !ostD ? '카페24에서 불러오는 중…' : '';
     return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요"><span class="k">카페24${tm ? ' · ' : ''}</span>${tm}</small></span><span class="ost-hb"><button class="ost-mk${mkWin ? ' on' : ''}" type="button" data-ostmk="1" ${ostOn() ? '' : 'disabled'} title="${U.mkt ? '카페24 배송준비중 관리 화면을 새 창으로 열어요 · 창을 닫으면 주문을 새로 받아요 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : '마켓 주문 수집 화면 주소 넣기'}"><i aria-hidden="true">🛒</i>${mkWin ? '수집 창 열림' : '마켓 주문 수집'}</button><button class="hm-more ost-re${ostBusy ? ' spin' : ''}" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="${ostBusy ? '받는 중' : '지금 새로 받기'}" title="${ostBusy ? '받는 중…' : '새로 받기'}"><i aria-hidden="true">↻</i></button></span></div>
       <div class="ost-g">${cell('N00', '입금전')}<div class="ost-pair">${cell('N10', '상품준비중')}${cell('N22', '배송보류중')}</div>${cell('N20', '배송준비중')}${cell('N21', '배송대기')}${cell('N30', '배송중')}</div>
-      ${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}${ostOn() ? hwIncBox() : ''}</div>`; },
+      ${mvOpen && ostOn() ? mvBox() : ''}${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}${ostOn() ? hwIncBox() : ''}</div>`; },
   today() { const t = isoDate(new Date()), U = upl[t] || {}, am = U.am ? uplOrders(t, 'am') : 0, pm = U.pm ? uplOrders(t, 'pm') : 0, all = uplOrders(t), tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
     const sl = (k, n, lb) => `<span class="hm-slot ${U[k] ? 'done' : 'wait'}"><i></i>${lb} ${U[k] ? n + '건 · ' + esc(hhmm(U[k].at).replace(/^오[전후] /, '')) : '대기'}</span>`;
     return `<button class="hm-w hm-today" type="button" data-go="sum"><div class="hm-wt"><span class="hm-lb">오늘 들어온 주문</span><span class="hm-arrow" aria-hidden="true"></span></div><div class="hm-tbody"><div><b class="hm-big">${all.toLocaleString('ko-KR')}<small>건</small></b><div class="hm-slots">${sl('am', am, '오전')}${sl('pm', pm, '오후')}</div></div><div class="hm-ring ${tot ? '' : 'empty'}" style="--p:${tot ? p : 0}"><span>${tot ? '<b>' + p + '%</b><small>오전</small>' : '<small>아직<br>없음</small>'}</span></div></div></button>`; },
@@ -10637,7 +10702,7 @@ function renderSale() {
     : `<div class="sumempty">${saleF === 'hid' ? '숨겨 둔 상품이 없어요' : '맞는 상품이 없어요'}</div>`;
   renderSaleLog();
 }
-const SALE_K = { off: '품절', on: '판매 재개', hide: '숨김', show: '진열', edit: '수정' };
+const SALE_K = { off: '품절', on: '판매 재개', hide: '숨김', show: '진열', edit: '수정', mv: '주문 넘김' };
 const saleLi = (x, withDay) => { const t = saleKst(x.at); return `<div class="sale-li"><span class="w">${withDay ? +t.slice(5, 7) + '/' + +t.slice(8, 10) + ' ' : ''}${t.slice(11, 16)} · ${esc(x.who || '')}</span><span class="k ${esc(x.k)}">${SALE_K[x.k] || ''}</span><span class="x">${esc(x.pn || '')}${x.on ? ' · ' + esc(x.on) : ''}${x.t ? ' — ' + esc(x.t) : ''}${x.days ? ' (품절 ' + x.days + '일)' : ''}</span></div>`; };
 function renderSaleLog() { const el = $('sale-log'); if (!el) return; const L = saleLogs().slice(0, 30); el.innerHTML = L.length ? L.map(x => saleLi(x, true)).join('') : '<p class="msg">아직 바꾼 상품이 없어요. 위에서 [품절]이나 [수정]을 눌러 보세요.</p>'; }
 function renderSaleHist() {   // 기록 › 날짜별 기록: 고른 날의 품절 · 판매 재개 · 수정 기록

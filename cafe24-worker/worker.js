@@ -31,6 +31,7 @@ export default {
       if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
       if (url.pathname === '/claimord') return json(await claimOrd(env, url.searchParams), cors);   // 취소 · 반품 카드 눌렀을 때 주문 정보 (결제자 이름은 화면에만, 저장 안 해요)
+      if (url.pathname === '/ostmove' && req.method === 'POST') { needAdmin(who); return json(await ostMove(env, await req.json()), cors); }   // 입금전 · 상품준비중 → 배송준비중 (관리자만)
       if (url.pathname === '/ostorders') return json(await ostOrders(env, url.searchParams.get('code')), cors);   // 그 상태(배송준비중)인 주문 전부 (화면에만 보여 주고 저장 안 해요)
       if (url.pathname === '/ostids') return json(await ostIds(env, url.searchParams.get('code')), cors);   // 상태별 주문 번호 · 결제 시각만 (이름 · 연락처 없음)
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
@@ -391,7 +392,7 @@ async function ostOrders(env, code) {
     L.forEach(o => { if (o.canceled === 'T') return; const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
       const items = (o.items || []).filter(i => (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0 }));
       if (!items.length) return;
-      out.push({ order_id: o.order_id, order_date: o.order_date, payment_date: o.payment_date, payment_method: o.payment_method || [], order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '',
+      out.push({ order_id: o.order_id, order_date: o.order_date, payment_date: o.payment_date, payment_method: o.payment_method || [], payment_amount: o.payment_amount || (o.actual_order_amount && o.actual_order_amount.payment_amount) || '', payer_name: code === 'N00' ? (o.payer_name || '') : '', order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '',
         buyer: { name: by.name || '' }, receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '' }, items }); });
     if (L.length < 200) break;
   }
@@ -560,6 +561,40 @@ async function saleCats(env, fresh) {
   saleCatMem = out; await env.TOKENS.put('salecats', JSON.stringify(out), { expirationTtl: 86400 }).catch(() => {});
   return out;
 }
+// 입금전(N00) · 상품준비중(N10) 주문을 배송준비중(N20)으로 넘겨요. 입금전은 먼저 입금확인(paid)을 해요
+async function ostMove(env, b) {
+  const from = String(b && b.from || ''); if (from !== 'N00' && from !== 'N10') throw fail(400, 'move', '입금전 · 상품준비중 주문만 넘길 수 있어요');
+  const ids = [...new Set((Array.isArray(b.ids) ? b.ids : []).map(String).filter(i => /^\d{8}-\d{7}$/.test(i)))].slice(0, 40);
+  if (!ids.length) throw fail(400, 'move', '넘길 주문을 골라 주세요');
+  const token = await accessToken(env), day = ms => new Date(ms + 9 * 3600e3).toISOString().slice(0, 10), now = Date.now();
+  const look = async () => { const d = await c24get(env, token, '/admin/orders', { order_id: ids.join(','), start_date: day(now - 89 * 864e5), end_date: day(now), date_type: 'order_date', embed: 'items', limit: 100 }, '주문(Order) 읽기');
+    const M = {}; (d.orders || []).forEach(o => { if (o.canceled === 'T') return; M[o.order_id] = (o.items || []).filter(i => !/^C|^R|^E/.test(i.order_status || '')).map(i => ({ c: i.order_item_code, s: i.order_status || '' })); }); return M; };
+  const W = async (path, body) => { for (let i = 0; i < 4; i++) {
+    const r = await fetch(base(env) + path, { method: 'PUT', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 429 && i < 3) { await new Promise(res => setTimeout(res, 1200 * (i + 1))); continue; }
+    if (r.status === 401 || r.status === 403) throw fail(403, 'scope_order', '카페24 앱에 [주문 쓰기] 권한이 없어요. 개발자센터 → 앱 → 권한에서 주문(쓰기)을 추가하고, 사이트에서 [카페24 연결]을 다시 눌러 주세요 (' + ((d.error && d.error.message) || r.status) + ')');
+    return { ok: r.ok, d, st: r.status }; } };
+  const res = {}; ids.forEach(i => { res[i] = { ok: false, msg: '지금 그 상태인 주문이 아니에요' }; });
+  let M = await look();
+  const want = from, mine = id => (M[id] || []).filter(x => x.s === want);
+  let todo = ids.filter(id => mine(id).length);
+  if (from === 'N00' && todo.length) {
+    const r = await W('/admin/payments', { shop_no: 1, requests: todo.map(id => ({ order_id: id, status: 'paid' })) });
+    if (!r.ok && r.st !== 207) { const m = (r.d.error && r.d.error.message) || ('오류 ' + r.st); todo.forEach(id => { res[id] = { ok: false, msg: '입금확인 실패: ' + m }; }); todo = []; }
+    if (todo.length) { await new Promise(r2 => setTimeout(r2, 400)); M = await look(); }
+  }
+  const step = todo.filter(id => (M[id] || []).some(x => x.s === 'N10' || x.s === 'N00'));
+  ids.forEach(id => { if ((M[id] || []).length && (M[id] || []).every(x => x.s === 'N20')) res[id] = { ok: true }; });
+  if (step.length) {
+    const r = await W('/admin/orders', { shop_no: 1, requests: step.map(id => ({ order_id: id, process_status: 'prepare', order_item_code: (M[id] || []).filter(x => x.s === 'N10' || x.s === 'N00').map(x => x.c) })) });
+    if (!r.ok && r.st !== 207) { const m = (r.d.error && r.d.error.message) || ('오류 ' + r.st); step.forEach(id => { res[id] = { ok: false, msg: (from === 'N00' ? '입금확인은 됐지만 ' : '') + '배송준비중으로 바꾸지 못했어요: ' + m }; }); }
+    else { await new Promise(r2 => setTimeout(r2, 400)); M = await look(); step.forEach(id => { const L = M[id] || []; res[id] = L.length && L.every(x => x.s === 'N20') ? { ok: true } : { ok: false, msg: (from === 'N00' ? '입금확인은 됐지만 ' : '') + '아직 배송준비중이 아니에요 (' + [...new Set(L.map(x => x.s))].join(',') + ')' }; }); }
+  }
+  ostMem = null; await env.TOKENS.delete('ost').catch(() => {});
+  return { ok: true, from, res, done: ids.filter(i => res[i].ok).length };
+}
+
 async function saleSave(env, b) {
   const no = Number(b && b.no); if (!no) throw fail(400, 'sale', '상품 번호가 없어요');
   const yn = v => v === 'T' || v === 'F' ? v : null, token = await accessToken(env);
