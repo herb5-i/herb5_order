@@ -1872,7 +1872,7 @@ button.hmfb-nh{width:100%;border:0;background:none;padding:0;font:inherit;color:
 .sd-b .stkpanel{margin:0;border:0;box-shadow:none;padding:0;background:none}.sd-b .stkpanel .sp-h b{display:none}.sd-b .stkpanel .sp-h{margin-bottom:8px}
 html.dark .sdrawer{background:#1b221d}
 /* 들어온 주문 (정리 › 들어온 주문) */
-.incc .hh .sp{flex:1}.incc .hh h2{margin:0}.incc .hh .btn{min-height:42px;padding:0 18px}
+.incc .hh .sp{flex:1}.incc .hh h2{margin:0}#inc-go.spin svg{animation:incspin .9s linear infinite}@keyframes incspin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){#inc-go.spin svg{animation:none}}#inc-go:disabled{opacity:.6}
 .inc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0 10px}
 .inc-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--card);min-width:0}.inc-t small{display:block;font-size:12px;color:var(--mute)}
 .inc-t b{display:block;font-size:24px;font-weight:800;line-height:1.25}.inc-t b i{font-style:normal;font-size:13px;font-weight:700;margin-left:2px}.inc-t span{display:block;font-size:11.5px;color:var(--mute);overflow-wrap:anywhere}
@@ -2842,7 +2842,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   <section id="v-run" class="hidden" data-cur="order">
     <nav class="subtabs" data-subfor="run" role="tablist"><button type="button" role="tab" data-subgo="order"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4.5 4.5M12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>주문 정리</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="inc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 13.5 6 5.5A1.5 1.5 0 0 1 7.4 4.5h9.2A1.5 1.5 0 0 1 18 5.5l2.5 8V18a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 18z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3.5 13.5H8l1.2 2.2h5.6l1.2-2.2h4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>들어온 주문</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="ship"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5A1.5 1.5 0 0 1 4 5h9.5A1.5 1.5 0 0 1 15 6.5V16H2.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15 9h3.2l3.3 3.6V16H15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.5" cy="17.5" r="2" fill="currentColor"/><circle cx="17.5" cy="17.5" r="2" fill="currentColor"/></svg><span>배송</span><i class="sdot"></i></button></nav>
     <div class="card incc" data-sub="inc" id="inccard">
-      <div class="hh"><h2>지금까지 들어온 주문</h2><span class="sp"></span><button class="btn pri iczno" type="button" id="inc-go">지금 확인</button></div>
+      <div class="hh"><h2>지금까지 들어온 주문</h2><span class="sp"></span><button class="ibtn iczno" type="button" id="inc-go" title="지금 다시 확인" aria-label="지금 다시 확인"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3L19.5 9"/><path d="M19.5 4v5h-5"/></svg></button></div>
       <p class="help">아직 엑셀로 불러오지 않은 카페24 주문과 카톡 주문만 모아 봐요. 보기만 하는 칸이라 엑셀 · 송장 · 재고는 안 바뀌어요.</p>
       <p class="msg" id="inc-msg"></p>
       <div id="inc-body"></div>
@@ -10366,10 +10366,10 @@ function incCalc0() {
 function incRender() {
   const box = $('inc-body'), msg = $('inc-msg'); if (!box) return;
   if (!c24Cfg().worker || !window.h5Fb) { msg.className = 'msg'; msg.textContent = ''; box.innerHTML = '<div class="sumempty">카페24에 연결된 웹 사이트에서 로그인하면 쓸 수 있어요.</div>'; return; }
-  $('inc-go').disabled = incBusy; $('inc-go').textContent = incBusy ? '확인 중…' : '지금 확인';
+  $('inc-go').disabled = incBusy; $('inc-go').classList.toggle('spin', incBusy); $('inc-go').setAttribute('aria-busy', incBusy ? 'true' : 'false');
   msg.className = 'msg' + (incErr ? ' err' : '');
   msg.textContent = incErr || (incBusy ? '카페24에서 아직 안 불러온 주문을 세는 중…' : incD ? incD.lab + ' 결제된 주문 · ' + new Date(incD.at).toTimeString().slice(0, 5) + ' 확인' : '');
-  if (!incD) { box.innerHTML = `<div class="sumempty">${incBusy ? '확인하는 중이에요…' : '[지금 확인]을 누르면 아직 엑셀로 안 불러온 주문을 모아 보여 줘요.'}</div>`; return; }
+  if (!incD) { box.innerHTML = `<div class="sumempty">${incBusy ? '확인하는 중이에요…' : '오른쪽 위 새로고침을 누르면 아직 엑셀로 안 불러온 주문을 모아 보여 줘요.'}</div>`; return; }
   const { rows, short, ords } = incCalc(), nQ = ords.reduce((a, o) => a + o.lines.reduce((b, l) => b + l.q, 0), 0);
   const chs = {}; ords.forEach(o => { chs[o.ch] = (chs[o.ch] || 0) + 1; });
   const tiles = `<div class="inc-tiles"><div class="inc-t"><small>주문</small><b>${ords.length}<i>건</i></b><span>${ords.filter(o => o.kt).length ? '카톡 ' + ords.filter(o => o.kt).length + '건 포함' : '카페24 · 카톡'}</span></div><div class="inc-t"><small>상품</small><b>${nQ}<i>개</i></b><span>${rows.length}가지 품목</span></div><div class="inc-t${short.size ? ' bad' : ''}"><small>모자란 품목</small><b>${short.size}<i>가지</i></b><span>지금 재고 기준</span></div></div>`
