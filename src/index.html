@@ -1775,7 +1775,11 @@ button.hmfb-nh{width:100%;border:0;background:none;padding:0;font:inherit;color:
 .svd-dl{margin:0;display:grid;gap:4px}.svd-dl dt{font-size:12.5px;color:var(--mute);margin-top:10px}.svd-dl dd{margin:0;font-size:14.5px;overflow-wrap:anywhere}.svd-dl ul{margin:0;padding-left:18px}.svd-note{white-space:pre-line}
 .svc-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}#tbl tr.svcr td{background:#fff3df}html.dark #tbl tr.svcr td{background:rgba(208,138,58,.15)}#tbl tr.svcr td.rn span{font-size:11px;color:#b86b00;font-weight:700}
 #ktinfo{white-space:pre-line}
-.lay-off{display:none!important}.sh > .num{display:none!important}/* 단계 번호 숨기기 (사용자 요청 2026-11-27) */#v-sum > #sumbody + .sumtop{margin-top:16px}
+.lay-off{display:none!important}@media(max-width:999px){.lay-offm{display:none!important}}@media(min-width:1000px){.lay-offp{display:none!important}}
+.lay-r{flex-wrap:wrap}.lay-r .lay-n{min-width:150px}@media(max-width:700px){.lay-r .lay-n{flex-basis:100%}.lay-r{row-gap:6px}}
+.lay-dv{display:flex;gap:6px;flex-wrap:wrap}.lay-pl{position:relative;width:38px;height:30px;padding:0;border-radius:99px;border:1px solid var(--line);background:var(--bg2,#f1f2f0);color:var(--mute);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;text-decoration:none;opacity:.55;font-size:15px!important}.lay-pl::after{content:'';position:absolute;left:9px;right:9px;top:50%;height:2px;background:#c0392b;transform:rotate(-35deg);border-radius:2px}.lay-pl.on::after{display:none}.lay-pl.on{opacity:1;border-color:var(--acc);background:var(--acc2,#eef6f1);color:var(--acc);text-decoration:none}
+html.dark .lay-pl{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+@media(max-width:700px){.lay-pl{height:30px}.lay-dv{gap:4px}.lay-r{column-gap:4px}.lay-r .ibtn{width:30px;height:30px;min-width:30px}}.sh > .num{display:none!important}/* 단계 번호 숨기기 (사용자 요청 2026-11-27) */#v-sum > #sumbody + .sumtop{margin-top:16px}
 .lay-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-top:10px}.lay-t > b{display:block;font-size:14px;margin-bottom:6px}
 .lay-r{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.lay-r:first-of-type{border-top:0}.lay-n{flex:1;min-width:0;font-size:14px;overflow-wrap:anywhere}.lay-n small{color:var(--mute);font-size:12px}
 .lay-r.off .lay-n{color:var(--mute);text-decoration:line-through}.lay-r .ibtn:disabled{opacity:.3}.lay-r .ibtn.on{color:var(--acc)}
@@ -4893,8 +4897,8 @@ const mvAmt = o => { const a = Number(o.payment_amount); if (a > 0) return a; re
 function mvBox() {
   const k = mvOpen, D = mvD[k], isPay = k === 'N00', admin = bakCanSee();
   setTimeout(() => { const b = document.querySelector('.mv-list'); if (b) b.scrollTop = mvTop; }, 0);
-  const head = n => `<div class="mv-h"><b>${MV_N[k]} 주문</b><small class="mv-sub">${n}</small><span class="sp"></span>${D && D.orders.length ? `<label class="mv-all"><input type="checkbox" data-mvall="1"${D.orders.every(o => mvSel.has(String(o.order_id))) ? ' checked' : ''}>모두 고르기</label>` : ''}</div>`;
-  if (!D) return `<div class="mv">${head('')}<p class="hwi-empty">${mvErr ? '⚠ ' + esc(mvErr) : '카페24에서 불러오는 중…'}</p><div class="mv-act"><button class="btn" type="button" data-mvx="1">닫기</button></div></div>`;
+  const head = n => `<div class="mv-h"><b>${MV_N[k]} 주문</b><span class="sp"></span>${D && D.orders.length ? `<label class="mv-all"><input type="checkbox" data-mvall="1"${D.orders.every(o => mvSel.has(String(o.order_id))) ? ' checked' : ''}>모두 고르기</label>` : ''}</div>`;
+  if (!D) return `<div class="mv">${head('')}<p class="hwi-empty">${mvErr ? '⚠ ' + esc(mvErr) : '카페24에서 불러오는 중…'}</p></div>`;
   const L = D.orders, picked = L.filter(o => mvSel.has(String(o.order_id))).length;
   const rows = L.map(o => { const id = String(o.order_id), ch = mallChOf(o), C = MALL_CH.find(m => m[0] === ch) || MALL_CH[MALL_CH.length - 1], t = new Date(o.order_date || o.payment_date || ''), td = isNaN(t) ? '' : (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5);
     const who = (o.buyer && o.buyer.name) || (o.receiver && o.receiver.name) || '이름 없음', on = mvSel.has(id);
@@ -4903,12 +4907,12 @@ function mvBox() {
     ${L.length ? `<div class="mv-list" tabindex="0" aria-label="${MV_N[k]} 주문 목록">${rows}</div>` : `<p class="hwi-empty">지금 ${MV_N[k]} 주문이 없어요</p>`}
     ${isPay && L.length ? '<p class="mv-warn">⚠ 통장에 돈이 들어온 주문만 골라 주세요. 입금확인을 하면 카페24에서 결제 완료로 바뀌어요.</p>' : ''}
     ${mvErr ? `<p class="mv-warn">⚠ ${esc(mvErr)}</p>` : ''}
-    <div class="mv-act">${admin ? '' : '<small class="msg">배송준비중으로 넘기기는 관리자 계정만 할 수 있어요</small>'}<button class="btn" type="button" data-mvx="1">닫기</button>${L.length ? `<button class="btn pri" type="button" data-mvgo="1"${!picked || !admin || mvBusy ? ' disabled' : ''}>${mvLbl(isPay, picked)}</button>` : ''}</div></div>`;
+    ${L.length ? `<div class="mv-act">${admin ? '' : '<small class="msg">배송준비중으로 넘기기는 관리자 계정만 할 수 있어요</small>'}` : ''}${L.length ? `<button class="btn pri" type="button" data-mvgo="1"${!picked || !admin || mvBusy ? ' disabled' : ''}>${mvLbl(isPay, picked)}</button></div>` : ''}</div>`;
 }
 const mvLbl = (isPay, n) => mvBusy ? '넘기는 중…' : !n ? '주문을 골라 주세요' : (isPay ? '입금확인하고 배송준비중으로' : '배송준비중으로 넘기기') + ` (${n}건)`;
 function mvSync(box) { const D = mvD[mvOpen]; if (!D || !box) return; const L = D.orders, n = L.filter(o => mvSel.has(String(o.order_id))).length;
   box.querySelectorAll('[data-mvck]').forEach(c => { c.checked = mvSel.has(c.dataset.mvck); c.closest('.mv-r').classList.toggle('on', c.checked); });
-  const a = box.querySelector('[data-mvall]'); if (a) a.checked = L.length > 0 && n === L.length; const sp = box.querySelector('[data-mvn]'); if (sp) sp.textContent = n;
+  const a = box.querySelector('[data-mvall]'); if (a) a.checked = L.length > 0 && n === L.length; 
   const g = box.querySelector('[data-mvgo]'); if (g) { g.textContent = mvLbl(mvOpen === 'N00', n); g.disabled = !n || !bakCanSee() || mvBusy; } }
 document.addEventListener('scroll', e => { if (e.target.classList && e.target.classList.contains('mv-list')) mvTop = e.target.scrollTop; }, true);
 document.addEventListener('change', e => { const t = e.target; if (!t.closest) return; const box = t.closest('.mv'); if (!box) return;
@@ -6112,7 +6116,7 @@ function dsRender() {
     <div class="ds-sec"><b>카페24에서 기다리는 주문</b><small>보낼 날 새벽 3시에 저절로 배송준비중으로 돌아가요</small></div>
     ${!on ? '<p class="ds-help">로그인하는 웹 버전에서 카페24에 연결되면 보여요</p>' : dsHoldErr ? `<p class="ds-w">⚠ ${esc(dsHoldErr)}</p>` : !dsHolds ? '<p class="ds-help">불러오는 중…</p>' : H.length ? `<div class="ds-hl">${hold}</div>` : '<p class="ds-help">기다리는 주문이 없어요</p>'}
     ${log ? `<div class="ds-sec"><b>최근 풀린 주문</b></div>${log}` : ''}`;
-  const f = $('ds-f'); if (f) f.innerHTML = `<span class="msg">${!admin ? '카페24 반영은 관리자만 할 수 있어요' : !on ? '' : n ? '배송보류 + 희망배송일로 바뀌어요' : ''}</span><button class="btn" type="button" data-dsx="1">닫기</button>${on ? `<button class="btn pri" type="button" data-dsgo="1"${!n || !admin || dsBusy ? ' disabled' : ''}>${dsBusy ? '반영하는 중…' : n ? `카페24에 반영 (${n}건)` : '카페24에 반영'}</button>` : ''}`;
+  const f = $('ds-f'); if (f) f.innerHTML = `<span class="msg">${!admin ? '카페24 반영은 관리자만 할 수 있어요' : !on ? '' : n ? '배송보류 + 희망배송일로 바뀌어요' : ''}</span>${on ? `<button class="btn pri" type="button" data-dsgo="1"${!n || !admin || dsBusy ? ' disabled' : ''}>${dsBusy ? '반영하는 중…' : n ? `카페24에 반영 (${n}건)` : '카페24에 반영'}</button>` : ''}`;
 }
 function dsRefresh() { runProcess(); dsRender(); dsSyncUpl(); }
 document.addEventListener('change', e => { const t = e.target; if (!t.closest || !t.closest('#dsdrawer')) return;
@@ -9348,17 +9352,20 @@ const LAY = {
   hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x'], ['salehist', '판매 변경 (품절 · 판매 재개)', '#salehist']] },
 };
 const LAY_SUB = { run: { inc: ['inc'] }, stock: { sale: ['sale', 'salelog'] } };   // 칸 → 하위 메뉴 아이콘
-const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
+const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); const f = a => (a || []).filter(k => ks.includes(k)), hide = f(c.hide); return { order, hide, hm: [...new Set(hide.concat(f(c.hideM)))], hp: [...new Set(hide.concat(f(c.hideP)))] }; };   // hide: 둘 다 · hm: 휴대폰 · hp: PC
+const layMob = () => { try { return matchMedia('(max-width:999px)').matches; } catch (e) { return false; } };   // 아래쪽 메뉴가 나오는 화면 = 휴대폰
+try { matchMedia('(max-width:999px)').addEventListener('change', () => layApply()); } catch (e) {}
 function layApply() {
   Object.entries(LAY).forEach(([t, L]) => { const sec = $(L.sec); if (!sec) return; const c = layCfg(t), els = {};
     L.items.forEach(([k, , sel]) => { els[k] = [...sec.querySelectorAll(sel)].filter(e => e.parentNode === sec); });
     let mark = sec._layMark; if (!mark) { const first = L.items.map(i => els[i[0]][0]).filter(Boolean).sort((a, b) => a.compareDocumentPosition(b) & 4 ? -1 : 1)[0]; if (!first) return; mark = document.createComment('lay'); sec.insertBefore(mark, first); sec._layMark = mark; }
     let at = mark; c.order.forEach(k => (els[k] || []).forEach(e => { at.parentNode.insertBefore(e, at.nextSibling); at = e; }));
-    L.items.forEach(([k]) => (els[k] || []).forEach(e => e.classList.toggle('lay-off', c.hide.includes(k))));
+    L.items.forEach(([k]) => (els[k] || []).forEach(e => { const m = c.hm.includes(k), p = c.hp.includes(k); e.classList.toggle('lay-off', m && p); e.classList.toggle('lay-offm', m && !p); e.classList.toggle('lay-offp', p && !m); }));
+    const offNow = layMob() ? c.hm : c.hp;
     // 하위 메뉴 칸을 모두 숨기면 그 하위 메뉴 아이콘도 숨겨요 (지금 그 메뉴를 보고 있었으면 첫 메뉴로)
-    Object.entries(LAY_SUB[t] || {}).forEach(([sub, ks]) => { const off = ks.every(k => c.hide.includes(k)), b = document.querySelector(`.subtabs[data-subfor="${t}"] [data-subgo="${sub}"]`); if (!b) return;
+    Object.entries(LAY_SUB[t] || {}).forEach(([sub, ks]) => { const off = ks.every(k => offNow.includes(k)), b = document.querySelector(`.subtabs[data-subfor="${t}"] [data-subgo="${sub}"]`); if (!b) return;
       b.classList.toggle('lay-off', off); if (off && sec.dataset.cur === sub) { const f = document.querySelector(`.subtabs[data-subfor="${t}"] [data-subgo]:not(.lay-off)`); if (f) try { subSet(t, f.dataset.subgo, true); } catch (e) {} } });
-    if (t === 'run') { let n = 0; c.order.filter(k => !c.hide.includes(k)).forEach(k => { const nums = (els[k] || []).flatMap(e => [...e.querySelectorAll(':scope > .sh .num, :scope > .card > .sh .num')]); if (!nums.length) return; n++; nums.forEach(x => { x.textContent = n; }); }); }
+    if (t === 'run') { let n = 0; c.order.filter(k => !offNow.includes(k)).forEach(k => { const nums = (els[k] || []).flatMap(e => [...e.querySelectorAll(':scope > .sh .num, :scope > .card > .sh .num')]); if (!nums.length) return; n++; nums.forEach(x => { x.textContent = n; }); }); }
   });
   layRender();
 }
@@ -9368,13 +9375,16 @@ function layRender() {
   const EYEX = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 6.1A9 9 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-3 3.6M6.3 7.6A16 16 0 0 0 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4-.9"/></svg>';
   const UP = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>', DN = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
   box.innerHTML = Object.entries(LAY).map(([t, L]) => { const c = layCfg(t), nm = Object.fromEntries(L.items.map(i => [i[0], i[1]]));
-    return `<div class="lay-t"><b>${esc(L.n)}</b>${c.order.map((k, i) => { const off = c.hide.includes(k);
-      return `<div class="lay-r${off ? ' off' : ''}"><span class="lay-n">${esc(nm[k])}${off ? ' <small>빠짐</small>' : ''}</span><button class="ibtn iczno" type="button" data-lay="${t}:${k}:up" ${i ? '' : 'disabled'} title="위로" aria-label="${esc(nm[k])} 위로">${UP}</button><button class="ibtn iczno" type="button" data-lay="${t}:${k}:down" ${i < c.order.length - 1 ? '' : 'disabled'} title="아래로" aria-label="${esc(nm[k])} 아래로">${DN}</button><button class="ibtn iczno${off ? '' : ' on'}" type="button" data-lay="${t}:${k}:vis" title="${off ? '다시 넣기' : '빼기 (숨기기)'}" aria-label="${esc(nm[k])} ${off ? '다시 넣기' : '빼기'}" aria-pressed="${!off}">${off ? EYEX : EYE}</button></div>`; }).join('')}</div>`; }).join('');
+    return `<div class="lay-t"><b>${esc(L.n)}</b>${c.order.map((k, i) => { const m = c.hm.includes(k), p = c.hp.includes(k), off = m && p, tag = off ? '빠짐' : m ? '휴대폰에서만 숨김' : p ? 'PC에서만 숨김' : '';
+      return `<div class="lay-r${off ? ' off' : ''}"><span class="lay-n">${esc(nm[k])}${tag ? ' <small>' + tag + '</small>' : ''}</span><button class="ibtn iczno" type="button" data-lay="${t}:${k}:up" ${i ? '' : 'disabled'} title="위로" aria-label="${esc(nm[k])} 위로">${UP}</button><button class="ibtn iczno" type="button" data-lay="${t}:${k}:down" ${i < c.order.length - 1 ? '' : 'disabled'} title="아래로" aria-label="${esc(nm[k])} 아래로">${DN}</button><span class="lay-dv"><button class="lay-pl iczno${m ? '' : ' on'}" type="button" data-lay="${t}:${k}:m" aria-pressed="${!m}" aria-label="${esc(nm[k])} 휴대폰에서 ${m ? '보이기' : '숨기기'}" title="휴대폰 ${m ? '숨김 · 눌러서 보이기' : '보임 · 눌러서 숨기기'}">📱</button><button class="lay-pl iczno${p ? '' : ' on'}" type="button" data-lay="${t}:${k}:p" aria-pressed="${!p}" aria-label="${esc(nm[k])} PC에서 ${p ? '보이기' : '숨기기'}" title="PC ${p ? '숨김 · 눌러서 보이기' : '보임 · 눌러서 숨기기'}">🖥</button></span></div>`;}).join('')}</div>`; }).join('');
 }
 async function laySave(fn) { const keep = JSON.stringify(rules.layout || {}); rules.layout = JSON.parse(keep); fn(rules.layout); layApply(); const m = $('laymsg');
-  try { await saveRules(); if (m) { m.className = 'msg ok'; m.textContent = '저장했어요'; } } catch (er) { rules.layout = JSON.parse(keep); layApply(); if (m) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er); } } }
+  try { if (typeof rulesDoc !== 'undefined' && rulesDoc) { await rulesDoc.update({ 'rules.layout': clone(rules.layout), updatedAt: new Date().toISOString() }); try { const sv = JSON.parse(rulesSavedJ); sv.layout = clone(rules.layout); rulesSavedJ = JSON.stringify(sv); } catch (e) {} }   // 화면 구성만 공용 저장소에 바로 저장 → 모든 기기 · 브라우저에 같이 적용돼요
+    else await saveRules();
+    if (m) { m.className = 'msg ok'; m.textContent = rulesDoc ? '저장했어요 · 모든 기기에 같이 적용돼요' : '이 브라우저에만 저장했어요'; } } catch (er) { rules.layout = JSON.parse(keep); layApply(); if (m) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er); } } }
 document.addEventListener('click', e => { const b = e.target.closest('[data-lay]'); if (b) { const [t, k, act] = b.dataset.lay.split(':');
-    laySave(Lo => { const c = layCfg(t); if (act === 'vis') { c.hide = c.hide.includes(k) ? c.hide.filter(x => x !== k) : c.hide.concat(k); } else { const i = c.order.indexOf(k), j = act === 'up' ? i - 1 : i + 1; if (j >= 0 && j < c.order.length) [c.order[i], c.order[j]] = [c.order[j], c.order[i]]; } Lo[t] = c; }); return; }
+    laySave(Lo => { const c = layCfg(t); if (act === 'm' || act === 'p') { const M = new Set(c.hm), P = new Set(c.hp), S = act === 'm' ? M : P; if (S.has(k)) S.delete(k); else S.add(k);
+        c.hide = [...M].filter(x => P.has(x)); c.hideM = [...M].filter(x => !P.has(x)); c.hideP = [...P].filter(x => !M.has(x)); } else { const i = c.order.indexOf(k), j = act === 'up' ? i - 1 : i + 1; if (j >= 0 && j < c.order.length) [c.order[i], c.order[j]] = [c.order[j], c.order[i]]; } Lo[t] = { order: c.order, hide: c.hide, hideM: c.hideM || c.hm.filter(x => !c.hide.includes(x)), hideP: c.hideP || c.hp.filter(x => !c.hide.includes(x)) }; }); return; }
   if (e.target.closest('#layreset')) laySave(Lo => { Object.keys(LAY).forEach(t => delete Lo[t]); }); });
 layApply();
 // ---------- 앱 아이콘 고르기 (규칙 관리 → 계정 관리, 관리자) ----------
@@ -10111,6 +10121,7 @@ srcLabel('규칙을 불러오는 중…');
     if (!snap.metadata.fromCache) clearTimeout(timer);
     if (snap.exists && snap.data().rules) {
       if (!dirty) { rules = Object.assign(clone(DEFAULT_RULES), clone(snap.data().rules)); rulesSavedJ = JSON.stringify(rules); renderRules(); try { appIconApply(); } catch (e) {} try { layApply(); } catch (e) {} if (srcRows && first) runProcess(); }
+      else { const L = snap.data().rules.layout; if (JSON.stringify(L || {}) !== JSON.stringify(rules.layout || {})) { rules.layout = clone(L || {}); try { layApply(); } catch (e) {} } }   // 규칙을 고치는 중이어도 화면 구성은 바로 맞춰요
       const u = snap.data().updatedAt; srcLabel('저장된 규칙 사용 중' + (u ? ' · 마지막 저장 ' + new Date(u).toLocaleString('ko-KR') : ''));
     } else if (!snap.metadata.fromCache) srcLabel('저장된 규칙이 없어 기본 규칙을 보여드려요. 고친 뒤 [규칙 저장]을 누르세요.');
     first = false;
