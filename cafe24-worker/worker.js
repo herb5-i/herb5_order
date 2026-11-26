@@ -30,6 +30,7 @@ export default {
       if (url.pathname === '/fb/del' && req.method === 'POST') return json(await fbDel(env, await req.json(), who), cors);   // 개선 메모 지우기: 쓴 사람 또는 관리자
       if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
+      if (url.pathname === '/claimord') return json(await claimOrd(env, url.searchParams), cors);   // 취소 · 반품 카드 눌렀을 때 주문 정보 (결제자 이름은 화면에만, 저장 안 해요)
       if (url.pathname === '/ostorders') return json(await ostOrders(env, url.searchParams.get('code')), cors);   // 그 상태(배송준비중)인 주문 전부 (화면에만 보여 주고 저장 안 해요)
       if (url.pathname === '/ostids') return json(await ostIds(env, url.searchParams.get('code')), cors);   // 상태별 주문 번호 · 결제 시각만 (이름 · 연락처 없음)
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
@@ -256,6 +257,18 @@ async function byTrack(env, q) {
   }
   return { found: false, days };
 }
+async function claimOrd(env, q) {
+  const id = String(q.get('order_id') || '').replace(/[^0-9A-Za-z\-]/g, ''), code = String(q.get('item') || ''); if (!id) throw fail(400, 'order', '주문번호가 없어요');
+  const token = await accessToken(env), num = v => (v === undefined || v === null || v === '' || isNaN(Number(v))) ? null : Number(v);
+  const d = await c24get(env, token, '/admin/orders/' + id, { embed: 'items,buyer' }, '주문(Order) 읽기'), o = d.order || {};
+  const a = o.actual_order_amount || o.initial_order_amount || {}, by = o.buyer || {};
+  const items = (o.items || []).map(i => ({ order_item_code: i.order_item_code || '', shipping_code: i.shipping_code || '', product_name: i.product_name || '', option_value: i.option_value || '', quantity: Number(i.quantity) || 0,
+    product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, order_status: i.order_status || '', status_text: i.order_status_additional_info || '', claim_by: i.claim_type || '',
+    tracking_no: i.tracking_no || '', shipping_company_name: i.shipping_company_name || '', hit: !!code && i.order_item_code === code }));
+  const price = num(a.order_price_amount) ?? items.reduce((t, i) => t + (i.product_price + i.option_price) * i.quantity, 0), ship = num(a.shipping_fee) ?? num(o.shipping_fee), pay = num(o.payment_amount) ?? num(a.payment_amount);
+  return { order: { order_id: o.order_id || id, order_date: o.order_date || '', payment_date: o.payment_date || '', order_place_name: o.order_place_name || '', market_id: o.market_id || '',
+    payment_method_name: o.payment_method_name || [], payer: o.billing_name || by.name || '', price, shipping_fee: ship, payment: pay, discount: price !== null && pay !== null ? Math.max(0, price + (ship || 0) - pay) : null, items } };
+}
 async function whoIs(env, q) {
   const id = String(q.get('order_id') || '').replace(/[^0-9A-Za-z\-]/g, ''); if (!id) throw fail(400, 'order', '주문번호가 없어요');
   const token = await accessToken(env);
@@ -333,7 +346,7 @@ async function claims(env, q) {
         allI.filter(i => String(i.order_status || '').startsWith(pre) || String(i.claim_type || '').toUpperCase().startsWith(pre)).forEach(i => {
           const ci = cl.find(c => [].concat(c.items || []).some(x => x.order_item_code === i.order_item_code)) || {};
           out.push({ type, day, order_id: o.order_id, order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.claim_quantity || i.quantity) || 0,
-            status: i.order_status || '', item_no: allI.indexOf(i) + 1, item_count: allI.length, reason: pick(i, RK) || pick(ci, RK) || creason, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '' });
+            status: i.order_status || '', tracking_no: i.tracking_no || '', shipping_company_name: i.shipping_company_name || '', item_no: allI.indexOf(i) + 1, item_count: allI.length, reason: pick(i, RK) || pick(ci, RK) || creason, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '' });
         });
       });
       if (list.length < 500) break;

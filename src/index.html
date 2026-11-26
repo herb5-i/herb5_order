@@ -1797,6 +1797,21 @@ html.dark .sdrawer{background:#1b221d}
 .tipbub{position:fixed;z-index:3000;max-width:min(320px,calc(100vw - 16px));padding:10px 13px;border-radius:12px;background:#1f2620;color:#fff;font:500 13px/1.6 var(--body,inherit);box-shadow:0 10px 28px -10px rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:opacity .12s;pointer-events:none;text-align:left;white-space:normal;overflow-wrap:anywhere}
 .tipbub.on{opacity:1;visibility:visible;pointer-events:auto}.tipbub p{margin:0}.tipbub p+p{margin-top:6px}
 html.dark .tipbub{background:#eef2ea;color:#1b221d}
+
+/* 취소 · 반품 카드 */
+.iss-chip.iss-cl .iss-pos,.iss-note .iss-pos{display:block;font-size:13.5px;font-weight:700;color:#2f6db5}html.dark .iss-chip.iss-cl .iss-pos,html.dark .iss-note .iss-pos{color:#8db8ea}
+.iss-chip.iss-cl .iss-cl-t{display:block;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.55;font-size:13px;color:var(--mute);margin-top:2px}
+.iss-chip.iss-cl .iss-cl-sep{display:block;height:1px;background:var(--line);margin:8px 0}
+.iss-cord{margin-top:10px;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.cord-t{overflow-x:auto;border-top:2px solid var(--ink)}.cord-t table{width:100%;min-width:560px;border-collapse:collapse}
+.cord-t th{padding:8px 6px;font-size:12px;font-weight:700;color:var(--mute);background:var(--soft,var(--bg));border-bottom:1px solid var(--line);text-align:center}
+.cord-t td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:center;vertical-align:middle;line-height:1.5;overflow-wrap:anywhere}.cord-t .l{text-align:left}.cord-t .r{text-align:right}
+.cord-t small{color:var(--mute);font-size:11.5px}.cord-t .op{color:#2f6db5;font-size:12px}.cord-t .st{color:#2f6db5}html.dark .cord-t .op,html.dark .cord-t .st{color:#8db8ea}
+.cord-h{font-size:13.5px;margin-top:4px}
+.cord-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;text-align:center}.cord-g div{border-right:1px solid var(--line)}.cord-g div:last-child{border-right:0}
+.cord-g span{display:block;padding:6px 4px;font-size:11.5px;color:var(--mute);background:var(--soft,var(--bg))}.cord-g b{display:block;padding:8px 4px}
+.cord-k{display:grid;grid-template-columns:120px minmax(0,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden}.cord-k span{padding:7px 10px;background:var(--soft,var(--bg));color:var(--mute);border-top:1px solid var(--line)}.cord-k b{padding:7px 10px;font-weight:600;border-top:1px solid var(--line);overflow-wrap:anywhere}.cord-k span:first-child,.cord-k span:first-child+b{border-top:0}
+@media(max-width:560px){.cord-g{grid-template-columns:repeat(2,minmax(0,1fr))}.cord-g div:nth-child(2){border-right:0}.cord-k{grid-template-columns:96px minmax(0,1fr)}}
 /* 들어온 주문 (정리 › 들어온 주문) */
 .hwi{border-top:1px dashed var(--line);margin-top:12px;padding-top:12px;display:flex;flex-direction:column;gap:8px}
 .hwi-t{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}.hwi-t>b{font-size:14px}.hwi-t .sp,.hwi-f .sp{flex:1}.hwi-t .n{font-size:13px;font-weight:800}
@@ -4347,7 +4362,7 @@ function renderIssue() {
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
-    (issCat === 'parcel' ? `<div class="iss-cw"><button class="iss-cdl" type="button" data-issimg="${esc(it)}" title="사진과 메모를 이미지로 저장" aria-label="이미지로 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>이미지 저장</span></button>` : '') + `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b>${issCat === 'claim' ? `<span class="iss-who">${arr.map(x => [claimWho(x) || '이름 모름', claimPos(x)].filter(Boolean).join(' · ')).map(esc).join('<br>')}</span>` : ''}<span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>` + (issCat === 'parcel' ? '</div>' : '')).join('')
+    (issCat === 'parcel' ? `<div class="iss-cw"><button class="iss-cdl" type="button" data-issimg="${esc(it)}" title="사진과 메모를 이미지로 저장" aria-label="이미지로 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>이미지 저장</span></button>` : '') + `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b>${issCat === 'claim' ? arr.map(x => `<span class="iss-who">${esc(claimWho(x) || '이름 모름')}</span>${claimPosLine(x) ? `<span class="iss-pos">${esc(claimPosLine(x))}</span>` : ''}<span class="iss-cl-t">${esc(x.text || '').replace(/\n/g, '<br>')}</span>`).join('<i class="iss-cl-sep"></i>') : `<span>${esc((arr[0].text || '사진').split('\n')[0])}</span>`}${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>` + (issCat === 'parcel' ? '</div>' : '')).join('')
     : (issCat === 'review' ? '<p class="iss-empty">이 날 들어온 상품 후기가 없어요.<br>카페24 후기 게시판에 글이 올라오면 자동으로 여기에 기록돼요.</p>' : issCat === 'parcel' ? '<p class="iss-empty">이 날 적어 둔 택배 사고가 없어요.<br><b>사고 적기</b>를 눌러 사진 · 메모를 남겨 보세요. 송장 사진을 올리면 송장번호를 자동으로 찾아 적어 줘요.<br>사고 접수할 때 <b>이미지로 저장</b>해서 택배사에 올리면 돼요.</p>' : issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
   renderIssueSearch();
 }
@@ -4377,11 +4392,27 @@ function issOpenModal(item) {
 }
 function renderIssList() {
   const arr = issModalItem ? issOfDay(issDay).filter(x => x.item === issModalItem).reverse() : [];
-  $('iss-list').innerHTML = arr.map(x => `<div class="iss-note ${issEditId === x.id ? 'editing' : ''}"><p>${x.cat === 'claim' && (claimWho(x) || claimPos(x)) ? `<b class="iss-who">${esc([claimWho(x), claimPos(x)].filter(Boolean).join(' · '))}</b><br>` : ''}${esc(x.text).replace(/\n/g, '<br>')}</p>${x.ph && x.ph.length ? `<div class="iss-phs">${photoThumbs(x.ph)}</div>` : ''}<div class="iss-nf"><small>${esc(hhmm(x.at))}${x.by ? ' · ' + esc(x.by) : ''}</small><span><button class="ibtn sm" type="button" data-issedit="${x.id}" title="고치기" aria-label="고치기">${IC.edit}</button><button class="ibtn sm" type="button" data-issdel="${x.id}" title="지우기" aria-label="지우기">${IC.trash}</button></span></div></div>`).join('');
+  $('iss-list').innerHTML = arr.map(x => `<div class="iss-note ${issEditId === x.id ? 'editing' : ''}"><p>${x.cat === 'claim' ? `<b class="iss-who">${esc(claimWho(x) || '이름 모름')}</b>${claimPosLine(x) ? `<br><b class="iss-pos">${esc(claimPosLine(x))}</b>` : ''}<br>` : ''}${esc(x.text).replace(/\n/g, '<br>')}</p>${x.cat === 'claim' && claimOid(x) ? `<div class="iss-cord" data-cord="${esc(claimOid(x))}|${esc(x.oic || '')}">${claimOrdHtml(claimOid(x), x.oic || '')}</div>` : ''}${x.ph && x.ph.length ? `<div class="iss-phs">${photoThumbs(x.ph)}</div>` : ''}<div class="iss-nf"><small>${esc(hhmm(x.at))}${x.by ? ' · ' + esc(x.by) : ''}</small><span><button class="ibtn sm" type="button" data-issedit="${x.id}" title="고치기" aria-label="고치기">${IC.edit}</button><button class="ibtn sm" type="button" data-issdel="${x.id}" title="지우기" aria-label="지우기">${IC.trash}</button></span></div></div>`).join('');
   $('iss-list').classList.toggle('hidden', !arr.length); photoFill($('iss-list'));
   const PC = issCat === 'parcel'; $('iss-pimg').classList.toggle('hidden', !(PC && arr.length));
   try { renderIssOrd(); } catch (e) {}
   $('iss-text').placeholder = PC ? (arr.length ? '메모나 사진을 더 붙이기' : '메모 (예: 박스 한쪽 찌그러짐 · 내용물 젖음 · 사고접수 예정)') : arr.length ? '이 품목에 이슈를 더 적기' : '어떤 이슈였는지 적어 주세요 (예: 잎 끝 갈변 · 3팩 교환)';
+}
+// ---------- 취소 · 반품 카드를 열면 카페24 주문 화면처럼 보여 줘요 (결제자 이름은 화면에만, 저장 안 해요) ----------
+const claimOrdMem = new Map(); let claimOrdT = null;   // 주문번호 → { busy } | { err } | { o }
+function claimOrdLoad(oid) {
+  if (!oid || claimOrdMem.has(oid) || !c24Cfg().worker || !window.h5Fb) return; claimOrdMem.set(oid, { busy: 1 });
+  c24Call('/claimord?order_id=' + encodeURIComponent(oid)).then(d => claimOrdMem.set(oid, { o: d.order })).catch(e => claimOrdMem.set(oid, { err: e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포하면 보여요' : (e.message || '불러오지 못했어요') }))
+    .finally(() => { document.querySelectorAll(`[data-cord^="${oid}|"]`).forEach(b => { const [o, c] = b.dataset.cord.split('|'); b.innerHTML = claimOrdHtml(o, c); }); clearTimeout(claimOrdT); claimOrdT = setTimeout(() => { try { if (issOpen()) renderIssue(); if (!$('issModal').classList.contains('hidden')) { const ys = $('iss-list').scrollTop; renderIssList(); $('iss-list').scrollTop = ys; } } catch (e) {} }, 150); });
+}
+function claimOrdHtml(oid, oic) {
+  const m = claimOrdMem.get(oid); if (!m) { setTimeout(() => claimOrdLoad(oid), 0); return c24Cfg().worker && window.h5Fb ? '<p class="msg">카페24 주문 정보를 불러오는 중…</p>' : ''; }
+  if (m.busy) return '<p class="msg">카페24 주문 정보를 불러오는 중…</p>'; if (m.err) return `<p class="msg err">${esc(m.err)}</p>`;
+  const o = m.o, its = (o.items || []).filter(i => !oic || i.order_item_code === oic), L = its.length ? its : (o.items || []), dt = v => v ? String(v).replace('T', ' ').slice(0, 19).replace(/\+.*$/, '') : '-';
+  const stName = i => { const s = i.order_status || '', t = ({ C: 'cancel', R: 'return', E: 'exchange' })[s[0]]; return t ? claimStat(t, s) : (OST_N[s] || s); };
+  return `<div class="cord-t"><table><thead><tr><th>품목별 주문번호<br>배송번호</th><th class="l">상품명 / 옵션</th><th>수량</th><th>상품구매금액<br>(판매가)</th><th>운송장번호</th><th>주문상태</th></tr></thead><tbody>${L.map(i => `<tr><td>${esc(i.order_item_code)}<br><small>${esc(i.shipping_code || '')}</small></td><td class="l"><b>${esc(i.product_name)}</b>${i.option_value ? `<br><span class="op">- 옵션 : ${esc(incOpt(i.option_value))}</span>` : ''}</td><td>${i.quantity}</td><td class="r">${issWon((i.product_price + (i.option_price || 0)) * i.quantity).replace('원', '')}<br><small>(${issWon(i.product_price).replace('원', '')})</small></td><td><b>${esc(i.tracking_no || '-')}</b>${i.shipping_company_name ? `<br><small>${esc(i.shipping_company_name)}</small>` : ''}</td><td><b class="st">${esc(stName(i))}</b>${i.claim_by ? `<br><small>[${esc(i.claim_by)}]</small>` : ''}</td></tr>`).join('')}</tbody></table></div>
+    <b class="cord-h">결제 정보</b><div class="cord-g">${[['상품구매금액', o.price], ['배송비', o.shipping_fee], ['할인혜택', o.discount], ['총 실결제금액', o.payment]].map(([k, v]) => `<div><span>${k}</span><b>${v == null ? '-' : Number(v).toLocaleString('ko-KR')}</b></div>`).join('')}</div>
+    <b class="cord-h">결제수단</b><div class="cord-k">${[['결제(입금)자', o.payer || '-'], ['결제수단', (o.payment_method_name || []).join(', ') || '-'], ['결제(입금)확인일', dt(o.payment_date)]].map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join('')}</div>`;
 }
 // ---------- 택배 사고: 송장번호로 카페24 주문 찾기 → 모달에 보여주고, 저장 이미지에 같이 그려요 ----------
 // 카페24 관리자 화면 자체는 사이트에서 캡처할 수 없어서, 같은 내용을 카페24 주문 자료로 그려요. 이름 · 전화 · 주소는 안 가져와요.
@@ -8263,7 +8294,28 @@ function claimName(n) { const m = new Map((rules.names || []).map(r => [String(r
 function claimWho(x) { const m = String(x.text || '').match(/주문 (\d{8}-\d{5,})/); if (!m) return ''; const oid = m[1];
   try { if (result && result.sheet1) { const H = result.sheet1[0], oc = H.indexOf('주문번호'), rc = H.indexOf('수령인'); const r = result.sheet1.find((r, i) => i && String(r[oc] ?? '').trim() === oid); if (r && r[rc]) return String(r[rc]).trim(); } } catch (e) {}
   try { for (const v of crmMem.values()) { const o = (v.o || []).find(o => o.i === oid); if (o) return o.rn || o.nm || ''; } } catch (e) {}
+  try { const m = claimOrdMem.get(oid); if (m && m.o && m.o.payer) return m.o.payer; if (!m) setTimeout(() => claimOrdLoad(oid), 0); } catch (e) {}
   return ''; }
+// 그날 올린 주문 묶음에서 몇 번째 송장인지 - 송장번호 (예: 11/26 오후 송장 23번째 - 463871163512)
+const claimPosMem = new Map();
+const claimOid = x => x.oid || ((String(x.text || '').match(/주문 (\d{8}-\d{5,})/) || [])[1] || '');
+function claimBatch(oid, item) {
+  if (!oid) return null; const ck = oid + '|' + item + '|' + uplRev; if (claimPosMem.has(ck)) return claimPosMem.get(ck);
+  let out = null;
+  try { const days = Object.keys(upl).sort().reverse().slice(0, 30);
+    for (const d of days) { for (const sl of ['am', 'pm']) { const b = upl[d] && upl[d][sl]; if (!b || !Array.isArray(b.rows) || !b.rows.some(r => !r.del && String(r.o) === oid)) continue;
+      const res = uplResult(d, sl); let idx = 0;
+      if (res && res.sheet1) { const H = res.sheet1[0], oc = H.indexOf('주문번호'), pc = H.indexOf('주문상품명'), R = res.sheet1.slice(1), nm = String(item || '').replace(/\s+/g, '');
+        idx = R.findIndex(r => String(r[oc] ?? '').trim() === oid && nm && String(r[pc] ?? '').replace(/\s+/g, '').includes(nm)) + 1 || R.findIndex(r => String(r[oc] ?? '').trim() === oid) + 1; }
+      const dd = dOf(d); out = (dd.getMonth() + 1) + '/' + dd.getDate() + ' ' + (sl === 'am' ? '오전' : '오후') + (idx ? ' 송장 ' + idx + '번째' : ' 주문'); break; }
+      if (out) break; } } catch (e) { out = null; }
+  claimPosMem.set(ck, out); return out;
+}
+function claimPosLine(x) {
+  if (x.cat !== 'claim') return ''; const b = claimBatch(claimOid(x), x.item), t = x.trk || '';
+  if (!t && x.ctype === '취소' && x.oid) return (b ? b + ' · ' : '') + '송장 전 취소 (아직 안 나감)';
+  return [b, t].filter(Boolean).join(' - ') || (x.oid ? '' : claimPos(x));
+}
 const claimPos = x => { const m = String(x.text || '').match(/송장 (\d+)개 중 (\d+)번째/); return m ? m[1] + '개 중 ' + m[2] + '번째' : ''; };
 function claimMk(c) { return MALL_CH.find(x => x[0] === mallChOf(c))[1]; }
 function issSyncLine() {
@@ -8288,13 +8340,13 @@ async function claimSync(force) {
       if (!list.length) continue;
       const cur = issAllRaw().filter(x => x.day === day && x.key);
       const want = list.map(c => { const key = 'c24:' + c.type + ':' + (c.order_item_code || c.order_id + ':' + c.product_name), ct = CLAIM_T[c.type];
-        const text = [claimStat(c.type, c.status), c.item_count > 1 ? '송장 ' + c.item_count + '개 중 ' + c.item_no + '번째' : c.item_count === 1 ? '송장 1개 중 1번째' : '', c.option_value ? '옵션 ' + c.option_value : '', c.quantity ? c.quantity + '개' : '', c.reason ? '사유: ' + c.reason : '', claimMk(c), '주문 ' + c.order_id].filter(Boolean).join(' · ');
-        return { key, ct, text, item: claimName(c.product_name) }; });
-      const changed = want.filter(w => { const o = cur.find(x => x.key === w.key); return !o || o.text !== w.text || o.item !== w.item; });
+        const text = [[claimStat(c.type, c.status), claimMk(c), '주문 ' + c.order_id].join(' · '), [c.option_value ? '옵션 ' + incOpt(c.option_value) : '', c.quantity ? c.quantity + '개' : ''].filter(Boolean).join(' · '), c.reason ? '사유: ' + c.reason : ''].filter(Boolean).join('\n');
+        return { key, ct, text, item: claimName(c.product_name), oid: String(c.order_id || ''), oic: c.order_item_code || '', trk: c.tracking_no || '' }; });
+      const changed = want.filter(w => { const o = cur.find(x => x.key === w.key); return !o || o.text !== w.text || o.item !== w.item || (o.trk || '') !== w.trk || !o.oid; });
       if (!changed.length) continue;
       await issWrite(day, arr => changed.forEach(w => { const o = arr.find(x => x.key === w.key);
-        if (o) { o.text = w.text; o.item = w.item; o.editedAt = new Date().toISOString(); upd++; }
-        else { arr.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: w.key, cat: 'claim', ctype: w.ct, item: w.item, text: w.text, at: new Date().toISOString(), by: '카페24 자동' }); add++; } }));
+        if (o) { o.text = w.text; o.item = w.item; o.oid = w.oid; o.oic = w.oic; o.trk = w.trk; o.editedAt = new Date().toISOString(); upd++; }
+        else { arr.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), key: w.key, cat: 'claim', ctype: w.ct, item: w.item, text: w.text, oid: w.oid, oic: w.oic, trk: w.trk, at: new Date().toISOString(), by: '카페24 자동' }); add++; } }));
     }
     try { localStorage.setItem('herb5_claimsync', JSON.stringify({ at: new Date().toISOString() })); } catch (e) {}
     claimMsg = add || upd ? `새로 ${add}건${upd ? ' · 바뀐 것 ' + upd + '건' : ''} 기록했어요` : '새로 들어온 건이 없어요';
