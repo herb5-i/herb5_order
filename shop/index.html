@@ -10655,13 +10655,16 @@ document.addEventListener('click', ev => { const b = ev.target.closest && ev.tar
     bub.style.top = Math.max(8, top) + 'px'; bub.style.left = Math.max(8, Math.min(r.left + r.width / 2 - 24, innerWidth - w - 8)) + 'px';
     const b = t.querySelector(':scope > .tipi'); if (b) { b.setAttribute('aria-expanded', 'true'); b.setAttribute('aria-describedby', 'tipbub'); }
   }
-  function hide(force) { if (!bub || (pinned && !force)) return; bub.classList.remove('on'); if (cur) { const b = cur.querySelector(':scope > .tipi'); if (b) b.setAttribute('aria-expanded', 'false'); } cur = null; pinned = false; }
+  function hide(force) { clearTimeout(hv); hvT = null; if (!bub || (pinned && !force)) return; bub.classList.remove('on'); if (cur) { const b = cur.querySelector(':scope > .tipi'); if (b) b.setAttribute('aria-expanded', 'false'); } cur = null; pinned = false; }
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('.tipi');
     if (b) { e.preventDefault(); e.stopPropagation(); const t = b.parentElement; if (cur === t && pinned) hide(true); else show(t, true); return; }
     if (pinned && !(e.target.closest && e.target.closest('.tipbub'))) hide(true);
   }, true);
-  document.addEventListener('mouseover', e => { if (pinned) return; const t = e.target.closest && e.target.closest('.tipt'); if (t && t.querySelector(':scope > .tipi')) { if (cur !== t) show(t, false); } else if (cur) hide(); });
+  let hv = null, hvT = null;   // 제목에 3초 넘게 가져다 대야 떠요 ('!'를 누르면 바로 떠요)
+  document.addEventListener('mouseover', e => { if (pinned) return; const t = e.target.closest && e.target.closest('.tipt'); const ok = t && t.querySelector(':scope > .tipi');
+    if (ok) { if (hvT === t || cur === t) return; clearTimeout(hv); hvT = t; hv = setTimeout(() => { if (hvT === t && !pinned) show(t, false); }, 3000); }
+    else { clearTimeout(hv); hvT = null; if (cur) hide(); } });
   document.addEventListener('focusin', e => { if (e.target.classList && e.target.classList.contains('tipi')) show(e.target.parentElement, false); });
   document.addEventListener('focusout', e => { if (e.target.classList && e.target.classList.contains('tipi') && !pinned) hide(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && cur) hide(true); });
