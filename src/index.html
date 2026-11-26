@@ -3075,7 +3075,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
     </div>
     <div class="card laycard" data-sub="set" id="laycard">
       <div class="hh"><h2>탭 화면 구성</h2><span class="msg">순서 바꾸기 · 빼기 · 다시 넣기</span></div>
-      <p class="help">탭마다 보이는 칸의 순서를 ↑ ↓ 로 바꾸고, 쓰지 않는 칸은 눈 아이콘으로 빼 둘 수 있어요. 뺀 칸은 지워지지 않고 숨겨지기만 해서 언제든 다시 넣을 수 있어요. 바꾸면 바로 저장되고 모든 기기에 같이 적용돼요.</p>
+      <p class="help">탭마다 보이는 칸의 순서를 ↑ ↓ 로 바꾸고, 쓰지 않는 칸은 📱(휴대폰) · 🖥(PC) 버튼으로 숨길 수 있어요. 숨긴 칸은 지워지지 않아서 언제든 다시 보이게 할 수 있어요. <b>📱 휴대폰은 이 기기에만</b> 저장되고(기기마다 따로), <b>🖥 PC와 순서는 모든 기기에 같이</b> 적용돼요.</p>
       <div id="laylist"></div>
       <div class="row"><button class="btn sm iczno" type="button" id="layreset">처음 순서로</button><span class="msg" id="laymsg"></span></div>
     </div>
@@ -9349,7 +9349,11 @@ const LAY = {
   hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x'], ['salehist', '판매 변경 (품절 · 판매 재개)', '#salehist']] },
 };
 const LAY_SUB = { run: { inc: ['inc'] }, stock: { sale: ['sale', 'salelog'] } };   // 칸 → 하위 메뉴 아이콘
-const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); const f = a => (a || []).filter(k => ks.includes(k)), hide = f(c.hide); return { order, hide, hm: [...new Set(hide.concat(f(c.hideM)))], hp: [...new Set(hide.concat(f(c.hideP)))] }; };   // hide: 둘 다 · hm: 휴대폰 · hp: PC
+const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); const f = a => (a || []).filter(k => ks.includes(k)), hide = f(c.hide); const own = layMobOwn(t); return { order, hide, hm: own ? f(own) : [...new Set(hide.concat(f(c.hideM)))], hp: [...new Set(hide.concat(f(c.hideP)))], hmShared: [...new Set(hide.concat(f(c.hideM)))] }; };   // hm: 휴대폰(이 기기 설정이 있으면 그것) · hp: PC(공용)
+// 휴대폰 숨기기는 기기마다 따로 (이 기기에만 저장), PC 숨기기는 공용 저장소로 모든 기기에 같이 (사용자 요청 2026-11-27)
+const LAY_MOB_KEY = 'h5_lay_mob';
+function layMobOwn(t) { try { const o = JSON.parse(localStorage.getItem(LAY_MOB_KEY) || '{}'); return Array.isArray(o[t]) ? o[t] : null; } catch (e) { return null; } }
+function layMobSet(t, arr) { try { const o = JSON.parse(localStorage.getItem(LAY_MOB_KEY) || '{}'); if (arr) o[t] = arr; else delete o[t]; localStorage.setItem(LAY_MOB_KEY, JSON.stringify(o)); } catch (e) {} }
 const layMob = () => { try { return matchMedia('(max-width:999px)').matches; } catch (e) { return false; } };   // 아래쪽 메뉴가 나오는 화면 = 휴대폰
 try { matchMedia('(max-width:999px)').addEventListener('change', () => layApply()); } catch (e) {}
 function layApply() {
@@ -9373,16 +9377,17 @@ function layRender() {
   const UP = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>', DN = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
   box.innerHTML = Object.entries(LAY).map(([t, L]) => { const c = layCfg(t), nm = Object.fromEntries(L.items.map(i => [i[0], i[1]]));
     return `<div class="lay-t"><b>${esc(L.n)}</b>${c.order.map((k, i) => { const m = c.hm.includes(k), p = c.hp.includes(k), off = m && p, tag = off ? '빠짐' : m ? '휴대폰에서만 숨김' : p ? 'PC에서만 숨김' : '';
-      return `<div class="lay-r${off ? ' off' : ''}"><span class="lay-n">${esc(nm[k])}${tag ? ' <small>' + tag + '</small>' : ''}</span><button class="ibtn iczno" type="button" data-lay="${t}:${k}:up" ${i ? '' : 'disabled'} title="위로" aria-label="${esc(nm[k])} 위로">${UP}</button><button class="ibtn iczno" type="button" data-lay="${t}:${k}:down" ${i < c.order.length - 1 ? '' : 'disabled'} title="아래로" aria-label="${esc(nm[k])} 아래로">${DN}</button><span class="lay-dv"><button class="lay-pl iczno${m ? '' : ' on'}" type="button" data-lay="${t}:${k}:m" aria-pressed="${!m}" aria-label="${esc(nm[k])} 휴대폰에서 ${m ? '보이기' : '숨기기'}" title="휴대폰 ${m ? '숨김 · 눌러서 보이기' : '보임 · 눌러서 숨기기'}">📱</button><button class="lay-pl iczno${p ? '' : ' on'}" type="button" data-lay="${t}:${k}:p" aria-pressed="${!p}" aria-label="${esc(nm[k])} PC에서 ${p ? '보이기' : '숨기기'}" title="PC ${p ? '숨김 · 눌러서 보이기' : '보임 · 눌러서 숨기기'}">🖥</button></span></div>`;}).join('')}</div>`; }).join('');
+      return `<div class="lay-r${off ? ' off' : ''}"><span class="lay-n">${esc(nm[k])}${tag ? ' <small>' + tag + '</small>' : ''}</span><button class="ibtn iczno" type="button" data-lay="${t}:${k}:up" ${i ? '' : 'disabled'} title="위로" aria-label="${esc(nm[k])} 위로">${UP}</button><button class="ibtn iczno" type="button" data-lay="${t}:${k}:down" ${i < c.order.length - 1 ? '' : 'disabled'} title="아래로" aria-label="${esc(nm[k])} 아래로">${DN}</button><span class="lay-dv"><button class="lay-pl iczno${m ? '' : ' on'}" type="button" data-lay="${t}:${k}:m" aria-pressed="${!m}" aria-label="${esc(nm[k])} 휴대폰에서 ${m ? '보이기' : '숨기기'}" title="휴대폰 ${m ? '숨김 · 눌러서 보이기' : '보임 · 눌러서 숨기기'} (이 기기에만)">📱</button><button class="lay-pl iczno${p ? '' : ' on'}" type="button" data-lay="${t}:${k}:p" aria-pressed="${!p}" aria-label="${esc(nm[k])} PC에서 ${p ? '보이기' : '숨기기'}" title="PC ${p ? '숨김 · 눌러서 보이기' : '보임 · 눌러서 숨기기'} (모든 기기 같이)">🖥</button></span></div>`;}).join('')}</div>`; }).join('');
 }
 async function laySave(fn) { const keep = JSON.stringify(rules.layout || {}); rules.layout = JSON.parse(keep); fn(rules.layout); layApply(); const m = $('laymsg');
   try { if (typeof rulesDoc !== 'undefined' && rulesDoc) { await rulesDoc.update({ 'rules.layout': clone(rules.layout), updatedAt: new Date().toISOString() }); try { const sv = JSON.parse(rulesSavedJ); sv.layout = clone(rules.layout); rulesSavedJ = JSON.stringify(sv); } catch (e) {} }   // 화면 구성만 공용 저장소에 바로 저장 → 모든 기기 · 브라우저에 같이 적용돼요
     else await saveRules();
     if (m) { m.className = 'msg ok'; m.textContent = rulesDoc ? '저장했어요 · 모든 기기에 같이 적용돼요' : '이 브라우저에만 저장했어요'; } } catch (er) { rules.layout = JSON.parse(keep); layApply(); if (m) { m.className = 'msg err'; m.textContent = '저장하지 못했어요: ' + (er.message || er); } } }
 document.addEventListener('click', e => { const b = e.target.closest('[data-lay]'); if (b) { const [t, k, act] = b.dataset.lay.split(':');
-    laySave(Lo => { const c = layCfg(t); if (act === 'm' || act === 'p') { const M = new Set(c.hm), P = new Set(c.hp), S = act === 'm' ? M : P; if (S.has(k)) S.delete(k); else S.add(k);
-        c.hide = [...M].filter(x => P.has(x)); c.hideM = [...M].filter(x => !P.has(x)); c.hideP = [...P].filter(x => !M.has(x)); } else { const i = c.order.indexOf(k), j = act === 'up' ? i - 1 : i + 1; if (j >= 0 && j < c.order.length) [c.order[i], c.order[j]] = [c.order[j], c.order[i]]; } Lo[t] = { order: c.order, hide: c.hide, hideM: c.hideM || c.hm.filter(x => !c.hide.includes(x)), hideP: c.hideP || c.hp.filter(x => !c.hide.includes(x)) }; }); return; }
-  if (e.target.closest('#layreset')) laySave(Lo => { Object.keys(LAY).forEach(t => delete Lo[t]); }); });
+    if (act === 'm') { const M = new Set(layCfg(t).hm); if (M.has(k)) M.delete(k); else M.add(k); layMobSet(t, [...M]); layApply(); const m = $('laymsg'); if (m) { m.className = 'msg ok'; m.textContent = '휴대폰 설정은 이 기기에만 저장했어요'; } return; }   // 휴대폰: 이 기기에만
+    laySave(Lo => { const c = layCfg(t); if (act === 'p') { const P = new Set(c.hp); if (P.has(k)) P.delete(k); else P.add(k);
+        c.hideM = c.hmShared; c.hide = []; c.hideP = [...P]; } else { const i = c.order.indexOf(k), j = act === 'up' ? i - 1 : i + 1; if (j >= 0 && j < c.order.length) [c.order[i], c.order[j]] = [c.order[j], c.order[i]]; } Lo[t] = { order: c.order, hide: c.hide, hideM: c.hideM || c.hmShared.filter(x => !c.hide.includes(x)), hideP: c.hideP || c.hp.filter(x => !c.hide.includes(x)) }; }); return; }
+  if (e.target.closest('#layreset')) { Object.keys(LAY).forEach(t => layMobSet(t, null)); laySave(Lo => { Object.keys(LAY).forEach(t => delete Lo[t]); }); } });
 layApply();
 // ---------- 앱 아이콘 고르기 (규칙 관리 → 계정 관리, 관리자) ----------
 // rules.appIcon(hi · farm · both)에 맞춰 이 화면의 앱 설치 파일 · 아이콘 링크를 바꿔요. 첫 화면(맨 앞 주소)도 이 기기에 적어 둔 값을 따라가요.
