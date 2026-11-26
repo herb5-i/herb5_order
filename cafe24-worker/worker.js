@@ -6,7 +6,7 @@
 //   Variables:  CAFE24_MALL_ID, CAFE24_CLIENT_ID, REDIRECT_URI, FIREBASE_PROJECT, ALLOWED_ORIGIN
 //   Secret:     CAFE24_CLIENT_SECRET
 //   KV binding: TOKENS
-//   Cron:       0 18 * * *   (매일 새벽 3시(한국)에 토큰을 미리 갱신해서 2주 만료를 막아요)
+//   Cron:       0 18 * * *   (매일 새벽 3시(한국)에 토큰을 미리 갱신해서 2주 만료를 막고, 보낼 날이 된 날짜 지정 주문의 배송보류를 풀어요)
 
 const API_VERSION = '2026-09-01';
 
@@ -31,6 +31,9 @@ export default {
       if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
       if (url.pathname === '/claimord') return json(await claimOrd(env, url.searchParams), cors);   // 취소 · 반품 카드 눌렀을 때 주문 정보 (결제자 이름은 화면에만, 저장 안 해요)
+      if (url.pathname === '/hold' && req.method === 'POST') { needAdmin(who); return json(await holdSet(env, await req.json()), cors); }   // 날짜 지정 주문: 배송보류 + 희망배송일 (관리자만)
+      if (url.pathname === '/hold/release' && req.method === 'POST') { needAdmin(who); return json(await holdRelease(env, (await req.json()).ids, '직접'), cors); }
+      if (url.pathname === '/holds') return json(await holdList(env), cors);
       if (url.pathname === '/ostmove' && req.method === 'POST') { needAdmin(who); return json(await ostMove(env, await req.json()), cors); }   // 입금전 · 상품준비중 → 배송준비중 (관리자만)
       if (url.pathname === '/ostorders') return json(await ostOrders(env, url.searchParams.get('code')), cors);   // 그 상태(배송준비중)인 주문 전부 (화면에만 보여 주고 저장 안 해요)
       if (url.pathname === '/ostids') return json(await ostIds(env, url.searchParams.get('code')), cors);   // 상태별 주문 번호 · 결제 시각만 (이름 · 연락처 없음)
@@ -57,7 +60,7 @@ export default {
       return json({ error: e.code || 'error', message: e.message || String(e) }, cors, e.status || 500);
     }
   },
-  async scheduled(event, env, ctx) { ctx.waitUntil(refresh(env).catch(() => {})); }
+  async scheduled(event, env, ctx) { ctx.waitUntil(refresh(env).catch(() => {}).then(() => holdDue(env)).catch(() => {})); }   // 새벽 3시: 토큰 갱신 + 보낼 날이 된 날짜 지정 주문 보류 풀기
 };
 
 function corsHeaders(req, env) {
@@ -561,6 +564,53 @@ async function saleCats(env, fresh) {
   saleCatMem = out; await env.TOKENS.put('salecats', JSON.stringify(out), { expirationTtl: 86400 }).catch(() => {});
   return out;
 }
+// ---------- 날짜 지정 주문 (손님이 비고에 "29일에 보내주세요"처럼 적은 주문) ----------
+// 카페24에서 배송보류(hold) + 희망배송일을 적고, KV 'holds'에 [주문번호, 보낼 날]만 적어 둬요 (손님 정보 없음).
+// 보낼 날 새벽 3시(크론)에 저절로 보류를 풀어 배송준비중으로 돌려요.
+async function holdKv(env) { return JSON.parse((await env.TOKENS.get('holds')) || '[]'); }
+async function holdOrders(env, token, ids) {
+  const day = ms => new Date(ms + 9 * 3600e3).toISOString().slice(0, 10), now = Date.now();
+  const d = await c24get(env, token, '/admin/orders', { order_id: ids.join(','), start_date: day(now - 89 * 864e5), end_date: day(now), date_type: 'order_date', embed: 'items,receivers', limit: 100 }, '주문(Order) 읽기');
+  const M = {}; (d.orders || []).forEach(o => { if (o.canceled === 'T') return; M[o.order_id] = { items: (o.items || []).map(i => ({ c: i.order_item_code, s: i.order_status || '' })), rc: (o.receivers || []).map(r => r.shipping_code).filter(Boolean) }; }); return M;
+}
+async function c24put(env, token, path, body) { for (let i = 0; i < 4; i++) {
+  const r = await fetch(base(env) + path, { method: 'PUT', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 429 && i < 3) { await new Promise(res => setTimeout(res, 1200 * (i + 1))); continue; }
+  if (r.status === 401 || r.status === 403) throw fail(403, 'scope_order', '카페24 앱에 [주문 쓰기] 권한이 없어요. 개발자센터 → 앱 → 권한에서 주문(쓰기)을 추가하고, 사이트에서 [카페24 연결]을 다시 눌러 주세요 (' + ((d.error && d.error.message) || r.status) + ')');
+  return { ok: r.ok || r.status === 207, d, st: r.status, msg: (d.error && d.error.message) || ('오류 ' + r.status) }; } }
+async function holdSet(env, b) {
+  const L = (Array.isArray(b && b.list) ? b.list : []).map(x => ({ o: String(x.order_id || ''), day: String(x.day || '') })).filter(x => /^\d{8}-\d{7}$/.test(x.o) && /^\d{4}-\d\d-\d\d$/.test(x.day)).slice(0, 20);
+  if (!L.length) throw fail(400, 'hold', '날짜를 정한 주문이 없어요');
+  const today = kstDay(); if (L.some(x => x.day <= today)) throw fail(400, 'hold', '보낼 날은 내일 이후여야 해요');
+  const token = await accessToken(env), M = await holdOrders(env, token, L.map(x => x.o)), res = {};
+  const can = L.filter(x => { const m = M[x.o]; if (!m) { res[x.o] = { ok: false, msg: '카페24에서 주문을 못 찾았어요' }; return false; } if (!m.items.some(i => i.s === 'N20' || i.s === 'N22')) { res[x.o] = { ok: false, msg: '배송준비중 주문이 아니에요' }; return false; } return true; });
+  const toHold = can.filter(x => M[x.o].items.some(i => i.s === 'N20'));
+  if (toHold.length) { const r = await c24put(env, token, '/admin/orders', { shop_no: 1, requests: toHold.map(x => ({ order_id: x.o, process_status: 'hold', order_item_code: M[x.o].items.filter(i => i.s === 'N20').map(i => i.c) })) });
+    if (!r.ok) { toHold.forEach(x => { res[x.o] = { ok: false, msg: '배송보류로 바꾸지 못했어요: ' + r.msg }; }); } }
+  for (const x of can) { if (res[x.o]) continue; let wish = true;
+    for (const sc of M[x.o].rc.slice(0, 2)) { const r = await c24put(env, token, '/admin/orders/' + encodeURIComponent(x.o) + '/receivers/' + encodeURIComponent(sc), { shop_no: 1, request: { wished_delivery_date: x.day } }); if (!r.ok) wish = false; }
+    res[x.o] = { ok: true, wish }; }
+  const ok = can.filter(x => res[x.o] && res[x.o].ok);
+  if (ok.length) { const H = (await holdKv(env)).filter(h => !ok.some(x => x.o === h.o)).concat(ok.map(x => ({ o: x.o, day: x.day, at: new Date().toISOString() }))); await env.TOKENS.put('holds', JSON.stringify(H.slice(-300))); }
+  ostMem = null; await env.TOKENS.delete('ost').catch(() => {});
+  return { ok: true, res, done: ok.length };
+}
+async function holdRelease(env, ids, how) {
+  ids = [...new Set((Array.isArray(ids) ? ids : []).map(String).filter(i => /^\d{8}-\d{7}$/.test(i)))].slice(0, 30); if (!ids.length) return { ok: true, res: {}, done: 0 };
+  const token = await accessToken(env), M = await holdOrders(env, token, ids), res = {};
+  const on = ids.filter(id => M[id] && M[id].items.some(i => i.s === 'N22'));
+  ids.filter(id => !on.includes(id)).forEach(id => { res[id] = { ok: true, msg: '이미 보류가 아니에요' }; });
+  if (on.length) { const r = await c24put(env, token, '/admin/orders', { shop_no: 1, requests: on.map(id => ({ order_id: id, process_status: 'unhold', order_item_code: M[id].items.filter(i => i.s === 'N22').map(i => i.c) })) });
+    on.forEach(id => { res[id] = r.ok ? { ok: true } : { ok: false, msg: '보류를 풀지 못했어요: ' + r.msg }; }); }
+  const okIds = ids.filter(id => res[id].ok), H = await holdKv(env), keep = H.filter(h => !okIds.includes(h.o));
+  if (keep.length !== H.length) { const log = JSON.parse((await env.TOKENS.get('holdlog')) || '[]'); okIds.forEach(id => { const h = H.find(x => x.o === id); if (h) log.unshift({ o: id, day: h.day, at: new Date().toISOString(), how }); }); await env.TOKENS.put('holds', JSON.stringify(keep)); await env.TOKENS.put('holdlog', JSON.stringify(log.slice(0, 100))); }
+  ostMem = null; await env.TOKENS.delete('ost').catch(() => {});
+  return { ok: true, res, done: okIds.length };
+}
+async function holdDue(env) { const t = kstDay(), H = await holdKv(env), due = H.filter(h => h.day <= t).map(h => h.o); if (due.length) await holdRelease(env, due, '자동'); }
+async function holdList(env) { return { holds: await holdKv(env), log: JSON.parse((await env.TOKENS.get('holdlog')) || '[]').slice(0, 30), today: kstDay() }; }
+
 // 입금전(N00) · 상품준비중(N10) 주문을 배송준비중(N20)으로 넘겨요. 입금전은 먼저 입금확인(paid)을 해요
 async function ostMove(env, b) {
   const from = String(b && b.from || ''); if (from !== 'N00' && from !== 'N10') throw fail(400, 'move', '입금전 · 상품준비중 주문만 넘길 수 있어요');

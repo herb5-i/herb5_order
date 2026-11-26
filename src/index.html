@@ -1782,6 +1782,22 @@ button.hmfb-nh{width:100%;border:0;background:none;padding:0;font:inherit;color:
 .appicon{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.ai-h{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}.ai-h b{font-size:15px}
 .ai-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:460px}.ai-o{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
 .ai-o img{width:72px;height:72px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.12)}.ai-o.on{border-color:var(--acc);background:var(--acc2);font-weight:700}
+.dsdr{width:min(520px,94vw)}.dsdr .sd-b{display:flex;flex-direction:column;gap:10px;padding-bottom:10px}
+.ds-f{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)}.ds-f .msg{flex:1;min-width:150px}
+.ds-help{margin:0;font-size:12.5px;color:var(--mute);line-height:1.6}.ds-msg{margin:0;font-size:13px;font-weight:700;color:var(--acc);background:var(--acc2,#eef6f1);border-radius:10px;padding:8px 11px;line-height:1.5}
+.ds-list{border:1px solid var(--line);border-radius:14px;overflow:hidden}.ds-r{display:flex;gap:10px;padding:11px 12px}.ds-r+.ds-r{border-top:1px solid var(--line)}.ds-r.on{background:var(--acc2,#eef6f1)}
+.ds-ck input{width:17px;height:17px;margin:2px 0 0;accent-color:var(--acc);padding:0;min-height:0}.ds-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.ds-t{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}.ds-t b{font-size:13.5px}.ds-i{font-size:12.5px;color:var(--mute);overflow-wrap:anywhere}
+.ds-n{font-size:12.5px;background:var(--bg,#f6f7f5);border-radius:8px;padding:6px 9px;overflow-wrap:anywhere;line-height:1.55}.ds-n mark{background:#ffe7a8;color:#1f2620;border-radius:3px;padding:0 2px}
+html.dark .ds-n{background:rgba(255,255,255,.05)}html.dark .ds-n mark{background:#6b5520;color:#fff}
+.ds-d{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:12.5px}.ds-d>span:first-child{color:var(--mute)}.ds-d select{height:32px;width:auto;min-width:0;padding:0 8px;font-size:12.5px;border-radius:8px}
+.ds-ok{font-size:12px;font-weight:700;color:var(--acc)}.ds-w{font-size:12px;color:#a05a00;line-height:1.5}html.dark .ds-w{color:#f0b46a}
+.ds-sec{display:flex;flex-direction:column;gap:2px;margin-top:6px}.ds-sec b{font-size:14px}.ds-sec small{font-size:12px;color:var(--mute)}
+.ds-hl{border:1px solid var(--line);border-radius:12px;overflow:hidden}.ds-h{display:flex;align-items:center;gap:8px;padding:8px 11px;font-size:13px}.ds-h+.ds-h{border-top:1px solid var(--line)}.ds-hd{font-weight:800;white-space:nowrap}.ds-hd.due{color:#c0392b}.ds-ho{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ds-lg{font-size:12px;color:var(--mute)}
+.ds-chip{height:30px;padding:0 11px;border-radius:99px;border:1px solid #e3c08a;background:#fdf3e2;color:#8a5a12;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;margin-left:6px}html.dark .ds-chip{background:#3a2f1c;color:#f0c987;border-color:#6b5520}
+.stabs:has(.ds-tab,.ds-chip){flex-wrap:wrap;min-width:0}.stabs:has(.ds-tab,.ds-chip) .stab{white-space:nowrap}.stabs .ds-chip{margin-left:0}
+.stab.ds-tab{color:#8a5a12}html.dark .stab.ds-tab{color:#f0c987}.ds-td{font-weight:800;white-space:nowrap}
 .sdback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900}.sdback.hidden{display:none}
 .sdrawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));box-sizing:border-box}
 .sdrawer.on{transform:none}.sd-h{display:flex;align-items:center;gap:8px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}.sd-h b{font-size:18px;flex:1;min-width:0;overflow-wrap:anywhere}.sd-b{overflow:auto;flex:1;padding-top:10px}
@@ -3957,8 +3973,8 @@ async function uplWrite(day, entry) {
 }
 function uplRows(day, slot) {
   const e = upl[day]; if (!e) return [];
-  if (slot && slot !== 'all') return ((e[slot] && e[slot].rows) || []).filter(x => !x.del);
-  const m = new Map(); ['am', 'pm'].forEach(k => ((e[k] && e[k].rows) || []).forEach(x => m.set(x.k, x))); return [...m.values()].filter(x => !x.del);
+  if (slot && slot !== 'all') return ((e[slot] && e[slot].rows) || []).filter(x => !x.del && !x.ns);
+  const m = new Map(); ['am', 'pm'].forEach(k => ((e[k] && e[k].rows) || []).forEach(x => m.set(x.k, x))); return [...m.values()].filter(x => !x.del && !x.ns);
 }
 const uplOrders = (day, slot) => new Set(uplRows(day, slot).map(x => x.o)).size;
 function uplResult(day, slot) {
@@ -4138,7 +4154,8 @@ async function histSaveUpload(rows, fname, opt) {
     }
     if (!histSel || !hist[histSel]) histSel = Object.keys(byDate).sort().pop();
     const upDay = opt.day || isoDate(nowD), prevU = upl[upDay] || {};
-    const allRows = []; Object.keys(byDate).forEach(d => byDate[d].forEach(x => allRows.push(Object.assign({ d }, x))));
+    const dsH = old ? new Set() : (() => { try { return dsHeld(); } catch (e) { return new Set(); } })();
+    const allRows = []; Object.keys(byDate).forEach(d => byDate[d].forEach(x => allRows.push(Object.assign({ d }, x, dsH.has(x.o) ? { ns: 1 } : {}))));
     if (!old) { srcKeys = keysOf; lastUp = { day: upDay, slot }; }
     const mb = uplMerge(prevU[slot], slot, fid, fname, now, allRows); if (old) mb.files = mb.files.map(f => f.id === fid ? Object.assign({}, f, { old: 1 }) : f);
     await uplWrite(upDay, Object.assign({}, prevU, { [slot]: mb, updatedAt: now }));
@@ -5993,8 +6010,138 @@ function readFile(f) {
 }
 
 const SHEETS = [['주문정리', 'sheet1'], ['수령인별', 'sheet2'], ['집계', 'sheet3']];
+// ---------- 날짜 지정 주문: 비고에 "29일에 보내주세요"처럼 적은 주문 ----------
+// 엑셀을 정리하면 찾아서 주문정리 · 수령인별 · 집계에서 빼고 [날짜 지정] 칸에 따로 모아요. 옆 창에서 카페24에 배송보류 + 희망배송일로 반영하면
+// 보낼 날 새벽에 worker가 저절로 보류를 풀어 배송준비중으로 돌려요. 이 기기에는 [이번 파일, 뺄지 말지, 고른 날]만 저장해요 (손님 정보 없음).
+const DS_KEY = 'h5_ds';
+let dsB = null, dsKeep = new Set(), dsDay = {}, dsDone = {}, dsList = [], dsHolds = null, dsHoldErr = '', dsBusy = false, dsMsg = '', dsAuto = '';
+function dsCheck() { const b = srcAt ? String(srcAt.getTime()) : ''; if (b === dsB) return; dsB = b; dsKeep = new Set(); dsDay = {}; dsDone = {}; dsMsg = '';
+  try { const o = JSON.parse(localStorage.getItem(DS_KEY) || 'null'); if (o && o.b === b && b) { dsKeep = new Set(o.keep || []); dsDay = o.day || {}; dsDone = o.done || {}; dsAuto = o.auto || ''; } } catch (e) {} }
+function dsSave() { try { localStorage.setItem(DS_KEY, JSON.stringify({ b: dsB, keep: [...dsKeep], day: dsDay, done: dsDone, auto: dsAuto })); } catch (e) {} }
+const DS_KW = /(보내|발송|배송|출고|받|도착|수령|부쳐|맞춰)/;
+const dsAdd = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+function dsParse(note, base) {   // base: 오늘 0시. 보낼 날짜를 찾으면 { want, ship, hit, recv } (오늘 · 지난 날짜 · 60일 넘는 날짜는 빼요)
+  const t = String(note || '').replace(/\s+/g, ' '); if (!t.trim() || !DS_KW.test(t)) return null;
+  const P = [
+    [/(\d{1,2})\s*월\s*(\d{1,2})\s*일/, m => ({ mo: +m[1], d: +m[2] })],
+    [/(?<![\d.\/])(\d{1,2})\s*\/\s*(\d{1,2})(?![\d\/])/, m => ({ mo: +m[1], d: +m[2] })],
+    [/(?<![\d.\/])(\d{1,2})\s*일\s*(?:후|뒤)/, m => ({ rel: +m[1] })],
+    [/(다다음\s*주|다음\s*주|담주|이번\s*주)?\s*([월화수목금토일])요일/, m => ({ wd: '일월화수목금토'.indexOf(m[2]), wk: m[1] ? (/다다음/.test(m[1]) ? 2 : /이번/.test(m[1]) ? 0 : 1) : -1 })],
+    [/(?<![\d.\/월])(\d{1,2})\s*일(?!\s*(?:이내|안에|동안|정도|째|분|간))/, m => ({ d: +m[1] })],
+    [/(내일|모레|글피)/, m => ({ rel: { 내일: 1, 모레: 2, 글피: 3 }[m[1]] })]];
+  for (const [re, fn] of P) {
+    const m = t.match(re); if (!m) continue; const g = fn(m), after = t.slice(m.index + m[0].length, m.index + m[0].length + 16);
+    if (/^\s*(?:까지|전에|전까지|안에|이전|이내)/.test(after)) return null;   // "29일까지 받고 싶어요"는 마감일이라 평소처럼 보내요
+    let w = null;
+    if (g.rel) w = dsAdd(base, g.rel);
+    else if (g.wd !== undefined) { const cur = base.getDay(), mon = dsAdd(base, -((cur + 6) % 7)); if (g.wk < 0) { w = dsAdd(base, ((g.wd - cur + 7) % 7) || 7); } else w = dsAdd(mon, g.wk * 7 + ((g.wd + 6) % 7)); }
+    else { const y = base.getFullYear(); let mo = g.mo || base.getMonth() + 1; if (g.d < 1 || g.d > 31 || mo < 1 || mo > 12) continue;
+      w = new Date(y, mo - 1, g.d); if (!g.mo && g.d <= base.getDate()) w = new Date(y, base.getMonth() + 1, g.d);
+      if (g.mo && w < dsAdd(base, -60)) w = new Date(y + 1, mo - 1, g.d); if (w.getDate() !== g.d) continue; }
+    const tail = (after.match(/^[^\d.,!~\n]{0,8}?(?:보내|발송|배송|출고|받|도착|수령|부쳐|맞춰)[가-힣]{0,4}/) || [''])[0];
+    if (!tail) continue;   // 날짜 바로 뒤에 '보내 · 받 · 도착' 같은 말이 있을 때만 (예: "1일 1팩"은 아니에요)
+    const recv = /(받|도착|수령)/.test(tail) && !/(보내|발송|출고)/.test(tail);
+    return { want: w, hit: m[0] + tail, recv };
+  }
+  return null;
+}
+function dsShipOf(p, base) {   // 받고 싶은 날이면 하루 전에 보내요. 배송 쉬는 날이면 (받는 날 기준은 앞으로, 보낼 날 기준은 뒤로) 옮겨요
+  const c = c24Cfg(), ok = d => { try { return c24IsShip(d, c); } catch (e) { return d.getDay() > 0 && d.getDay() < 6; } };
+  let s = p.recv ? dsAdd(p.want, -1) : new Date(p.want), n = 0, moved = false;
+  while (!ok(s) && n++ < 10) { s = dsAdd(s, p.recv ? -1 : 1); moved = true; }
+  return { ship: s, moved, ok: s > base && s <= dsAdd(base, 60) };
+}
+const dsFmt = d => (d.getMonth() + 1) + '/' + d.getDate() + ' (' + WDK[d.getDay()] + ')';
+const dsIso = d => isoDate(d);
+function dsFind() {   // 이번 파일에서 날짜를 정해 둔 주문 (주문번호마다 한 번)
+  dsCheck(); dsList = []; if (!srcRows || srcRows.length < 2) return dsList;
+  const H = srcRows[0].map(v => String(v ?? '')), ix = h => H.indexOf(h), oc = ix('주문번호'), nc = ix('비고'), rc = ix('수령인'), pc = ix('주문상품명'), qc = ix('수량'), opc = ix('옵션');
+  if (oc < 0 || nc < 0) return dsList;
+  const base = new Date(); base.setHours(0, 0, 0, 0); const G = new Map();
+  srcRows.slice(1).forEach(r => { if (!r) return; const o = String(r[oc] ?? '').trim(); if (!o) return; let g = G.get(o); if (!g) { g = { o, who: String(r[rc] ?? ''), note: '', items: [] }; G.set(o, g); }
+    const n = String(r[nc] ?? '').trim(); if (n && !g.note) g.note = n; g.items.push(String(r[pc] ?? '') + (opc >= 0 && r[opc] ? ' ' + incOpt(String(r[opc])) : '') + ' × ' + (Number(r[qc]) || 0)); });
+  G.forEach(g => { const p = dsParse(g.note, base); if (!p) return; const s = dsShipOf(p, base); if (!s.ok) return;
+    const auto = dsIso(s.ship), day = dsDone[g.o] || dsDay[g.o] || auto, k = g.note.indexOf(p.hit);
+    const warn = [p.recv ? dsFmt(p.want) + '에 받으려면 하루 전에 보내요' : '', s.moved ? dsFmt(p.recv ? dsAdd(p.want, -1) : p.want) + '은 배송 쉬는 날이라 ' + dsFmt(s.ship) + (p.recv ? '에 보내요' : '로 옮겼어요') : ''].filter(Boolean).join(' · ');
+    dsList.push(Object.assign(g, { auto, day, want: dsIso(p.want), hit: p.hit, pre: k >= 0 ? g.note.slice(0, k) : g.note, post: k >= 0 ? g.note.slice(k + p.hit.length) : '', warn, c24: /^\d{8}-\d{7}$/.test(g.o) })); });
+  dsList.sort((a, b) => a.day.localeCompare(b.day)); return dsList;
+}
+const dsHeld = () => new Set(dsList.filter(x => !dsKeep.has(x.o) || dsDone[x.o]).map(x => x.o));
+function dsApply(res) {   // 정리 결과에서 날짜 지정 주문을 빼고, [날짜 지정] 칸을 만들어요
+  dsFind(); res.sheetD = null; const held = dsHeld(); if (!held.size) return userEdits;
+  const h1 = res.sheet1[0], oc = h1.indexOf('주문번호'), wx = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']), keepC = h1.map((h, c) => wx.has(String(h)) ? -1 : c).filter(c => c >= 0);
+  const ed = new Map(userEdits), dayOf = new Map(dsList.map(x => [x.o, x.day])), rows = [];
+  res.sheet1.forEach((r, i) => { if (!i) return; const o = String(r[oc] ?? '').trim(); if (!held.has(o)) return; ed.set('sheet1|' + i + '|__del', true); rows.push([dsFmt(new Date(dayOf.get(o) + 'T00:00'))].concat(keepC.map(c => r[c]))); });
+  rows.sort((a, b) => String(dayOf.get(String(a[1 + keepC.indexOf(oc)] ?? '').trim())).localeCompare(String(dayOf.get(String(b[1 + keepC.indexOf(oc)] ?? '').trim()))));
+  res.sheetD = [['보낼 날'].concat(keepC.map(c => h1[c]))].concat(rows); return ed;
+}
+async function dsSyncUpl() {   // 재고 · 집계 보기: 뺀 주문은 오늘 올린 기록에서 '안 보냄(ns)'으로 표시해요 (보낼 날 엑셀을 올리면 그날 빠져요)
+  try { if (!lastUp || !upl[lastUp.day] || !upl[lastUp.day][lastUp.slot]) return; const held = dsHeld(), all = new Set(dsList.map(x => x.o)), e = upl[lastUp.day], b = e[lastUp.slot]; let ch = 0;
+    const rows = (b.rows || []).map(x => { if (!all.has(x.o)) return x; const want = held.has(x.o); if (!!x.ns === want) return x; ch++; const y = Object.assign({}, x); if (want) y.ns = 1; else delete y.ns; return y; });
+    if (ch) { await uplWrite(lastUp.day, Object.assign({}, e, { [lastUp.slot]: Object.assign({}, b, { rows }), updatedAt: new Date().toISOString() })); try { stkRowCache.clear(); stkEvSig = ''; } catch (er) {} }
+  } catch (e) {} }
+function dsChip() { if (!dsList.length) return ''; const n = dsList.filter(x => !dsKeep.has(x.o) && !dsDone[x.o] && x.c24).length; return `<button type="button" class="ds-chip" data-dsopen="1" title="날짜를 정해 둔 주문 옆 창 열기">${n ? '카페24 반영 ' + n + '건' : '옆 창 열기'}</button>`; }
+function dsOpen() { const d = $('dsdrawer'); if (!d) return; d.classList.add('on'); d.setAttribute('aria-hidden', 'false'); $('dsback').classList.remove('hidden'); dsRender(); dsLoadHolds(); }
+function dsClose() { const d = $('dsdrawer'); if (!d) return; d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); $('dsback').classList.add('hidden'); }
+async function dsLoadHolds() { if (!ostOn()) { dsHolds = null; dsRender(); return; } dsHoldErr = '';
+  try { dsHolds = await c24Call('/holds'); } catch (e) { dsHolds = null; dsHoldErr = e && e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포하면 보여요' : ((e && e.message) || String(e)); }
+  dsRender(); }
+function dsDayOpts(sel) { const base = new Date(); base.setHours(0, 0, 0, 0); const c = c24Cfg(), out = []; let d = dsAdd(base, 1);
+  for (let n = 0; out.length < 14 && n < 40; n++, d = dsAdd(d, 1)) { let ok = true; try { ok = c24IsShip(d, c); } catch (e) {} if (ok || dsIso(d) === sel) out.push(d); }
+  if (sel && !out.some(d => dsIso(d) === sel)) out.unshift(new Date(sel + 'T00:00'));
+  return out.map(d => `<option value="${dsIso(d)}"${dsIso(d) === sel ? ' selected' : ''}>${dsFmt(d)}</option>`).join(''); }
+function dsRender() {
+  const b = $('ds-b'); if (!b) return; const admin = bakCanSee(), on = ostOn();
+  const pick = dsList.filter(x => !dsKeep.has(x.o) && !dsDone[x.o] && x.c24), n = pick.length;
+  const rows = dsList.map(x => { const done = dsDone[x.o], held = !dsKeep.has(x.o) || done;
+    return `<div class="ds-r${held ? ' on' : ''}"><label class="ds-ck"><input type="checkbox" data-dsk="${esc(x.o)}"${held ? ' checked' : ''}${done ? ' disabled' : ''} aria-label="오늘 엑셀에서 빼기"></label><div class="ds-m">
+      <div class="ds-t"><b>${esc(x.who || x.o)}</b><span class="ds-i">${esc(x.items.join(' · '))}</span></div>
+      <div class="ds-n">비고: ${esc(x.pre)}<mark>${esc(x.hit)}</mark>${esc(x.post)}</div>
+      <div class="ds-d"><span>보낼 날</span>${done ? `<b>${dsFmt(new Date(done + 'T00:00'))}</b><span class="ds-ok">카페24 반영됨 · 그날 새벽에 저절로 풀려요</span>` : `<select data-dsd="${esc(x.o)}"${held ? '' : ' disabled'} aria-label="보낼 날">${dsDayOpts(x.day)}</select>${held ? '' : '<span class="ds-w">오늘 엑셀에 넣어요</span>'}`}</div>
+      ${x.warn && !done ? `<div class="ds-w">⚠ ${esc(x.warn)}</div>` : ''}${x.c24 ? '' : '<div class="ds-w">카페24 주문번호가 아니라 엑셀에서만 빼요</div>'}</div></div>`; }).join('');
+  const H = (dsHolds && dsHolds.holds) || [], today = (dsHolds && dsHolds.today) || isoDate(new Date()), nm = new Map(dsList.map(x => [x.o, x.who]));
+  const hold = H.slice().sort((a, b) => a.day.localeCompare(b.day)).map(h => `<div class="ds-h"><span class="ds-hd${h.day <= today ? ' due' : ''}">${dsFmt(new Date(h.day + 'T00:00'))}</span><span class="ds-ho">${esc(nm.get(h.o) || ('주문 ' + h.o))}</span>${admin ? `<button class="btn sm" type="button" data-dsrel="${esc(h.o)}"${dsBusy ? ' disabled' : ''}>지금 풀기</button>` : ''}</div>`).join('');
+  const log = ((dsHolds && dsHolds.log) || []).slice(0, 5).map(l => `<div class="ds-lg">${esc(saleKst(l.at).slice(5, 16).replace('-', '/').replace('T', ' '))} · ${esc(nm.get(l.o) || l.o)} · ${l.how === '자동' ? '새벽에 저절로 풀림' : '직접 풀음'}</div>`).join('');
+  b.innerHTML = `${dsList.length ? `<p class="ds-help">체크한 주문은 오늘 엑셀(주문정리 · 수령인별 · 집계)에서 빠지고 <b>[날짜 지정]</b> 칸에 모여요. 체크를 끄면 오늘 엑셀에 다시 들어가요.</p><div class="ds-list">${rows}</div>` : '<p class="ds-help">이번 엑셀에는 비고에 보낼 날을 적은 주문이 없어요.</p>'}
+    ${dsMsg ? `<p class="ds-msg">${esc(dsMsg)}</p>` : ''}
+    <div class="ds-sec"><b>카페24에서 기다리는 주문</b><small>보낼 날 새벽 3시에 저절로 배송준비중으로 돌아가요</small></div>
+    ${!on ? '<p class="ds-help">로그인하는 웹 버전에서 카페24에 연결되면 보여요</p>' : dsHoldErr ? `<p class="ds-w">⚠ ${esc(dsHoldErr)}</p>` : !dsHolds ? '<p class="ds-help">불러오는 중…</p>' : H.length ? `<div class="ds-hl">${hold}</div>` : '<p class="ds-help">기다리는 주문이 없어요</p>'}
+    ${log ? `<div class="ds-sec"><b>최근 풀린 주문</b></div>${log}` : ''}`;
+  const f = $('ds-f'); if (f) f.innerHTML = `<span class="msg">${!admin ? '카페24 반영은 관리자만 할 수 있어요' : !on ? '' : n ? '배송보류 + 희망배송일로 바뀌어요' : ''}</span><button class="btn" type="button" data-dsx="1">닫기</button>${on ? `<button class="btn pri" type="button" data-dsgo="1"${!n || !admin || dsBusy ? ' disabled' : ''}>${dsBusy ? '반영하는 중…' : n ? `카페24에 반영 (${n}건)` : '카페24에 반영'}</button>` : ''}`;
+}
+function dsRefresh() { runProcess(); dsRender(); dsSyncUpl(); }
+document.addEventListener('change', e => { const t = e.target; if (!t.closest || !t.closest('#dsdrawer')) return;
+  if (t.dataset.dsk) { if (t.checked) dsKeep.delete(t.dataset.dsk); else dsKeep.add(t.dataset.dsk); dsSave(); dsRefresh(); }
+  else if (t.dataset.dsd) { dsDay[t.dataset.dsd] = t.value; dsSave(); dsRefresh(); } });
+document.addEventListener('click', e => { if (!e.target.closest) return; let b;
+  if (e.target.closest('[data-dsopen]')) { dsOpen(); return; }
+  if (e.target.closest('[data-dsx]') || e.target.id === 'dsback' || e.target.closest('#ds-x')) { dsClose(); return; }
+  if ((b = e.target.closest('[data-dsrel]'))) { const id = b.dataset.dsrel; saleAsk('이 주문의 배송보류를 지금 풀까요?', ['· ' + (dsList.find(x => x.o === id) || { who: '주문 ' + id }).who, '배송준비중으로 돌아가요. 카페24에 바로 반영돼요.'], '보류 풀기', false, () => dsRelease([id])); return; }
+  if (e.target.closest('[data-dsgo]')) { const P = dsList.filter(x => !dsKeep.has(x.o) && !dsDone[x.o] && x.c24); if (!P.length || dsBusy || !bakCanSee()) return;
+    if (P.length > 20) { shareToast('한 번에 20건까지 반영할 수 있어요'); return; }
+    saleAsk(P.length + '건을 날짜 지정 주문으로 돌릴까요?', P.map(x => '· ' + (x.who || x.o) + ' → ' + dsFmt(new Date(x.day + 'T00:00')) + '에 보내기').concat(['카페24에서 배송보류 + 희망배송일로 바뀌고, 보낼 날 새벽에 저절로 배송준비중으로 돌아가요.']), '반영하기', false, () => dsGo(P)); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('dsdrawer') && $('dsdrawer').classList.contains('on') && $('salecf').classList.contains('hidden')) dsClose(); });
+async function dsGo(P) {
+  dsBusy = true; dsMsg = ''; dsRender(); let d = null;
+  try { d = await c24Call('/hold', { method: 'POST', body: JSON.stringify({ list: P.map(x => ({ order_id: x.o, day: x.day })) }) }); }
+  catch (e) { dsMsg = '⚠ ' + (e && e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포해야 반영할 수 있어요' : ((e && e.message) || String(e))); }
+  dsBusy = false;
+  if (d) { const ok = P.filter(x => d.res && d.res[x.o] && d.res[x.o].ok), bad = P.filter(x => !ok.includes(x));
+    ok.forEach(x => { dsDone[x.o] = x.day; }); dsSave();
+    if (ok.length) { try { await saleLog([{ at: new Date().toISOString(), who: saleMe(), no: 0, pn: '날짜 지정 주문', on: '', k: 'mv', t: ok.length + '건 배송보류 (' + [...new Set(ok.map(x => dsFmt(new Date(x.day + 'T00:00'))))].join(', ') + '에 보내기)', src: 'site' }]); } catch (e) {} }
+    const nw = ok.filter(x => d.res[x.o].wish === false).length;
+    dsMsg = (ok.length ? '✓ ' + ok.length + '건을 배송보류로 바꾸고 희망배송일을 적었어요.' + (nw ? ' (' + nw + '건은 희망배송일을 못 적었어요)' : '') : '') + (bad.length ? ' ⚠ ' + bad.length + '건은 못 했어요: ' + ((d.res[bad[0].o] && d.res[bad[0].o].msg) || '') : '');
+    try { ostErr = ''; ostLoad(true); incErr = ''; incLoad(); } catch (e) {} dsLoadHolds(); }
+  dsRefresh();
+}
+async function dsRelease(ids) {
+  dsBusy = true; dsRender(); let d = null;
+  try { d = await c24Call('/hold/release', { method: 'POST', body: JSON.stringify({ ids }) }); } catch (e) { dsMsg = '⚠ ' + ((e && e.message) || String(e)); }
+  dsBusy = false; if (d) { const n = d.done || 0; dsMsg = n ? '✓ ' + n + '건을 배송준비중으로 돌렸어요' : '⚠ ' + ((d.res && d.res[ids[0]] && d.res[ids[0]].msg) || '풀지 못했어요'); try { ostErr = ''; ostLoad(true); incErr = ''; incLoad(); } catch (e) {} }
+  await dsLoadHolds();
+}
 function runProcess() {
-  try { const R0 = (srcRows[0] || []).includes('품목별 주문번호') && !(rules.dropColumns || []).includes('품목별 주문번호') ? Object.assign({}, rules, { dropColumns: (rules.dropColumns || []).concat('품목별 주문번호') }) : rules; result = CORE.process(srcRows, R0, wxCtx()); applyUserEdits(result, userEdits); }
+  try { const R0 = (srcRows[0] || []).includes('품목별 주문번호') && !(rules.dropColumns || []).includes('품목별 주문번호') ? Object.assign({}, rules, { dropColumns: (rules.dropColumns || []).concat('품목별 주문번호') }) : rules; result = CORE.process(srcRows, R0, wxCtx()); applyUserEdits(result, dsApply(result)); }
   catch (e) { $('runmsg').className = 'msg err'; $('runmsg').textContent = e.message; $('out').classList.add('hidden'); return; }
   $('out').classList.remove('hidden');
   const W = result.warnings, orders = new Set(result.sheet1.slice(1).map(r => r[result.sheet1[0].indexOf('주문번호')]));
@@ -6009,6 +6156,7 @@ function runProcess() {
   }
   $('warns').innerHTML = wh;
   renderSheetTabs(); renderSheet(); renderNeed(); renderSum(); renderPack(); try { ktRenderList(); ktLists(); ktAutoNote(); } catch (e) {} try { renderNs(); } catch (e) {} try { renderSvc(); } catch (e) {}
+  try { if (dsList.length && dsB && dsAuto !== dsB) { dsAuto = dsB; dsSave(); setTimeout(dsOpen, 250); } else if ($('dsdrawer') && $('dsdrawer').classList.contains('on')) dsRender(); } catch (e) {}
   try { if (srcAt && runProcess._at !== srcAt) { runProcess._at = srcAt; document.querySelectorAll('.fold-c[data-fold="out"]').forEach(c => foldSet(c, false, false)); } } catch (e) {}
 }
 // 배송 불가 지역 (날씨 기준에 '경고'가 있는 포장 방법) 따로 모아 보기
@@ -6244,10 +6392,14 @@ document.addEventListener('click', e => {
 });
 function renderSheetTabs() {
   const ktn = ktOn().reduce((n, o) => n + o.items.length, 0);
-  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0)})</button>`).join('');
-  $('stabs').querySelectorAll('.stab').forEach(b => b.onclick = () => { if (edMode) edCollect(); curSheet = +b.dataset.s; renderSheetTabs(); renderSheet(); });
+  if (curSheet === 3 && !(result.sheetD && result.sheetD.length > 1)) curSheet = 0;
+  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0)})</button>`).join('') + (result.sheetD && result.sheetD.length > 1 ? `<button class="stab ds-tab ${curSheet === 3 ? 'on' : ''}" data-s="3">📅 날짜 지정 (${result.sheetD.length - 1})</button>` : '') + dsChip();
+  $('stabs').querySelectorAll('.stab[data-s]').forEach(b => b.onclick = () => { if (edMode) edCollect(); curSheet = +b.dataset.s; renderSheetTabs(); renderSheet(); });
 }
 function renderSheet() {
+  if (curSheet === 3 && result.sheetD) { const D = result.sheetD; if (edMode) { edMode = false; edDraft = new Map(); }
+    $('tbl').innerHTML = '<thead><tr><th>#</th>' + D[0].map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' + D.slice(1).map((r, i) => `<tr><td class="msg rn">${i + 1}</td>` + r.map((v, j) => `<td${j === 0 ? ' class="ds-td"' : ''}>${esc(fmt(v))}</td>`).join('') + '</tr>').join('') + '</tbody>';
+    $('tbl').classList.remove('editing'); edButtons(); $('edstart').classList.add('hidden'); return; }
   const aoa = result[SHEETS[curSheet][1]];
   const flagged = new Set(curSheet < 2 ? result.warnings.map(w => w.row - 1) : []);
   const hl = new Set(curSheet === 2 ? result.highlight : []);
@@ -9106,6 +9258,7 @@ function buildXlsx() {
     });
     XLSX.utils.book_append_sheet(wb, ws, name);
   });
+  if (result.sheetD && result.sheetD.length > 1) { const ws = XLSX.utils.aoa_to_sheet(result.sheetD, { cellDates: true, dateNF: 'yyyy-mm-dd' }); const wl = v => [...String(fmt(v))].reduce((t, ch) => t + (ch.charCodeAt(0) > 255 ? 2 : 1), 0); ws['!cols'] = result.sheetD[0].map((h, c) => ({ wch: Math.min(Math.max(Math.max(...result.sheetD.slice(0, 200).map(r => wl(r[c]))) + 2, 8), 60) })); XLSX.utils.book_append_sheet(wb, ws, '날짜 지정'); }
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
 // ---------- 버튼 아이콘화: 글자 버튼을 아이콘으로 (기록·통계, 시장 탭은 그대로) ----------
@@ -10315,7 +10468,7 @@ window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); 
 </script>
 <div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
 <div class="sdback hidden" id="stkdback"></div><aside class="sdrawer" id="stkdrawer" role="dialog" aria-modal="true" aria-label="재고 수정" aria-hidden="true"><div class="sd-h"><b id="stkd-t">재고 수정</b><button class="ibtn" type="button" id="stkd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="stkd-b"></div></aside>
-<div class="sdback hidden" id="saledback"></div><aside class="sdrawer saledr" id="saledrawer" role="dialog" aria-modal="true" aria-label="상품 수정" aria-hidden="true"><div class="sd-h"><b id="saled-t">상품 수정</b><button class="ibtn iczno" type="button" id="saled-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="saled-b"></div><div class="saled-f"><span class="msg" id="saled-n"></span><button class="btn" type="button" id="saled-no">취소</button><button class="btn pri" type="button" id="saled-ok">저장</button></div></aside>
+<div class="sdback hidden" id="dsback"></div><aside class="sdrawer dsdr" id="dsdrawer" role="dialog" aria-modal="true" aria-label="날짜를 정해 둔 주문" aria-hidden="true"><div class="sd-h"><b>📅 날짜를 정해 둔 주문</b><button class="ibtn iczno" type="button" id="ds-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="ds-b"></div><div class="ds-f" id="ds-f"></div></aside><div class="sdback hidden" id="saledback"></div><aside class="sdrawer saledr" id="saledrawer" role="dialog" aria-modal="true" aria-label="상품 수정" aria-hidden="true"><div class="sd-h"><b id="saled-t">상품 수정</b><button class="ibtn iczno" type="button" id="saled-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="saled-b"></div><div class="saled-f"><span class="msg" id="saled-n"></span><button class="btn" type="button" id="saled-no">취소</button><button class="btn pri" type="button" id="saled-ok">저장</button></div></aside>
 <div class="modal hidden salecf" id="salecf" role="dialog" aria-modal="true" aria-labelledby="salecf-t"><div class="mbox"><h2 id="salecf-t"></h2><div class="salecf-b" id="salecf-b"></div><p class="msg">연결된 판매처에 반영되기까지 몇 분 걸릴 수 있어요</p><div class="row mact"><button class="btn" type="button" id="salecf-no">취소</button><button class="btn pri" type="button" id="salecf-yes">확인</button></div></div></div>
 <div class="sdback hidden" id="svdback"></div><aside class="sdrawer" id="svdrawer" role="dialog" aria-modal="true" aria-label="손님 상세" aria-hidden="true"><div class="sd-h"><b id="svd-t">손님 상세</b><button class="ibtn iczno" type="button" id="svd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="svd-b"></div></aside>
 <div class="sdback hidden" id="shdback"></div><aside class="sdrawer" id="shdrawer" role="dialog" aria-modal="true" aria-label="복사 · 공유" aria-hidden="true"><div class="sd-h"><b id="shd-t">복사하기</b><button class="ibtn iczno" type="button" id="shd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="shd-b"></div></aside>
