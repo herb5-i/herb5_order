@@ -30,6 +30,7 @@ export default {
       if (url.pathname === '/fb/del' && req.method === 'POST') return json(await fbDel(env, await req.json(), who), cors);   // 개선 메모 지우기: 쓴 사람 또는 관리자
       if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
+      if (url.pathname === '/ostids') return json(await ostIds(env, url.searchParams.get('code')), cors);   // 상태별 주문 번호 · 결제 시각만 (이름 · 연락처 없음)
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
@@ -354,6 +355,17 @@ async function ostatus(env, fresh) {
   const out = { t: now, at: new Date(now).toISOString(), from: params.start_date, counts, labels: Object.fromEntries(OST) };
   ostMem = out; await env.TOKENS.put('ost', JSON.stringify(out), { expirationTtl: 3600 }).catch(() => {});
   return out;
+}
+
+// 들어온 주문과 맞춰 보기: 그 상태(예: 배송준비중)인 주문 번호 · 결제 시각 · 주문 경로만 보내요
+async function ostIds(env, code) {
+  code = String(code || 'N20'); if (!OST.some(([c]) => c === code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
+  const token = await accessToken(env), day = ms => new Date(ms + 9 * 3600e3).toISOString().slice(0, 10), now = Date.now(), out = [];
+  for (let offset = 0; offset < 3000; offset += 500) {
+    const d = await c24get(env, token, '/admin/orders', { start_date: day(now - 89 * 864e5), end_date: day(now), date_type: 'order_date', order_status: code, limit: 500, offset }, '주문(Order) 읽기');
+    const L = d.orders || []; L.forEach(o => out.push({ i: o.order_id, p: o.payment_date || '', pl: o.order_place_id || '' })); if (L.length < 500) break;
+  }
+  return { code, at: new Date(now).toISOString(), list: out };
 }
 
 // ---------- 상품 후기: 후기 게시판 글 + 상품 이름 (작성자 이름·이메일은 보내지 않아요) ----------
