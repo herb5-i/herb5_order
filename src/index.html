@@ -9040,6 +9040,7 @@ const LAY = {
   stock: { n: '재고 관리', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard'], ['sale', '판매 관리 (판매 메뉴)', '#salecard'], ['salelog', '판매 처리 기록 (판매 메뉴)', '#salelogcard']] },
   hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x'], ['salehist', '판매 변경 (품절 · 판매 재개)', '#salehist']] },
 };
+const LAY_SUB = { run: { inc: ['inc'] }, stock: { sale: ['sale', 'salelog'] } };   // 칸 → 하위 메뉴 아이콘
 const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
 function layApply() {
   Object.entries(LAY).forEach(([t, L]) => { const sec = $(L.sec); if (!sec) return; const c = layCfg(t), els = {};
@@ -9047,6 +9048,9 @@ function layApply() {
     let mark = sec._layMark; if (!mark) { const first = L.items.map(i => els[i[0]][0]).filter(Boolean).sort((a, b) => a.compareDocumentPosition(b) & 4 ? -1 : 1)[0]; if (!first) return; mark = document.createComment('lay'); sec.insertBefore(mark, first); sec._layMark = mark; }
     let at = mark; c.order.forEach(k => (els[k] || []).forEach(e => { at.parentNode.insertBefore(e, at.nextSibling); at = e; }));
     L.items.forEach(([k]) => (els[k] || []).forEach(e => e.classList.toggle('lay-off', c.hide.includes(k))));
+    // 하위 메뉴 칸을 모두 숨기면 그 하위 메뉴 아이콘도 숨겨요 (지금 그 메뉴를 보고 있었으면 첫 메뉴로)
+    Object.entries(LAY_SUB[t] || {}).forEach(([sub, ks]) => { const off = ks.every(k => c.hide.includes(k)), b = document.querySelector(`.subtabs[data-subfor="${t}"] [data-subgo="${sub}"]`); if (!b) return;
+      b.classList.toggle('lay-off', off); if (off && sec.dataset.cur === sub) { const f = document.querySelector(`.subtabs[data-subfor="${t}"] [data-subgo]:not(.lay-off)`); if (f) try { subSet(t, f.dataset.subgo, true); } catch (e) {} } });
     if (t === 'run') { let n = 0; c.order.filter(k => !c.hide.includes(k)).forEach(k => { const nums = (els[k] || []).flatMap(e => [...e.querySelectorAll(':scope > .sh .num, :scope > .card > .sh .num')]); if (!nums.length) return; n++; nums.forEach(x => { x.textContent = n; }); }); }
   });
   layRender();
