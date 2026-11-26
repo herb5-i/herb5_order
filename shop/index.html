@@ -1896,15 +1896,11 @@ html.dark .tipbub{background:#eef2ea;color:#1b221d}
 .hwi-i{flex-direction:row;align-items:center;gap:10px}.hwi-i .nm{flex:1;min-width:0}.hwi-i .nm b{display:block;font-size:13.5px;overflow-wrap:anywhere}.hwi-i .nm small{display:block;font-size:11.5px;color:var(--mute)}
 .hwi-i .lf{font-size:12.5px;white-space:nowrap;color:#2e7d4f}.hwi-i .lf.lo{color:#b86b00}.hwi-i .lf.bad{color:#c0392b}html.dark .hwi-i .lf{color:#7fc79a}html.dark .hwi-i .lf.lo{color:#f0b45c}html.dark .hwi-i .lf.bad{color:#f08a7f}
 .hwi-l{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 34px;gap:8px;font-size:12.5px;line-height:1.45;color:var(--ink)}.hwi-l .p{overflow-wrap:anywhere}.hwi-l .o{color:var(--mute);overflow-wrap:anywhere}.hwi-l .q{text-align:right;font-weight:700}.hwi-l.bad .p,.hwi-l.bad .q{color:#c0392b}html.dark .hwi-l.bad .p,html.dark .hwi-l.bad .q{color:#f08a7f}
-.hwi-cols{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:8px}.hwi-col{display:flex;flex-direction:column;gap:4px;min-height:0;min-width:0}.hwi-col .hwi-box{flex:1}.hwi-ch{font-size:11.5px;font-weight:700;color:var(--mute);padding-left:2px}
-.hwi-l{grid-template-columns:minmax(0,1fr) auto 24px!important}.hwi-l .o{max-width:9em;text-align:right}
-@media(max-width:700px){.hwi-cols{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.3fr) minmax(0,1fr)}}
-.hwi-o{display:grid!important;grid-template-columns:118px minmax(0,1fr);gap:4px 12px;align-items:start}
-.hwi-w{display:flex;flex-direction:column;gap:3px;min-width:0}.hwi-w b{font-size:13.5px;overflow-wrap:anywhere;line-height:1.35}.hwi-m{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.hwi-m small{font-size:11px;color:var(--mute)}
-.hwi-ls{display:flex;flex-direction:column;gap:2px;min-width:0}
-.hwi-ls{max-width:540px}.hwi-o .hwi-l{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 24px!important;gap:10px}.hwi-o .hwi-l .o{text-align:left}
-.hwi-o.bad .hwi-w b{color:#c0392b}html.dark .hwi-o.bad .hwi-w b{color:#f08a7f}
-@media(max-width:560px){.hwi-o{grid-template-columns:84px minmax(0,1fr);gap:4px 8px}.hwi-o .hwi-l{gap:6px}}
+.hwi-cols{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px}.hwi-col{display:flex;flex-direction:column;gap:4px;min-height:0;min-width:0}.hwi-col .hwi-box{flex:1}.hwi-ch{font-size:11.5px;font-weight:700;color:var(--mute);padding-left:2px}
+.hwi-seg{display:none}
+.hwi-g{padding:6px 12px 4px;font-size:11.5px;font-weight:800;color:var(--acc);background:rgba(60,120,80,.07);border-top:1px solid var(--line)}.hwi-g:first-child{border-top:0}
+.hwi-i .nm .op{font-weight:500;color:var(--mute);font-size:12px}
+@media(max-width:700px){.hwi-seg{display:flex}.hwi-cols{grid-template-columns:minmax(0,1fr)}.hwi-ch{display:none}.hwi[data-v=o] .hwi-col.i,.hwi[data-v=i] .hwi-col.o{display:none}}
 .hwi-empty{margin:0;padding:18px 12px;font-size:13px;color:var(--mute);text-align:center}
 .hwi-f{display:flex;align-items:center;gap:6px}.hwi-f small{font-size:11.5px;color:var(--mute);line-height:1.5}#inc-msg{white-space:pre-line}
 
@@ -5405,25 +5401,43 @@ document.addEventListener('click', e => { if (e.target.closest && e.target.close
 
 // 주문 처리 현황 위젯 아래: 들어온 주문 (칸 안에서만 스크롤)
 let incHmTop = {};
+let incHmV = 'o';   // 휴대폰에서 보는 칸 (o: 주문, i: 품목). PC는 두 칸을 나란히 보여요
+function incAgg(R) {   // 품목 칸: 집계 보기와 같은 순서 (묶음 → 집계 순서)
+  const day = isoDate(new Date()), rows = [HIST_HEAD];
+  ((incD && incD.orders) || []).forEach(o => (o.items || []).forEach(i => rows.push([o.order_id, day, i.product_name || '', i.option_value || '', Number(i.quantity) || 0, '', '', i.additional_option_value || ''])));
+  let sh3 = []; try { sh3 = CORE.process(rows, rules, { regions: {}, places: {} }).sheet3.slice(1); } catch (e) { sh3 = []; }
+  let comp = { items: [] }; try { comp = stkCompute(); } catch (e) {}
+  const byKey = new Map(comp.items.map(x => [x.key, x])), claim = stkClaimer([...byKey.keys()]), alias = stkAliasFn(), need = new Map(R.rows.map(r => [r.key, r]));
+  const groups = new Map();
+  sh3.forEach(([nm, op, q]) => { const n = String(nm ?? '').trim(), o = String(op ?? '').trim(), u = { key: stkK(stkBase(n, o)), n, o, g: gramOf(o), q: Number(q) || 0 };
+    const to = alias(u) || claim(u), x = to ? byKey.get(to) : null, k = x ? x.key : stkK(n + (o ? ' ' + o : '')), r = need.get(k), g = groupOf(n);
+    if (!groups.has(g)) groups.set(g, []); groups.get(g).push({ n, o, q: u.q, r, bad: !!(r && R.short.has(r.key)) }); });
+  return groups;
+}
 function hwIncBox() {
   incEnsure();
   const tm = incD ? new Date(incD.at).toTimeString().slice(0, 5) + ' 확인' : '';
   let R = null; if (incD) { try { R = incCalc(); } catch (e) { R = null; } }
-  const sh = R ? R.rows.filter(r => R.short.has(r.key)) : [], n = R ? R.ords.length : 0;
+  const n = R ? R.ords.length : 0;
   let body = '', ordB = '', itmB = '';
   if (!R) body = `<p class="hwi-empty">${incErr ? '⚠ ' + esc(incErr) : '카페24에서 확인하는 중…'}</p>`;
   else if (!n) body = '<p class="hwi-empty">지금 배송준비중인 주문이 없어요</p>';
-  else { ordB = R.ords.map(o => { const t = o.at ? new Date(o.at) : null, td = t && !isNaN(t) ? (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5) : '';
-    return `<button type="button" class="hwi-r hwi-o${o.short ? ' bad' : ''}" data-inchgo="${esc(o.id)}"><span class="hwi-w"><b>${esc(o.who || '이름 없음')}</b><span class="hwi-m"><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span><small>${td}</small></span></span><span class="hwi-ls">${o.lines.map(l => `<span class="hwi-l${l.short ? ' bad' : ''}"><span class="p">${esc(l.p)}</span><span class="o">${esc(incOpt(l.op))}</span><span class="q">${l.q}</span></span>`).join('')}</span></button>`; }).join('');
-  itmB = R.rows.slice().sort((a, b) => (a.left === null ? 1e12 : a.left) - (b.left === null ? 1e12 : b.left) || b.need - a.need).map(r => { const bad = R.short.has(r.key), tight = !bad && r.left !== null && r.left <= (stkIsW(r.unit) ? 200 : 2);
-    return `<button type="button" class="hwi-r hwi-i${bad ? ' bad' : ''}" data-inchgo=""><span class="nm"><b>${esc(r.key)}</b><small>주문 ${esc(stkShow(r.unit, r.need))} · 재고 ${r.cur === null ? '미입력' : esc(stkShow(r.unit, r.cur))}</small></span><b class="lf${bad ? ' bad' : tight ? ' lo' : ''}">${r.left === null ? '—' : bad ? esc(stkShow(r.unit, -r.left)) + ' 부족' : esc(stkShow(r.unit, r.left)) + ' 남음'}</b></button>`; }).join(''); }
+  else {
+    ordB = R.ords.map(o => { const t = o.at ? new Date(o.at) : null, td = t && !isNaN(t) ? (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5) : '';
+      return `<button type="button" class="hwi-r${o.short ? ' bad' : ''}" data-inchgo="${esc(o.id)}"><span class="hwi-h"><b>${esc(o.who || '이름 없음')}</b><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span><span class="sp"></span><small>${td}</small></span>${o.lines.map(l => `<span class="hwi-l${l.short ? ' bad' : ''}"><span class="p">${esc(l.p)}</span><span class="o">${esc(incOpt(l.op))}</span><span class="q">${l.q}</span></span>`).join('')}</button>`; }).join('');
+    let G = new Map(); try { G = incAgg(R); } catch (e) {}
+    itmB = [...G.entries()].map(([g, L]) => `<div class="hwi-g">${esc(g)}</div>` + L.map(x => { const r = x.r, tight = r && !x.bad && r.left !== null && r.left <= (stkIsW(r.unit) ? 200 : 2);
+      return `<button type="button" class="hwi-r hwi-i${x.bad ? ' bad' : ''}" data-inchgo=""><span class="nm"><b>${esc(x.n)}${x.o ? ` <span class="op">${esc(x.o)}</span>` : ''}</b><small>주문 ${x.q}${r ? ' · 재고 ' + (r.cur === null ? '미입력' : esc(stkShow(r.unit, r.cur))) : ''}</small></span><b class="lf${x.bad ? ' bad' : tight ? ' lo' : ''}">${!r || r.left === null ? '' : x.bad ? esc(stkShow(r.unit, -r.left)) + ' 부족' : esc(stkShow(r.unit, r.left)) + ' 남음'}</b></button>`; }).join('')).join('') || '<p class="hwi-empty">집계할 품목이 없어요</p>';
+  }
   setTimeout(() => document.querySelectorAll('.hwi-box').forEach(b => { b.scrollTop = incHmTop[b.dataset.k] || 0; }), 0);
-  return `<div class="hwi"><div class="hwi-t"><b>들어온 주문</b></div>
-    <div class="hwi-box" data-k="o" tabindex="0" aria-label="들어온 주문 목록">${body || ordB}</div>
+  const seg = (k, t) => `<button type="button" role="tab" data-inchv="${k}" class="${incHmV === k ? 'on' : ''}" aria-selected="${incHmV === k}">${t}</button>`;
+  return `<div class="hwi" data-v="${incHmV}"><div class="hwi-t"><b>들어온 주문</b><span class="sp"></span>${body ? '' : `<span class="hwi-seg" role="tablist" aria-label="보기">${seg('o', '주문')}${seg('i', '품목')}</span>`}</div>
+    ${body ? `<div class="hwi-box" data-k="o">${body}</div>` : `<div class="hwi-cols"><div class="hwi-col o"><small class="hwi-ch">주문</small><div class="hwi-box" data-k="o" tabindex="0" aria-label="들어온 주문 목록">${ordB}</div></div><div class="hwi-col i"><small class="hwi-ch">품목</small><div class="hwi-box" data-k="i" tabindex="0" aria-label="품목 (집계 순서)">${itmB}</div></div></div>`}
     <div class="hwi-f"><small>${tm}</small></div></div>`;
 }
 document.addEventListener('scroll', e => { if (e.target.classList && e.target.classList.contains('hwi-box')) incHmTop[e.target.dataset.k] = e.target.scrollTop; }, true);
 document.addEventListener('click', e => { if (!e.target.closest) return; let b;
+  if ((b = e.target.closest('[data-inchv]'))) { e.stopPropagation(); incHmV = b.dataset.inchv; const w = b.closest('.hwi'); if (w) { w.dataset.v = incHmV; w.querySelectorAll('[data-inchv]').forEach(x => { x.classList.toggle('on', x.dataset.inchv === incHmV); x.setAttribute('aria-selected', x.dataset.inchv === incHmV); }); } return; }
   if ((b = e.target.closest('[data-inchgo]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; const id = b.dataset.inchgo; incView = id ? 'order' : 'item'; incQ = id; if (!id) incShort = false; hmOpenApp('inc'); } });
 const HW = {
   ost() { ostEnsure(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
