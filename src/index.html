@@ -1798,6 +1798,7 @@ html.dark .sdrawer{background:#1b221d}
 .tipbub.on{opacity:1;visibility:visible;pointer-events:auto}.tipbub p{margin:0}.tipbub p+p{margin-top:6px}
 html.dark .tipbub{background:#eef2ea;color:#1b221d}
 /* 들어온 주문 (정리 › 들어온 주문) */
+.hw-inc-b{display:flex;align-items:center;gap:6px;flex:none}
 .incc .hh .sp{flex:1}.incc .hh h2{margin:0}#inc-go.spin svg{animation:incspin .9s linear infinite}@keyframes incspin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){#inc-go.spin svg{animation:none}}#inc-go:disabled{opacity:.6}
 .inc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0 10px}
 .inc-t{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--card);min-width:0}.inc-t small{display:block;font-size:12px;color:var(--mute)}
@@ -4696,6 +4697,7 @@ const HM_SZ = { S: '작게', M: '중간', L: '크게', W: '가로 꽉' };
 // 위젯: app = 어느 아이콘의 위젯인지 (홈에 추가 → 아이콘을 누르면 그 아이콘 위젯 3~4개가 나와요)
 const HM_W = {
   ost: { app: 'run', n: '주문 처리 현황', d: '카페24 입금전 · 배송준비중 · 배송중… 10분마다 새로', s: ['M', 'W'], def: 'W' },
+  inc: { app: 'run', n: '지금까지 들어온 주문', d: '아직 엑셀로 안 불러온 주문 수 · 모자란 품목', s: ['S', 'M', 'L', 'W'], def: 'M' },
   today: { app: 'run', n: '오늘 들어온 주문', d: '오늘 주문 수와 오전 · 오후 비율', s: ['S', 'M', 'L', 'W'], def: 'W' },
   wk7: { app: 'run', n: '최근 7일 주문', d: '날마다 들어온 주문 수 막대', s: ['M', 'L', 'W'], def: 'M' },
   top: { app: 'run', n: '오늘 많이 나간 상품', d: '오늘 주문에서 수량 많은 순서', s: ['M', 'L', 'W'], def: 'M' },
@@ -4828,6 +4830,17 @@ const HW = {
     return `<div class="hm-w hm-alert ${alist.length ? '' : 'calm'}">` + (alist.length ? `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span><button class="hm-more" type="button" data-go="stock">재고 관리</button></div><div class="hm-alist">` + alist.slice(0, 8).map(({ x, t }) =>
       `<button type="button" class="hm-al ${t}" data-go="stock"><b>${esc(x.key)}</b><span>${t === 'out' ? '남은 재고 없음' : esc(stkShow(x.unit, x.cur))}${t === 'low' ? ' · 최소 ' + esc(stkShow(x.unit, x.min)) : ''}${x.days !== null ? ' · 약 ' + (x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치') : ''}</span><em>${t === 'out' ? '품절' : t === 'low' ? '부족' : '곧 부족'}</em></button>`).join('') + '</div>'
       : `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span></div><p class="hw-calm">품절 · 부족한 품목이 없어요</p>`) + '</div>'; },
+  inc(x) { incEnsure(); const sm = x && x.s === 'S', on = ostOn();
+    const re = `<button class="hm-more ost-re${incBusy ? ' spin' : ''}" type="button" data-incre="1" ${incBusy || !on ? 'disabled' : ''} aria-label="${incBusy ? '확인 중' : '지금 다시 확인'}" title="지금 다시 확인"><i aria-hidden="true">↻</i></button>`;
+    const head = `<div class="hm-wt"><span class="hm-lb">들어온 주문${incD ? ` <small class="hw-tm">${new Date(incD.at).toTimeString().slice(0, 5)}</small>` : ''}</span><span class="hw-inc-b">${re}<button class="hm-more" type="button" data-hmgo="inc">열기</button></span></div>`;
+    if (!on) return `<div class="hm-w${sm ? ' hw-sm' : ''}">${head}${hwEmpty('로그인하는 웹 버전에서 카페24에 연결되면 보여요')}</div>`;
+    if (!incD) return `<div class="hm-w${sm ? ' hw-sm' : ''}">${head}${hwEmpty(incErr ? '⚠ ' + esc(incErr) : '카페24에서 확인하는 중…')}</div>`;
+    let R; try { R = incCalc(); } catch (e) { R = { rows: [], short: new Set(), ords: [] }; }
+    const n = R.ords.length, sh = R.rows.filter(r => R.short.has(r.key)).sort((a, b) => a.left - b.left);
+    if (sm) return `<div class="hm-w hw-sm">${head}<b class="hm-big">${n}<small>건</small></b><p class="hw-foot${sh.length ? ' warn' : ''}">${sh.length ? '부족 ' + sh.length + '가지' : n ? '모자란 품목 없음' : '새 주문 없음'}</p></div>`;
+    const L = sh.length ? sh : R.rows.slice().sort((a, b) => b.need - a.need), big = x && (x.s === 'L' || x.s === 'W');
+    return `<div class="hm-w">${head}<div class="hw-nums"><div><b>${n}</b><span>주문</span></div><div><b>${R.ords.reduce((a, o) => a + o.lines.reduce((b, l) => b + l.q, 0), 0)}</b><span>상품</span></div><div class="${sh.length ? 'bad' : ''}"><b>${sh.length}</b><span>부족</span></div></div>`
+      + (L.length ? `<ul class="hm-list">${L.slice(0, big ? 8 : 4).map(r => { const bad = R.short.has(r.key); return `<li class="${bad ? 'bad' : ''}"><span class="nm">${esc(r.key)}<small>주문 ${esc(stkShow(r.unit, r.need))}${r.cur !== null ? ' · 재고 ' + esc(stkShow(r.unit, r.cur)) : ''}</small></span><b>${bad ? esc(stkShow(r.unit, -r.left)) + ' 부족' : esc(stkShow(r.unit, r.need))}</b></li>`; }).join('')}</ul>` : hwEmpty(incErr ? '⚠ ' + esc(incErr) : '아직 새로 들어온 주문이 없어요')) + '</div>'; },
   stkcnt() { const { inp, out, low, soon } = hwStk();
     return `<div class="hm-w hw-sm">${hwHead('재고', 'stock', '열기')}${inp.length ? `<div class="hw-nums"><div class="bad"><b>${out.length}</b><span>품절</span></div><div class="warn"><b>${low.length}</b><span>부족</span></div><div><b>${soon.length}</b><span>곧 부족</span></div></div><p class="hw-foot">${inp.length}품목 관리 중</p>` : hwEmpty('재고를 넣어 주세요')}</div>`; },
   stkdays() { const { inp } = hwStk(), L = inp.filter(x => x.days !== null || x.cur <= 0).sort((a, b) => (a.cur <= 0 ? -1 : a.days) - (b.cur <= 0 ? -1 : b.days)).slice(0, 8);
@@ -5443,6 +5456,7 @@ function hmHasApp(a) { return hmL.items.some(x => (x.t === 'app' && x.a === a) |
 function hmHasW(w) { return hmL.items.some(x => x.t === 'w' && x.w === w); }
 function hmOpenApp(a) {
   const go = t => { const b = document.querySelector('.tab[data-t="' + t + '"]'); if (b) b.click(); };
+  if (a === 'inc') { subSet('run', 'inc', true); go('run'); setTimeout(() => { try { incShow(); } catch (e) {} }, 60); return; }
   if (['c24', 'run', 'wx', 'inv', 'ship'].includes(a)) { subSet('run', ['wx', 'inv', 'ship'].includes(a) ? a : 'order', true); go('run'); if (a === 'c24') setTimeout(() => { const c = $('c24'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 80); return; }
   if (a === 'sum' || a === 'oldup') { go('sum'); if (a === 'oldup') setTimeout(() => { const o = $('oldup'); if (o) { o.open = true; o.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 80); return; }
   if (a === 'issue' || a === 'claim') { try { issCat = a === 'claim' ? 'claim' : 'item'; } catch (e) {} go('issue'); try { renderIssue(); } catch (e) {} return; }
@@ -9753,11 +9767,11 @@ function incFrom() {   // 마지막으로 불러온 주문 묶음이 끝난 뒤�
   return { from, lab };
 }
 async function incLoad() {
-  if (incBusy) return; incBusy = true; incErr = ''; incRender();
+  if (incBusy) return; incBusy = true; incErr = ''; incRender(); try { homeSoon(); } catch (e) {}
   try { const f = incFrom(), d = await c24Call('/orders?from=' + encodeURIComponent(new Date(f.from).toISOString()) + '&to=' + encodeURIComponent(new Date().toISOString()));
     incD = { orders: d.orders || [], from: f.from, lab: f.lab, at: Date.now() }; incOpen = new Set(); }
   catch (e) { incErr = (e && e.message) || String(e); if (e && (e.code === 'not_connected' || e.code === 'expired')) try { c24Status(); } catch (er) {} }
-  finally { incBusy = false; incRender(); }
+  finally { incBusy = false; incRender(); try { homeSoon(); } catch (e) {} }
 }
 let incCache = null;
 function incCalc() {
@@ -9826,6 +9840,8 @@ document.addEventListener('click', ev => { const t = ev.target.closest ? ev.targ
   if (t.closest('[data-incsh]')) { incShort = !incShort; incRender(); return; }
   if ((b = t.closest('[data-incct]'))) { const id = b.dataset.incct; incOpen.has(id) ? incOpen.delete(id) : incOpen.add(id); incRender(); return; } });
 document.addEventListener('input', ev => { if (ev.target && ev.target.id === 'inc-q') { incQ = ev.target.value; incRender(); } });
+function incEnsure() { if (!ostOn() || incBusy || incErr) return; if (!incD || Date.now() - incD.at > 600e3) incLoad(); }
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-incre]')) { incErr = ''; incLoad(); } });
 function incShow() { incRender(); if (!incD && !incBusy && c24Cfg().worker && window.h5Fb) incLoad(); }
 // ---------- 판매 관리 (재고 관리 › 판매): 카페24 상품 품절 · 판매 재개 · 가격 · 수량 바꾸기 ----------
 // 상품 목록은 이 기기에 잠깐 저장(h5_sale)하고, 바꾼 기록은 공용 저장소 stock/salelog 에 남겨요 (상품 정보만, 손님 정보 없음).
@@ -10060,7 +10076,7 @@ document.addEventListener('click', ev => { const b = ev.target.closest && ev.tar
     q('.stkrn > span > small, .su-h > small, .ktchk > span > small', el => el.parentElement);
     q('details.oldup > summary > span', el => el.parentElement.querySelector('b'));
   }
-  function scanLive() { q('.hm-lb > small', el => el.parentElement); }
+  function scanLive() { document.querySelectorAll('.hm-lb > small:not([class])').forEach(el => { if (el.textContent.trim().length >= 15) try { add(el.parentElement, el); } catch (e) {} }); }
   const txt = t => { const b = t.querySelector(':scope > .tipi'); if (b && b.dataset.tip) return [b.dataset.tip];
     return (map.get(t) || []).map(s => s.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean); };
   let bub = null, cur = null, pinned = false;
