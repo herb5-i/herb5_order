@@ -4832,7 +4832,12 @@ function incAgg(R) {   // 품목 칸: 집계 보기와 같은 순서 (묶음 →
   const groups = new Map();
   sh3.forEach(([nm, op, q]) => { const n = String(nm ?? '').trim(), o = String(op ?? '').trim(), u = { key: stkK(stkBase(n, o)), n, o, g: gramOf(o), q: Number(q) || 0 };
     const to = alias(u) || claim(u), x = to ? byKey.get(to) : null, k = x ? x.key : stkK(n + (o ? ' ' + o : '')), r = need.get(k), g = groupOf(n);
-    if (!groups.has(g)) groups.set(g, []); groups.get(g).push({ n, o, q: u.q, r, bad: !!(r && R.short.has(r.key)) }); });
+    if (!groups.has(g)) groups.set(g, []);
+    // 같은 재고에서 빠지는 줄(예: 로즈마리 10g · 30g · 100g)은 처음 나온 자리에 한 줄로 합쳐요
+    const L = groups.get(g), same = x && L.find(e => e.r && e.r.key === k);
+    if (same) { same.merged = true; same.q += u.q; return; }
+    L.push({ n, o, q: u.q, r, bad: !!(r && R.short.has(r.key)) }); });
+  groups.forEach(L => L.forEach(e => { if (e.merged) { e.o = ''; e.n = e.n.replace(/\s*\d+(?:\.\d+)?\s*(?:g|kg|송이|개)\s*$/i, '').trim() || e.n; } }));
   return groups;
 }
 function hwIncBox() {
@@ -4848,7 +4853,7 @@ function hwIncBox() {
       return `<button type="button" class="hwi-r${o.short ? ' bad' : ''}" data-inchgo="${esc(o.id)}"><span class="hwi-h"><b>${esc(o.who || '이름 없음')}</b><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span><span class="sp"></span><small>${td}</small></span>${o.lines.map(l => `<span class="hwi-l${l.short ? ' bad' : ''}"><span class="p">${esc(l.p)}</span><span class="o">${esc(incOpt(l.op))}</span><span class="q">${l.q}</span></span>`).join('')}</button>`; }).join('');
     let G = new Map(); try { G = incAgg(R); } catch (e) {}
     itmB = [...G.entries()].map(([g, L]) => `<div class="hwi-g">${esc(g)}</div>` + L.map(x => { const r = x.r, tight = r && !x.bad && r.left !== null && r.left <= (stkIsW(r.unit) ? 200 : 2);
-      return `<button type="button" class="hwi-r hwi-i${x.bad ? ' bad' : ''}" data-inchgo=""><span class="nm"><b>${esc(x.n)}${x.o ? ` <span class="op">${esc(x.o)}</span>` : ''}</b><small>${r ? '재고 ' + (r.cur === null ? '미입력' : esc(stkShow(r.unit, r.cur))) + ' · ' : ''}주문 ${x.q}</small></span><b class="lf${x.bad ? ' bad' : tight ? ' lo' : ''}">${!r || r.left === null ? '' : x.bad ? esc(stkShow(r.unit, -r.left)) + ' 부족' : esc(stkShow(r.unit, r.left)) + ' 남음'}</b></button>`; }).join('')).join('') || '<p class="hwi-empty">집계할 품목이 없어요</p>';
+      return `<button type="button" class="hwi-r hwi-i${x.bad ? ' bad' : ''}" data-inchgo=""><span class="nm"><b>${esc(x.n)}${x.o ? ` <span class="op">${esc(x.o)}</span>` : ''}</b><small>${r ? '재고 ' + (r.cur === null ? '미입력' : esc(stkShow(r.unit, r.cur))) + ' · ' : ''}주문 ${x.merged && r ? esc(stkShow(r.unit, r.need)) : x.q}</small></span><b class="lf${x.bad ? ' bad' : tight ? ' lo' : ''}">${!r || r.left === null ? '' : x.bad ? esc(stkShow(r.unit, -r.left)) + ' 부족' : esc(stkShow(r.unit, r.left)) + ' 남음'}</b></button>`; }).join('')).join('') || '<p class="hwi-empty">집계할 품목이 없어요</p>';
   }
   setTimeout(() => document.querySelectorAll('.hwi-box').forEach(b => { b.scrollTop = incHmTop[b.dataset.k] || 0; }), 0);
   const seg = (k, t) => `<button type="button" role="tab" data-inchv="${k}" class="${incHmV === k ? 'on' : ''}" aria-selected="${incHmV === k}">${t}</button>`;
