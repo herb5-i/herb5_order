@@ -3199,7 +3199,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
     <div class="iss-row">
       <div class="card iss-calcard"><div id="isscal"></div></div>
       <div class="card iss-daycard">
-        <div class="iss-dh"><div><p class="iss-dk" id="iss-dk"></p><h2 id="iss-dt"></h2></div><button class="iss-add" id="iss-addbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>이슈 적기</button></div>
+        <div class="iss-dh"><div><h2 id="iss-dt"></h2></div><button class="iss-add" id="iss-addbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>이슈 적기</button></div>
         <div class="iss-items" id="iss-items"></div>
       </div>
     </div>
@@ -4973,8 +4973,7 @@ function renderIssue() {
     g += `<button class="hd ${c ? 'has iss-has' : ''} ${iso === issDay ? 'on' : ''} ${iso === today ? 'today' : ''} ${dt.getDay() === 0 ? 'sun' : dt.getDay() === 6 ? 'sat' : ''}" data-issday="${iso}"><span class="n">${d}</span><span class="iss-c">${c ? c + (issCat !== 'item' ? '건' : '품목') : ''}</span></button>`;
   }
   $('isscal').innerHTML = g + '</div>';
-  // 고른 날
-  $('iss-dk').textContent = issDay === today ? '오늘' : '고른 날';
+  // 날짜 위 '오늘 · 고른 날' 글자는 빼요 (사용자 요청 2026-11-27)
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
