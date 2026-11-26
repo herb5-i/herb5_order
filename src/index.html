@@ -6393,7 +6393,7 @@ document.addEventListener('click', e => {
 function renderSheetTabs() {
   const ktn = ktOn().reduce((n, o) => n + o.items.length, 0);
   if (curSheet === 3 && !(result.sheetD && result.sheetD.length > 1)) curSheet = 0;
-  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0)})</button>`).join('') + (result.sheetD && result.sheetD.length > 1 ? `<button class="stab ds-tab ${curSheet === 3 ? 'on' : ''}" data-s="3">📅 날짜 지정 (${result.sheetD.length - 1})</button>` : '') + dsChip();
+  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0)})</button>`).join('') + (result.sheetD && result.sheetD.length > 1 ? `<button class="stab ds-tab ${curSheet === 3 ? 'on' : ''}" data-s="3">날짜 지정 (${result.sheetD.length - 1})</button>` : '') + dsChip();
   $('stabs').querySelectorAll('.stab[data-s]').forEach(b => b.onclick = () => { if (edMode) edCollect(); curSheet = +b.dataset.s; renderSheetTabs(); renderSheet(); });
 }
 function renderSheet() {
