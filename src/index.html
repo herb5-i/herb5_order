@@ -1788,6 +1788,15 @@ button.hmfb-nh{width:100%;border:0;background:none;padding:0;font:inherit;color:
 .sd-b .stkform2{grid-template-columns:minmax(0,1fr) 84px}.sd-b .stkform2 .f-n,.sd-b .stkform2 .f-b{grid-column:1/-1}.sd-b .stkpm{flex:1}
 .sd-b .stkpanel{margin:0;border:0;box-shadow:none;padding:0;background:none}.sd-b .stkpanel .sp-h b{display:none}.sd-b .stkpanel .sp-h{margin-bottom:8px}
 html.dark .sdrawer{background:#1b221d}
+
+/* 설명 '!' 표시 (제목에 가져다 대거나 누르면 보여요) */
+.tipsrc{display:none!important}
+.tipi{position:relative;display:inline-grid;place-items:center;width:18px;height:18px;margin:0 0 0 6px;padding:0;border-radius:50%;border:1.5px solid currentColor;background:none;color:var(--mute);font:800 11px/1 var(--body,inherit);cursor:pointer;vertical-align:.15em;flex:none;opacity:.7;letter-spacing:0;text-transform:none;box-shadow:none;min-height:0;min-width:0}
+.tipi::after{content:'';position:absolute;inset:-12px}
+.tipi:hover,.tipi:focus-visible,.tipi[aria-expanded="true"]{opacity:1;color:var(--acc)}
+.tipbub{position:fixed;z-index:3000;max-width:min(320px,calc(100vw - 16px));padding:10px 13px;border-radius:12px;background:#1f2620;color:#fff;font:500 13px/1.6 var(--body,inherit);box-shadow:0 10px 28px -10px rgba(0,0,0,.45);opacity:0;visibility:hidden;transition:opacity .12s;pointer-events:none;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.tipbub.on{opacity:1;visibility:visible;pointer-events:auto}.tipbub p{margin:0}.tipbub p+p{margin-top:6px}
+html.dark .tipbub{background:#eef2ea;color:#1b221d}
 /* 들어온 주문 (정리 › 들어온 주문) */
 .incc .hh .sp{flex:1}.incc .hh h2{margin:0}#inc-go.spin svg{animation:incspin .9s linear infinite}@keyframes incspin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){#inc-go.spin svg{animation:none}}#inc-go:disabled{opacity:.6}
 .inc-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0 10px}
@@ -2873,7 +2882,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
       <div class="sale-list" id="sale-list"></div>
     </div>
     <div class="card salelogc" data-sub="sale" id="salelogcard">
-      <div class="hh"><h2>처리 기록</h2><span class="msg">최근 30개 · 날짜별로는 기록 › 날짜별 기록에서 봐요</span></div>
+      <div class="hh"><h2 class="tipt">처리 기록<button type="button" class="tipi iczno" aria-label="설명 보기" data-tip="최근 30개 · 날짜별로는 기록 › 날짜별 기록에서 봐요">!</button></h2></div>
       <div class="sale-log" id="sale-log"></div>
     </div>
   </section>
@@ -4026,7 +4035,7 @@ function renderTrash() {
   const a = trashList(); if (!a.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   const tm = iso => { const d = new Date(iso); return isNaN(d) ? '' : (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }); };
   box.classList.remove('hidden');
-  mfoldInit(box, 'utrash'); box.innerHTML = `<div class="ut-h" data-mfold="utrash"><b>최근 지운 파일 <small>${a.length}개</small></b><span>잘못 지웠으면 되돌려요 · 이 기기에서 7일 동안</span></div>` + a.slice(0, 5).map(p =>
+  mfoldInit(box, 'utrash'); box.innerHTML = `<div class="ut-h" data-mfold="utrash"><b class="tipt">최근 지운 파일 <small>${a.length}개</small><button type="button" class="tipi iczno" aria-label="설명 보기" data-tip="잘못 지웠으면 되돌려요 · 이 기기에서 7일 동안">!</button></b></div>` + a.slice(0, 5).map(p =>
     `<div class="ut-row"><span class="ut-nm">${esc(fmtDay(p.day))} ${esc(p.files.map(f => (f.slot === 'am' ? '오전 ' : '오후 ') + f.name).join(', ') || '파일')}<small>${esc(tm(p.at))}에 지움 · ${p.n || 0}줄</small></span><button class="urestore" type="button" data-urestore="${p.id}">↶ 되돌리기</button></div>`).join('') + '<p class="msg" id="trashmsg" style="margin:4px 0 0"></p>';
 }
 document.addEventListener('click', async e => {
@@ -4656,8 +4665,7 @@ document.addEventListener('click', e => {
 
 
 // 단계 설명: 제목 옆 ⓘ 로 열고 닫기 · 확인 필요 목록 펼치기
-(() => { document.querySelectorAll('.sh').forEach(sh => { const p = sh.querySelector('p'), h = sh.querySelector('h2'); if (!p || !h || h.querySelector('.shinfo')) return;
-  const b = document.createElement('button'); b.type = 'button'; b.className = 'shinfo'; b.textContent = 'i'; b.title = '설명 보기'; b.setAttribute('aria-label', '설명 보기'); h.appendChild(b); }); })();
+// (예전 ⓘ 버튼은 제목 옆 '!' 설명으로 바뀌었어요 → 아래 '설명 글은 제목 옆' 참고)
 document.addEventListener('click', e => {
   const i = e.target.closest('.shinfo'); if (i) { e.preventDefault(); e.stopPropagation(); i.closest('.sh').classList.toggle('showhelp'); return; }
   const h = e.target.closest('.warnbox h3'); if (h) h.closest('.warnbox').classList.toggle('open');
@@ -5876,7 +5884,7 @@ function renderUFiles() {
   ufPick = new Set([...ufPick].filter(k => list.some(f => f.slot + '|' + f.id === k)));
   if (!sumSel || !list.length) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   box.classList.remove('hidden');
-  mfoldInit(box, 'ufiles'); box.innerHTML = `<div class="uf-h" data-mfold="ufiles"><b>올린 파일</b><span>${list.length}개 · 지울 파일을 골라요</span></div><div class="uf-list">` + list.map(f => {
+  mfoldInit(box, 'ufiles'); box.innerHTML = `<div class="uf-h" data-mfold="ufiles"><b class="tipt">올린 파일 <small>${list.length}개</small><button type="button" class="tipi iczno" aria-label="설명 보기" data-tip="지울 파일을 골라요">!</button></b></div><div class="uf-list">` + list.map(f => {
     const k = f.slot + '|' + f.id;
     return `<label class="uf ${ufPick.has(k) ? 'on' : ''}"><input type="checkbox" data-ufile="${esc(k)}" ${ufPick.has(k) ? 'checked' : ''}><span class="uf-slot ${f.old ? 'old' : f.slot}">${f.old ? '예전' : f.slot === 'am' ? '오전' : '오후'}</span><span class="uf-nm"><b>${esc(f.name || '파일')}</b><small>${esc(tm(f.at))}${f.n ? ' · 주문 ' + f.n + '건' : ''}${f.lines ? ' · ' + f.lines + '줄' : ''}</small></span></label>`;
   }).join('') + `</div><div class="uf-act"><span class="msg" id="ufmsg"></span><button class="btn uf-del" id="ufdel" type="button" ${ufPick.size ? '' : 'disabled'}>${IC.trash}<span>${ufPick.size ? '고른 파일 ' + ufPick.size + '개 지우기' : '지울 파일을 골라 주세요'}</span></button></div>`;
@@ -10025,6 +10033,60 @@ document.addEventListener('keydown', ev => { if (ev.key !== 'Escape') return; if
 (function () { const q = $('sale-q'); if (q) q.addEventListener('input', () => { saleQ = q.value; renderSale(); }); })();
 document.addEventListener('click', ev => { const b = ev.target.closest && ev.target.closest('.tab[data-t="stock"],[data-go="stock"]'); if (b) setTimeout(() => { if (saleOpen()) saleShow(); }, 60); });
 document.addEventListener('click', ev => { const b = ev.target.closest && ev.target.closest('.tab[data-t="run"],[data-go="run"]'); if (b) setTimeout(() => { if (incOpenNow()) incShow(); }, 60); });
+// ---------- 설명 글은 제목 옆 '!'로: 제목에 가져다 대거나 '!'를 누르면 보여요 (사용자 요청 2026-11-26) ----------
+(function () {
+  const map = new Map();   // 제목 → 설명 요소들 (글은 보여 줄 때마다 새로 읽어서, 바뀌는 설명도 그대로 따라가요)
+  const NO = '#wplaces,#sale-hidtip,.c24x-pi small,.ph4 .sh p,.tipsrc';
+  const titleFor = el => {
+    for (let p = el.previousElementSibling; p; p = p.previousElementSibling) {
+      if (p.matches('h1,h2,h3,h4')) return p;
+      if (p.matches('.hh,.sh')) { const h = p.querySelector('h2,h3'); if (h) return h; }
+    }
+    const c = el.parentElement && el.parentElement.closest('.card,.sdrawer,.mbox,details');
+    return c ? c.querySelector('h2,h3,.sd-h b,summary b') : null;
+  };
+  const mkBtn = t => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tipi iczno'; b.setAttribute('aria-label', '설명 보기'); b.textContent = '!'; t.appendChild(b); t.classList.add('tipt'); return b; };
+  function add(t, src) {
+    if (!t || !src || src.matches(NO) || src.dataset.tipd || !src.textContent.trim()) return;
+    src.dataset.tipd = '1'; src.classList.add('tipsrc');
+    let L = map.get(t); if (!L) { L = []; map.set(t, L); mkBtn(t); }
+    L.push(src);
+  }
+  const q = (sel, fn) => document.querySelectorAll(sel).forEach(el => { try { add(fn(el), el); } catch (e) {} });
+  function scanStatic() {   // 처음 화면에 있던 설명만 바꿔요 (주문이 없을 때 뜨는 안내 같은 건 그대로 보여요)
+    q('p.help', titleFor);
+    q('.sh > div > p', el => el.parentElement.querySelector('h2'));
+    q('p.wst-lead', titleFor);
+    q('.stkrn > span > small, .su-h > small, .ktchk > span > small', el => el.parentElement);
+    q('details.oldup > summary > span', el => el.parentElement.querySelector('b'));
+  }
+  function scanLive() { q('.hm-lb > small', el => el.parentElement); }
+  const txt = t => { const b = t.querySelector(':scope > .tipi'); if (b && b.dataset.tip) return [b.dataset.tip];
+    return (map.get(t) || []).map(s => s.textContent.replace(/\s+/g, ' ').trim()).filter(Boolean); };
+  let bub = null, cur = null, pinned = false;
+  function show(t, pin) {
+    const L = txt(t); if (!L.length) return hide(true);
+    if (!bub) { bub = document.createElement('div'); bub.className = 'tipbub'; bub.setAttribute('role', 'tooltip'); bub.id = 'tipbub'; document.body.appendChild(bub); }
+    bub.innerHTML = L.map(x => `<p>${esc(x)}</p>`).join(''); bub.classList.add('on'); cur = t; pinned = !!pin;
+    const a = t.querySelector(':scope > .tipi') || t, r = a.getBoundingClientRect(), w = bub.offsetWidth, h = bub.offsetHeight;
+    let top = r.bottom + 8; if (top + h > innerHeight - 8 && r.top - h - 8 > 8) top = r.top - h - 8;
+    bub.style.top = Math.max(8, top) + 'px'; bub.style.left = Math.max(8, Math.min(r.left + r.width / 2 - 24, innerWidth - w - 8)) + 'px';
+    const b = t.querySelector(':scope > .tipi'); if (b) { b.setAttribute('aria-expanded', 'true'); b.setAttribute('aria-describedby', 'tipbub'); }
+  }
+  function hide(force) { if (!bub || (pinned && !force)) return; bub.classList.remove('on'); if (cur) { const b = cur.querySelector(':scope > .tipi'); if (b) b.setAttribute('aria-expanded', 'false'); } cur = null; pinned = false; }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.tipi');
+    if (b) { e.preventDefault(); e.stopPropagation(); const t = b.parentElement; if (cur === t && pinned) hide(true); else show(t, true); return; }
+    if (pinned && !(e.target.closest && e.target.closest('.tipbub'))) hide(true);
+  }, true);
+  document.addEventListener('mouseover', e => { if (pinned) return; const t = e.target.closest && e.target.closest('.tipt'); if (t && t.querySelector(':scope > .tipi')) { if (cur !== t) show(t, false); } else if (cur) hide(); });
+  document.addEventListener('focusin', e => { if (e.target.classList && e.target.classList.contains('tipi')) show(e.target.parentElement, false); });
+  document.addEventListener('focusout', e => { if (e.target.classList && e.target.classList.contains('tipi') && !pinned) hide(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && cur) hide(true); });
+  addEventListener('scroll', () => hide(true), true); addEventListener('resize', () => hide(true));
+  scanStatic(); scanLive();
+  let tm = null; new MutationObserver(() => { clearTimeout(tm); tm = setTimeout(scanLive, 250); }).observe(document.body, { childList: true, subtree: true });
+})();
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 </script>
 <div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
