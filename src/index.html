@@ -1741,6 +1741,12 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .hmfb-cf textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);background:var(--card);resize:vertical}.hmfb-cb{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
 .stkrn{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}.stkrn>span{font-size:13px;font-weight:700;color:var(--ink)}.stkrn small{display:block;font-weight:400;color:var(--mute);font-size:12px}
 .stkrn-r{display:flex;gap:6px}.stkrn-r input{flex:1;min-width:0;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:14px;color:var(--ink);background:var(--card)}.stkrn .btn.danger{background:#c0392b;color:#fff;border-color:#c0392b}.stkrn .msg{margin:0}
+.hmnsw .hm-wt{display:flex;align-items:center;gap:10px}.hmnsw .hm-wt .hm-lb{flex:1;min-width:0}.hmnsw:not(.seen){box-shadow:0 0 0 2px #c0392b}
+.nsw-l{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:10px}.nsw-d{border:1px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}.nsw-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.nsw-h b{color:#c0392b;font-size:15px}.nsw-h span{font-size:12px;color:var(--mute)}
+.nsw-r{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.nsw-r span{font-size:13px;background:var(--bg);border-radius:99px;padding:2px 9px}.nsw-r b{color:#c0392b}.nsw-none{margin:10px 0 0;font-size:14px;color:var(--acc);font-weight:700}
+.nsc.ns-off{display:none!important}.nsw-miss{margin:8px 0 0;font-size:12.5px;color:var(--mute);line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.stkwhy{margin:6px 0}.stkwhy .linkbtn{font-size:13px}#stk-whyl{display:flex;flex-direction:column;gap:5px;margin-top:6px}.sw-r{display:flex;flex-direction:column;gap:1px;padding:7px 10px;border-radius:10px;border:1px solid var(--line);border-left-width:4px;font-size:13px}
+.sw-r small{color:var(--mute);font-size:11.5px}.sw-r b{overflow-wrap:anywhere}.sw-r.ok{border-left-color:var(--acc)}.sw-r.warn{border-left-color:#d08a3a}.sw-r.bad{border-left-color:#c0392b}.sw-r.bad span{color:#c0392b}.sw-r.warn span{color:#b86b00}
 .svg-list{display:grid;gap:10px;margin-top:12px}.svg-c{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);transition:box-shadow .3s}.svg-c.flash{box-shadow:0 0 0 3px var(--acc2)}
 .svg-h{display:flex;align-items:flex-start;gap:8px}.svg-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.svg-t b{font-size:16px;overflow-wrap:anywhere}.svg-t small{font-size:12.5px;color:var(--mute)}.svg-t em{font-style:normal;color:var(--acc);font-weight:700}
 .svg-del{flex:none;width:32px;height:32px}.svg-del svg{width:16px;height:16px}
@@ -2517,6 +2523,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
 
   <section id="v-home">
     <div class="hm-w hm-bak hidden" id="hm-bak"></div>
+    <div class="hm-w hmnsw hidden" id="hmnsw"></div>
     <div class="hm-w hmfb" id="hmfb">
       <div class="hm-wt"><span class="hm-lb">개선 메모 <small>불편한 점 · 고칠 점 · 바라는 기능을 적어 주세요. 모두 같이 봐요</small></span><span class="hmfb-pin" title="홈에 고정된 칸이에요"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span></div>
       <form class="hmfb-f" id="hmfb-f" autocomplete="off"><textarea id="hmfb-t" rows="2" maxlength="1000" placeholder="예: 재고 화면에서 품목 찾기가 불편해요 · 마이크를 누르고 말해도 돼요" aria-label="개선 메모"></textarea>
@@ -2713,6 +2720,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
         <datalist id="stk-names"></datalist>
         <p class="msg" id="stkmsg"></p>
         <label class="stknote hidden" id="stknotebox"><span>품목 메모 <small id="stknote-st"></small></span><textarea id="stk-note" rows="2" placeholder="이 품목에 남길 메모 (예: 하우스 2번 · 다음 주 수확 많음 · 잎 작음)"></textarea></label>
+        <div class="stkwhy" id="stkwhybox"><button type="button" class="linkbtn iczno" id="stk-why">이 품목 주문 연결 확인 (안 빠질 때)</button><div id="stk-whyl"></div></div>
         <div class="stkrn adm-only" id="stkrnbox"><span>품목 이름 바꾸기 <small>지금까지 이 품목에서 빠지던 주문은 바꾼 이름에서 계속 빠져요</small></span><div class="stkrn-r"><input id="stk-rn" placeholder="새 이름 (예: 애플민트 작은잎)" autocomplete="off" aria-label="새 이름"><button class="btn sm iczno" type="button" id="stk-rn-go">이름 바꾸기</button></div><p class="msg" id="stk-rn-msg"></p></div>
         <div class="stkunits hidden" id="stkunits"><div class="su-h">단위 편집 <small>단위를 넣거나 지워요. kg·g 는 무게(주문 g 만큼 빠짐), 나머지는 개수로 세요.</small></div><div class="su-list"></div><div class="su-add"><input id="su-new" placeholder="새 단위 (예: 송이, 팩, 박스)" maxlength="8" autocomplete="off"><button class="ibtn ibtn-acc" id="su-addbtn" title="단위 추가" aria-label="단위 추가"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="ibtn" id="su-reset" title="처음 단위로 (개 · kg · g)" aria-label="처음 단위로"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button></div><p class="msg" id="su-msg"></p></div>
         <p class="help">＋ 들어온 만큼 더하기 · − 따로 나간 만큼 빼기. 재고를 넣은 뒤에 올린 원본(오전·오후)부터 집계 수량만큼 실시간으로 빠져요. 이미 올라와 있던 주문은 빼지 않아요 (무게는 100g 단위 올림, 예: 560g → 600g).</p>
@@ -4502,7 +4510,7 @@ const hq = id => $(id) || document.createElement('div');
 function renderHome() {
   if (!$('v-home')) return;
   if (!hmBuilt) hmBuild();
-  const now = new Date(), today = isoDate(now), U = upl[today] || {};
+  const now = new Date(), today = isoDate(now), U = upl[today] || {}; try { renderNsw(); } catch (e) {}
   const rev = salesDayRev();
   // 바로 가기 아래 한 줄
   const last = ['pm', 'am'].map(k => U[k]).filter(Boolean).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
@@ -6313,12 +6321,29 @@ document.addEventListener('click', async e => { const b = e.target.closest && e.
   delete b.dataset.sure; b.textContent = '이름 바꾸기'; b.classList.remove('danger'); b.disabled = true;
   try { const n = await stkRename(from, to); $('stk-n').value = stkK(to); $('stk-rn').value = ''; $('stkd-t').textContent = stkK(to) + ' 재고'; m.className = 'msg ok'; m.textContent = '이름을 바꿨어요' + (n ? ' · 주문 문구 ' + n + '개를 새 이름에 고정했어요' : ''); try { stkCurLine(); renderStock(); } catch (er) {} }
   catch (er) { m.className = 'msg err'; m.textContent = er.message || String(er); } b.disabled = false; });
+// ---------- 이 품목 주문 연결 확인: 최근 주문이 이 재고에서 빠졌는지, 왜 안 빠졌는지 ----------
+function stkWhy(key) {
+  key = stkK(key); const C = stkCompute(), x = C.items.find(i => i.key === key), base = stkTxt(key).replace(/생화|생잎|식용꽃|허브|장식용|랜덤/g, '');
+  const w0 = (() => { const d = new Date(); d.setDate(d.getDate() - 10); return isoDate(d); })(), w = base.slice(0, Math.max(2, Math.min(4, base.length)));
+  const L = []; C.evs.forEach(e => { if (e.day < w0) return; e.uses.forEach(u => { const t = stkTxt(u.n + ' ' + u.o); if (u.to !== key && !(w && t.includes(w))) return;
+    let st, cls = '';
+    if (u.to === key) { if (!x || !x.rec) { st = '재고를 아직 안 넣어서 안 빠져요'; cls = 'warn'; }
+      else if (e.day < (x.rec.baseDay || '') || (x.rec.seen || []).includes(e.k) || (e.at && x.rec.baseAt && e.at <= x.rec.baseAt)) { st = '재고를 맞추기 전에 올라온 주문이라 안 빠져요'; cls = 'warn'; }
+      else { const amt = x.urule ? stkUnitAmt(x.urule, u) : stkIsW(x.unit) ? (u.g === null ? 0 : u.g * u.q) : u.q; st = amt ? stkShow(x.unit, amt) + ' 빠졌어요' : '빠질 양이 0이에요 (무게를 못 읽음 · 단위 확인)'; cls = amt ? 'ok' : 'bad'; } }
+    else if (u.to) { st = '다른 품목 [' + u.to + ']에서 빠져요'; cls = 'bad'; } else { st = '어느 재고에도 연결이 안 됐어요'; cls = 'bad'; }
+    L.push({ d: e.day, s: e.slot, n: u.n + (u.o ? ' · ' + u.o : ''), q: u.q, st, cls }); }); });
+  return L.sort((a, b) => b.d.localeCompare(a.d) || (b.s || '').localeCompare(a.s || '')).slice(0, 25);
+}
+document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#stk-why')) return; const box = $('stk-whyl'), k = $('stk-n').value;
+  if (box.innerHTML) { box.innerHTML = ''; return; } let L = []; try { L = stkWhy(stkBase(k, '')); } catch (er) { box.innerHTML = '<p class="msg err">확인하지 못했어요: ' + esc(er.message || er) + '</p>'; return; }
+  box.innerHTML = L.length ? '<p class="help">최근 10일 주문 중 이 품목과 비슷한 이름 · 이 품목에서 빠진 주문이에요</p>' + L.map(x => `<div class="sw-r ${x.cls}"><small>${esc(x.d.slice(5).replace('-', '/'))} ${x.s === 'am' ? '오전' : x.s === 'pm' ? '오후' : ''} · ${x.q}개</small><b>${esc(x.n)}</b><span>${esc(x.st)}</span></div>`).join('')
+    + '<p class="help">빨간 줄은 규칙 관리 → <b>재고 품목 · 같이 셀 키워드</b>에 이 품목 이름과 주문 문구를 넣으면 이 재고에서 빠져요</p>' : '<p class="help">최근 10일 주문 중 이 품목과 연결되거나 이름이 비슷한 주문이 없어요</p>'; });
 function stkDrawerOpen(key) {
   const p = $('stkedit'); if (!p._home) p._home = { parent: p.parentNode, next: p.nextSibling };
   $('stkd-b').appendChild(p); p.classList.remove('hidden'); stkDrawer = true;
   $('stkd-t').textContent = key ? key + ' 재고' : '재고 수정';
   $('stkdrawer').classList.add('on'); $('stkdrawer').setAttribute('aria-hidden', 'false'); $('stkdback').classList.remove('hidden');
-  if (key) { $('stk-n').value = key; $('stkmsg').textContent = ''; } if ($('stk-rn')) { $('stk-rn').value = ''; $('stk-rn-msg').textContent = ''; }
+  if (key) { $('stk-n').value = key; $('stkmsg').textContent = ''; } if ($('stk-rn')) { $('stk-rn').value = ''; $('stk-rn-msg').textContent = ''; } if ($('stk-whyl')) $('stk-whyl').innerHTML = '';
   stkCurLine(); setTimeout(() => $('stk-q').focus({ preventScroll: true }), 260);
 }
 function stkDrawerClose() {
@@ -8869,6 +8894,7 @@ function ntItems() {
   const L = [], now = new Date(), today = isoDate(now), seen = ntSeen();
   NT_NEWS.filter(n => !seen.includes(n.v)).forEach(n => L.push({ k: 'news', n: 1, cls: '', t: '새 소식 · ' + n.t, d: n.d, go: n.go }));
   try { const { out } = hwStk(); if (out.length) L.push({ k: 'out', n: out.length, cls: 'bad', t: '품절 ' + out.length + '품목', d: out.slice(0, 4).map(x => x.key).join(', ') + (out.length > 4 ? ' 외' : ''), go: 'stock' }); } catch (e) {}
+  try { const D = nswData(); if (D && D.bad.length && now.getDay() === 0 || (D && D.bad.length && localStorage.getItem(NSW_KEY + '_n') === D.mon)) { if (localStorage.getItem(NSW_KEY) !== D.mon) { try { localStorage.setItem(NSW_KEY + '_n', D.mon); } catch (e) {} L.push({ k: 'nsw', n: 1, cls: 'bad', t: '이번 주 배송 불가 예보 · ' + D.bad.map(x => nswDay(x.d)).join(' '), d: D.bad.map(x => nswDay(x.d) + ' ' + x.regs.slice(0, 3).map(g => g.r).join('·')).join(' / ') + ' 도착분', go: 'home' }); } } } catch (e) {}
   try { const c = c24Cfg(), cut = c24PmCut(c, today), U = upl[today] || {};
     if (cut && hcShip(today) && !U.pm) { const [h, m] = String(cut).split(':').map(Number), ct = new Date(now); ct.setHours(h, m || 0, 0, 0); const min = Math.round((ct - now) / 60e3);
       if (min <= 60 && min > 0) L.push({ k: 'pm', n: 1, cls: 'warn', t: '오후 주문 마감 ' + cut + ' · ' + min + '분 남았어요', d: '마감 뒤에 오후 주문을 불러와 정리해 주세요', go: 'run' });
@@ -8894,6 +8920,7 @@ document.addEventListener('click', async e => {
     if (ntOpen) { try { localStorage.setItem(NT_SEEN, JSON.stringify(NT_NEWS.map(n => n.v).concat(ntSeen()).filter((v, i, a) => a.indexOf(v) === i))); } catch (er) {} } return; }
   if (e.target.closest('#nt-perm')) { try { await Notification.requestPermission(); } catch (er) {} ntRender(); return; }
   const g = e.target.closest('[data-ntgo]'); if (g) { const x = ntLast[+g.dataset.ntgo]; if (!x) return; ntShow(false);
+    if (x.k === 'nsw') { const t = document.querySelector('.tab[data-t="home"]'); if (t) t.click(); setTimeout(() => $('hmnsw').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); return; }
     if (x.go === 'home') { $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const t = document.querySelector('.tab[data-t="' + x.go + '"]'); if (t) t.click(); if (x.go === 'run') subSet('run', 'order', true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 });
@@ -8975,6 +9002,33 @@ function mfoldInit(box, k) { if (box._mf) return; box._mf = 1; box.classList.add
 document.addEventListener('click', e => { const h = e.target.closest('[data-mfold]'); if (!h || (e.target.closest('button,input,label') && !e.target.closest('.foldt'))) return;
   const box = h.closest('.mfold-c'); if (!box) return; const f = !box.classList.contains('mfolded'); box.classList.toggle('mfolded', f);
   const m = foldGet(); m[h.dataset.mfold] = f ? 1 : 0; try { localStorage.setItem(FOLD_KEY, JSON.stringify(m)); } catch (er) {} });
+// ---------- 이번 주 배송 불가 예보 (일요일에 다음 한 주를 미리 봐요) ----------
+// 날씨 예보(최저기온)로 '도착일'마다 배송 불가 기준(규칙 관리 날씨 기준의 경고 줄)에 걸리는 지역을 찾아요. 출고는 도착 전날이에요.
+const NSW_KEY = 'herb5_nsweek';
+function nswRange(now) { now = now || new Date(); const d0 = new Date(now); d0.setHours(0, 0, 0, 0); const dow = d0.getDay();
+  const mon = new Date(d0); if (dow === 0) mon.setDate(d0.getDate() + 1); else mon.setDate(d0.getDate() - (dow - 1));
+  const days = []; for (let i = 0; i < 7; i++) { const x = new Date(mon); x.setDate(mon.getDate() + i); if (x > d0) days.push(isoDate(x)); } return { mon: isoDate(mon), days }; }
+function nswData() {
+  if (!nsSeason()) return null; const B = ((rules.weather && rules.weather.bands) || []).filter(b => String(b.warn || '').trim() && String(b.basis || '').includes('최저'));
+  if (!B.length || !wdata || !wdata.days) return null; const R = nswRange(), num = v => v === '' || v == null ? null : Number(v);
+  const hit = t => B.find(b => { const lo = num(b.min), hi = num(b.max); return (lo === null || t >= lo) && (hi === null || t <= hi); });
+  const out = R.days.map(d => { const dd = wdata.days[d]; if (!dd) return { d, none: true };
+    const regs = Object.entries(dd).filter(([, v]) => v && Array.isArray(v.min)).map(([r, v]) => ({ r, t: Math.min(...v.min) })).filter(x => hit(x.t)).sort((a, b) => a.t - b.t); return { d, regs }; });
+  return { mon: R.mon, days: out, bad: out.filter(x => x.regs && x.regs.length) };
+}
+const nswDay = iso => { const d = new Date(iso + 'T00:00:00'); return (d.getMonth() + 1) + '/' + d.getDate() + '(' + WD[d.getDay()] + ')'; };
+const nswShip = iso => { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() - 1); return nswDay(isoDate(d)); };
+function renderNsw() {
+  const box = $('hmnsw'); if (!box) return; const D = nswData(), sun = new Date().getDay() === 0;
+  if (!D || (!D.bad.length && !sun)) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+  const seen = (() => { try { return localStorage.getItem(NSW_KEY) === D.mon; } catch (e) { return false; } })(), miss = D.days.filter(x => x.none);
+  box.classList.remove('hidden'); box.classList.toggle('seen', seen);
+  box.innerHTML = `<div class="hm-wt"><span class="hm-lb">이번 주 배송 불가 예보 <small>${esc(nswDay(D.mon))}부터 한 주 · 도착일 기준 최저기온</small></span>${seen ? '' : '<button type="button" class="btn sm iczno" id="nsw-ok">확인했어요</button>'}</div>
+    ${D.bad.length ? `<div class="nsw-l">${D.bad.map(x => `<div class="nsw-d"><div class="nsw-h"><b>${esc(nswDay(x.d))} 도착</b><span>${esc(nswShip(x.d))} 출고분</span></div><div class="nsw-r">${x.regs.map(g => `<span>${esc(g.r)} <b>${g.t}도</b></span>`).join('')}</div></div>`).join('')}</div>`
+      : '<p class="nsw-none">예보가 나온 날 중에는 배송 불가인 날이 없어요</p>'}
+    ${miss.length ? `<p class="nsw-miss">${miss.map(x => esc(nswDay(x.d))).join(' · ')}은 아직 예보가 없어요. 예보가 나오면 여기에 더해져요</p>` : ''}`;
+}
+document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#nsw-ok')) return; const D = nswData(); try { if (D) localStorage.setItem(NSW_KEY, D.mon); } catch (er) {} renderNsw(); try { ntRender(); } catch (er) {} });
 // ---------- 카페24 전체 주문 엑셀로 받기 (한 달씩 받아서 한 파일로) ----------
 let c24xStop = false, c24xBusy = false, c24xPI = false;
 $('c24x-to').value = ymOf(new Date());
@@ -9026,18 +9080,23 @@ $('c24x-go').onclick = async () => {
 };
 // ---------- 배송 불가 주문: 묶어서 엑셀에서 빼기 · 수령인 + 핸드폰만 내려받기 ----------
 // 기준은 규칙 관리 날씨 기준에서 '경고'가 있는 포장 방법(지금은 최저 -10도 이하 = 배송X)이에요. 뺀 주문은 이 묶음(오전 · 오후)에서만 기억해요.
+// 배송 불가는 겨울에만: 11월 1일 ~ 3월 둘째 주 일요일 (주는 월요일 시작, 3월 1일이 든 주가 첫째 주)
+function nsSeason(d) { d = d ? new Date(d) : new Date(); const m = d.getMonth() + 1; if (m >= 11 || m <= 2) return true; if (m !== 3) return false;
+  const m1 = new Date(d.getFullYear(), 2, 1), mon = new Date(m1); mon.setDate(1 - ((m1.getDay() + 6) % 7)); const end = new Date(mon); end.setDate(mon.getDate() + 13); end.setHours(23, 59, 59, 999); return d <= end; }
+const nsOn = () => nsSeason(srcAt || new Date());
 const NS_KEY = 'herb5_nsout';
 let nsOut = new Set(), nsB = null, nsPick = new Set(), nsKnown = new Set();
 function nsCheck() { const b = srcAt ? String(srcAt.getTime()) : ''; if (b === nsB) return; nsB = b; nsOut = new Set(); nsPick = new Set(); nsKnown = new Set();
   try { const o = JSON.parse(localStorage.getItem(NS_KEY) || 'null'); if (o && o.b === b && b) nsOut = new Set(o.o || []); } catch (e) {} }
 function nsSave() { try { localStorage.setItem(NS_KEY, JSON.stringify({ b: nsB, o: [...nsOut] })); } catch (e) {} }
-function nsOrders() { const R = noShipRows(); if (!R || !R.rows.length) return [];
+function nsOrders() { if (!nsOn()) return []; const R = noShipRows(); if (!R || !R.rows.length) return [];
   const h = R.h, ix = n => h.indexOf(n), on = ix('주문번호'), ro = ix('수령인'), ad = ix('주소'), pn = ix('주문상품명'), tc = ix('예보기온(최저/최고)'), hp = ix('핸드폰'), tp = ix('수령지전화'), ph = ix('전화번호'), m = new Map();
   const v = (r, i) => i >= 0 && r[i] != null ? String(r[i]).trim() : '';
   R.rows.forEach(r => { const o = v(r, on); if (!o) return; if (!m.has(o)) m.set(o, { o, rn: v(r, ro), area: v(r, ad).split(/\s+/).slice(0, 2).join(' '), t: v(r, tc), hp: v(r, hp) || v(r, tp) || v(r, ph), items: [] }); m.get(o).items.push(v(r, pn)); });
   return [...m.values()]; }
 function renderNs() {
   const box = $('nsbody'), card = $('nscard'); if (!box) return; nsCheck();
+  card.classList.toggle('ns-off', !nsOn()); if (!nsOn()) { box.innerHTML = ''; return; }
   if (!result) { box.innerHTML = '<p class="help">주문을 불러오면 배송 불가 주문이 여기 모여요.</p>'; return; }
   const L = nsOrders(); L.forEach(x => { if (!nsKnown.has(x.o)) { nsKnown.add(x.o); nsPick.add(x.o); } });
   if (!L.length) { box.innerHTML = '<p class="help">이번 주문에는 배송 불가(영하 10도 이하) 지역이 없어요.</p>' + (nsOut.size ? '' : ''); card.classList.remove('has'); return; }
@@ -9068,7 +9127,7 @@ document.addEventListener('click', async e => { if (!e.target.closest) return;
     catch (er) { if (er && er.code === 'declined') return; m.className = 'msg err'; m.textContent = '내려받지 못했어요: ' + (er.message || er); } }
 });
 // 엑셀 만들 때: 뺀 주문은 주문정리 · 수령인별 시트에서 빠져요 (집계는 그대로)
-function nsFilter(full, si) { nsCheck(); if (!nsOut.size || !full || full.length < 2) return full; const H = full[0];
+function nsFilter(full, si) { nsCheck(); if (!nsOn() || !nsOut.size || !full || full.length < 2) return full; const H = full[0];
   if (si === 0) { const oc = H.indexOf('주문번호'); if (oc < 0) return full; return full.filter((r, i) => !i || r.__kt || !nsOut.has(String(r[oc] ?? '').trim())); }
   if (si === 1) { const rc = H.indexOf('수령인'), s1 = result.sheet1, h1 = s1[0], oc = h1.indexOf('주문번호'), rc1 = h1.indexOf('수령인'); if (rc < 0 || oc < 0 || rc1 < 0) return full;
     const keep = new Set(), gone = new Set(); s1.slice(1).forEach(r => { const n = String(r[rc1] ?? '').trim(); (nsOut.has(String(r[oc] ?? '').trim()) ? gone : keep).add(n); });
@@ -9487,7 +9546,7 @@ srcLabel('규칙을 불러오는 중…');
   histInit(db);
   weatherDoc.onSnapshot(snap => {
     if (wDirty || !snap.exists) { if (!snap.exists && !snap.metadata.fromCache) renderWeather(); return; }
-    wdata = snap.data(); computeTemps(); renderWeather(); renderNeed();
+    wdata = snap.data(); computeTemps(); renderWeather(); renderNeed(); try { renderNsw(); ntRender(); } catch (e) {}
     if (srcRows) runProcess();
   }, () => {});
   const timer = setTimeout(() => srcLabel('저장된 규칙을 아직 불러오지 못했어요. 기본 규칙으로 보여드려요.'), 10000);
