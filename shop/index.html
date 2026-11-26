@@ -1756,7 +1756,7 @@ html.dark .mall .mkpi .mkc{background:rgba(255,255,255,.04)}html.dark .mall .mba
 .subtabs button.alert .sdot{display:block}
 section[data-cur] > [data-sub]{animation:subIn .28s ease both}
 #v-run[data-cur="order"] > [data-sub]:not([data-sub="order"]),#v-run[data-cur="wx"] > [data-sub]:not([data-sub="wx"]),#v-run[data-cur="inv"] > [data-sub]:not([data-sub="inv"]),#v-run[data-cur="ship"] > [data-sub]:not([data-sub="ship"]),
-#v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]),#v-hist[data-cur="mall"] > [data-sub]:not([data-sub="mall"]),#v-stock[data-cur="cur"] > [data-sub]:not([data-sub="cur"]),#v-stock[data-cur="chg"] > [data-sub]:not([data-sub="chg"]),#v-stock[data-cur="ret"] > [data-sub]:not([data-sub="ret"]),#v-rules[data-cur="order"] [data-sub]:not([data-sub="order"]),#v-rules[data-cur="sum"] [data-sub]:not([data-sub="sum"]),#v-rules[data-cur="wx"] [data-sub]:not([data-sub="wx"]),#v-rules[data-cur="stock"] [data-sub]:not([data-sub="stock"]),#v-rules[data-cur="set"] [data-sub]:not([data-sub="set"]){display:none!important}
+#v-hist[data-cur="report"] > [data-sub]:not([data-sub="report"]),#v-hist[data-cur="days"] > [data-sub]:not([data-sub="days"]),#v-hist[data-cur="sales"] > [data-sub]:not([data-sub="sales"]),#v-hist[data-cur="mall"] > [data-sub]:not([data-sub="mall"]),#v-stock[data-cur="cur"] > [data-sub]:not([data-sub="cur"]),#v-stock[data-cur="sale"] > [data-sub]:not([data-sub="sale"]),#v-stock[data-cur="chg"] > [data-sub]:not([data-sub="chg"]),#v-stock[data-cur="ret"] > [data-sub]:not([data-sub="ret"]),#v-rules[data-cur="order"] [data-sub]:not([data-sub="order"]),#v-rules[data-cur="sum"] [data-sub]:not([data-sub="sum"]),#v-rules[data-cur="wx"] [data-sub]:not([data-sub="wx"]),#v-rules[data-cur="stock"] [data-sub]:not([data-sub="stock"]),#v-rules[data-cur="set"] [data-sub]:not([data-sub="set"]){display:none!important}
 body.is-guest #v-hist .subtabs{display:none!important}
 @keyframes subIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.06)}html.dark .subtabs .sdot{box-shadow:0 0 0 2px #1c241e}
@@ -1774,7 +1774,7 @@ html.dark .subtabs{background:rgba(28,36,30,.86);border-color:rgba(255,255,255,.
 .hm-noti{position:relative;white-space:nowrap}.hm-noti svg{flex:none;width:18px;height:18px}.hm-noti span{white-space:nowrap}.hm-noti .ntc{min-width:20px;height:20px;padding:0 6px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 12px/20px var(--body);text-align:center}.hm-noti .ntc.hidden{display:none}
 .tabs .tab{position:relative}.tbadge{position:absolute;top:2px;right:2px;min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;border-radius:99px;background:#d9483b;color:#fff;font:700 10.5px/17px var(--body);text-align:center;pointer-events:none;z-index:2}
 .icz{display:inline-flex;align-items:center;justify-content:center;gap:6px}.icz.hidden{display:none!important}.icz>.icz-h{display:none!important}.icz svg.bic{width:18px;height:18px;flex:none;pointer-events:none}button svg,a.btn svg{pointer-events:none}.btn.icz-o{padding-left:0;padding-right:0;width:38px;min-width:38px}.btn.sm.icz-o{width:34px;min-width:34px}.hm-ghost.icz-o{padding:13px 14px}
-.subtabs:not([data-subfor=hist]):not([data-subfor=market]) [data-subgo] span{display:none}
+.subtabs:not([data-subfor=hist]):not([data-subfor=market]):not([data-subfor=stock]) [data-subgo] span{display:none}
 .hm-noti{padding:13px 14px!important}.hm-noti .ntc{position:absolute;top:-6px;right:-6px}
 .fold-c{position:relative}.fold-c > .sh{cursor:pointer}.fold-c > .sh:focus-visible{outline:2px solid var(--acc);outline-offset:4px;border-radius:8px}.foldt{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mute);display:grid;place-items:center;cursor:pointer}
 .foldt svg{width:20px;height:20px;transition:transform .2s;transform:rotate(180deg)}.fold-c.folded .foldt svg{transform:none}.fold-c.folded .foldt{color:var(--acc);border-color:var(--acc)}
@@ -1787,7 +1787,7 @@ html.dark .hw-pin{background:rgba(26,31,28,.94)}html.dark .hw-pin b{color:#e4e9e
 .hw-wxbig{display:flex;flex-direction:column}.hw-wxrow{flex:1;min-height:0;display:flex;gap:12px}.hw-wxrow .hw-mapbox{flex:0 0 auto;max-width:48%}.hw-wxrow .hm-list{flex:1;min-width:0;overflow:auto;margin:0}.hw-wxrow .hw-wx li{flex-wrap:wrap;row-gap:4px}.hw-wxrow .hw-wx .nm{flex:1;min-width:0}.hw-wxrow .hw-chips{flex-basis:100%;justify-content:flex-start;flex-wrap:wrap}
 .mfold-c > .uf-h,.mfold-c > .ut-h{cursor:pointer}.foldt.mini{top:50%;right:0;transform:translateY(-50%);width:34px;height:34px}.foldt.mini svg{width:18px;height:18px}
 .mfold-c.mfolded > :not(.uf-h):not(.ut-h){display:none!important}.mfold-c.mfolded .foldt.mini svg{transform:none}.mfold-c.mfolded .foldt.mini{color:var(--acc);border-color:var(--acc)}.ut-h b small{font-weight:400;color:var(--mute);margin-left:4px}
-.subtabs[data-subfor=stock]{display:none!important}.histrow.hcalfull{display:block}.hcalfull #hcal .hd{position:relative}
+/* 재고 관리: 재고 · 판매 */.histrow.hcalfull{display:block}.hcalfull #hcal .hd{position:relative}
 @media(min-width:900px){.hcalfull #hcal .hd{min-height:64px}.hcalfull #hcal .hd .n{font-size:15px}}
 #hcal .sdots{display:flex;gap:3px;justify-content:center;height:6px;margin-top:1px}#hcal .sdots i{width:6px;height:6px;border-radius:50%}#hcal .sdots .di{background:#4c8a5b}#hcal .sdots .do{background:#e7859c}#hcal .hd.on .sdots .di{background:#d9f2cf}#hcal .hd.on .sdots .do{background:#ffd3de}
 .hdrow{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start;margin:16px 0}.hdrow > .card{margin:0;min-width:0}.hdrow .stkhistrow{display:block}
@@ -1871,6 +1871,64 @@ button.hmfb-nh{width:100%;border:0;background:none;padding:0;font:inherit;color:
 .sd-b .stkform2{grid-template-columns:minmax(0,1fr) 84px}.sd-b .stkform2 .f-n,.sd-b .stkform2 .f-b{grid-column:1/-1}.sd-b .stkpm{flex:1}
 .sd-b .stkpanel{margin:0;border:0;box-shadow:none;padding:0;background:none}.sd-b .stkpanel .sp-h b{display:none}.sd-b .stkpanel .sp-h{margin-bottom:8px}
 html.dark .sdrawer{background:#1b221d}
+/* 판매 관리 (재고 관리 › 판매) */
+.salec .hh .sp{flex:1}.salec .hh h2{margin:0}
+.sale-f{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.sale-chip{height:38px;padding:0 14px;border-radius:99px;border:1px solid var(--line2,var(--line));background:var(--card);color:var(--ink);font:700 14px var(--body,inherit);cursor:pointer}
+.sale-chip b{font-weight:700;opacity:.75;margin-left:2px}.sale-chip.on{background:var(--acc);border-color:var(--acc);color:#fff}.sale-chip.hid.on{background:#6b5a8e;border-color:#6b5a8e}
+.sale-cats{display:flex;flex-wrap:wrap;gap:6px;padding:0 0 10px;margin:0 0 10px;border-bottom:1px solid var(--line)}
+.sale-cat{height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--soft,var(--bg));color:var(--ink);font:800 14.5px var(--body,inherit);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sale-cat span{font-size:12px;font-weight:700;opacity:.7}.sale-cat.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.sale-q{display:flex;align-items:center;gap:8px;height:46px;padding:0 12px;border:1px solid var(--line2,var(--line));border-radius:12px;background:var(--card);margin:0 0 12px}
+.sale-q svg{width:18px;height:18px;flex:none;color:var(--mute)}.sale-q input{flex:1;min-width:0;border:0;outline:0;background:none;font:15px var(--body,inherit);color:var(--ink);padding:0}
+.sale-hidtip{color:#6b5a8e!important;font-weight:700;margin:-4px 0 10px}
+.sale-list{display:flex;flex-direction:column;gap:20px}.sale-g{display:flex;flex-direction:column;gap:8px}
+.sale-gh{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}.sale-gh h3{margin:0;font-size:16px;font-weight:800}.sale-gh span{font-size:12.5px;color:var(--mute)}
+.sale-p{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card)}
+.sale-p.off{border-color:#e7b9b3;background:#fbf3f1}html.dark .sale-p.off{border-color:#6a3a35;background:#2a1f1e}
+.sale-ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.sale-ph img{width:44px;height:44px;border-radius:10px;object-fit:cover;flex:none;background:var(--soft,var(--bg))}
+.sale-pi{flex:1 1 200px;min-width:0;display:flex;flex-direction:column;gap:3px}
+.sale-pn{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.sale-pn b{font-size:15px;overflow-wrap:anywhere}
+.sale-b{font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 8px;color:#fff;background:#2e7d4f;white-space:nowrap}.sale-b.part{background:#b86b00}.sale-b.off{background:#c0392b}.sale-b.hid{background:#6b5a8e}
+.sale-pp{font-size:13.5px;display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline}.sale-pp s{font-size:12px;color:var(--mute)}.sale-pp span{font-size:12px;color:var(--mute)}
+.sale-pa{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}.sale-pa .btn{min-height:40px;padding:0 14px;font-size:14px;font-weight:700}
+.btn.sale-red{background:#c0392b;border-color:#c0392b;color:#fff}
+.sale-os{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sale-o{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:5px 5px 5px 10px;border-radius:11px;border:1px solid var(--line);background:var(--soft,var(--bg));max-width:100%;min-width:0}
+.sale-o.off{border-color:#e7b9b3;background:#fbf3f1}html.dark .sale-o.off{border-color:#6a3a35;background:#2a1f1e}
+.sale-o .n{font-size:13.5px;font-weight:600;overflow-wrap:anywhere;min-width:0}.sale-o .a{font-size:12px;color:var(--mute)}
+.sale-o .q{font-size:12px;font-weight:700;color:var(--mute)}.sale-o .q.lo{color:#b86b00}.sale-o .q.z{color:#c0392b}
+.sale-o .t{font-size:12px;font-weight:700;color:#2e7d4f}.sale-o.off .t{color:#c0392b}html.dark .sale-o .t{color:#7fc79a}html.dark .sale-o.off .t{color:#f08a7f}
+.sale-ob{height:32px;padding:0 10px;border-radius:8px;border:1px solid #d9a9a2;background:var(--card);color:#c0392b;font:700 12.5px var(--body,inherit);cursor:pointer}
+.sale-o.off .sale-ob{border-color:#2e7d4f;color:#2e7d4f}html.dark .sale-o.off .sale-ob{color:#7fc79a;border-color:#3f9a6c}
+.sale-ob:disabled,.sale-pa .btn:disabled{opacity:.5;cursor:default}
+.sale-log{display:flex;flex-direction:column;gap:6px}
+.sale-li{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:13.5px;padding:8px 12px;border-radius:10px;background:var(--soft,var(--bg))}
+.sale-li .w{color:var(--mute);white-space:nowrap}.sale-li .k{font-weight:700;white-space:nowrap}.sale-li .k.off{color:#c0392b}.sale-li .k.on{color:#2e7d4f}.sale-li .k.hide{color:#6b5a8e}
+html.dark .sale-li .k.off{color:#f08a7f}html.dark .sale-li .k.on{color:#7fc79a}html.dark .sale-li .k.hide{color:#b9a6e0}
+.sale-li .x{min-width:0;overflow-wrap:anywhere}
+.saledr .sd-b{display:flex;flex-direction:column;gap:16px;padding-bottom:12px}
+.saled-l{display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:700}.saled-l small{font-weight:500;color:var(--mute)}
+.saled-in{display:flex;align-items:center;gap:6px;height:44px;padding:0 12px;border:1px solid var(--line2,var(--line));border-radius:12px;background:var(--card);font-weight:500}
+.saled-in input{flex:1;min-width:0;border:0;outline:0;background:none;font:15px var(--body,inherit);color:var(--ink);padding:0}.saled-in input.r{text-align:right;font-weight:700}
+.saled-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.saled-seg{display:flex;gap:6px}.saled-seg button{flex:1;height:42px;border-radius:11px;border:1px solid var(--line2,var(--line));background:var(--card);color:var(--ink);font:800 14px var(--body,inherit);cursor:pointer}
+.saled-seg button.on{background:var(--acc);border-color:var(--acc);color:#fff}.saled-seg button.on.hid,.saled-seg button.on.bad{background:#6b5a8e;border-color:#6b5a8e}.saled-seg button.on.bad{background:#c0392b;border-color:#c0392b}
+.saled-o{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px}
+.saled-oh{display:flex;align-items:center;gap:8px}.saled-oh b{flex:1;min-width:0;font-size:14.5px;overflow-wrap:anywhere}
+.saled-os{height:36px;min-width:74px;padding:0 10px;border-radius:9px;font:800 13px var(--body,inherit);cursor:pointer;border:1px solid #2e7d4f;background:#eef6f0;color:#2e7d4f}
+.saled-os.off{border-color:#c0392b;background:#fbf1ef;color:#c0392b}html.dark .saled-os{background:transparent;color:#7fc79a;border-color:#3f9a6c}html.dark .saled-os.off{color:#f08a7f;border-color:#a0483f}
+.saled-or{display:grid;grid-template-columns:1fr 1fr;gap:8px}.saled-or .saled-in{height:40px}.saled-or .saled-in span{font-size:12px;color:var(--mute);white-space:nowrap}
+.saled-inv{height:40px;border-radius:10px;border:1px dashed var(--line2,var(--line));background:none;color:var(--mute);font:700 13px var(--body,inherit);cursor:pointer}
+.saled-note{font-size:12.5px;color:var(--mute);line-height:1.55;margin:0}
+.saled-f{display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--line)}.saled-f .msg{flex:1;min-width:0;margin:0}.saled-f .btn{min-height:44px;padding:0 18px}
+.salecf{z-index:960}.salecf-b{font-size:14.5px;line-height:1.6;margin:8px 0}.salecf-b p{margin:0}.salecf-b p:first-child{font-weight:700;margin-bottom:4px}
+.salehc .sale-log{margin-top:4px}
+.saledr .sd-b{overflow-x:hidden}.saledr input,.sale-q input{width:auto!important;flex:1 1 0;min-width:0!important;max-width:100%;border:0!important;background:none!important;box-shadow:none!important;height:auto!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:0!important;outline:0!important}
+.saled-in:focus-within,.sale-q:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc2,rgba(47,125,85,.15))}
+.saled-2,.saled-or{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media(max-width:560px){.sale-pa{margin-left:0;width:100%}.sale-pa .btn{flex:1}.saled-2,.saled-or{grid-template-columns:minmax(0,1fr)}.sale-chip{height:36px;padding:0 11px;font-size:13.5px}.sale-cat{height:38px;padding:0 12px;font-size:14px}}
+
 .ntback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900;opacity:1;transition:opacity .2s}.ntback.hidden{display:none}
 .ntdrawer{position:fixed;top:0;right:0;bottom:0;width:min(380px,88vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}
 .ntdrawer.on{transform:none}.ntd-h{display:flex;align-items:center;gap:8px;padding:4px 2px 12px;border-bottom:1px solid var(--line)}.ntd-h b{font-size:18px}.ntd-h span{flex:1;color:var(--mute);font-size:13px}.ntd-b{overflow:auto;flex:1;padding-top:4px}
@@ -2921,7 +2979,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </div>
 
   <section id="v-stock" class="hidden" data-cur="cur">
-    <nav class="subtabs" data-subfor="stock" role="tablist"><button type="button" role="tab" data-subgo="cur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>재고</span><i class="sdot"></i></button></nav>
+    <nav class="subtabs" data-subfor="stock" role="tablist"><button type="button" role="tab" data-subgo="cur"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5-9 4.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>재고</span><i class="sdot"></i></button><button type="button" role="tab" data-subgo="sale"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.4 1.4 0 0 1 0 2l-6.7 6.7a1.4 1.4 0 0 1-2 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.6" fill="currentColor"/></svg><span>판매</span><i class="sdot"></i></button></nav>
     <div class="card stkcur" data-sub="cur">
       <div class="hh"><h2>현재 재고</h2><span class="msg" id="stksum"></span><button class="retchip hidden" type="button" id="ret-chip" data-subgo2="ret"></button><span id="stkshare"></span><button class="ibtn ibtn-acc" id="stk-editbtn" aria-pressed="false" title="편집 (재고 수정 · 순서 바꾸기)" aria-label="편집"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
       <div class="stkpanel hidden" id="stkedit">
@@ -2976,6 +3034,19 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <div class="ret-foot"><label class="ret-ded"><input type="checkbox" id="wst-deduct" checked> 완료할 때 재고에서 빼기</label><span class="sp"></span><button class="btn pri" type="button" id="wst-send" disabled>폐기 완료</button></div>
       <p class="msg" id="wst-msg"></p>
       <div class="ret-past"><h3>지난 폐기</h3><div id="wst-hist"></div></div><p class="ret-moved">지난 기록은 <button type="button" class="linkbtn iczno" data-go2hist="1">기록 · 통계 → 날짜별 기록</button>에서 날짜를 누르면 봐요</p>
+    </div>
+      <div class="card salec" data-sub="sale" id="salecard">
+      <div class="hh"><h2>판매 관리</h2><span class="msg" id="salemsg"></span><span class="sp"></span><button class="ibtn iczno" type="button" id="sale-re" title="카페24에서 다시 불러오기" aria-label="카페24에서 다시 불러오기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3L19.5 9"/><path d="M19.5 4v5h-5"/></svg></button></div>
+      <p class="help">카페24 상품을 품절로 바꾸면 마켓플러스로 연결된 스마트스토어 · 쿠팡도 같이 바뀌어요. 바꾸는 건 관리자만 할 수 있어요.</p>
+      <div class="sale-f" id="sale-f" role="group" aria-label="판매 상태"></div>
+      <div class="sale-cats" id="sale-cats" role="tablist" aria-label="카테고리"></div>
+      <label class="sale-q"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="sale-q" type="search" placeholder="상품 이름 검색 (예: 비올)" aria-label="상품 검색" autocomplete="off"></label>
+      <p class="msg sale-hidtip hidden" id="sale-hidtip">카페24에서 ‘진열 안 함’으로 숨겨 둔 상품이에요. 손님에게는 안 보여요.</p>
+      <div class="sale-list" id="sale-list"></div>
+    </div>
+    <div class="card salelogc" data-sub="sale" id="salelogcard">
+      <div class="hh"><h2>처리 기록</h2><span class="msg">최근 30개 · 날짜별로는 기록 › 날짜별 기록에서 봐요</span></div>
+      <div class="sale-log" id="sale-log"></div>
     </div>
   </section>
 
@@ -3057,6 +3128,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         </div>
       </div>
     </div>
+    <div class="card salehc hidden" id="salehist" data-sub="days"></div>
     <div class="card" id="hstat" data-sub="days"></div>
     <div class="card adm-only c24x" id="c24x" data-sub="days">
       <div class="hh"><h2>카페24 전체 주문 엑셀로 받기</h2></div>
@@ -5081,6 +5153,7 @@ function subSet(tab, key, noScroll) {
   sec.querySelectorAll('[data-subgo]').forEach(b => { const on = b.dataset.subgo === key; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
   if (!noScroll) { const t = sec.querySelector('.subtabs'); if (t && t.getBoundingClientRect().top < 0) t.scrollIntoView({ block: 'start' }); }
   if (tab === 'hist' && key === 'days') setTimeout(() => { try { if (stkOpen()) renderStock(); } catch (e) {} }, 0);
+  if (tab === 'stock' && key === 'sale') setTimeout(() => { try { saleShow(); } catch (e) {} }, 0);
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-subgo]'); if (!b) return; subSet(b.closest('.subtabs').dataset.subfor, b.dataset.subgo); });
 ['run', 'hist', 'stock', 'rules'].forEach(t => { let k = null; try { k = sessionStorage.getItem('herb5_sub_' + t); } catch (e) {} if (k && !$('v-' + t).querySelector('[data-subgo="' + k + '"]')) k = null; subSet(t, k || $('v-' + t).dataset.cur, true); });
@@ -6120,6 +6193,7 @@ function renderHistCal() {
   $('hcal').innerHTML = g + `</div><p class="msg hmsum">${m + 1}월 기록 ${md}일 · 주문 ${mt}건</p>`;
 }
 function renderHistDay() {
+  try { renderSaleHist(); } catch (er) {}
   const el = $('hday'), d = histSel, e = hist[d];
   if (!e) { el.innerHTML = `<div class="hh"><h2>${fmtDay(d)}</h2></div><div class="sumempty">이 날짜에는 기록이 없어요.<br>정리 탭에서 원본을 올리면 주문이 들어온 날짜 기준으로 자동 저장돼요.</div>`; return; }
   const res = dayResult(d), ords = dayOrders(d);
@@ -6631,6 +6705,7 @@ function stockInit(db) {
       const next = {}, list = qs.docs || (qs.forEach ? (() => { const a = []; qs.forEach(x => a.push(x)); return a; })() : []);
       list.forEach(d => { const v = d.data(); if (v && v.name) next[d.id] = v; });
       stock = next; try { ktFromStock(true); } catch (e) {} if (stkOpen()) renderStock(); homeSoon(); try { c24SyncCheck(); } catch (e) {} if (issOpen()) renderIssue(); if ($('hsales') && !$('v-hist').classList.contains('hidden')) renderSales();
+      try { if (saleOpen()) renderSaleLog(); renderSaleHist(); } catch (e) {}
     }, () => {}); } catch (e) {}
   } else { try { stock = JSON.parse(localStorage.getItem('herb5_stock') || '{}') || {}; } catch (e) { stock = {}; } }
 }
@@ -9180,7 +9255,7 @@ async function c24Call(path, opt) {
   if (!r.ok) { const e = new Error(d.message || ('중계 서버 오류 ' + r.status)); e.code = d.error; throw e; }
   return d;
 }
-function c24ScopeTxt(sc) { const M = { read_order: '주문 읽기', write_order: '주문 쓰기', read_shipping: '배송 읽기', read_community: '게시판 읽기', read_product: '상품 읽기', read_salesreport: '매출통계 읽기', read_application: '앱 읽기', write_application: '앱 쓰기' };
+function c24ScopeTxt(sc) { const M = { read_order: '주문 읽기', write_order: '주문 쓰기', read_shipping: '배송 읽기', read_community: '게시판 읽기', read_product: '상품 읽기', write_product: '상품 쓰기', read_category: '상품분류 읽기', read_salesreport: '매출통계 읽기', read_application: '앱 읽기', write_application: '앱 쓰기' };
   return (sc || []).map(x => M[String(x).replace(/^mall\./, '')] || x).join(', ') || '(없음)'; }
 async function c24Status() {
   const st = $('c24st');
@@ -10203,10 +10278,217 @@ srcLabel('규칙을 불러오는 중…');
   setTimeout(close, reduce ? 1000 : 3300);
   sp.addEventListener('click', close);
 })();
+// ---------- 판매 관리 (재고 관리 › 판매): 카페24 상품 품절 · 판매 재개 · 가격 · 수량 바꾸기 ----------
+// 상품 목록은 이 기기에 잠깐 저장(h5_sale)하고, 바꾼 기록은 공용 저장소 stock/salelog 에 남겨요 (상품 정보만, 손님 정보 없음).
+// stock/salesnap 은 지난번 카페24 상태라서, 카페24에서 직접 바꾼 것도 "카페24에서 바뀜"으로 기록할 수 있어요.
+const SALE_LOG = 'salelog', SALE_SNAP = 'salesnap';
+let saleL = null, saleCats = null, saleAt = 0, saleF = 'all', saleCat = '전체', saleQ = '', saleBusy = false, saleErr = '', saleCatErr = '', saleEd = null, saleCfDo = null, saleBusyNo = null, saleOk = '';
+try { const c = JSON.parse(localStorage.getItem('h5_sale') || 'null'); if (c && Array.isArray(c.list)) { saleL = c.list; saleCats = c.cats || null; saleAt = c.at || 0; } } catch (e) {}
+const saleWon = n => (Number(n) || 0).toLocaleString('ko-KR') + '원';
+const saleVOff = v => !v.selling || (v.inv && v.qty != null && v.qty <= 0);
+const saleStat = p => !p.selling ? 'off' : (p.v.length && p.v.every(saleVOff)) ? 'off' : p.v.some(saleVOff) ? 'part' : 'on';
+const saleOpen = () => { const s = $('v-stock'); return !!s && !s.classList.contains('hidden') && s.dataset.cur === 'sale'; };
+const saleAdm = () => document.body.classList.contains('is-admin');
+const saleMe = () => { try { return (typeof fbUser !== 'undefined' && fbUser && fbUser.email) ? (typeof showId === 'function' ? showId(fbUser.email) : fbUser.email.split('@')[0]) : '나'; } catch (e) { return '나'; } };
+const saleKst = at => new Date(new Date(at).getTime() + 9 * 3600e3).toISOString();
+const saleCache = () => { try { localStorage.setItem('h5_sale', JSON.stringify({ list: saleL, cats: saleCats, at: saleAt })); } catch (e) {} };
+const saleLogs = () => (stock[SALE_LOG] && stock[SALE_LOG].kind === 'salelog' && stock[SALE_LOG].list) || [];
+function saleCatMap() {   // 상품번호 → 맨 위 카테고리 이름 (카페24 상품분류 순서대로)
+  const m = {}, order = []; if (!Array.isArray(saleCats) || !saleCats.length) return { m, order };
+  const by = {}; saleCats.forEach(c => { by[c.no] = c; });
+  const top = c => { let x = c, g = 0; while (x && x.parent && by[x.parent] && g++ < 8) x = by[x.parent]; return x || c; };
+  saleCats.forEach(c => { const t = top(c); (c.p || []).forEach(no => { if (!(no in m)) m[no] = t.name; }); });
+  const used = new Set(Object.values(m)); saleCats.forEach(c => { const t = top(c); if (used.has(t.name) && !order.includes(t.name)) order.push(t.name); });
+  return { m, order };
+}
+async function saleLoad(fresh) {
+  if (saleBusy) return; if (!c24Cfg().worker || !window.h5Fb) { renderSale(); return; }
+  saleBusy = true; saleErr = ''; saleOk = ''; renderSale();
+  try {
+    let off = 0, list = [];
+    for (let i = 0; i < 60; i++) { const d = await c24Call('/sale/list?offset=' + off); list = list.concat(d.list || []); const m = $('salemsg'); if (m) m.textContent = '카페24에서 불러오는 중… ' + list.length + '개'; if (d.next == null) break; off = d.next; }
+    saleCatErr = '';
+    try { const c = await c24Call('/sale/cats' + (fresh ? '?fresh=1' : '')); saleCats = c.cats || null; if (c.err) saleCatErr = c.err; } catch (e) { saleCatErr = e.message || String(e); }
+    saleL = list; saleAt = Date.now(); saleCache();
+    try { await saleSnapCheck(); } catch (e) {}
+  } catch (e) { saleErr = (e && e.message) || String(e); }
+  finally { saleBusy = false; renderSale(); }
+}
+function saleShow() { renderSale(); if (!saleBusy && (!saleL || Date.now() - saleAt > 10 * 60e3)) saleLoad(false); }
+function saleRow(p) {
+  const st = saleStat(p), off = st === 'off', adm = saleAdm(), dis = saleBusyNo === p.no ? ' disabled' : '';
+  const showV = p.opt || p.v.some(v => v.inv);
+  const chips = showV ? p.v.map(v => { const o = saleVOff(v), zero = v.selling && v.inv && v.qty != null && v.qty <= 0;
+    const btn = !adm ? '' : zero ? `<button type="button" class="sale-ob" data-saleed="${p.no}"${dis}>수량</button>` : `<button type="button" class="sale-ob" data-salev="${p.no}|${esc(v.code)}" aria-label="${esc(p.name + ' ' + v.name + (v.selling ? ' 품절' : ' 판매 재개'))}"${dis}>${v.selling ? '품절' : '재개'}</button>`;
+    return `<div class="sale-o${o ? ' off' : ''}"><span class="n">${esc(v.name)}</span>${v.add ? `<span class="a">${v.add > 0 ? '+' : ''}${saleWon(v.add)}</span>` : ''}${v.inv && v.qty != null && v.qty > 0 ? `<span class="q${v.qty <= 10 ? ' lo' : ''}">${v.qty}개</span>` : ''}<span class="t">${!v.selling ? '품절' : zero ? '수량 0' : '판매 중'}</span>${btn}</div>`; }).join('') : '';
+  return `<div class="sale-p${off ? ' off' : ''}"><div class="sale-ph">${p.img ? `<img src="${esc(p.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ''}<div class="sale-pi"><div class="sale-pn"><b>${esc(p.name)}</b><span class="sale-b ${st}">${off ? '품절' : st === 'part' ? '일부 품절' : '판매 중'}</span>${!p.display ? '<span class="sale-b hid">숨김</span>' : ''}</div><div class="sale-pp"><b>${saleWon(p.price)}</b>${p.retail > p.price ? `<s>${saleWon(p.retail)}</s>` : ''}<span>${esc(p.code)}</span></div></div>${adm ? `<div class="sale-pa"><button class="btn sm" type="button" data-saleed="${p.no}"${dis}>수정</button><button class="btn sm${off ? '' : ' sale-red'}" type="button" data-salep="${p.no}"${dis}>${off ? '판매 재개' : '전체 품절'}</button></div>` : ''}</div>${chips ? `<div class="sale-os">${chips}</div>` : ''}</div>`;
+}
+function renderSale() {
+  if (!$('salecard')) return; const msg = $('salemsg'), list = $('sale-list');
+  if (!c24Cfg().worker || !window.h5Fb) { msg.textContent = ''; $('sale-f').innerHTML = ''; $('sale-cats').innerHTML = ''; list.innerHTML = '<div class="sumempty">카페24에 연결된 웹 사이트에서 로그인하면 쓸 수 있어요.</div>'; renderSaleLog(); return; }
+  msg.className = 'msg' + (saleErr ? ' err' : saleOk ? ' ok' : '');
+  msg.textContent = saleBusy ? '카페24에서 불러오는 중…' : saleErr ? saleErr : saleOk ? saleOk : saleAt ? new Date(saleAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' 불러옴' + (saleCatErr ? ' · 카테고리 못 불러옴' : '') : '';
+  if (saleCatErr && !saleErr && !saleBusy && !saleOk) msg.title = saleCatErr;
+  if (!saleL) { $('sale-f').innerHTML = ''; $('sale-cats').innerHTML = ''; list.innerHTML = `<div class="sumempty">${saleBusy ? '카페24 상품을 불러오는 중이에요…' : '오른쪽 위 새로고침을 눌러 카페24 상품을 불러와 주세요.'}</div>`; renderSaleLog(); return; }
+  const { m, order } = saleCatMap(), catOf = p => m[p.no] || '분류 없음';
+  const q = saleQ.replace(/\s+/g, '').toLowerCase();
+  const found = saleL.filter(p => !q || p.name.replace(/\s+/g, '').toLowerCase().includes(q) || String(p.code).toLowerCase().includes(q) || p.v.some(v => v.name.replace(/\s+/g, '').toLowerCase().includes(q)));
+  const vis = p => saleF === 'hid' ? !p.display : p.display;
+  const names = order.slice(); if (names.length && saleL.some(p => !m[p.no])) names.push('분류 없음');
+  if (saleCat !== '전체' && !names.includes(saleCat)) saleCat = '전체';
+  const inCat = found.filter(p => saleCat === '전체' || catOf(p) === saleCat), shown = inCat.filter(p => p.display);
+  const F = [['all', '전체', shown.length], ['on', '판매 중', shown.filter(p => saleStat(p) !== 'off').length], ['off', '품절', shown.filter(p => saleStat(p) !== 'on').length], ['hid', '숨김', inCat.filter(p => !p.display).length]];
+  $('sale-f').innerHTML = F.map(([k, t, n]) => `<button type="button" class="sale-chip${k === 'hid' ? ' hid' : ''}${saleF === k ? ' on' : ''}" data-salef="${k}" aria-pressed="${saleF === k}">${t} <b>${n}</b></button>`).join('');
+  $('sale-cats').classList.toggle('hidden', names.length < 2);
+  $('sale-cats').innerHTML = names.length < 2 ? '' : ['전체'].concat(names).map(c => { const n = found.filter(p => vis(p) && (c === '전체' || catOf(p) === c)).length; return `<button type="button" role="tab" class="sale-cat${saleCat === c ? ' on' : ''}" aria-selected="${saleCat === c}" data-salecat="${esc(c)}">${esc(c)} <span>${n}</span></button>`; }).join('');
+  $('sale-hidtip').classList.toggle('hidden', saleF !== 'hid');
+  const rows = inCat.filter(vis).filter(p => saleF === 'all' || saleF === 'hid' || (saleF === 'off' ? saleStat(p) !== 'on' : saleStat(p) !== 'off'));
+  let groups = names.length < 2 ? [{ c: '', r: rows }] : (saleCat === '전체' ? names : [saleCat]).map(c => ({ c, r: rows.filter(p => catOf(p) === c) }));
+  groups = groups.filter(g => g.r.length);
+  list.innerHTML = groups.length ? groups.map(g => { const src = inCat.filter(p => vis(p) && (!g.c || catOf(p) === g.c)), off = src.filter(p => saleStat(p) === 'off').length, part = src.filter(p => saleStat(p) === 'part').length;
+    return `<section class="sale-g">${g.c ? `<div class="sale-gh"><h3>${esc(g.c)}</h3><span>${src.length}개 상품${off ? ' · 품절 ' + off : ''}${part ? ' · 일부 품절 ' + part : ''}</span></div>` : ''}${g.r.map(saleRow).join('')}</section>`; }).join('')
+    : `<div class="sumempty">${saleF === 'hid' ? '숨겨 둔 상품이 없어요' : '맞는 상품이 없어요'}</div>`;
+  renderSaleLog();
+}
+const SALE_K = { off: '품절', on: '판매 재개', hide: '숨김', show: '진열', edit: '수정' };
+const saleLi = (x, withDay) => { const t = saleKst(x.at); return `<div class="sale-li"><span class="w">${withDay ? +t.slice(5, 7) + '/' + +t.slice(8, 10) + ' ' : ''}${t.slice(11, 16)} · ${esc(x.who || '')}</span><span class="k ${esc(x.k)}">${SALE_K[x.k] || ''}</span><span class="x">${esc(x.pn || '')}${x.on ? ' · ' + esc(x.on) : ''}${x.t ? ' — ' + esc(x.t) : ''}${x.days ? ' (품절 ' + x.days + '일)' : ''}</span></div>`; };
+function renderSaleLog() { const el = $('sale-log'); if (!el) return; const L = saleLogs().slice(0, 30); el.innerHTML = L.length ? L.map(x => saleLi(x, true)).join('') : '<p class="msg">아직 바꾼 상품이 없어요. 위에서 [품절]이나 [수정]을 눌러 보세요.</p>'; }
+function renderSaleHist() {   // 기록 › 날짜별 기록: 고른 날의 품절 · 판매 재개 · 수정 기록
+  const el = $('salehist'); if (!el) return; const d = typeof histSel !== 'undefined' ? histSel : ''; const L = d ? saleLogs().filter(x => saleKst(x.at).slice(0, 10) === d) : [];
+  el.classList.toggle('hidden', !L.length && !saleLogs().length);
+  el.innerHTML = `<div class="hh"><h2>판매 변경 (품절 · 판매 재개)</h2><span class="msg">${L.length ? L.length + '건' : ''}</span></div><div class="sale-log">${L.length ? L.slice().reverse().map(x => saleLi(x, false)).join('') : '<p class="msg">이 날은 품절 · 판매 재개 기록이 없어요.</p>'}</div>`;
+}
+function saleLE(p, v, k, t) {   // 기록 한 줄. 판매 재개면 마지막 품절부터 며칠이었는지 같이 적어요
+  const x = { at: new Date().toISOString(), who: saleMe(), no: p.no, pn: p.name, on: v ? v.name : '', k, t: t || '', src: 'site' };
+  if (k === 'on') { const prev = saleLogs().find(y => y.no === p.no && (y.on || '') === x.on && (y.k === 'off' || y.k === 'on')); if (prev && prev.k === 'off') x.days = Math.max(1, Math.round((Date.now() - new Date(prev.at).getTime()) / 864e5)); }
+  return x;
+}
+async function saleLog(entries) {
+  if (!entries.length) return; if (stockDb && !ktReady) return;
+  const cut = Date.now() - 180 * 864e5, list = entries.concat(saleLogs()).filter(x => new Date(x.at).getTime() > cut).slice(0, 1500);
+  await stockWrite(SALE_LOG, { kind: 'salelog', name: '__salelog', list, updatedAt: new Date().toISOString() });
+}
+const saleSig = p => ({ s: p.selling ? 1 : 0, d: p.display ? 1 : 0, v: Object.fromEntries(p.v.map(v => [v.code, saleVOff(v) ? 0 : 1])) });
+async function saleSnapCheck() {   // 카페24에서 직접 바꾼 것(또는 수량이 0이 돼 저절로 품절된 것)을 알아채서 기록해요
+  if (!saleL || (stockDb && !ktReady)) return;
+  const sd = stock[SALE_SNAP], old = sd && sd.kind === 'salesnap' ? sd.m : null, m = {}; saleL.forEach(p => { m[p.no] = saleSig(p); });
+  if (old) { const logs = [], mk = (p, v, k, t) => Object.assign(saleLE(p, v, k, t), { who: '카페24', src: 'c24' });
+    saleL.forEach(p => { const o = old[p.no], c = m[p.no]; if (!o) return;
+      if (o.s !== c.s) logs.push(mk(p, null, c.s ? 'on' : 'off', c.s ? '카페24에서 판매함으로 바뀜' : '카페24에서 판매 안 함으로 바뀜'));
+      if (o.d !== c.d) logs.push(mk(p, null, c.d ? 'show' : 'hide', c.d ? '카페24에서 진열함으로 바뀜' : '카페24에서 진열 안 함으로 바뀜'));
+      p.v.forEach(v => { if (o.v && v.code in o.v && o.v[v.code] !== c.v[v.code]) logs.push(mk(p, v, c.v[v.code] ? 'on' : 'off', c.v[v.code] ? '카페24에서 다시 팔림' : (v.inv && v.qty != null && v.qty <= 0 ? '수량이 0개가 돼 품절' : '카페24에서 품절로 바뀜'))); }); });
+    if (logs.length) await saleLog(logs); }
+  if (!old || JSON.stringify(old) !== JSON.stringify(m)) await stockWrite(SALE_SNAP, { kind: 'salesnap', name: '__salesnap', m, at: new Date().toISOString() });
+}
+async function saleSnapSet(no) {   // 우리 사이트에서 바꾼 건 "카페24에서 바뀜"으로 또 적히지 않게, 지난 상태를 바로 고쳐 둬요
+  if (stockDb && !ktReady) return; const sd = stock[SALE_SNAP], p = (saleL || []).find(x => x.no === no); if (!sd || sd.kind !== 'salesnap' || !p) return;
+  const m = Object.assign({}, sd.m); m[no] = saleSig(p); await stockWrite(SALE_SNAP, { kind: 'salesnap', name: '__salesnap', m, at: new Date().toISOString() });
+}
+function saleAsk(title, lines, btn, red, fn) {
+  saleCfDo = fn; $('salecf-t').textContent = title; $('salecf-b').innerHTML = lines.map(l => `<p>${esc(l)}</p>`).join('');
+  const y = $('salecf-yes'); y.textContent = btn; y.className = 'btn ' + (red ? 'dangerfill' : 'pri'); $('salecf').classList.remove('hidden'); setTimeout(() => y.focus(), 30);
+}
+function saleCfClose() { $('salecf').classList.add('hidden'); saleCfDo = null; }
+async function saleSend(p, body, logs, okTxt) {
+  if (!saleAdm()) { saleErr = '관리자만 바꿀 수 있어요'; renderSale(); return false; }
+  saleBusyNo = p.no; saleErr = ''; saleOk = ''; renderSale();
+  try {
+    const d = await c24Call('/sale/save', { method: 'POST', body: JSON.stringify(Object.assign({ no: p.no }, body)) });
+    if (d.product) { const i = saleL.findIndex(x => x.no === p.no); if (i >= 0) saleL[i] = d.product; saleCache(); }
+    try { await saleLog(logs); await saleSnapSet(p.no); } catch (e) {}
+    saleOk = okTxt || '카페24에 반영했어요'; return true;
+  } catch (e) { saleErr = '카페24에 반영하지 못했어요: ' + ((e && e.message) || e); return false; }
+  finally { saleBusyNo = null; renderSale(); }
+}
+function saleProdAct(no) {
+  const p = (saleL || []).find(x => x.no === no); if (!p) return;
+  if (saleStat(p) === 'off') {
+    const vs = p.v.filter(v => !v.selling), zero = p.v.filter(v => v.inv && v.qty != null && v.qty <= 0);
+    saleAsk('다시 판매할까요?', [p.name + ' (옵션 전체)', '자사몰 · 스마트스토어 · 쿠팡에서 다시 살 수 있어요.'].concat(zero.length ? ['수량이 0개인 옵션(' + zero.map(v => v.name).join(', ') + ')은 [수정]에서 수량을 넣어야 팔려요.'] : []), '판매 재개', false,
+      () => saleSend(p, { prod: { selling: 'T' }, vars: vs.map(v => ({ variant_code: v.code, selling: 'T' })) }, [saleLE(p, null, 'on', '옵션 전체')], p.name + ' 판매 재개했어요'));
+  } else saleAsk('품절로 바꿀까요?', [p.name + ' (상품 전체)', '자사몰 · 스마트스토어 · 쿠팡에서 품절로 보여요.'], '품절로 바꾸기', true,
+    () => saleSend(p, { prod: { selling: 'F' } }, [saleLE(p, null, 'off', '상품 전체')], p.name + ' 품절로 바꿨어요'));
+}
+function saleVarAct(key) {
+  const [no, code] = key.split('|'), p = (saleL || []).find(x => x.no === +no), v = p && p.v.find(x => x.code === code); if (!v) return;
+  const on = !v.selling;
+  saleAsk(on ? '이 옵션을 다시 팔까요?' : '이 옵션만 품절로 바꿀까요?', [p.name + ' · ' + v.name, on ? '자사몰 · 스마트스토어 · 쿠팡에서 다시 살 수 있어요.' : '이 옵션만 품절로 보이고, 다른 옵션은 그대로 팔려요.'], on ? '판매 재개' : '품절로 바꾸기', !on,
+    () => saleSend(p, { vars: [{ variant_code: v.code, selling: on ? 'T' : 'F' }] }, [saleLE(p, v, on ? 'on' : 'off', '')], p.name + ' · ' + v.name + (on ? ' 판매 재개했어요' : ' 품절로 바꿨어요')));
+}
+// 수정 창
+async function saleEdOpen(no) {
+  const p = (saleL || []).find(x => x.no === no); if (!p) return;
+  saleEd = JSON.parse(JSON.stringify(p)); saleEd.base = JSON.parse(JSON.stringify(p));
+  $('saled-t').textContent = '상품 수정'; saleEdRender(); $('saledrawer').classList.add('on'); $('saledrawer').setAttribute('aria-hidden', 'false'); $('saledback').classList.remove('hidden');
+  try { const d = await c24Call('/sale/one?no=' + no); if (d.product && saleEd && saleEd.no === no && !saleEdDiff().L.length) { const i = saleL.findIndex(x => x.no === no); if (i >= 0) saleL[i] = d.product; saleCache(); saleEd = JSON.parse(JSON.stringify(d.product)); saleEd.base = JSON.parse(JSON.stringify(d.product)); saleEdRender(); renderSale(); } } catch (e) {}
+}
+function saleEdClose() { saleEd = null; $('saledrawer').classList.remove('on'); $('saledrawer').setAttribute('aria-hidden', 'true'); $('saledback').classList.add('hidden'); }
+function saleEdRender() {
+  const e = saleEd; if (!e) return;
+  $('saled-b').innerHTML = `<p class="saled-note">상품번호 ${e.no} · ${esc(e.code)}</p>
+    <label class="saled-l">상품명<span class="saled-in"><input data-saledf="name" value="${esc(e.name)}" maxlength="250"></span></label>
+    <div class="saled-2"><label class="saled-l">판매가 <small>손님이 내는 값</small><span class="saled-in"><input class="r" data-saledf="price" inputmode="numeric" value="${e.price.toLocaleString('ko-KR')}">원</span></label>
+    <label class="saled-l">소비자가 <small>줄 그어 보이는 값</small><span class="saled-in"><input class="r" data-saledf="retail" inputmode="numeric" value="${e.retail ? e.retail.toLocaleString('ko-KR') : ''}" placeholder="0">원</span></label></div>
+    <div class="saled-l">진열 상태<div class="saled-seg"><button type="button" data-saledseg="display|1" class="${e.display ? 'on' : ''}">진열함</button><button type="button" data-saledseg="display|0" class="hid${!e.display ? ' on' : ''}">진열 안 함 (숨김)</button></div></div>
+    <div class="saled-l">판매 상태<div class="saled-seg"><button type="button" data-saledseg="selling|1" class="${e.selling ? 'on' : ''}">판매함</button><button type="button" data-saledseg="selling|0" class="bad${!e.selling ? ' on' : ''}">판매 안 함 (품절)</button></div></div>
+    ${e.v.length ? `<div class="saled-l">옵션${e.v.map((v, i) => `<div class="saled-o"><div class="saled-oh"><b>${esc(v.name)}</b><button type="button" class="saled-os${v.selling ? '' : ' off'}" data-saledvs="${i}">${v.selling ? '판매 중' : '품절'}</button></div>
+      <div class="saled-or">${e.opt ? `<span class="saled-in"><span>추가 금액</span><input class="r" data-saledadd="${i}" inputmode="numeric" value="${v.add.toLocaleString('ko-KR')}">원</span>` : ''}${v.inv ? `<span class="saled-in"><span>수량</span><input class="r" data-saledqty="${i}" inputmode="numeric" value="${v.qty == null ? '' : v.qty}" placeholder="0">개</span>` : `<button type="button" class="saled-inv" data-saledinv="${i}">수량 관리 켜기</button>`}</div></div>`).join('')}</div>` : ''}
+    <p class="saled-note">추가 금액은 판매가에 더해지는 값이에요. 수량은 카페24에서 팔 수 있는 남은 개수예요. 0개가 되면 저절로 품절로 보여요.<br>옵션 이름 · 카테고리 · 사진 · 상세 설명 · 배송비는 카페24 관리자에서 고쳐요.</p>`;
+  saleEdFoot();
+}
+const saleNum = v => { const t = String(v).replace(/[^0-9-]/g, ''); return t === '' || t === '-' ? 0 : parseInt(t, 10); };
+function saleEdDiff() {
+  const e = saleEd, o = e && e.base, L = [], prod = {}, vars = [], inv = [], logs = [], ed = []; if (!e) return { L };
+  const nm = e.name.trim();
+  if (nm && nm !== o.name) { prod.product_name = nm; L.push('상품명: ' + o.name + ' → ' + nm); ed.push('상품명 변경'); }
+  if (e.price !== o.price) { prod.price = e.price; L.push('판매가: ' + saleWon(o.price) + ' → ' + saleWon(e.price)); ed.push('판매가 ' + saleWon(o.price) + ' → ' + saleWon(e.price)); }
+  if (e.retail !== o.retail) { prod.retail_price = e.retail; L.push('소비자가: ' + saleWon(o.retail) + ' → ' + saleWon(e.retail)); ed.push('소비자가 ' + saleWon(e.retail)); }
+  if (e.display !== o.display) { prod.display = e.display ? 'T' : 'F'; L.push('진열: ' + (e.display ? '진열 안 함 → 진열함' : '진열함 → 진열 안 함 (숨김)')); logs.push(saleLE(o, null, e.display ? 'show' : 'hide', '')); }
+  if (e.selling !== o.selling) { prod.selling = e.selling ? 'T' : 'F'; L.push('판매: ' + (e.selling ? '판매 안 함 → 판매함' : '판매함 → 판매 안 함 (품절)')); logs.push(saleLE(o, null, e.selling ? 'on' : 'off', '상품 전체')); }
+  e.v.forEach((v, i) => { const ov = o.v[i], r = { variant_code: v.code }; let ch = false;
+    if (v.add !== ov.add) { r.additional_amount = v.add; ch = true; L.push(v.name + ' 추가 금액: ' + saleWon(ov.add) + ' → ' + saleWon(v.add)); ed.push(v.name + ' 추가 금액 ' + saleWon(v.add)); }
+    if (v.selling !== ov.selling) { r.selling = v.selling ? 'T' : 'F'; ch = true; L.push(v.name + ': ' + (v.selling ? '판매 재개' : '품절')); logs.push(saleLE(o, v, v.selling ? 'on' : 'off', '')); }
+    if (ch) vars.push(r);
+    if (v.inv && (!ov.inv || v.qty !== ov.qty)) { inv.push({ variant_code: v.code, quantity: v.qty || 0 }); L.push(v.name + ' 수량: ' + (ov.inv && ov.qty != null ? ov.qty + '개' : '관리 안 함') + ' → ' + (v.qty || 0) + '개'); ed.push(v.name + ' 수량 ' + (v.qty || 0) + '개'); } });
+  if (ed.length) logs.push(saleLE(o, null, 'edit', ed.join(', ')));
+  return { L, body: { prod, vars, inv }, logs };
+}
+function saleEdFoot() { const n = saleEdDiff().L.length; $('saled-n').textContent = n ? '바뀐 곳 ' + n + '개' : '아직 바뀐 곳이 없어요'; $('saled-ok').disabled = !n; }
+document.addEventListener('input', ev => { const t = ev.target; if (!saleEd || !t.closest || !t.closest('#saledrawer')) return;
+  if (t.dataset.saledf === 'name') saleEd.name = t.value;
+  else if (t.dataset.saledf === 'price') saleEd.price = Math.max(0, saleNum(t.value));
+  else if (t.dataset.saledf === 'retail') saleEd.retail = Math.max(0, saleNum(t.value));
+  else if (t.dataset.saledadd != null) saleEd.v[+t.dataset.saledadd].add = saleNum(t.value);
+  else if (t.dataset.saledqty != null) saleEd.v[+t.dataset.saledqty].qty = Math.max(0, saleNum(t.value));
+  saleEdFoot(); });
+document.addEventListener('click', ev => {
+  const t = ev.target.closest ? ev.target : null; if (!t) return;
+  let b;
+  if ((b = t.closest('[data-salef]'))) { saleF = b.dataset.salef; renderSale(); return; }
+  if ((b = t.closest('[data-salecat]'))) { saleCat = b.dataset.salecat; renderSale(); return; }
+  if ((b = t.closest('#sale-re'))) { saleLoad(true); return; }
+  if ((b = t.closest('[data-salep]'))) { saleProdAct(+b.dataset.salep); return; }
+  if ((b = t.closest('[data-salev]'))) { saleVarAct(b.dataset.salev); return; }
+  if ((b = t.closest('[data-saleed]'))) { saleEdOpen(+b.dataset.saleed); return; }
+  if (t.closest('#saled-x,#saled-no,#saledback')) { saleEdClose(); return; }
+  if ((b = t.closest('[data-saledseg]')) && saleEd) { const [f, v] = b.dataset.saledseg.split('|'); saleEd[f] = v === '1'; saleEdRender(); return; }
+  if ((b = t.closest('[data-saledvs]')) && saleEd) { const v = saleEd.v[+b.dataset.saledvs]; v.selling = !v.selling; saleEdRender(); return; }
+  if ((b = t.closest('[data-saledinv]')) && saleEd) { const v = saleEd.v[+b.dataset.saledinv]; v.inv = true; if (v.qty == null) v.qty = 0; saleEdRender(); const i = $('saled-b').querySelector(`[data-saledqty="${b.dataset.saledinv}"]`); if (i) { i.focus(); i.select(); } return; }
+  if (t.closest('#saled-ok') && saleEd) { const d = saleEdDiff(); if (!d.L.length) return; const e = saleEd;
+    if (d.body.inv.some(x => !x.quantity)) d.L.push('※ 수량 0개인 옵션은 품절로 보여요');
+    saleAsk('카페24에 저장할까요?', [e.base.name].concat(d.L.map(l => '· ' + l)), '저장하기', false, async () => { const ok = await saleSend(e.base, d.body, d.logs, e.base.name + ' 저장했어요'); if (ok) saleEdClose(); }); return; }
+  if (t.closest('#salecf-no')) { saleCfClose(); return; }
+  if (t.closest('#salecf-yes')) { const fn = saleCfDo; saleCfClose(); if (fn) fn(); return; }
+});
+document.addEventListener('keydown', ev => { if (ev.key !== 'Escape') return; if ($('salecf') && !$('salecf').classList.contains('hidden')) saleCfClose(); else if ($('saledrawer') && $('saledrawer').classList.contains('on')) saleEdClose(); });
+(function () { const q = $('sale-q'); if (q) q.addEventListener('input', () => { saleQ = q.value; renderSale(); }); })();
+document.addEventListener('click', ev => { const b = ev.target.closest && ev.target.closest('.tab[data-t="stock"],[data-go="stock"]'); if (b) setTimeout(() => { if (saleOpen()) saleShow(); }, 60); });
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 </script>
 <div class="ntback hidden" id="ntback"></div><aside class="ntdrawer" id="ntdrawer" role="dialog" aria-modal="true" aria-label="알림" aria-hidden="true"><div class="ntd-h"><b>알림</b><span id="ntd-n"></span><button class="ibtn" type="button" id="ntd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="ntd-b" id="hm-nt"></div></aside>
 <div class="sdback hidden" id="stkdback"></div><aside class="sdrawer" id="stkdrawer" role="dialog" aria-modal="true" aria-label="재고 수정" aria-hidden="true"><div class="sd-h"><b id="stkd-t">재고 수정</b><button class="ibtn" type="button" id="stkd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="stkd-b"></div></aside>
+<div class="sdback hidden" id="saledback"></div><aside class="sdrawer saledr" id="saledrawer" role="dialog" aria-modal="true" aria-label="상품 수정" aria-hidden="true"><div class="sd-h"><b id="saled-t">상품 수정</b><button class="ibtn iczno" type="button" id="saled-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="saled-b"></div><div class="saled-f"><span class="msg" id="saled-n"></span><button class="btn" type="button" id="saled-no">취소</button><button class="btn pri" type="button" id="saled-ok">저장</button></div></aside>
+<div class="modal hidden salecf" id="salecf" role="dialog" aria-modal="true" aria-labelledby="salecf-t"><div class="mbox"><h2 id="salecf-t"></h2><div class="salecf-b" id="salecf-b"></div><p class="msg">연결된 판매처에 반영되기까지 몇 분 걸릴 수 있어요</p><div class="row mact"><button class="btn" type="button" id="salecf-no">취소</button><button class="btn pri" type="button" id="salecf-yes">확인</button></div></div></div>
 <div class="sdback hidden" id="svdback"></div><aside class="sdrawer" id="svdrawer" role="dialog" aria-modal="true" aria-label="손님 상세" aria-hidden="true"><div class="sd-h"><b id="svd-t">손님 상세</b><button class="ibtn iczno" type="button" id="svd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="svd-b"></div></aside>
 <div class="sdback hidden" id="shdback"></div><aside class="sdrawer" id="shdrawer" role="dialog" aria-modal="true" aria-label="복사 · 공유" aria-hidden="true"><div class="sd-h"><b id="shd-t">복사하기</b><button class="ibtn iczno" type="button" id="shd-x" title="닫기" aria-label="닫기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="sd-b" id="shd-b"></div></aside>
 </body>

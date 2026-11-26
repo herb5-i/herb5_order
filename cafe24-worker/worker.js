@@ -43,6 +43,10 @@ export default {
       if (url.pathname === '/shipments' && req.method === 'POST') return json(await shipments(env, await req.json(), who), cors);
       if (url.pathname === '/market/cfg') { if (req.method === 'POST') { needAdmin(who); return json(await mkSetCfg(env, await req.json()), cors); } return json(await mkCfgOut(env), cors); }
       if (url.pathname === '/market/trend' && req.method === 'POST') return json(await mkTrend(env, await req.json()), cors);
+      if (url.pathname === '/sale/list') return json(await saleList(env, url.searchParams), cors);   // 판매 관리: 상품 · 옵션 목록 (100개씩)
+      if (url.pathname === '/sale/one') return json(await saleOne(env, url.searchParams.get('no')), cors);   // 판매 관리: 상품 하나 (수정 창 열 때 수량까지 새로)
+      if (url.pathname === '/sale/cats') return json(await saleCats(env, url.searchParams.get('fresh') === '1'), cors);   // 판매 관리: 카테고리 → 상품번호
+      if (url.pathname === '/sale/save' && req.method === 'POST') { needAdmin(who); return json(await saleSave(env, await req.json()), cors); }   // 품절 · 판매 재개 · 가격 · 수량 (관리자만)
       if (url.pathname === '/disconnect' && req.method === 'POST') { needAdmin(who); await env.TOKENS.delete('tok'); return json({ ok: true }, cors); }
       return json({ error: 'not_found' }, cors, 404);
     } catch (e) {
@@ -78,7 +82,7 @@ function authUrl(env, state) {
   const u = new URL(base(env) + '/oauth/authorize');
   u.searchParams.set('response_type', 'code'); u.searchParams.set('client_id', env.CAFE24_CLIENT_ID);
   u.searchParams.set('state', state); u.searchParams.set('redirect_uri', env.REDIRECT_URI);
-  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping mall.read_community mall.write_community mall.read_product');
+  u.searchParams.set('scope', 'mall.read_order mall.write_order mall.read_shipping mall.read_community mall.write_community mall.read_product mall.write_product mall.read_category');
   u.searchParams.set('prompt', 'consent');   // 권한을 새로 더했을 때도 동의 화면을 다시 띄워서 새 권한을 받아요
   return u.toString();
 }
@@ -461,6 +465,80 @@ async function wish(env, b) {
   }
   return { date, orders: seen, done: ok.length, already, fail: bad, left: Math.max(0, todo.length - max) };
 }
+
+// ---------- 판매 관리: 카페24 상품 품절 · 판매 재개 · 가격 · 수량 (상품 읽기 · 쓰기, 상품분류 읽기 권한) ----------
+// 손님 정보는 다루지 않아요. 바꾸기는 관리자만 할 수 있어요 (사이트에서 확인 창을 거쳐요).
+const SALE_NEED_W = '상품(Product) 쓰기';
+async function c24p(env, token, method, path, body, need) {   // 카페24가 잠깐 바쁘면(429) 조금 쉬었다가 다시 해요
+  for (let i = 0; i < 4; i++) {
+    const r = await fetch(base(env) + path, { method, headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json', 'X-Cafe24-Api-Version': API_VERSION }, body: body ? JSON.stringify(body) : undefined });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 429 && i < 3) { await new Promise(res => setTimeout(res, 1200 * (i + 1))); continue; }
+    if (r.status === 401 || r.status === 403) throw fail(403, 'scope_product', '카페24 앱에 [' + need + '] 권한이 없어요. 개발자센터 → 앱 → 권한에서 ' + need + '을 추가하고 저장한 뒤, 사이트에서 [카페24 연결]을 다시 눌러 동의해 주세요 (' + ((d.error && d.error.message) || r.status) + ')');
+    if (!r.ok) throw fail(r.status, 'cafe24', '카페24 상품 작업에 실패했어요: ' + ((d.error && d.error.message) || r.status));
+    return d;
+  }
+}
+const saleNum = v => Math.round(Number(v) || 0);
+function saleProd(p) {
+  const invs = {}; (p.inventories || []).forEach(x => { if (x && x.variant_code) invs[x.variant_code] = x; });
+  (p.variants || []).forEach(v => { const x = invs[v.variant_code] || (Array.isArray(v.inventories) ? v.inventories[0] : v.inventories) || null; if (x) { if (x.quantity != null) v.quantity = x.quantity; if (x.use_inventory) v.use_inventory = x.use_inventory; if (x.display_soldout) v.display_soldout = x.display_soldout; } });
+  const vs = (p.variants || []).map(v => ({ code: v.variant_code, name: (v.options || []).map(o => o.value).filter(Boolean).join(' / ') || '기본', display: v.display !== 'F', selling: v.selling !== 'F',
+    add: saleNum(v.additional_amount), inv: v.use_inventory === 'T', qty: v.quantity == null ? null : saleNum(v.quantity), dsold: v.display_soldout === 'T' }));
+  return { no: Number(p.product_no), code: p.product_code || '', name: p.product_name || '', price: saleNum(p.price), retail: saleNum(p.retail_price), display: p.display === 'T', selling: p.selling === 'T',
+    opt: p.has_option === 'T', img: p.tiny_image || p.small_image || p.list_image || '', v: vs };
+}
+async function saleList(env, q) {
+  const token = await accessToken(env), offset = Math.max(0, Math.min(8000, Number(q.get('offset')) || 0));
+  const d = await c24p(env, token, 'GET', '/admin/products?shop_no=1&limit=100&offset=' + offset + '&embed=variants', null, '상품(Product) 읽기');
+  const list = (d.products || []).map(saleProd);
+  return { list, next: list.length >= 100 ? offset + 100 : null };
+}
+let saleCatMem = null;
+async function saleCats(env, fresh) {
+  const ok = h => h && Date.now() - h.t < 6 * 3600e3;
+  if (!fresh && ok(saleCatMem)) return saleCatMem;
+  if (!fresh) { const hit = JSON.parse((await env.TOKENS.get('salecats')) || 'null'); if (ok(hit)) { saleCatMem = hit; return hit; } }
+  const token = await accessToken(env);
+  let cats = [];
+  try {
+    for (let off = 0; off < 500; off += 100) { const d = await c24p(env, token, 'GET', '/admin/categories?shop_no=1&limit=100&offset=' + off, null, '상품분류(Category) 읽기'); const L = d.categories || []; cats = cats.concat(L); if (L.length < 100) break; }
+  } catch (e) { return { t: Date.now(), cats: null, err: e.message }; }
+  cats = cats.filter(c => c.use_display !== 'F').map(c => ({ no: Number(c.category_no), name: c.category_name || '', depth: Number(c.category_depth) || 1, parent: Number(c.parent_category_no) || 0, p: [] }));
+  cats.sort((a, b) => a.depth - b.depth);
+  const todo = cats.slice(0, 38); let calls = 0;   // 한 번에 외부 요청 50개까지라 카테고리는 38개까지만 봐요
+  for (let i = 0; i < todo.length; i += 4) {
+    await Promise.all(todo.slice(i, i + 4).map(async c => {
+      if (calls++ > 44) return;
+      const d = await c24p(env, token, 'GET', '/admin/products?shop_no=1&limit=100&fields=product_no&category=' + c.no, null, '상품(Product) 읽기').catch(() => null);
+      c.p = d ? (d.products || []).map(x => Number(x.product_no)) : [];
+    }));
+  }
+  const out = { t: Date.now(), cats: todo.filter(c => c.p.length || todo.some(x => x.parent === c.no)), more: cats.length > todo.length };
+  saleCatMem = out; await env.TOKENS.put('salecats', JSON.stringify(out), { expirationTtl: 86400 }).catch(() => {});
+  return out;
+}
+async function saleSave(env, b) {
+  const no = Number(b && b.no); if (!no) throw fail(400, 'sale', '상품 번호가 없어요');
+  const yn = v => v === 'T' || v === 'F' ? v : null, token = await accessToken(env);
+  const P = b.prod || {}, req = {};
+  if (typeof P.product_name === 'string' && P.product_name.trim()) req.product_name = P.product_name.trim().slice(0, 250);
+  if (P.price != null) { const v = saleNum(P.price); if (v < 0 || v > 100000000) throw fail(400, 'sale', '판매가를 확인해 주세요'); req.price = v; }
+  if (P.retail_price != null) { const v = saleNum(P.retail_price); if (v < 0 || v > 100000000) throw fail(400, 'sale', '소비자가를 확인해 주세요'); req.retail_price = v; }
+  if (yn(P.display)) req.display = P.display;
+  if (yn(P.selling)) req.selling = P.selling;
+  if (Object.keys(req).length) await c24p(env, token, 'PUT', '/admin/products/' + no, { shop_no: 1, request: req }, SALE_NEED_W);
+  const V = (Array.isArray(b.vars) ? b.vars : []).slice(0, 100).map(v => { const r = { variant_code: String(v.variant_code || '') }; if (yn(v.selling)) r.selling = v.selling; if (yn(v.display)) r.display = v.display; if (v.additional_amount != null) r.additional_amount = saleNum(v.additional_amount); return r; }).filter(r => /^[A-Z0-9]{12}$/.test(r.variant_code) && Object.keys(r).length > 1);
+  if (V.length) await c24p(env, token, 'PUT', '/admin/products/' + no + '/variants', { shop_no: 1, requests: V }, SALE_NEED_W);
+  const I = (Array.isArray(b.inv) ? b.inv : []).slice(0, 30).filter(v => /^[A-Z0-9]{12}$/.test(String(v.variant_code || '')));
+  for (const v of I) {
+    const q = saleNum(v.quantity); if (q < 0 || q > 999999) throw fail(400, 'sale', '수량을 확인해 주세요');
+    await c24p(env, token, 'PUT', '/admin/products/' + no + '/variants/' + v.variant_code + '/inventories', { shop_no: 1, request: { use_inventory: 'T', display_soldout: 'T', quantity: q } }, SALE_NEED_W);
+  }
+  return { ok: true, product: await saleOneGet(env, token, no) };
+}
+async function saleOneGet(env, token, no) { const d = await c24p(env, token, 'GET', '/admin/products/' + no + '?shop_no=1&embed=variants,inventories', null, '상품(Product) 읽기'); return d.product ? saleProd(d.product) : null; }
+async function saleOne(env, no) { no = Number(no); if (!no) throw fail(400, 'sale', '상품 번호가 없어요'); return { product: await saleOneGet(env, await accessToken(env), no) }; }
 
 // ---------- 배송 휴무 공지: 카페24 게시판에 글 올리기 · 내리기 (게시판 쓰기 권한 필요) ----------
 async function c24Req(env, method, path, body) {
