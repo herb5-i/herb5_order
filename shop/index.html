@@ -9537,7 +9537,7 @@ async function hmfbNotesLoad() { if (!/^https?:$/.test(location.protocol) || Dat
 const FB_STAT = [['memo', '메모됨', '새로 들어와 아직 처리 전'], ['doing', '처리중', '확인했고 고치는 중'], ['done', '반영함', '사이트에 반영했어요'], ['hold', '반영 안 됨', '보류 · 나중에']];
 let hmfbF = null, hmfbOpenN = new Set();
 function hmfbStat(x) { const n = hmfbNotes[String(x.no)];
-  if (n && n.st === 'hold') return 'hold'; if ((n && n.st === 'done') || x.st === 'done') return 'done'; if ((n && n.st === 'doing') || x.st === 'seen' || n) return 'doing'; return 'memo'; }
+  if (!n || !n.st) return n && n.t ? 'doing' : 'memo'; return n.st === 'hold' ? 'hold' : n.st === 'done' ? 'done' : 'doing'; }   // AI가 적은 처리 내용(fb_notes.json)으로만 정해요
 function hmfbRender() {
   const box = $('hmfb-list'); if (!box) return;
   if (!hmfbOk()) { box.innerHTML = '<p class="hw-foot">로그인한 웹 버전에서 카페24 중계 서버가 연결되면 메모가 모여요</p>'; return; }
@@ -9555,7 +9555,7 @@ function hmfbRender() {
       : `<button type="button" class="hmfb-cmo iczno" data-hmfbco="${esc(x.id)}">＋ 이어서 의견 더하기${C.length ? ' · ' + C.length + '개' : ''}</button>`}</div>`; };
   const tiles = `<div class="fbs-t" role="group" aria-label="메모 상태로 보기">${FB_STAT.map(([k, l, d]) => `<button type="button" class="fbs fbs-${k}${hmfbF === k ? ' on' : ''} iczno" data-hmfbf="${k}" aria-pressed="${hmfbF === k}"><b>${cnt[k] || 0}</b><span>${l}</span></button>`).join('')}</div>`
     ;
-  box.innerHTML = !ALL.length ? '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : tiles + (!hmfbF ? '' : !L.length ? '<p class="hw-foot">이 상태인 메모가 없어요</p>' : show.map(x => `<div class="hmfb-it st-${hmfbStat(x)}"><div class="hmfb-top"><span class="fbs-chip fbs-${hmfbStat(x)}">${SL[hmfbStat(x)]}</span></div><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}<button type="button" class="hmfb-st ${x.st}" data-hmfbst="${esc(x.id)}" title="관리자가 누르면 상태가 바뀌어요">${ST[x.st] || x.st}</button>${hmfbMine(x) ? `<button type="button" class="hmfb-del iczno" data-hmfbdel="${esc(x.id)}" title="메모 지우기" aria-label="메모 #${x.no} 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</small>${noteH(x)}${cmH(x)}</div>`).join('')) +
+  box.innerHTML = !ALL.length ? '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : tiles + (!hmfbF ? '' : !L.length ? '<p class="hw-foot">이 상태인 메모가 없어요</p>' : show.map(x => `<div class="hmfb-it st-${hmfbStat(x)}"><div class="hmfb-top"><span class="fbs-chip fbs-${hmfbStat(x)}">${SL[hmfbStat(x)]}</span></div><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}${hmfbMine(x) ? `<button type="button" class="hmfb-del iczno" data-hmfbdel="${esc(x.id)}" title="메모 지우기" aria-label="메모 #${x.no} 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</small>${noteH(x)}${cmH(x)}</div>`).join('')) +
     '';
 }
 document.addEventListener('click', e => { if (!e.target.closest) return; const f = e.target.closest('[data-hmfbf]'); if (f) { const k = f.dataset.hmfbf || null; hmfbF = hmfbF === k ? null : k; hmfbRender(); return; }
