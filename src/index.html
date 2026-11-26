@@ -1797,6 +1797,7 @@ html.dark .ds-n{background:rgba(255,255,255,.05)}html.dark .ds-n mark{background
 .ds-lg{font-size:12px;color:var(--mute)}
 .ds-chip{height:30px;padding:0 11px;border-radius:99px;border:1px solid #e3c08a;background:#fdf3e2;color:#8a5a12;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;margin-left:6px}html.dark .ds-chip{background:#3a2f1c;color:#f0c987;border-color:#6b5520}
 .stabs:has(.ds-tab,.ds-chip){flex-wrap:wrap;min-width:0}.stabs:has(.ds-tab,.ds-chip) .stab{white-space:nowrap}.stabs .ds-chip{margin-left:0}
+.ds-chip.ds-none{background:none;border-color:var(--line);color:var(--mute);font-weight:600}
 .stab.ds-tab{color:#8a5a12}html.dark .stab.ds-tab{color:#f0c987}.ds-td{font-weight:800;white-space:nowrap}
 .sdback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900}.sdback.hidden{display:none}
 .sdrawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);z-index:901;background:var(--card);box-shadow:-12px 0 40px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));box-sizing:border-box}
@@ -6014,34 +6015,34 @@ const SHEETS = [['주문정리', 'sheet1'], ['수령인별', 'sheet2'], ['집계
 // 엑셀을 정리하면 찾아서 주문정리 · 수령인별 · 집계에서 빼고 [날짜 지정] 칸에 따로 모아요. 옆 창에서 카페24에 배송보류 + 희망배송일로 반영하면
 // 보낼 날 새벽에 worker가 저절로 보류를 풀어 배송준비중으로 돌려요. 이 기기에는 [이번 파일, 뺄지 말지, 고른 날]만 저장해요 (손님 정보 없음).
 const DS_KEY = 'h5_ds';
-let dsB = null, dsKeep = new Set(), dsDay = {}, dsDone = {}, dsList = [], dsHolds = null, dsHoldErr = '', dsBusy = false, dsMsg = '', dsAuto = '';
-function dsCheck() { const b = srcAt ? String(srcAt.getTime()) : ''; if (b === dsB) return; dsB = b; dsKeep = new Set(); dsDay = {}; dsDone = {}; dsMsg = '';
-  try { const o = JSON.parse(localStorage.getItem(DS_KEY) || 'null'); if (o && o.b === b && b) { dsKeep = new Set(o.keep || []); dsDay = o.day || {}; dsDone = o.done || {}; dsAuto = o.auto || ''; } } catch (e) {} }
-function dsSave() { try { localStorage.setItem(DS_KEY, JSON.stringify({ b: dsB, keep: [...dsKeep], day: dsDay, done: dsDone, auto: dsAuto })); } catch (e) {} }
-const DS_KW = /(보내|발송|배송|출고|받|도착|수령|부쳐|맞춰)/;
+let dsB = null, dsKeep = new Set(), dsOn = new Set(), dsDay = {}, dsDone = {}, dsList = [], dsHolds = null, dsHoldErr = '', dsBusy = false, dsMsg = '', dsAuto = '';
+function dsCheck() { const b = srcAt ? String(srcAt.getTime()) : ''; if (b === dsB) return; dsB = b; dsKeep = new Set(); dsOn = new Set(); dsDay = {}; dsDone = {}; dsMsg = '';
+  try { const o = JSON.parse(localStorage.getItem(DS_KEY) || 'null'); if (o && o.b === b && b) { dsKeep = new Set(o.keep || []); dsOn = new Set(o.on || []); dsDay = o.day || {}; dsDone = o.done || {}; dsAuto = o.auto || ''; } } catch (e) {} }
+function dsSave() { try { localStorage.setItem(DS_KEY, JSON.stringify({ b: dsB, keep: [...dsKeep], on: [...dsOn], day: dsDay, done: dsDone, auto: dsAuto })); } catch (e) {} }
+const DS_KW = /(보내|발송|배송|출고|받|도착|수령|부쳐|맞춰|부탁|희망|원해|해\s?주|가능|예정|필요|날)/;
 const dsAdd = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 function dsParse(note, base) {   // base: 오늘 0시. 보낼 날짜를 찾으면 { want, ship, hit, recv } (오늘 · 지난 날짜 · 60일 넘는 날짜는 빼요)
   const t = String(note || '').replace(/\s+/g, ' '); if (!t.trim() || !DS_KW.test(t)) return null;
   const P = [
     [/(\d{1,2})\s*월\s*(\d{1,2})\s*일/, m => ({ mo: +m[1], d: +m[2] })],
-    [/(?<![\d.\/])(\d{1,2})\s*\/\s*(\d{1,2})(?![\d\/])/, m => ({ mo: +m[1], d: +m[2] })],
+    [/(?<![\d.\/])(\d{1,2})\s*[\/.]\s*(\d{1,2})(?![\d\/.a-zA-Z%])/, m => ({ mo: +m[1], d: +m[2] })],
     [/(?<![\d.\/])(\d{1,2})\s*일\s*(?:후|뒤)/, m => ({ rel: +m[1] })],
     [/(다다음\s*주|다음\s*주|담주|이번\s*주)?\s*([월화수목금토일])요일/, m => ({ wd: '일월화수목금토'.indexOf(m[2]), wk: m[1] ? (/다다음/.test(m[1]) ? 2 : /이번/.test(m[1]) ? 0 : 1) : -1 })],
     [/(?<![\d.\/월])(\d{1,2})\s*일(?!\s*(?:이내|안에|동안|정도|째|분|간))/, m => ({ d: +m[1] })],
     [/(내일|모레|글피)/, m => ({ rel: { 내일: 1, 모레: 2, 글피: 3 }[m[1]] })]];
   for (const [re, fn] of P) {
     const m = t.match(re); if (!m) continue; const g = fn(m), after = t.slice(m.index + m[0].length, m.index + m[0].length + 16);
-    if (/^\s*(?:까지|전에|전까지|안에|이전|이내)/.test(after)) return null;   // "29일까지 받고 싶어요"는 마감일이라 평소처럼 보내요
+    const dl = /^\s*(?:까지|전에|전까지|안에|이전|이내)/.test(after);   // "29일까지 받고 싶어요"는 마감일이라 평소처럼 보내요 (옆 창에만 보여 줘요)
     let w = null;
     if (g.rel) w = dsAdd(base, g.rel);
     else if (g.wd !== undefined) { const cur = base.getDay(), mon = dsAdd(base, -((cur + 6) % 7)); if (g.wk < 0) { w = dsAdd(base, ((g.wd - cur + 7) % 7) || 7); } else w = dsAdd(mon, g.wk * 7 + ((g.wd + 6) % 7)); }
     else { const y = base.getFullYear(); let mo = g.mo || base.getMonth() + 1; if (g.d < 1 || g.d > 31 || mo < 1 || mo > 12) continue;
       w = new Date(y, mo - 1, g.d); if (!g.mo && g.d <= base.getDate()) w = new Date(y, base.getMonth() + 1, g.d);
       if (g.mo && w < dsAdd(base, -60)) w = new Date(y + 1, mo - 1, g.d); if (w.getDate() !== g.d) continue; }
-    const tail = (after.match(/^[^\d.,!~\n]{0,8}?(?:보내|발송|배송|출고|받|도착|수령|부쳐|맞춰)[가-힣]{0,4}/) || [''])[0];
+    const tail = (after.match(/^[^\d.,!~\n]{0,10}?(?:보내|발송|배송|출고|받|도착|수령|부쳐|맞춰|부탁|희망|원해|해\s?주|가능|예정|필요|날)[가-힣]{0,4}/) || [''])[0];
     if (!tail) continue;   // 날짜 바로 뒤에 '보내 · 받 · 도착' 같은 말이 있을 때만 (예: "1일 1팩"은 아니에요)
-    const recv = /(받|도착|수령)/.test(tail) && !/(보내|발송|출고)/.test(tail);
-    return { want: w, hit: m[0] + tail, recv };
+    const win = after.slice(0, 16), ri = win.search(/받|도착|수령/), si = win.search(/보내|발송|출고/), recv = ri >= 0 && (si < 0 || ri < si);   // '받' 이 '보내'보다 먼저 나오면 받는 날
+    return { want: w, hit: m[0] + tail, recv, dl };
   }
   return null;
 }
@@ -6060,13 +6061,17 @@ function dsFind() {   // 이번 파일에서 날짜를 정해 둔 주문 (주문
   const base = new Date(); base.setHours(0, 0, 0, 0); const G = new Map();
   srcRows.slice(1).forEach(r => { if (!r) return; const o = String(r[oc] ?? '').trim(); if (!o) return; let g = G.get(o); if (!g) { g = { o, who: String(r[rc] ?? ''), note: '', items: [] }; G.set(o, g); }
     const n = String(r[nc] ?? '').trim(); if (n && !g.note) g.note = n; g.items.push(String(r[pc] ?? '') + (opc >= 0 && r[opc] ? ' ' + incOpt(String(r[opc])) : '') + ' × ' + (Number(r[qc]) || 0)); });
-  G.forEach(g => { const p = dsParse(g.note, base); if (!p) return; const s = dsShipOf(p, base); if (!s.ok) return;
-    const auto = dsIso(s.ship), day = dsDone[g.o] || dsDay[g.o] || auto, k = g.note.indexOf(p.hit);
-    const warn = [p.recv ? dsFmt(p.want) + '에 받으려면 하루 전에 보내요' : '', s.moved ? dsFmt(p.recv ? dsAdd(p.want, -1) : p.want) + '은 배송 쉬는 날이라 ' + dsFmt(s.ship) + (p.recv ? '에 보내요' : '로 옮겼어요') : ''].filter(Boolean).join(' · ');
-    dsList.push(Object.assign(g, { auto, day, want: dsIso(p.want), hit: p.hit, pre: k >= 0 ? g.note.slice(0, k) : g.note, post: k >= 0 ? g.note.slice(k + p.hit.length) : '', warn, c24: /^\d{8}-\d{7}$/.test(g.o) })); });
+  const nextShip = () => { const c = c24Cfg(); let d = dsAdd(base, 1); for (let n = 0; n < 14; n++, d = dsAdd(d, 1)) { try { if (c24IsShip(d, c)) return d; } catch (e) { return d; } } return dsAdd(base, 1); };
+  G.forEach(g => { const p = dsParse(g.note, base); if (!p) return; const s = dsShipOf(p, base); if (s.ship > dsAdd(base, 60)) return;
+    const def = !p.dl && s.ok; if (!def && !p.dl && !p.recv) return;   // 오늘 · 지난 날짜에 보내 달라는 건 그냥 오늘 보내요
+    const why = def ? '' : p.dl ? dsFmt(p.want) + '까지라 오늘 보내요' : dsFmt(p.want) + '에 받으려면 오늘 보내야 해요';
+    const auto = dsIso(def ? s.ship : nextShip()), day = dsDone[g.o] || dsDay[g.o] || auto, k = g.note.indexOf(p.hit);
+    const warn = !def ? '' : [p.recv ? dsFmt(p.want) + '에 받으려면 하루 전에 보내요' : '', s.moved ? dsFmt(p.recv ? dsAdd(p.want, -1) : p.want) + '은 배송 쉬는 날이라 ' + dsFmt(s.ship) + (p.recv ? '에 보내요' : '로 옮겼어요') : ''].filter(Boolean).join(' · ');
+    dsList.push(Object.assign(g, { def, why, auto, day, want: dsIso(p.want), hit: p.hit, pre: k >= 0 ? g.note.slice(0, k) : g.note, post: k >= 0 ? g.note.slice(k + p.hit.length) : '', warn, c24: /^\d{8}-\d{7}$/.test(g.o) })); });
   dsList.sort((a, b) => a.day.localeCompare(b.day)); return dsList;
 }
-const dsHeld = () => new Set(dsList.filter(x => !dsKeep.has(x.o) || dsDone[x.o]).map(x => x.o));
+const dsIsHeld = x => !!dsDone[x.o] || (x.def ? !dsKeep.has(x.o) : dsOn.has(x.o));
+const dsHeld = () => new Set(dsList.filter(dsIsHeld).map(x => x.o));
 function dsApply(res) {   // 정리 결과에서 날짜 지정 주문을 빼고, [날짜 지정] 칸을 만들어요
   dsFind(); res.sheetD = null; const held = dsHeld(); if (!held.size) return userEdits;
   const h1 = res.sheet1[0], oc = h1.indexOf('주문번호'), wx = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']), keepC = h1.map((h, c) => wx.has(String(h)) ? -1 : c).filter(c => c >= 0);
@@ -6080,7 +6085,7 @@ async function dsSyncUpl() {   // 재고 · 집계 보기: 뺀 주문은 오늘 
     const rows = (b.rows || []).map(x => { if (!all.has(x.o)) return x; const want = held.has(x.o); if (!!x.ns === want) return x; ch++; const y = Object.assign({}, x); if (want) y.ns = 1; else delete y.ns; return y; });
     if (ch) { await uplWrite(lastUp.day, Object.assign({}, e, { [lastUp.slot]: Object.assign({}, b, { rows }), updatedAt: new Date().toISOString() })); try { stkRowCache.clear(); stkEvSig = ''; } catch (er) {} }
   } catch (e) {} }
-function dsChip() { if (!dsList.length) return ''; const n = dsList.filter(x => !dsKeep.has(x.o) && !dsDone[x.o] && x.c24).length; return `<button type="button" class="ds-chip" data-dsopen="1" title="날짜를 정해 둔 주문 옆 창 열기">${n ? '카페24 반영 ' + n + '건' : '옆 창 열기'}</button>`; }
+function dsChip() { if (!dsList.length) return srcRows ? '<button type="button" class="ds-chip ds-none" data-dsopen="1" title="비고에서 보낼 날을 찾지 못했어요 · 눌러서 기다리는 주문 보기">날짜 지정 없음</button>' : ''; const n = dsList.filter(x => dsIsHeld(x) && !dsDone[x.o] && x.c24).length; return `<button type="button" class="ds-chip" data-dsopen="1" title="날짜를 정해 둔 주문 옆 창 열기">${n ? '카페24 반영 ' + n + '건' : '옆 창 열기'}</button>`; }
 function dsOpen() { const d = $('dsdrawer'); if (!d) return; d.classList.add('on'); d.setAttribute('aria-hidden', 'false'); $('dsback').classList.remove('hidden'); dsRender(); dsLoadHolds(); }
 function dsClose() { const d = $('dsdrawer'); if (!d) return; d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); $('dsback').classList.add('hidden'); }
 async function dsLoadHolds() { if (!ostOn()) { dsHolds = null; dsRender(); return; } dsHoldErr = '';
@@ -6092,12 +6097,12 @@ function dsDayOpts(sel) { const base = new Date(); base.setHours(0, 0, 0, 0); co
   return out.map(d => `<option value="${dsIso(d)}"${dsIso(d) === sel ? ' selected' : ''}>${dsFmt(d)}</option>`).join(''); }
 function dsRender() {
   const b = $('ds-b'); if (!b) return; const admin = bakCanSee(), on = ostOn();
-  const pick = dsList.filter(x => !dsKeep.has(x.o) && !dsDone[x.o] && x.c24), n = pick.length;
-  const rows = dsList.map(x => { const done = dsDone[x.o], held = !dsKeep.has(x.o) || done;
+  const pick = dsList.filter(x => dsIsHeld(x) && !dsDone[x.o] && x.c24), n = pick.length;
+  const rows = dsList.map(x => { const done = dsDone[x.o], held = dsIsHeld(x);
     return `<div class="ds-r${held ? ' on' : ''}"><label class="ds-ck"><input type="checkbox" data-dsk="${esc(x.o)}"${held ? ' checked' : ''}${done ? ' disabled' : ''} aria-label="오늘 엑셀에서 빼기"></label><div class="ds-m">
       <div class="ds-t"><b>${esc(x.who || x.o)}</b><span class="ds-i">${esc(x.items.join(' · '))}</span></div>
       <div class="ds-n">비고: ${esc(x.pre)}<mark>${esc(x.hit)}</mark>${esc(x.post)}</div>
-      <div class="ds-d"><span>보낼 날</span>${done ? `<b>${dsFmt(new Date(done + 'T00:00'))}</b><span class="ds-ok">카페24 반영됨 · 그날 새벽에 저절로 풀려요</span>` : `<select data-dsd="${esc(x.o)}"${held ? '' : ' disabled'} aria-label="보낼 날">${dsDayOpts(x.day)}</select>${held ? '' : '<span class="ds-w">오늘 엑셀에 넣어요</span>'}`}</div>
+      <div class="ds-d"><span>보낼 날</span>${done ? `<b>${dsFmt(new Date(done + 'T00:00'))}</b><span class="ds-ok">카페24 반영됨 · 그날 새벽에 저절로 풀려요</span>` : `<select data-dsd="${esc(x.o)}"${held ? '' : ' disabled'} aria-label="보낼 날">${dsDayOpts(x.day)}</select>${held ? '' : `<span class="ds-w">${x.why ? esc(x.why) + ' · 체크하면 이 날로 빼요' : '오늘 엑셀에 넣어요'}</span>`}`}</div>
       ${x.warn && !done ? `<div class="ds-w">⚠ ${esc(x.warn)}</div>` : ''}${x.c24 ? '' : '<div class="ds-w">카페24 주문번호가 아니라 엑셀에서만 빼요</div>'}</div></div>`; }).join('');
   const H = (dsHolds && dsHolds.holds) || [], today = (dsHolds && dsHolds.today) || isoDate(new Date()), nm = new Map(dsList.map(x => [x.o, x.who]));
   const hold = H.slice().sort((a, b) => a.day.localeCompare(b.day)).map(h => `<div class="ds-h"><span class="ds-hd${h.day <= today ? ' due' : ''}">${dsFmt(new Date(h.day + 'T00:00'))}</span><span class="ds-ho">${esc(nm.get(h.o) || ('주문 ' + h.o))}</span>${admin ? `<button class="btn sm" type="button" data-dsrel="${esc(h.o)}"${dsBusy ? ' disabled' : ''}>지금 풀기</button>` : ''}</div>`).join('');
@@ -6111,13 +6116,13 @@ function dsRender() {
 }
 function dsRefresh() { runProcess(); dsRender(); dsSyncUpl(); }
 document.addEventListener('change', e => { const t = e.target; if (!t.closest || !t.closest('#dsdrawer')) return;
-  if (t.dataset.dsk) { if (t.checked) dsKeep.delete(t.dataset.dsk); else dsKeep.add(t.dataset.dsk); dsSave(); dsRefresh(); }
+  if (t.dataset.dsk) { const o = t.dataset.dsk, x = dsList.find(y => y.o === o) || { def: true }; if (x.def) { if (t.checked) dsKeep.delete(o); else dsKeep.add(o); } else { if (t.checked) dsOn.add(o); else dsOn.delete(o); } dsSave(); dsRefresh(); }
   else if (t.dataset.dsd) { dsDay[t.dataset.dsd] = t.value; dsSave(); dsRefresh(); } });
 document.addEventListener('click', e => { if (!e.target.closest) return; let b;
   if (e.target.closest('[data-dsopen]')) { dsOpen(); return; }
   if (e.target.closest('[data-dsx]') || e.target.id === 'dsback' || e.target.closest('#ds-x')) { dsClose(); return; }
   if ((b = e.target.closest('[data-dsrel]'))) { const id = b.dataset.dsrel; saleAsk('이 주문의 배송보류를 지금 풀까요?', ['· ' + (dsList.find(x => x.o === id) || { who: '주문 ' + id }).who, '배송준비중으로 돌아가요. 카페24에 바로 반영돼요.'], '보류 풀기', false, () => dsRelease([id])); return; }
-  if (e.target.closest('[data-dsgo]')) { const P = dsList.filter(x => !dsKeep.has(x.o) && !dsDone[x.o] && x.c24); if (!P.length || dsBusy || !bakCanSee()) return;
+  if (e.target.closest('[data-dsgo]')) { const P = dsList.filter(x => dsIsHeld(x) && !dsDone[x.o] && x.c24); if (!P.length || dsBusy || !bakCanSee()) return;
     if (P.length > 20) { shareToast('한 번에 20건까지 반영할 수 있어요'); return; }
     saleAsk(P.length + '건을 날짜 지정 주문으로 돌릴까요?', P.map(x => '· ' + (x.who || x.o) + ' → ' + dsFmt(new Date(x.day + 'T00:00')) + '에 보내기').concat(['카페24에서 배송보류 + 희망배송일로 바뀌고, 보낼 날 새벽에 저절로 배송준비중으로 돌아가요.']), '반영하기', false, () => dsGo(P)); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('dsdrawer') && $('dsdrawer').classList.contains('on') && $('salecf').classList.contains('hidden')) dsClose(); });
