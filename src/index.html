@@ -4445,7 +4445,7 @@ function claimOrdHtml(oid, oic) {
   const m = claimOrdMem.get(oid); if (!m) { setTimeout(() => claimOrdLoad(oid), 0); return c24Cfg().worker && window.h5Fb ? '<p class="msg">카페24 주문 정보를 불러오는 중…</p>' : ''; }
   if (m.busy) return '<p class="msg">카페24 주문 정보를 불러오는 중…</p>'; if (m.err) return `<p class="msg err">${esc(m.err)}</p>`;
   const o = m.o, its = (o.items || []).filter(i => !oic || i.order_item_code === oic), L = its.length ? its : (o.items || []), dt = v => v ? String(v).replace('T', ' ').slice(0, 19).replace(/\+.*$/, '') : '-';
-  const stName = i => { const s = i.order_status || '', t = ({ C: 'cancel', R: 'return', E: 'exchange' })[s[0]]; return t ? claimStat(t, s) : (OST_N[s] || s); };
+  const stName = i => { const s = i.order_status || '', t = ({ C: 'cancel', R: 'return', E: 'exchange' })[s[0]]; return t ? claimStat(t, s) : (OST_N[s] || { N40: '배송완료', N50: '구매확정' }[s] || s); };
   return `<div class="cord-t"><table><thead><tr><th>품목별 주문번호<br>배송번호</th><th class="l">상품명 / 옵션</th><th>수량</th><th>상품구매금액<br>(판매가)</th><th>운송장번호</th><th>주문상태</th></tr></thead><tbody>${L.map(i => `<tr><td>${esc(i.order_item_code)}<br><small>${esc(i.shipping_code || '')}</small></td><td class="l"><b>${esc(i.product_name)}</b>${i.option_value ? `<br><span class="op">- 옵션 : ${esc(incOpt(i.option_value))}</span>` : ''}</td><td>${i.quantity}</td><td class="r">${issWon((i.product_price + (i.option_price || 0)) * i.quantity).replace('원', '')}<br><small>(${issWon(i.product_price).replace('원', '')})</small></td><td><b>${esc(i.tracking_no || '-')}</b>${i.shipping_company_name ? `<br><small>${esc(i.shipping_company_name)}</small>` : ''}</td><td><b class="st">${esc(stName(i))}</b>${i.claim_by ? `<br><small>[${esc(i.claim_by)}]</small>` : ''}</td></tr>`).join('')}</tbody></table></div>
     <b class="cord-h">결제 정보</b><div class="cord-g">${[['상품구매금액', o.price || (o.items || []).reduce((t, i) => t + ((i.product_price || 0) + (i.option_price || 0)) * (i.quantity || 0), 0)], ['배송비', o.shipping_fee], ['할인혜택', o.discount], ['총 실결제금액', o.payment]].map(([k, v]) => `<div><span>${k}</span><b>${v == null ? '-' : Number(v).toLocaleString('ko-KR')}</b></div>`).join('')}</div>
     <b class="cord-h">결제수단</b><div class="cord-k">${[['결제(입금)자', o.payer || '-'], ['결제수단', (o.payment_method_name || []).join(', ') || '-'], ['결제(입금)확인일', dt(o.payment_date)]].map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join('')}</div>`;
@@ -4478,10 +4478,8 @@ function renderIssOrd() {
   if (issCat !== 'parcel' || !it || issTrackNo(it).length < 8) { box.classList.add('hidden'); box.innerHTML = ''; return; }
   box.classList.remove('hidden'); const o = issOrdOf(it), st = issOrdTry.get(issTrackNo(it));
   const again = `<button class="btn sm" type="button" id="iss-ordgo">${o ? '다시 찾기' : '카페24에서 찾기'}</button>`;
-  if (o) { const L = issOrdLines(o);
-    box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span>이미지 저장 때 같이 들어가요</span>${again}</div><div class="iss-og">${L.head.map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join('')}</div>` +
-      L.items.map(i => `<div class="iss-oi"><b>${esc(i.name)}</b>${i.opt ? `<small>${esc(i.opt)}</small>` : ''}<span>${i.q}개 · ${issWon(i.price)}${i.st ? ' · ' + esc(i.st) : ''}</span></div>`).join('') +
-      `<div class="iss-og">${L.money.map(([k, v]) => `<span>${k}</span><b>${esc(v)}</b>`).join('')}</div>`; }
+  if (o) {   // 취소 · 반품 · 교환 카드와 같은 모양 (카페24 주문 화면처럼 표 · 결제 정보 · 결제수단)
+    box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span>이미지 저장 때 같이 들어가요 · 주문 ${esc(o.order_id)}${o.order_place_name ? ' · ' + esc(o.order_place_name) : ''}</span>${again}</div><div class="iss-cord" data-cord="${esc(o.order_id)}|">${claimOrdHtml(o.order_id, '')}</div>`; }
   else if (st === 'busy') box.innerHTML = '<div class="iss-oh"><b>카페24 주문</b><span>송장번호로 찾는 중…</span></div>';
   else if (st === 'none') box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span>최근 60일 주문에서 이 송장번호를 못 찾았어요</span>${again}</div>`;
   else if (st && st.startsWith('err:')) box.innerHTML = `<div class="iss-oh"><b>카페24 주문</b><span class="err">${esc(st.slice(4))}</span>${again}</div>`;
