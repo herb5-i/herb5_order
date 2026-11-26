@@ -30,6 +30,7 @@ export default {
       if (url.pathname === '/fb/del' && req.method === 'POST') return json(await fbDel(env, await req.json(), who), cors);   // 개선 메모 지우기: 쓴 사람 또는 관리자
       if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
+      if (url.pathname === '/ostorders') return json(await ostOrders(env, url.searchParams.get('code')), cors);   // 그 상태(배송준비중)인 주문 전부 (화면에만 보여 주고 저장 안 해요)
       if (url.pathname === '/ostids') return json(await ostIds(env, url.searchParams.get('code')), cors);   // 상태별 주문 번호 · 결제 시각만 (이름 · 연락처 없음)
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
@@ -366,6 +367,22 @@ async function ostIds(env, code) {
     const L = d.orders || []; L.forEach(o => out.push({ i: o.order_id, p: o.payment_date || '', pl: o.order_place_id || '' })); if (L.length < 500) break;
   }
   return { code, at: new Date(now).toISOString(), list: out };
+}
+
+async function ostOrders(env, code) {
+  code = String(code || 'N20'); if (!OST.some(([c]) => c === code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
+  const token = await accessToken(env), day = ms => new Date(ms + 9 * 3600e3).toISOString().slice(0, 10), now = Date.now(), out = [];
+  for (let offset = 0; offset < 2000; offset += 200) {
+    const d = await c24get(env, token, '/admin/orders', { start_date: day(now - 89 * 864e5), end_date: day(now), date_type: 'order_date', order_status: code, embed: 'items,receivers,buyer', limit: 200, offset }, '주문(Order) 읽기');
+    const L = d.orders || [];
+    L.forEach(o => { if (o.canceled === 'T') return; const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
+      const items = (o.items || []).filter(i => (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0 }));
+      if (!items.length) return;
+      out.push({ order_id: o.order_id, order_date: o.order_date, payment_date: o.payment_date, payment_method: o.payment_method || [], order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '',
+        buyer: { name: by.name || '' }, receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '' }, items }); });
+    if (L.length < 200) break;
+  }
+  return { code, at: new Date(now).toISOString(), orders: out, count: out.length };
 }
 
 // ---------- 상품 후기: 후기 게시판 글 + 상품 이름 (작성자 이름·이메일은 보내지 않아요) ----------
