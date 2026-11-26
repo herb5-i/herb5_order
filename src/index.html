@@ -1739,6 +1739,8 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .hmfb-cm{margin-top:6px;padding-left:12px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:6px}.hmfb-c small{font-size:12px;color:var(--mute)}.hmfb-c p{margin:2px 0 0;font-size:13.5px;white-space:pre-line;overflow-wrap:anywhere}
 .hmfb-cmo{align-self:flex-start;border:0;background:none;color:var(--acc);font:inherit;font-size:13px;font-weight:700;padding:4px 0;cursor:pointer}
 .hmfb-cf textarea{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;color:var(--ink);background:var(--card);resize:vertical}.hmfb-cb{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
+.stkrn{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}.stkrn>span{font-size:13px;font-weight:700;color:var(--ink)}.stkrn small{display:block;font-weight:400;color:var(--mute);font-size:12px}
+.stkrn-r{display:flex;gap:6px}.stkrn-r input{flex:1;min-width:0;height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:14px;color:var(--ink);background:var(--card)}.stkrn .btn.danger{background:#c0392b;color:#fff;border-color:#c0392b}.stkrn .msg{margin:0}
 .svg-list{display:grid;gap:10px;margin-top:12px}.svg-c{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);transition:box-shadow .3s}.svg-c.flash{box-shadow:0 0 0 3px var(--acc2)}
 .svg-h{display:flex;align-items:flex-start;gap:8px}.svg-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.svg-t b{font-size:16px;overflow-wrap:anywhere}.svg-t small{font-size:12.5px;color:var(--mute)}.svg-t em{font-style:normal;color:var(--acc);font-weight:700}
 .svg-del{flex:none;width:32px;height:32px}.svg-del svg{width:16px;height:16px}
@@ -2711,6 +2713,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
         <datalist id="stk-names"></datalist>
         <p class="msg" id="stkmsg"></p>
         <label class="stknote hidden" id="stknotebox"><span>품목 메모 <small id="stknote-st"></small></span><textarea id="stk-note" rows="2" placeholder="이 품목에 남길 메모 (예: 하우스 2번 · 다음 주 수확 많음 · 잎 작음)"></textarea></label>
+        <div class="stkrn adm-only" id="stkrnbox"><span>품목 이름 바꾸기 <small>지금까지 이 품목에서 빠지던 주문은 바꾼 이름에서 계속 빠져요</small></span><div class="stkrn-r"><input id="stk-rn" placeholder="새 이름 (예: 애플민트 작은잎)" autocomplete="off" aria-label="새 이름"><button class="btn sm iczno" type="button" id="stk-rn-go">이름 바꾸기</button></div><p class="msg" id="stk-rn-msg"></p></div>
         <div class="stkunits hidden" id="stkunits"><div class="su-h">단위 편집 <small>단위를 넣거나 지워요. kg·g 는 무게(주문 g 만큼 빠짐), 나머지는 개수로 세요.</small></div><div class="su-list"></div><div class="su-add"><input id="su-new" placeholder="새 단위 (예: 송이, 팩, 박스)" maxlength="8" autocomplete="off"><button class="ibtn ibtn-acc" id="su-addbtn" title="단위 추가" aria-label="단위 추가"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button><button class="ibtn" id="su-reset" title="처음 단위로 (개 · kg · g)" aria-label="처음 단위로"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button></div><p class="msg" id="su-msg"></p></div>
         <p class="help">＋ 들어온 만큼 더하기 · − 따로 나간 만큼 빼기. 재고를 넣은 뒤에 올린 원본(오전·오후)부터 집계 수량만큼 실시간으로 빠져요. 이미 올라와 있던 주문은 빼지 않아요 (무게는 100g 단위 올림, 예: 560g → 600g).</p>
         <div class="stkeditfoot"><button class="ibtn ibtn-bad" id="stk-del" title="품목 지우기" aria-label="품목 지우기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15M10 11v5.5M14 11v5.5"/><path d="M6.5 7l.8 11.2A2 2 0 0 0 9.3 20h5.4a2 2 0 0 0 2-1.8L17.5 7M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2"/></svg></button><span class="sp"></span><button class="ibtn" id="stk-unitbtn" title="단위 편집" aria-label="단위 편집"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 15.5 15.5 3.5l5 5-12 12-5-5Z"/><path d="m7.5 11.5 2 2M10.5 8.5l2 2M13.5 5.5l2 2"/></svg></button></div>
@@ -6280,12 +6283,42 @@ function stkDragEnd(save) {
 let stkEditMode = false, stkPress = null;
 // 길게 누르면 오른쪽 사이드 창에서 그 품목 재고를 고쳐요 (✎ 편집 모드의 수정칸을 창으로 옮겨 써요)
 let stkDrawer = false;
+// ---------- 재고 품목 이름 바꾸기 (관리자) ----------
+// 재고 숫자 · 기록은 그대로 두고 이름만 바꿔요. 이름이 바뀌어도 지금까지 이 품목에서 빠지던 주문(상품명 + 옵션)은 계속 이 품목에서 빠지도록
+// [같이 셀 키워드]에 그 주문 문구를 맨 위로 고정해 둬요. 이름표 · 단위 · 순서 · 숨김도 새 이름으로 옮겨요.
+async function stkRename(from, to) {
+  from = stkK(from); to = stkK(to);
+  if (!document.body.classList.contains('is-admin')) throw new Error('관리자만 이름을 바꿀 수 있어요');
+  if (!from || !to) throw new Error('새 이름을 적어 주세요'); if (from === to) throw new Error('지금 이름과 같아요');
+  const C = stkCompute(), x = C.items.find(i => i.key === from); if (!x || !x.rec || !x.id) throw new Error(from + '는 재고에 넣은 품목이 아니에요');
+  if (C.items.some(i => i.key === to && i.rec)) throw new Error(to + ' 이름이 이미 있어요. 그 품목 이름을 먼저 바꿔 주세요');
+  const kw = new Set(); C.evs.forEach(e => e.uses.forEach(u => { if (u.to === from) kw.add(stkTxt(u.n + ' ' + u.o)); }));
+  const now = new Date().toISOString(), rec = JSON.parse(JSON.stringify(x.rec)); rec.key = to; rec.name = to; rec.updatedAt = now;
+  rec.log = (rec.log || []).concat([{ at: now, t: 'rename', d: 0, why: '이름 바꿈: ' + from + ' → ' + to, by: retWho() }]).slice(-300);
+  await stockWrite(x.id, rec);
+  // 규칙: 기존 키워드 줄의 품목 이름을 새 이름으로 + 지금까지 빠지던 주문 문구를 맨 위에 고정
+  rules.stockAlias = (rules.stockAlias || []).map(r => stkK(r.item) === from ? Object.assign({}, r, { item: to }) : r);
+  const have = new Set(rules.stockAlias.filter(r => stkK(r.item) === to).flatMap(r => saWords(r.keywords))), add = [...kw].filter(k => !have.has(k));
+  if (add.length) rules.stockAlias.unshift({ item: to, keywords: add.slice(0, 40).join(', '), exclude: '' });
+  rules.stockUnits = (rules.stockUnits || []).map(r => stkK(r.item) === from ? Object.assign({}, r, { item: to }) : r);
+  await saveRules();
+  // 순서 · 묶음 · 숨김
+  const L = stock[STK_LAYOUT_ID];
+  if (L && L.kind === 'layout') { const l = JSON.parse(JSON.stringify(L)), sw = a => (a || []).map(k => k === from ? to : k);
+    l.order = sw(l.order); l.hidden = sw(l.hidden); ['grp', 'notes'].forEach(f => { if (l[f] && l[f][from] !== undefined) { l[f][to] = l[f][from]; delete l[f][from]; } }); l.updatedAt = now; await stockWrite(STK_LAYOUT_ID, l); }
+  return kw.size;
+}
+document.addEventListener('click', async e => { const b = e.target.closest && e.target.closest('#stk-rn-go'); if (!b) return; const m = $('stk-rn-msg'), from = $('stk-n').value, to = $('stk-rn').value;
+  if (!b.dataset.sure) { if (!stkK(to)) { m.className = 'msg err'; m.textContent = '새 이름을 적어 주세요'; return; } b.dataset.sure = 1; b.textContent = '한 번 더 누르면 바꿔요'; b.classList.add('danger'); m.className = 'msg'; m.textContent = stkK(from) + ' → ' + stkK(to); setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = '이름 바꾸기'; b.classList.remove('danger'); } }, 4000); return; }
+  delete b.dataset.sure; b.textContent = '이름 바꾸기'; b.classList.remove('danger'); b.disabled = true;
+  try { const n = await stkRename(from, to); $('stk-n').value = stkK(to); $('stk-rn').value = ''; $('stkd-t').textContent = stkK(to) + ' 재고'; m.className = 'msg ok'; m.textContent = '이름을 바꿨어요' + (n ? ' · 주문 문구 ' + n + '개를 새 이름에 고정했어요' : ''); try { stkCurLine(); renderStock(); } catch (er) {} }
+  catch (er) { m.className = 'msg err'; m.textContent = er.message || String(er); } b.disabled = false; });
 function stkDrawerOpen(key) {
   const p = $('stkedit'); if (!p._home) p._home = { parent: p.parentNode, next: p.nextSibling };
   $('stkd-b').appendChild(p); p.classList.remove('hidden'); stkDrawer = true;
   $('stkd-t').textContent = key ? key + ' 재고' : '재고 수정';
   $('stkdrawer').classList.add('on'); $('stkdrawer').setAttribute('aria-hidden', 'false'); $('stkdback').classList.remove('hidden');
-  if (key) { $('stk-n').value = key; $('stkmsg').textContent = ''; }
+  if (key) { $('stk-n').value = key; $('stkmsg').textContent = ''; } if ($('stk-rn')) { $('stk-rn').value = ''; $('stk-rn-msg').textContent = ''; }
   stkCurLine(); setTimeout(() => $('stk-q').focus({ preventScroll: true }), 260);
 }
 function stkDrawerClose() {
