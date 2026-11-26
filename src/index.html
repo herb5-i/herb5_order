@@ -9035,10 +9035,10 @@ new MutationObserver(ms => { if (iczQ) return; iczQ = true; requestAnimationFram
 iczAll();
 // ---------- 탭 화면 구성 (규칙 관리 → 설정): 탭마다 칸 순서 바꾸기 · 빼기 · 다시 넣기 ----------
 const LAY = {
-  run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['nship', '배송 불가 주문', '#nscard'], ['svc', '남는 재고 서비스 추천', '#svccard'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard']] },
+  run: { n: '정리', sec: 'v-run', items: [['up', '원본 엑셀 올리기', '.upcard'], ['out', '결과 확인 · 내려받기', '#out,.ph4'], ['nship', '배송 불가 주문', '#nscard'], ['svc', '남는 재고 서비스 추천', '#svccard'], ['kt', '카톡 주문 넣기', '#ktcard'], ['wxcal', '배송일 고르기', '#wxcal'], ['wxcard', '지역별 기온 · 포장 확인', '#wxcard'], ['inv', '송장번호 등록 파일 만들기', '#invcard'], ['inc', '들어온 주문 (들어온 주문 메뉴)', '#inccard']] },
   sum: { n: '집계 보기', sec: 'v-sum', items: [['body', '집계 품목', '#sumbody'], ['top', '달력 · 올린 파일', '.sumtop']] },
-  stock: { n: '재고 관리 (재고)', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard']] },
-  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x']] },
+  stock: { n: '재고 관리', sec: 'v-stock', items: [['cur', '현재 재고', '.stkcur'], ['ret', '입고 · 반송', '#stkretcard'], ['wst', '폐기', '#stkwstcard'], ['memo', '비고', '#stkmemocard'], ['sale', '판매 관리 (판매 메뉴)', '#salecard'], ['salelog', '판매 처리 기록 (판매 메뉴)', '#salelogcard']] },
+  hist: { n: '기록 · 통계 (날짜별 기록)', sec: 'v-hist', items: [['days', '날짜별 기록 달력', '.histrow'], ['dayd', '그날 집계 · 재고 변동', '#hdrow'], ['stat', '통계', '#hstat'], ['c24x', '카페24 전체 주문 엑셀로 받기', '#c24x'], ['salehist', '판매 변경 (품절 · 판매 재개)', '#salehist']] },
 };
 const layCfg = t => { const c = (rules.layout && rules.layout[t]) || {}, ks = LAY[t].items.map(i => i[0]); const order = (c.order || []).filter(k => ks.includes(k)); ks.forEach(k => { if (!order.includes(k)) order.push(k); }); return { order, hide: (c.hide || []).filter(k => ks.includes(k)) }; };
 function layApply() {
@@ -9047,7 +9047,7 @@ function layApply() {
     let mark = sec._layMark; if (!mark) { const first = L.items.map(i => els[i[0]][0]).filter(Boolean).sort((a, b) => a.compareDocumentPosition(b) & 4 ? -1 : 1)[0]; if (!first) return; mark = document.createComment('lay'); sec.insertBefore(mark, first); sec._layMark = mark; }
     let at = mark; c.order.forEach(k => (els[k] || []).forEach(e => { at.parentNode.insertBefore(e, at.nextSibling); at = e; }));
     L.items.forEach(([k]) => (els[k] || []).forEach(e => e.classList.toggle('lay-off', c.hide.includes(k))));
-    if (t === 'run') { let n = 0; c.order.filter(k => !c.hide.includes(k)).forEach(k => { n++; (els[k] || []).forEach(e => e.querySelectorAll(':scope > .sh .num, :scope > .card > .sh .num').forEach(x => { x.textContent = n; })); }); }
+    if (t === 'run') { let n = 0; c.order.filter(k => !c.hide.includes(k)).forEach(k => { const nums = (els[k] || []).flatMap(e => [...e.querySelectorAll(':scope > .sh .num, :scope > .card > .sh .num')]); if (!nums.length) return; n++; nums.forEach(x => { x.textContent = n; }); }); }
   });
   layRender();
 }
