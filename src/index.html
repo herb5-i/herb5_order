@@ -1734,7 +1734,7 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .msg.msg-big{display:block;font-size:17px;font-weight:800;line-height:1.5;color:var(--acc);background:var(--acc2);border-radius:12px;padding:10px 14px;margin-top:10px}
 .iss-chip .iss-who{display:block;font-size:13px;font-weight:700;color:var(--ink);line-height:1.45}.iss-note .iss-who{font-size:14px}#iss-itn{font-style:normal}
 .hmfb-note{margin-top:8px;padding:9px 12px;border-radius:12px;background:var(--acc2);font-size:13.5px}.hmfb-note.none{background:var(--bg);display:flex;gap:8px;align-items:center;color:var(--mute)}.hmfb-note.none b{color:var(--mute)}
-.hmfb-nh{display:flex;align-items:center;gap:8px;margin-bottom:3px}.hmfb-nh b{color:var(--acc)}.hmfb-nh span{font-size:12px;color:var(--mute)}.hmfb-nh em{margin-left:auto;font-style:normal;font-size:11px;font-weight:700;color:#fff;background:var(--acc);border-radius:99px;padding:1px 8px}.hmfb-nh em.hold{background:#b86b00}
+.hmfb-nh{display:flex;align-items:center;gap:8px;margin-bottom:3px}.hmfb-nh b{color:var(--acc)}.hmfb-nh span{font-size:12px;color:var(--mute)}.hmfb-nh em{margin-left:auto;font-style:normal;font-size:11px;font-weight:700;color:#fff;background:var(--acc);border-radius:99px;padding:1px 8px}.hmfb-nh em.hold{background:#b86b00}.hmfb-nh em.nw{margin-left:0;background:#c0392b}.hmfb-nh em.nw+em{margin-left:auto}
 .hmfb-note p{margin:0;white-space:pre-line;line-height:1.55;color:var(--ink);overflow-wrap:anywhere}
 .hmfb-cm{margin-top:6px;padding-left:12px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:6px}.hmfb-c small{font-size:12px;color:var(--mute)}.hmfb-c p{margin:2px 0 0;font-size:13.5px;white-space:pre-line;overflow-wrap:anywhere}
 .hmfb-cmo{align-self:flex-start;border:0;background:none;color:var(--acc);font:inherit;font-size:13px;font-weight:700;padding:4px 0;cursor:pointer}
@@ -8895,6 +8895,7 @@ function ntItems() {
   NT_NEWS.filter(n => !seen.includes(n.v)).forEach(n => L.push({ k: 'news', n: 1, cls: '', t: '새 소식 · ' + n.t, d: n.d, go: n.go }));
   try { const { out } = hwStk(); if (out.length) L.push({ k: 'out', n: out.length, cls: 'bad', t: '품절 ' + out.length + '품목', d: out.slice(0, 4).map(x => x.key).join(', ') + (out.length > 4 ? ' 외' : ''), go: 'stock' }); } catch (e) {}
   try { const D = nswData(); if (D && D.bad.length && now.getDay() === 0 || (D && D.bad.length && localStorage.getItem(NSW_KEY + '_n') === D.mon)) { if (localStorage.getItem(NSW_KEY) !== D.mon) { try { localStorage.setItem(NSW_KEY + '_n', D.mon); } catch (e) {} L.push({ k: 'nsw', n: 1, cls: 'bad', t: '이번 주 배송 불가 예보 · ' + D.bad.map(x => nswDay(x.d)).join(' '), d: D.bad.map(x => nswDay(x.d) + ' ' + x.regs.slice(0, 3).map(g => g.r).join('·')).join(' / ') + ' 도착분', go: 'home' }); } } } catch (e) {}
+  try { const N = fbnNew(); if (N.length) L.push({ k: 'fbnote', n: N.length, cls: '', t: '개선 메모 처리 내용 ' + N.length + '건이 올라왔어요', d: N.slice(0, 5).map(n => '#' + n).join(' · ') + ' · 눌러서 확인해요', go: 'home' }); } catch (e) {}
   try { const c = c24Cfg(), cut = c24PmCut(c, today), U = upl[today] || {};
     if (cut && hcShip(today) && !U.pm) { const [h, m] = String(cut).split(':').map(Number), ct = new Date(now); ct.setHours(h, m || 0, 0, 0); const min = Math.round((ct - now) / 60e3);
       if (min <= 60 && min > 0) L.push({ k: 'pm', n: 1, cls: 'warn', t: '오후 주문 마감 ' + cut + ' · ' + min + '분 남았어요', d: '마감 뒤에 오후 주문을 불러와 정리해 주세요', go: 'run' });
@@ -8921,6 +8922,7 @@ document.addEventListener('click', async e => {
   if (e.target.closest('#nt-perm')) { try { await Notification.requestPermission(); } catch (er) {} ntRender(); return; }
   const g = e.target.closest('[data-ntgo]'); if (g) { const x = ntLast[+g.dataset.ntgo]; if (!x) return; ntShow(false);
     if (x.k === 'nsw') { const t = document.querySelector('.tab[data-t="home"]'); if (t) t.click(); setTimeout(() => $('hmnsw').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); return; }
+    if (x.k === 'fbnote') { const t = document.querySelector('.tab[data-t="home"]'); if (t) t.click(); setTimeout(() => { hmfbAll = true; hmfbRender(); $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(fbnMarkSeen, 4000); }, 80); return; }
     if (x.go === 'home') { $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     const t = document.querySelector('.tab[data-t="' + x.go + '"]'); if (t) t.click(); if (x.go === 'run') subSet('run', 'order', true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 });
@@ -8933,8 +8935,17 @@ let hmfbBusy = false, hmfbL = null, hmfbAll = false, hmfbT = null, hmfbRec = nul
 const hmfbOk = () => !!(c24Cfg().worker && window.h5Fb);
 // AI 처리 내용: 저장소의 fb_notes.json (Claude가 메모를 처리할 때마다 적어 둬요)
 let hmfbNotes = {}, hmfbNotesAt = 0, hmfbOpenCm = new Set();
+// 처리 내용이 새로 올라오면 알림(종 · 앱 아이콘 숫자)으로 알려요. 본 것은 이 기기에 기억해요
+const FBN_KEY = 'herb5_fbnote_seen', fbnSig = (no, n) => no + '|' + (n.at || '') + '|' + String(n.t || '').length;
+const fbnSeen = () => { try { return JSON.parse(localStorage.getItem(FBN_KEY) || '[]'); } catch (e) { return []; } };
+const fbnNew = () => { const S = new Set(fbnSeen()); return Object.entries(hmfbNotes).filter(([k, n]) => /^\d+$/.test(k) && n && n.t && !S.has(fbnSig(k, n))).map(([k]) => +k).sort((a, b) => b - a); };
+function fbnMarkSeen() { const L = Object.entries(hmfbNotes).filter(([k, n]) => /^\d+$/.test(k) && n && n.t).map(([k, n]) => fbnSig(k, n)); try { localStorage.setItem(FBN_KEY, JSON.stringify(L.slice(-300))); } catch (e) {} try { ntRender(); } catch (e) {} }
+setTimeout(() => { hmfbNotesLoad(); setInterval(() => { if (!document.hidden) hmfbNotesLoad(); }, 10 * 60e3); }, 3000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) hmfbNotesLoad(); });
+// 홈의 메모 칸을 4초 넘게 보고 있으면 '봤어요'로 쳐요
+try { let tv = null; new IntersectionObserver(es => es.forEach(e => { clearTimeout(tv); if (e.isIntersecting && fbnNew().length) tv = setTimeout(fbnMarkSeen, 4000); }), { threshold: .35 }).observe(document.getElementById('hmfb-list')); } catch (e) {}
 async function hmfbNotesLoad() { if (!/^https?:$/.test(location.protocol) || Date.now() - hmfbNotesAt < 60e3) return; hmfbNotesAt = Date.now();
-  try { const base = /\/shop\/(index\.html)?$/.test(location.pathname) ? '../' : './'; const r = await fetch(base + 'fb_notes.json?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { hmfbNotes = await r.json(); hmfbRender(); } } catch (e) {} }
+  try { const base = /\/shop\/(index\.html)?$/.test(location.pathname) ? '../' : './'; const r = await fetch(base + 'fb_notes.json?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { hmfbNotes = await r.json(); hmfbRender(); try { ntRender(); } catch (e) {} } } catch (e) {} }
 function hmfbRender() {
   const box = $('hmfb-list'); if (!box) return;
   if (!hmfbOk()) { box.innerHTML = '<p class="hw-foot">로그인한 웹 버전에서 카페24 중계 서버가 연결되면 메모가 모여요</p>'; return; }
@@ -8942,7 +8953,7 @@ function hmfbRender() {
   const L = hmfbL.slice().reverse(), show = hmfbAll ? L : L.slice(0, 3), ST = { new: '새 메모', seen: '확인함', done: '반영함' };
   const tm = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
   const tmd = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate(); };
-  const noteH = x => { const n = hmfbNotes[String(x.no)]; return n && n.t ? `<div class="hmfb-note"><div class="hmfb-nh"><b>처리 내용</b><span>AI · ${esc(n.at ? tmd(n.at) : '')}</span>${n.st === 'done' ? '<em>반영함</em>' : n.st === 'hold' ? '<em class="hold">보류</em>' : ''}</div><p>${esc(n.t)}</p></div>` : `<div class="hmfb-note none"><b>처리 내용</b><span>아직 처리 전이에요</span></div>`; };
+  const noteH = x => { const n = hmfbNotes[String(x.no)]; return n && n.t ? `<div class="hmfb-note"><div class="hmfb-nh"><b>처리 내용</b><span>AI · ${esc(n.at ? tmd(n.at) : '')}</span>${fbnNew().includes(x.no) ? '<em class="nw">새 처리</em>' : ''}${n.st === 'done' ? '<em>반영함</em>' : n.st === 'hold' ? '<em class="hold">보류</em>' : ''}</div><p>${esc(n.t)}</p></div>` : `<div class="hmfb-note none"><b>처리 내용</b><span>아직 처리 전이에요</span></div>`; };
   const cmH = x => { const C = x.cm || [], open = hmfbOpenCm.has(x.id); return `<div class="hmfb-cm">${C.map(c => `<div class="hmfb-c"><small><b>${esc(c.by)}</b> · ${tm(c.at)}</small><p>${esc(c.t)}</p></div>`).join('')}
     ${open ? `<form class="hmfb-cf" data-hmfbcm="${esc(x.id)}" autocomplete="off"><textarea rows="2" maxlength="1000" placeholder="처리 내용에 이어서 의견을 적어 주세요 (예: 이름은 잘 나와요, 번호가 반대로 나와요)" aria-label="이어서 의견"></textarea><div class="hmfb-cb"><button type="button" class="btn sm iczno" data-hmfbcx="${esc(x.id)}">닫기</button><button type="submit" class="btn pri sm iczno">의견 남기기</button></div></form>`
       : `<button type="button" class="hmfb-cmo iczno" data-hmfbco="${esc(x.id)}">＋ 이어서 의견 더하기${C.length ? ' · ' + C.length + '개' : ''}</button>`}</div>`; };
