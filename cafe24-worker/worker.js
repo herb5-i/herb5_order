@@ -316,10 +316,11 @@ async function claims(env, q) {
       const list = d.orders || [];
       list.forEach(o => {
         const cl = [].concat(o[emb] || []), creason = cl.map(c => pick(c, RK)).find(Boolean) || '';
-        (o.items || []).filter(i => String(i.order_status || '').startsWith(pre) || String(i.claim_type || '').toUpperCase().startsWith(pre)).forEach(i => {
+        const allI = o.items || [];
+        allI.filter(i => String(i.order_status || '').startsWith(pre) || String(i.claim_type || '').toUpperCase().startsWith(pre)).forEach(i => {
           const ci = cl.find(c => [].concat(c.items || []).some(x => x.order_item_code === i.order_item_code)) || {};
           out.push({ type, day, order_id: o.order_id, order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.claim_quantity || i.quantity) || 0,
-            status: i.order_status || '', reason: pick(i, RK) || pick(ci, RK) || creason, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '' });
+            status: i.order_status || '', item_no: allI.indexOf(i) + 1, item_count: allI.length, reason: pick(i, RK) || pick(ci, RK) || creason, market_id: o.market_id || '', order_place_id: o.order_place_id || '', order_place_name: o.order_place_name || '' });
         });
       });
       if (list.length < 500) break;

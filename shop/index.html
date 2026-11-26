@@ -1814,6 +1814,8 @@ html.dark .sd-sblk li em.rt-in{background:rgba(63,154,108,.2);color:#8fd0aa}html
 .ns-nm em{font-style:normal;font-size:11px;font-weight:700;color:#c0392b;border:1px solid #c0392b;border-radius:99px;padding:1px 7px;align-self:flex-start}.ns-r.out{opacity:.6;background:var(--bg)}.ns-all{background:var(--bg)}.ns-all b{font-size:14.5px}.ns-all small{margin-left:auto;color:var(--mute);font-size:12.5px;flex:none}
 .ns-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.ns-act .btn.pri{background:#c0392b;border-color:#c0392b}
 .c24x-pi{display:flex!important;flex-direction:row!important;gap:10px!important;align-items:flex-start;margin:4px 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer}.c24x-pi input{width:18px;height:18px;margin-top:1px;flex:none;accent-color:var(--acc)}.c24x-pi span{display:flex;flex-direction:column;gap:3px;min-width:0}.c24x-pi b{color:var(--ink);font-size:14px}.c24x-pi small{font-size:12px;color:var(--mute);line-height:1.45}
+.msg.msg-big{display:block;font-size:17px;font-weight:800;line-height:1.5;color:var(--acc);background:var(--acc2);border-radius:12px;padding:10px 14px;margin-top:10px}
+.iss-chip .iss-who{display:block;font-size:13px;font-weight:700;color:var(--ink);line-height:1.45}.iss-note .iss-who{font-size:14px}#iss-itn{font-style:normal}
 .svg-list{display:grid;gap:10px;margin-top:12px}.svg-c{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);transition:box-shadow .3s}.svg-c.flash{box-shadow:0 0 0 3px var(--acc2)}
 .svg-h{display:flex;align-items:flex-start;gap:8px}.svg-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.svg-t b{font-size:16px;overflow-wrap:anywhere}.svg-t small{font-size:12.5px;color:var(--mute)}.svg-t em{font-style:normal;color:var(--acc);font-weight:700}
 .svg-del{flex:none;width:32px;height:32px}.svg-del svg{width:16px;height:16px}
@@ -2970,7 +2972,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   </section>
 
   <section id="v-issue" class="hidden">
-    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈</button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button><button type="button" role="tab" data-isscat="parcel"><span class="lf">택배 사고</span><span class="ls">택배사고</span><i id="iss-pcn"></i></button></div>
+    <div class="iss-cats" role="tablist"><button type="button" role="tab" data-isscat="item" class="on">품목 이슈<i id="iss-itn"></i></button><button type="button" role="tab" data-isscat="claim"><span class="lf">취소 · 반품 · 교환</span><span class="ls">취소·반품</span><i id="iss-cln"></i></button><button type="button" role="tab" data-isscat="parcel"><span class="lf">택배 사고</span><span class="ls">택배사고</span><i id="iss-pcn"></i></button></div>
     <div class="iss-sync hidden" id="iss-sync"><span id="iss-syncmsg"></span><button class="btn sm" type="button" id="iss-syncbtn">카페24에서 지금 가져오기</button></div>
     <div class="iss-search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -4759,7 +4761,7 @@ function renderIssue() {
   $('iss-dt').textContent = fmtDay(issDay);
   const day = issOfDay(issDay), items = new Map(); day.forEach(x => { if (!items.has(x.item)) items.set(x.item, []); items.get(x.item).push(x); });
   $('iss-items').innerHTML = items.size ? [...items.entries()].sort((a, b) => a[0].localeCompare(b[0], 'ko')).map(([it, arr]) =>
-    (issCat === 'parcel' ? `<div class="iss-cw"><button class="iss-cdl" type="button" data-issimg="${esc(it)}" title="사진과 메모를 이미지로 저장" aria-label="이미지로 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>이미지 저장</span></button>` : '') + `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b><span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>` + (issCat === 'parcel' ? '</div>' : '')).join('')
+    (issCat === 'parcel' ? `<div class="iss-cw"><button class="iss-cdl" type="button" data-issimg="${esc(it)}" title="사진과 메모를 이미지로 저장" aria-label="이미지로 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>이미지 저장</span></button>` : '') + `<button class="iss-chip ${issCat !== 'item' ? 'iss-cl' : ''}" type="button" data-issitem="${esc(it)}">${issCat === 'review' ? revStars(arr) : ''}${issCat === 'parcel' ? `<i class="iss-ct iss-ct-p">택배 사고</i>` : ''}${issCat === 'claim' ? [...new Set(arr.map(x => x.ctype || '메모'))].map(t => `<i class="iss-ct iss-ct-${({ 취소: 'c', 반품: 'r', 교환: 'e' })[t] || 'm'}">${esc(t)}</i>`).join('') : ''}<b>${esc(it)}${arr.some(x => x.ph && x.ph.length) ? ' <i class="iss-cam" title="사진 있음"></i>' : ''}</b>${issCat === 'claim' ? `<span class="iss-who">${arr.map(x => [claimWho(x) || '이름 모름', claimPos(x)].filter(Boolean).join(' · ')).map(esc).join('<br>')}</span>` : ''}<span>${esc((arr[0].text || '사진').split('\n')[0])}</span>${arr.length > 1 ? `<em>${arr.length}</em>` : ''}</button>` + (issCat === 'parcel' ? '</div>' : '')).join('')
     : (issCat === 'review' ? '<p class="iss-empty">이 날 들어온 상품 후기가 없어요.<br>카페24 후기 게시판에 글이 올라오면 자동으로 여기에 기록돼요.</p>' : issCat === 'parcel' ? '<p class="iss-empty">이 날 적어 둔 택배 사고가 없어요.<br><b>사고 적기</b>를 눌러 사진 · 메모를 남겨 보세요. 송장 사진을 올리면 송장번호를 자동으로 찾아 적어 줘요.<br>사고 접수할 때 <b>이미지로 저장</b>해서 택배사에 올리면 돼요.</p>' : issCat === 'claim' ? '<p class="iss-empty">이 날 들어온 취소·반품·교환이 없어요.<br>카페24에서 신청이 들어오면 자동으로 여기에 기록돼요.</p>' : '<p class="iss-empty">이 날은 적어 둔 이슈가 없어요.<br><b>이슈 적기</b>를 눌러 품목과 내용을 남겨 보세요.</p>');
   renderIssueSearch();
 }
@@ -4789,7 +4791,7 @@ function issOpenModal(item) {
 }
 function renderIssList() {
   const arr = issModalItem ? issOfDay(issDay).filter(x => x.item === issModalItem).reverse() : [];
-  $('iss-list').innerHTML = arr.map(x => `<div class="iss-note ${issEditId === x.id ? 'editing' : ''}"><p>${esc(x.text).replace(/\n/g, '<br>')}</p>${x.ph && x.ph.length ? `<div class="iss-phs">${photoThumbs(x.ph)}</div>` : ''}<div class="iss-nf"><small>${esc(hhmm(x.at))}${x.by ? ' · ' + esc(x.by) : ''}</small><span><button class="ibtn sm" type="button" data-issedit="${x.id}" title="고치기" aria-label="고치기">${IC.edit}</button><button class="ibtn sm" type="button" data-issdel="${x.id}" title="지우기" aria-label="지우기">${IC.trash}</button></span></div></div>`).join('');
+  $('iss-list').innerHTML = arr.map(x => `<div class="iss-note ${issEditId === x.id ? 'editing' : ''}"><p>${x.cat === 'claim' && (claimWho(x) || claimPos(x)) ? `<b class="iss-who">${esc([claimWho(x), claimPos(x)].filter(Boolean).join(' · '))}</b><br>` : ''}${esc(x.text).replace(/\n/g, '<br>')}</p>${x.ph && x.ph.length ? `<div class="iss-phs">${photoThumbs(x.ph)}</div>` : ''}<div class="iss-nf"><small>${esc(hhmm(x.at))}${x.by ? ' · ' + esc(x.by) : ''}</small><span><button class="ibtn sm" type="button" data-issedit="${x.id}" title="고치기" aria-label="고치기">${IC.edit}</button><button class="ibtn sm" type="button" data-issdel="${x.id}" title="지우기" aria-label="지우기">${IC.trash}</button></span></div></div>`).join('');
   $('iss-list').classList.toggle('hidden', !arr.length); photoFill($('iss-list'));
   const PC = issCat === 'parcel'; $('iss-pimg').classList.toggle('hidden', !(PC && arr.length));
   try { renderIssOrd(); } catch (e) {}
@@ -8563,11 +8565,17 @@ const claimStat = (t, st) => { const n = String(st || '').slice(1, 2); return CL
 var claimBusy = false, claimMsg = '';
 function claimLast() { try { return JSON.parse(localStorage.getItem('herb5_claimsync') || '{}'); } catch (e) { return {}; } }
 function claimName(n) { const m = new Map((rules.names || []).map(r => [String(r.from || '').trim(), String(r.to || '').trim() || String(r.from || '').trim()])), t = String(n || '').trim(); return mallAliasFn()(m.get(t) || t); }
+// 취소 · 반품 손님 이름: 공용 저장소에는 안 남기고, 이 기기에 있는 오늘 주문 · 고객 관리에서만 찾아 보여줘요
+function claimWho(x) { const m = String(x.text || '').match(/주문 (\d{8}-\d{5,})/); if (!m) return ''; const oid = m[1];
+  try { if (result && result.sheet1) { const H = result.sheet1[0], oc = H.indexOf('주문번호'), rc = H.indexOf('수령인'); const r = result.sheet1.find((r, i) => i && String(r[oc] ?? '').trim() === oid); if (r && r[rc]) return String(r[rc]).trim(); } } catch (e) {}
+  try { for (const v of crmMem.values()) { const o = (v.o || []).find(o => o.i === oid); if (o) return o.rn || o.nm || ''; } } catch (e) {}
+  return ''; }
+const claimPos = x => { const m = String(x.text || '').match(/송장 (\d+)개 중 (\d+)번째/); return m ? m[1] + '개 중 ' + m[2] + '번째' : ''; };
 function claimMk(c) { return MALL_CH.find(x => x[0] === mallChOf(c))[1]; }
 function issSyncLine() {
   const box = $('iss-sync'); if (!box) return; const on = issCat !== 'item' && issCat !== 'parcel'; box.classList.toggle('hidden', !on);
-  const wk = isoDate(new Date(Date.now() - 6 * 864e5)), cnt = c => issAllRaw().filter(x => x.cat === c && x.day >= wk).length;
-  const b = $('iss-cln'); if (b) b.textContent = cnt('claim') ? ' ' + cnt('claim') : ''; const b3 = $('iss-pcn'); if (b3) b3.textContent = cnt('parcel') ? ' ' + cnt('parcel') : ''; const b2 = $('iss-rvn'); if (b2) b2.textContent = cnt('review') ? ' ' + cnt('review') : '';
+  const dd = issDay || isoDate(new Date()), cnt = c => issAllRaw().filter(x => x.cat === c && x.day === dd).length;   // 고른 날(처음엔 오늘) 것만 세요
+  const b1 = $('iss-itn'); if (b1) b1.textContent = cnt('item') + issAllRaw().filter(x => !x.cat && x.day === dd).length ? ' ' + (cnt('item') + issAllRaw().filter(x => !x.cat && x.day === dd).length) : ''; const b = $('iss-cln'); if (b) b.textContent = cnt('claim') ? ' ' + cnt('claim') : ''; const b3 = $('iss-pcn'); if (b3) b3.textContent = cnt('parcel') ? ' ' + cnt('parcel') : ''; const b2 = $('iss-rvn'); if (b2) b2.textContent = cnt('review') ? ' ' + cnt('review') : '';
   try { renderIssCmp(); } catch (e) {}
   if (!on) return; if (issCat === 'review') return revSyncLine(); const L = claimLast();
   const ok = document.body.classList.contains('fbmode') && typeof c24Cfg === 'function' && c24Cfg().worker;
@@ -8586,7 +8594,7 @@ async function claimSync(force) {
       if (!list.length) continue;
       const cur = issAllRaw().filter(x => x.day === day && x.key);
       const want = list.map(c => { const key = 'c24:' + c.type + ':' + (c.order_item_code || c.order_id + ':' + c.product_name), ct = CLAIM_T[c.type];
-        const text = [claimStat(c.type, c.status), c.option_value ? '옵션 ' + c.option_value : '', c.quantity ? c.quantity + '개' : '', c.reason ? '사유: ' + c.reason : '', claimMk(c), '주문 ' + c.order_id].filter(Boolean).join(' · ');
+        const text = [claimStat(c.type, c.status), c.item_count > 1 ? '송장 ' + c.item_count + '개 중 ' + c.item_no + '번째' : c.item_count === 1 ? '송장 1개 중 1번째' : '', c.option_value ? '옵션 ' + c.option_value : '', c.quantity ? c.quantity + '개' : '', c.reason ? '사유: ' + c.reason : '', claimMk(c), '주문 ' + c.order_id].filter(Boolean).join(' · ');
         return { key, ct, text, item: claimName(c.product_name) }; });
       const changed = want.filter(w => { const o = cur.find(x => x.key === w.key); return !o || o.text !== w.text || o.item !== w.item; });
       if (!changed.length) continue;
@@ -9138,7 +9146,7 @@ async function c24Load(day, slot, sync) {
   srcRows = rows; srcName = fname.replace(/\.api$/, ''); srcAt = new Date(); c24Cur = { day, slot, at: srcAt };
   if ($('c24day').value !== day || c24Slot !== slot) { $('c24day').value = day; c24Slot = slot; try { c24ShowWin(); } catch (e) {} }
   const wxr = wxForOrderDay(day);
-  msg.className = 'msg ok'; msg.textContent = (sync ? '다른 기기에서 불러온 ' : '') + (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요' + wxNote(wxr);
+  msg.className = 'msg ok msg-big'; msg.textContent = (sync ? '다른 기기에서 불러온 ' : '') + (slot === 'am' ? '오전' : '오후') + ' 주문 ' + d.orders.length + '건 · 상품 ' + (rows.length - 1) + '줄을 가져왔어요' + wxNote(wxr);
   $('runmsg').textContent = '';
   runProcess();
   if (!sync) histSaveUpload(srcRows, fname, { slot, day });
