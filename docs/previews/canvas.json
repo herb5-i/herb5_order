@@ -1,1 +1,314 @@
-{"v": 3, "attachments": {}, "boards": {"Claim.dc.html": {"expand": "fill", "h": 1250, "is_interactive": true, "title": "이슈 관리 · 취소 반품 교환", "w": 940, "x": -2860, "y": 0}, "HomeOst.dc.html": {"expand": "fill", "h": 1000, "is_interactive": true, "title": "홈 · 주문 처리 현황 + 들어온 주문", "w": 820, "x": -920, "y": 0}, "Incoming.dc.html": {"expand": "fill", "h": 1700, "is_interactive": true, "title": "지금까지 들어온 주문 (메모 7번)", "w": 900, "x": 1360, "y": 0}, "LayInc.dc.html": {"expand": "fill", "h": 640, "is_interactive": true, "title": "탭 화면 구성 · 들어온 주문 숨기기", "w": 800, "x": -1820, "y": 0}, "Main.dc.html": {"expand": "fill", "h": 1500, "is_interactive": true, "title": "재고 관리 › 판매 관리", "w": 1302, "x": 0, "y": 0}, "ShipCold.dc.html": {"expand": "fill", "h": 820, "is_interactive": true, "title": "배송 탭 · 영하 10도 표시", "w": 800, "x": -3720, "y": 0}, "Collect.dc.html": {"expand": "fill", "h": 1050, "is_interactive": true, "title": "마켓 주문 수집 팝업", "w": 800, "x": -4620, "y": 0}, "Move.dc.html": {"expand": "fill", "h": 1100, "is_interactive": true, "title": "홈 · 입금전/상품준비중 → 배송준비중", "w": 800, "x": -5520, "y": 0}, "Hold.dc.html": {"expand": "fill", "h": 1250, "is_interactive": true, "title": "주문 정리 · 비고 날짜 지정 주문", "w": 820, "x": -6440, "y": 0}, "LayDev.dc.html": {"expand": "fill", "h": 980, "is_interactive": true, "title": "탭 화면 구성 · 휴대폰 / PC 따로 숨기기", "w": 940, "x": -7480, "y": 0}, "Parcel.dc.html": {"expand": "fill", "h": 1000, "is_interactive": true, "title": "택배 사고 · 카페24 주문 상세", "w": 940, "x": -8520, "y": 0}, "Agg.dc.html": {"expand": "fill", "h": 1350, "is_interactive": true, "title": "집계 보기 · 작업할 양 · 재고 · 새 주문 · 남은 재고", "w": 860, "x": -9480, "y": 0}, "SumRe.dc.html": {"expand": "fill", "h": 560, "is_interactive": true, "title": "집계 보기 · 새로고침 버튼 (도는 모양 + 5분 타이머)", "w": 460, "x": -10040, "y": 0}, "Quick.dc.html": {"expand": "fill", "h": 1180, "is_interactive": true, "title": "주문 정리 · 🛵 퀵 · 직접 전달 표시 (메모 9번)", "w": 900, "x": -11040, "y": 0}, "Sort.dc.html": {"expand": "fill", "h": 1700, "is_interactive": true, "title": "내려받기 · 송장 순서 (11/27 엑셀)", "w": 900, "x": -12000, "y": 0}, "Cal.dc.html": {"expand": "fill", "h": 1100, "is_interactive": true, "title": "집계 보기 · 다른 날 헷갈리지 않게", "w": 940, "x": -13000, "y": 0}, "SvcPick.dc.html": {"expand": "fill", "h": 1000, "is_interactive": true, "title": "서비스 손님 고르기 · 상세보기 (확인 버튼)", "w": 900, "x": -14000, "y": 0}, "HomeFind.dc.html": {"expand": "fill", "h": 1700, "is_interactive": true, "title": "홈 · 주문 처리 현황 + 전체 주문 조회 + 바로가기 검색", "w": 940, "x": -15060, "y": 0}, "HomeFindM.dc.html": {"expand": "fill", "h": 1900, "is_interactive": true, "title": "홈 · 주문 조회 + 바로가기 검색 (휴대폰)", "w": 390, "x": -15560, "y": 0}, "StockW.dc.html": {"expand": "fill", "h": 900, "is_interactive": true, "title": "홈 · 재고 위젯 (전부 · 자체 스크롤)", "w": 900, "x": -16560, "y": 0}, "CrmRef.dc.html": {"expand": "fill", "h": 1250, "is_interactive": true, "title": "고객 관리 · 다른 사이트 5곳 방식", "w": 1040, "x": -17700, "y": 0}, "Crm23.dc.html": {"expand": "fill", "h": 1500, "is_interactive": true, "title": "고객 관리 · 다음 주문 예상일 + 묶음 · 문구 · 결과 (2번 + 3번)", "w": 1080, "x": -18900, "y": 0}, "CrmEasy.dc.html": {"expand": "fill", "h": 1150, "is_interactive": true, "title": "고객 관리 · 쉬운 화면", "w": 800, "x": -19900, "y": 0}, "CrmFlow.dc.html": {"expand": "fill", "h": 1700, "is_interactive": true, "title": "고객 관리 · 순서대로 (손님 → 문자 → 보내기 → 결과)", "w": 800, "x": -20800, "y": 0}}, "createdOnFiles": {"at": "2026-11-26T09:15:00Z", "v": 1}, "designSystems": [], "launch": {"file": "CrmFlow.dc.html", "view": "focused"}, "notes": {}, "order": ["Collect.dc.html", "ShipCold.dc.html", "Claim.dc.html", "LayInc.dc.html", "HomeOst.dc.html", "Incoming.dc.html", "Main.dc.html", "Move.dc.html", "Hold.dc.html", "LayDev.dc.html", "Parcel.dc.html", "Agg.dc.html", "SumRe.dc.html", "Quick.dc.html", "Sort.dc.html", "Cal.dc.html", "SvcPick.dc.html", "HomeFind.dc.html", "HomeFindM.dc.html", "StockW.dc.html", "CrmRef.dc.html", "Crm23.dc.html", "CrmEasy.dc.html", "CrmFlow.dc.html"], "pages": [{"id": "page-1", "name": "Page 1"}], "title": "허브아이 미리보기"}
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Claim.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "이슈 관리 · 취소 반품 교환",
+      "w": 940,
+      "x": -2860,
+      "y": 0,
+      "page": "page-1"
+    },
+    "HomeOst.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "is_interactive": true,
+      "title": "홈 · 주문 처리 현황 + 들어온 주문",
+      "w": 820,
+      "x": -920,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Incoming.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "지금까지 들어온 주문 (메모 7번)",
+      "w": 900,
+      "x": 1360,
+      "y": 0,
+      "page": "page-1"
+    },
+    "LayInc.dc.html": {
+      "expand": "fill",
+      "h": 640,
+      "is_interactive": true,
+      "title": "탭 화면 구성 · 들어온 주문 숨기기",
+      "w": 800,
+      "x": -1820,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Main.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "재고 관리 › 판매 관리",
+      "w": 1302,
+      "x": 0,
+      "y": 0,
+      "page": "page-1"
+    },
+    "ShipCold.dc.html": {
+      "expand": "fill",
+      "h": 820,
+      "is_interactive": true,
+      "title": "배송 탭 · 영하 10도 표시",
+      "w": 800,
+      "x": -3720,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Collect.dc.html": {
+      "expand": "fill",
+      "h": 1050,
+      "is_interactive": true,
+      "title": "마켓 주문 수집 팝업",
+      "w": 800,
+      "x": -4620,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Move.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "is_interactive": true,
+      "title": "홈 · 입금전/상품준비중 → 배송준비중",
+      "w": 800,
+      "x": -5520,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Hold.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "주문 정리 · 비고 날짜 지정 주문",
+      "w": 820,
+      "x": -6440,
+      "y": 0,
+      "page": "page-1"
+    },
+    "LayDev.dc.html": {
+      "expand": "fill",
+      "h": 980,
+      "is_interactive": true,
+      "title": "탭 화면 구성 · 휴대폰 / PC 따로 숨기기",
+      "w": 940,
+      "x": -7480,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Parcel.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "is_interactive": true,
+      "title": "택배 사고 · 카페24 주문 상세",
+      "w": 940,
+      "x": -8520,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Agg.dc.html": {
+      "expand": "fill",
+      "h": 1350,
+      "is_interactive": true,
+      "title": "집계 보기 · 작업할 양 · 재고 · 새 주문 · 남은 재고",
+      "w": 860,
+      "x": -9480,
+      "y": 0,
+      "page": "page-1"
+    },
+    "SumRe.dc.html": {
+      "expand": "fill",
+      "h": 560,
+      "is_interactive": true,
+      "title": "집계 보기 · 새로고침 버튼 (도는 모양 + 5분 타이머)",
+      "w": 460,
+      "x": -10040,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Quick.dc.html": {
+      "expand": "fill",
+      "h": 1180,
+      "is_interactive": true,
+      "title": "주문 정리 · 🛵 퀵 · 직접 전달 표시 (메모 9번)",
+      "w": 900,
+      "x": -11040,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Sort.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "내려받기 · 송장 순서 (11/27 엑셀)",
+      "w": 900,
+      "x": -12000,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Cal.dc.html": {
+      "expand": "fill",
+      "h": 1100,
+      "is_interactive": true,
+      "title": "집계 보기 · 다른 날 헷갈리지 않게",
+      "w": 940,
+      "x": -13000,
+      "y": 0,
+      "page": "page-1"
+    },
+    "SvcPick.dc.html": {
+      "expand": "fill",
+      "h": 1000,
+      "is_interactive": true,
+      "title": "서비스 손님 고르기 · 상세보기 (확인 버튼)",
+      "w": 900,
+      "x": -14000,
+      "y": 0,
+      "page": "page-1"
+    },
+    "HomeFind.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "홈 · 주문 처리 현황 + 전체 주문 조회 + 바로가기 검색",
+      "w": 940,
+      "x": -15060,
+      "y": 0,
+      "page": "page-1"
+    },
+    "HomeFindM.dc.html": {
+      "expand": "fill",
+      "h": 1900,
+      "is_interactive": true,
+      "title": "홈 · 주문 조회 + 바로가기 검색 (휴대폰)",
+      "w": 390,
+      "x": -15560,
+      "y": 0,
+      "page": "page-1"
+    },
+    "StockW.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "title": "홈 · 재고 위젯 (전부 · 자체 스크롤)",
+      "w": 900,
+      "x": -16560,
+      "y": 0,
+      "page": "page-1"
+    },
+    "CrmRef.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "고객 관리 · 다른 사이트 5곳 방식",
+      "w": 1040,
+      "x": -17700,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Crm23.dc.html": {
+      "expand": "fill",
+      "h": 1500,
+      "is_interactive": true,
+      "title": "고객 관리 · 다음 주문 예상일 + 묶음 · 문구 · 결과 (2번 + 3번)",
+      "w": 1080,
+      "x": -18900,
+      "y": 0,
+      "page": "page-1"
+    },
+    "CrmEasy.dc.html": {
+      "expand": "fill",
+      "h": 1150,
+      "is_interactive": true,
+      "title": "고객 관리 · 쉬운 화면",
+      "w": 800,
+      "x": -19900,
+      "y": 0,
+      "page": "page-1"
+    },
+    "CrmFlow.dc.html": {
+      "expand": "fill",
+      "h": 1700,
+      "is_interactive": true,
+      "title": "고객 관리 · 순서대로 (손님 → 문자 → 보내기 → 결과)",
+      "w": 800,
+      "x": -20800,
+      "y": 0,
+      "page": "page-1"
+    },
+    "Artboard-8yx0.dc.html": {
+      "h": 600,
+      "handmade": true,
+      "page": "page-x89wl5",
+      "title": "Artboard 1",
+      "w": 800,
+      "x": 0,
+      "y": 0
+    },
+    "Polish.dc.html": {
+      "expand": "fill",
+      "h": 1300,
+      "is_interactive": true,
+      "title": "디자인 다듬기 · 메뉴 이름 · 큰 글자 · 큰 버튼",
+      "w": 900,
+      "x": -21780,
+      "y": 0,
+      "page": "page-1"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-11-26T09:15:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "file": "Polish.dc.html",
+    "view": "focused"
+  },
+  "notes": {},
+  "order": [
+    "Collect.dc.html",
+    "ShipCold.dc.html",
+    "Claim.dc.html",
+    "LayInc.dc.html",
+    "HomeOst.dc.html",
+    "Incoming.dc.html",
+    "Main.dc.html",
+    "Move.dc.html",
+    "Hold.dc.html",
+    "LayDev.dc.html",
+    "Parcel.dc.html",
+    "Agg.dc.html",
+    "SumRe.dc.html",
+    "Quick.dc.html",
+    "Sort.dc.html",
+    "Cal.dc.html",
+    "SvcPick.dc.html",
+    "HomeFind.dc.html",
+    "HomeFindM.dc.html",
+    "StockW.dc.html",
+    "CrmRef.dc.html",
+    "Crm23.dc.html",
+    "CrmEasy.dc.html",
+    "CrmFlow.dc.html",
+    "Polish.dc.html",
+    "Artboard-8yx0.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Page 1"
+    },
+    {
+      "id": "page-x89wl5",
+      "name": "Page 2"
+    }
+  ],
+  "title": "허브아이 미리보기"
+}
