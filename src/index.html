@@ -1910,7 +1910,7 @@ html.dark .ho-c{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.
 .ho-pd{display:flex;align-items:baseline;gap:8px;font-size:13px;color:var(--mute)}.ho-pd>span{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ho-pd b{font-size:17px;color:var(--ink)}
 .ho-box{background:var(--soft,#f5f6f4);border-radius:10px;padding:11px 13px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}.ho-box .pi{display:flex;gap:10px;align-items:flex-start}.ho-box .pi .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ho-box .pi small{color:#2f6db5;font-size:12.5px}html.dark .ho-box .pi small{color:#7fb0ef}.ho-box .pi .q{white-space:nowrap}
 .ho-box.rc{gap:3px;line-height:1.55}.ho-box.rc b{margin-right:4px}
-.ho-trk{font-size:12px;font-weight:700;color:#2f6db5}html.dark .ho-trk{color:#7fb0ef}.ho-cbox{max-height:480px;flex:none}
+.ho-note2{margin:0 0 6px;font-size:12px;color:var(--mute)}.ho-trk{font-size:12px;font-weight:700;color:#2f6db5}html.dark .ho-trk{color:#7fb0ef}.ho-cbox{max-height:480px;flex:none}
 .ho-tk{display:grid;grid-template-columns:40% minmax(0,1fr);gap:6px}.ho-tk span,.ho-tk b{height:40px;display:flex;align-items:center;padding:0 12px;border-radius:8px;font-size:14px}.ho-tk span{border:1px solid var(--line)}.ho-tk b{background:var(--soft,#f0f2ee);color:#2f6db5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html.dark .ho-tk b{color:#7fb0ef}.ho-tkd{font-size:12px;color:var(--mute);margin-top:-6px}
 .ho-pw{display:flex;flex-direction:column;gap:2px}.ho-why{margin:0;font-size:13px;color:var(--mute);overflow-wrap:anywhere}.ho-note{margin:0;font-size:11.5px;color:var(--mute)}
 .ho-pay{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;text-align:center;font-size:13px;margin-top:6px}.ho-pay div{border-right:1px solid var(--line)}.ho-pay div:last-child{border-right:0}.ho-pay span{display:block;padding:6px 4px;font-size:11.5px;color:var(--mute);background:var(--soft,var(--bg))}.ho-pay b{display:block;padding:8px 4px}
@@ -5140,11 +5140,24 @@ function hoListHtml() {
   else if (k === 'N20') body = hwIncBox(true);
   else if (k === 'CL') { const L = hoClaims().filter(x => hoHit(x.item, x.text, x.oid, (() => { try { return claimWho(x); } catch (e) { return ''; } })())); body = L.length ? hoClaimCards(L) : `<p class="hwi-empty">${hoNoDate() ? '오늘' : '이 기간에'} 취소 · 반품 · 교환이 없어요</p>`; }
   else { const E = hoLoad(k); if (E.busy && !E.orders) body = '<p class="hwi-empty">카페24에서 불러오는 중…</p>'; else if (E.err) body = `<p class="hwi-empty">⚠ ${esc(E.err)}</p>`;
-    else { const L = hoFilt(E.orders); body = !L.length ? `<p class="hwi-empty">${hoQ ? '찾는 주문이 없어요' : '이 기간에 ' + hoName(k) + ' 주문이 없어요'}</p>` : k === 'N22' ? hoSimple(L) : hoCompact(L, k) + (E.more ? '<p class="msg">최근 1,000건까지만 보여요 · 날짜를 좁혀 보세요</p>' : ''); } }
+    else { let L = hoFilt(E.orders), note = '';
+      if (k === 'ALL' && hoNoDate() && hoQ.trim().length >= 2) {   // 날짜를 안 골라도 최근 3개월에서 주문번호 · 주문자 · 받는 분으로 찾아요
+        const S = hoL[hoSrchKey()], ids = new Set(L.map(o => String(o.order_id)));
+        if (S && S.orders) S.orders.forEach(o => { if (!ids.has(String(o.order_id))) { ids.add(String(o.order_id)); L.push(o); } });
+        L.sort((a, b) => String(b.order_date).localeCompare(String(a.order_date)));
+        note = !S || S.busy ? '<p class="ho-note2">🔍 최근 3개월 주문에서 찾는 중…</p>' : S.err ? `<p class="ho-note2">⚠ ${esc(S.err)}</p>` : `<p class="ho-note2">🔍 최근 3개월에서 주문번호 · 이름으로 찾았어요${S.more ? ' (많아서 일부만)' : ''} · 품목 이름은 날짜를 고르면 찾아요</p>`; }
+      body = note + (!L.length && note.includes('찾는 중') ? '' : !L.length ? `<p class="hwi-empty">${hoQ ? '찾는 주문이 없어요' : '이 기간에 ' + hoName(k) + ' 주문이 없어요'}</p>` : k === 'N22' ? hoSimple(L) : hoCompact(L, k) + (E.more ? '<p class="msg">최근 1,000건까지만 보여요 · 날짜를 좁혀 보세요</p>' : '')); } }
   return body; }
 function hoBarHtml() { const [a, b] = [hoD1, hoD2];
   return `<div class="ho-bar"><b class="ho-ttl">${esc(hoName(hoSt))}</b><span class="ho-dt"><span aria-hidden="true">📅</span><input type="date" id="ho-d1" value="${esc(a)}" aria-label="주문일 시작" max="${isoDate(new Date())}"><span>~</span><input type="date" id="ho-d2" value="${esc(b)}" aria-label="주문일 끝" max="${isoDate(new Date())}">${a || b ? '<button type="button" class="ho-dx" data-hodx="1" title="날짜 지우기" aria-label="날짜 지우기">×</button>' : ''}</span><span class="ho-q"><span aria-hidden="true">🔍</span><input id="ho-q" type="search" value="${esc(hoQ)}" placeholder="주문번호 · 품목 · 받는 분" aria-label="주문 찾기"></span></div>`; }
-document.addEventListener('input', e => { if (e.target.id !== 'ho-q') return; hoQ = e.target.value; const box = document.querySelector('.ho-list'); if (box) box.innerHTML = hoListHtml(); });
+let hoSrchT = null;
+const hoSrchKey = () => 'ALLQ|' + hoQ.trim();
+function hoSrchLoad() { const q = hoQ.trim(), key = hoSrchKey(); if (q.length < 2 || (hoL[key] && (hoL[key].busy || Date.now() - hoL[key].at < 120e3))) return; hoL[key] = { busy: 1, at: Date.now() };
+  c24Call('/olist?code=ALL&q=' + encodeURIComponent(q)).then(d => { hoL[key] = { at: Date.now(), orders: d.orders || [], more: !!d.more }; })
+    .catch(e => { hoL[key] = { at: Date.now(), err: e && (e.code === 'not_found' || /404/.test(e.message || '')) ? '새 worker.js를 Cloudflare에 붙여 넣어 배포하면 찾을 수 있어요' : (e && e.message) || '찾지 못했어요' }; })
+    .finally(() => { if (hoQ.trim() === q) { const box = document.querySelector('.ho-list'); if (box) box.innerHTML = hoListHtml(); } }); }
+document.addEventListener('input', e => { if (e.target.id !== 'ho-q') return; hoQ = e.target.value; const box = document.querySelector('.ho-list'); if (box) box.innerHTML = hoListHtml();
+  clearTimeout(hoSrchT); if (hoSt === 'ALL' && hoNoDate() && hoQ.trim().length >= 2) hoSrchT = setTimeout(hoSrchLoad, 450); });
 document.addEventListener('change', e => { const t = e.target; if (t.id !== 'ho-d1' && t.id !== 'ho-d2') return; if (t.id === 'ho-d1') hoD1 = t.value; else hoD2 = t.value; hoBlur(); hoCntLoad(true); homeSoon(); });
 document.addEventListener('click', e => { if (!e.target.closest) return; let b;
   if ((b = e.target.closest('[data-hostc]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; hoPick(b.dataset.hostc); return; }

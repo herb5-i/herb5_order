@@ -392,19 +392,22 @@ async function oCount(env, q) {
 async function oList(env, q) {
   const code = String(q.get('code') || ''); if (!['N21', 'N30', 'N40', 'ALL'].includes(code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
   const [from, to] = oRange(q), token = await accessToken(env), out = []; let more = false;
-  for (let offset = 0; offset < 1000; offset += 250) {
-    const d = await c24get(env, token, '/admin/orders', Object.assign({ start_date: from, end_date: to, date_type: 'order_date', embed: 'items,receivers,buyer', limit: 250, offset }, code === 'ALL' ? {} : { order_status: code }), '주문(Order) 읽기');
+  // 전체 주문 조회 검색: 날짜를 안 골라도 최근 3개월에서 주문번호 · 주문자 · 받는 분 이름으로 찾아요
+  const kw = String(q.get('q') || '').trim().slice(0, 30), seen = new Set();
+  const finds = !kw ? [{}] : /^\d{8}-\d{7}$/.test(kw) ? [{ order_id: kw }] : [{ buyer_name: kw }, { receiver_name: kw }];
+  for (const f of finds) for (let offset = 0; offset < (kw ? 500 : 1000); offset += 250) {
+    const d = await c24get(env, token, '/admin/orders', Object.assign({ start_date: from, end_date: to, date_type: 'order_date', embed: 'items,receivers,buyer', limit: 250, offset }, code === 'ALL' ? {} : { order_status: code }, f), '주문(Order) 읽기');
     const L = d.orders || [];
-    L.forEach(o => { const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
+    L.forEach(o => { if (seen.has(o.order_id)) return; seen.add(o.order_id); const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
       const items = (o.items || []).filter(i => code === 'ALL' || (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, order_status: i.order_status || '', product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.quantity) || 0, product_code: i.product_code || '',
         tracking_no: i.tracking_no || '', shipping_company_name: i.shipping_company_name || '', shipping_code: i.shipping_code || '', shipped_date: i.shipped_date || '', delivered_date: i.delivered_date || '', tracking_no_updated_date: i.tracking_no_updated_date || '' }));
       if (!items.length) return;
       out.push({ order_id: o.order_id, order_date: o.order_date, payment_amount: o.payment_amount || (o.actual_order_amount && o.actual_order_amount.payment_amount) || '', order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '', member_id: o.member_id ? 1 : 0,
         buyer: { name: by.name || '' }, receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '', shipping_message: rc.shipping_message || '' }, items }); });
-    if (L.length < 250) break; if (offset + 250 >= 1000) more = true;
+    if (L.length < 250) break; if (offset + 250 >= (kw ? 500 : 1000)) more = true;
   }
   out.sort((a, b) => String(b.order_date).localeCompare(String(a.order_date)));
-  return { code, from, to, at: new Date().toISOString(), orders: out, more };
+  return { code, from, to, q: kw, at: new Date().toISOString(), orders: out, more };
 }
 
 // 들어온 주문과 맞춰 보기: 그 상태(예: 배송준비중)인 주문 번호 · 결제 시각 · 주문 경로만 보내요
