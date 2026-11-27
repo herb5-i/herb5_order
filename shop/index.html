@@ -10074,7 +10074,7 @@ function ntItems() {
       if (min <= 60 && min > 0) L.push({ k: 'pm', n: 1, cls: 'warn', t: '오후 주문 마감 ' + cut + ' · ' + min + '분 남았어요', d: '마감 뒤에 오후 주문을 불러와 정리해 주세요', go: 'run' });
       else if (min <= 0 && min > -240) L.push({ k: 'pm', n: 1, cls: 'warn', t: '오후 주문 받을 시간이에요 (마감 ' + cut + ')', d: '아직 오후 주문을 안 불러왔어요', go: 'run' }); } } catch (e) {}
   try { const miss = (ktList || []).filter(o => o.st === 'saved' && o.day < today); if (miss.length) L.push({ k: 'kt', n: miss.length, cls: 'bad', t: '안 보낸 카톡 주문 ' + miss.length + '건', d: '배송일이 지났어요 · 정리 → 주문 정리 ③에서 확인', go: 'run' }); } catch (e) {}
-  try { if (document.body.classList.contains('is-admin') && hmfbL) { const nw = hmfbL.filter(x => x.st === 'new').length; if (nw) L.push({ k: 'fb', n: nw, cls: '', t: '새 개선 메모 ' + nw + '건', d: '확인하면 상태를 "확인함"으로 바꿔 주세요', go: 'home' }); } } catch (e) {}
+  try { if (document.body.classList.contains('is-admin') && hmfbL) { const N = fbmNew(); if (N.length) L.push({ k: 'fb', n: N.length, cls: '', t: '새 개선 메모 ' + N.length + '건', d: N.slice(0, 5).map(n => '#' + n).join(' · ') + ' · 눌러서 확인해요', go: 'home' }); } } catch (e) {}
   return L;
 }
 function ntRender() {
@@ -10096,7 +10096,7 @@ document.addEventListener('click', async e => {
   const g = e.target.closest('[data-ntgo]'); if (g) { const x = ntLast[+g.dataset.ntgo]; if (!x) return; ntShow(false);
     if (x.k === 'nsw') { const t = document.querySelector('.tab[data-t="home"]'); if (t) t.click(); setTimeout(() => $('hmnsw').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); return; }
     if (x.k === 'fbnote') { const t = document.querySelector('.tab[data-t="home"]'); if (t) t.click(); setTimeout(() => { const N = fbnNew(); if (N.length) { const x = (hmfbL || []).find(m => m.no === N[0]); if (x) hmfbF = hmfbStat(x); } hmfbRender(); $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(fbnMarkSeen, 4000); }, 80); return; }
-    if (x.go === 'home') { $('hmfb').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    if (x.go === 'home') { const t = document.querySelector('.tab[data-t="home"]'); if (t && !t.classList.contains('on')) t.click(); setTimeout(() => { if (x.k === 'fb') { hmfbF = 'memo'; hmfbRender(); } const h = $('hmfb'); if (h) h.scrollIntoView({ behavior: 'smooth', block: 'start' }); setTimeout(() => { fbmMarkSeen(); }, 1500); }, 80); return; }
     const t = document.querySelector('.tab[data-t="' + x.go + '"]'); if (t) t.click(); if (x.go === 'run') subSet('run', 'order', true); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 });
 function ntShow(on) { ntOpen = on; $('ntdrawer').classList.toggle('on', on); $('ntdrawer').setAttribute('aria-hidden', String(!on)); $('ntback').classList.toggle('hidden', !on); $('hm-notib').setAttribute('aria-expanded', String(on)); ntRender(); if (on) setTimeout(() => $('ntd-x').focus(), 50); }
@@ -10124,7 +10124,15 @@ function fbnMarkSeen() { const L = Object.entries(hmfbNotes).filter(([k, n]) => 
 setTimeout(() => { hmfbNotesLoad(); setInterval(() => { if (!document.hidden) hmfbNotesLoad(); }, 10 * 60e3); }, 3000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) hmfbNotesLoad(); });
 // 홈의 메모 칸을 4초 넘게 보고 있으면 '봤어요'로 쳐요
-try { let tv = null; new IntersectionObserver(es => es.forEach(e => { clearTimeout(tv); if (e.isIntersecting && fbnNew().length) tv = setTimeout(fbnMarkSeen, 4000); }), { threshold: .35 }).observe(document.getElementById('hmfb-list')); } catch (e) {}
+// 1초마다 확인: 메모 목록이 화면에 충분히 보이는 상태(화면의 30% 이상, 또는 목록이 짧으면 목록의 대부분)가 3초 이어지면 '봤어요'
+// (예전엔 보이는 '순간'에만 확인해서, 목록이 이미 보이는 중에 새 처리 내용이 오면 영영 '봤어요'가 안 됐어요)
+let fbnVis = 0;
+setInterval(() => { try { const l = document.getElementById('hmfb-list');
+  if (!l || document.hidden || !l.offsetParent || !(fbnNew().length || fbmNew().length)) { fbnVis = 0; return; }
+  const r = l.getBoundingClientRect(), vh = innerHeight, h = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
+  const ok = r.height > 0 && (h >= vh * .3 || h >= r.height * .6);
+  fbnVis = ok ? fbnVis + 1 : 0;
+  if (fbnVis >= 3) { fbnVis = 0; if (fbnNew().length) fbnMarkSeen(); if (fbmNew().length) fbmMarkSeen(); } } catch (e) {} }, 1000);
 async function hmfbNotesLoad() { if (!/^https?:$/.test(location.protocol) || Date.now() - hmfbNotesAt < 60e3) return; hmfbNotesAt = Date.now();
   try { const base = /\/shop\/(index\.html)?$/.test(location.pathname) ? '../' : './'; const r = await fetch(base + 'fb_notes.json?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { hmfbNotes = await r.json(); hmfbRender(); try { ntRender(); } catch (e) {} } } catch (e) {} }
 // 메모 상태: 메모됨(새로 들어옴) · 처리중 · 반영함 · 반영 안 됨 — 위 네모칸을 누르면 그 상태만 모아 봐요
@@ -10154,6 +10162,11 @@ function hmfbRender() {
 }
 document.addEventListener('click', e => { if (!e.target.closest) return; const f = e.target.closest('[data-hmfbf]'); if (f) { const k = f.dataset.hmfbf || null; hmfbF = hmfbF === k ? null : k; hmfbRender(); return; }
   const n = e.target.closest('[data-hmfbn]'); if (n) { const no = +n.dataset.hmfbn; if (hmfbOpenN.has(no) || fbnNew().includes(no)) { hmfbOpenN.delete(no); if (fbnNew().includes(no)) fbnMarkOne(no); } else hmfbOpenN.add(no); hmfbRender(); } });
+// 새 개선 메모(아직 처리 내용이 없는 메모): 이 기기에서 한 번 보면 알림에서 빠져요
+const FBM_KEY = 'herb5_fbmemo_seen';
+const fbmSeen = () => { try { return JSON.parse(localStorage.getItem(FBM_KEY) || '[]'); } catch (e) { return []; } };
+const fbmNew = () => { const S = new Set(fbmSeen()); return (hmfbL || []).filter(x => hmfbStat(x) === 'memo' && !S.has(String(x.id || x.no))).map(x => x.no).sort((a, b) => b - a); };
+function fbmMarkSeen() { const S = new Set(fbmSeen()); (hmfbL || []).forEach(x => S.add(String(x.id || x.no))); try { localStorage.setItem(FBM_KEY, JSON.stringify([...S].slice(-500))); } catch (e) {} try { ntRender(); } catch (e) {} }
 function fbnMarkOne(no) { const n = hmfbNotes[String(no)]; if (!n) return; const S = fbnSeen(); S.push(fbnSig(String(no), n)); try { localStorage.setItem(FBN_KEY, JSON.stringify(S.slice(-300))); } catch (e) {} try { ntRender(); } catch (e) {} }
 document.addEventListener('click', e => { if (!e.target.closest) return; const o = e.target.closest('[data-hmfbco]'); if (o) { hmfbOpenCm.add(o.dataset.hmfbco); hmfbRender(); const f = document.querySelector(`[data-hmfbcm="${o.dataset.hmfbco}"] textarea`); if (f) f.focus(); return; }
   const x = e.target.closest('[data-hmfbcx]'); if (x) { hmfbOpenCm.delete(x.dataset.hmfbcx); hmfbRender(); } });
