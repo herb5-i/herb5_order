@@ -9949,24 +9949,26 @@ function bandMarks() { const m = new Map(); ((rules.weather && rules.weather.ban
 const SL_KEY = 'h5_slsort', SL_LEAF = /애플민트|로즈마리|타임|스피아민트/, SL_MIX = '\u0000생잎 섞임';
 const slOn = () => { try { return localStorage.getItem(SL_KEY) !== '0'; } catch (e) { return true; } };
 function slShow() { const b = $('slsort'); if (!b) return; const on = slOn(); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.textContent = on ? '📦 송장 순서 켜짐' : '📦 송장 순서 꺼짐'; }
+const slBase = n => String(n).replace(/^★\S+\s+/, '');   // ★단단 로즈마리 → 로즈마리 묶음 (같은 옵션이면 ★ 먼저)
 function slSize(t) { const m = String(t ?? '').match(/(\d+(?:\.\d+)?)\s*(kg|g|송이|잎|개)/i); return m ? parseFloat(m[1]) * (/kg/i.test(m[2]) ? 1000 : 1) : 0; }
 function slRank(full, unitCol) {   // 줄마다 순서 번호 (같은 주문 · 받는 분은 같은 번호)
   const H = full[0].map(v => String(v ?? '')), uc = H.indexOf(unitCol), nc = H.indexOf('주문상품명'), oc = H.indexOf('옵션'), qc = H.indexOf('수량');
   if (uc < 0 || nc < 0) return null;
   const merge = new Map(((rules.summary && rules.summary.merge) || []).map(m => [String(m.from ?? '').trim(), String(m.to ?? '').trim()]));
-  const P = []; ((result && result.sheet3) || []).slice(1).forEach(r => { const n = String(r[0] ?? '').trim(); if (n && !P.includes(n)) P.push(n); });
+  const P = [], S3 = ((result && result.sheet3) || []).slice(1).map(r => String(r[0] ?? '').trim()).filter(Boolean);   // 묶음 순서는 ★ 없는 원래 품목 자리 기준
+  S3.filter(n => !/^★/.test(n)).concat(S3.map(slBase)).forEach(n => { if (!P.includes(n)) P.push(n); });
   const U = new Map(), rowU = []; let cur = '';
   full.forEach((r, i) => { if (!i || r.__kt) return; let u = String(r[uc] ?? '').trim(); if (unitCol === '수령인') { if (u) cur = u; u = cur; } if (!u) u = '#' + i; rowU[i] = u;
-    const n0 = String(r[nc] ?? '').trim(), g = merge.get(n0) || n0, opt = oc >= 0 ? r[oc] : '';
-    let x = U.get(u); if (!x) { x = { u, first: i, it: [] }; U.set(u, x); } x.it.push({ g, sz: slSize(opt) || slSize(n0), q: Number(r[qc]) || 0 }); });
+    const n0 = String(r[nc] ?? '').trim(), g1 = merge.get(n0) || n0, star = /^★/.test(g1), g = slBase(g1), opt = oc >= 0 ? r[oc] : '';
+    let x = U.get(u); if (!x) { x = { u, first: i, it: [] }; U.set(u, x); } x.it.push({ g, star, sz: slSize(opt) || slSize(n0), q: Number(r[qc]) || 0 }); });
   const cnt = {}; U.forEach(x => new Set(x.it.map(t => t.g)).forEach(g => cnt[g] = (cnt[g] || 0) + 1));
   const pi = g => { const i = P.indexOf(g); return i < 0 ? 1e6 : i; }, rk = g => /식용꽃/.test(g) ? 0 : /자스민/.test(g) ? 1 : 2;
   const leaf0 = Math.min(1e6, ...P.map((g, i) => SL_LEAF.test(g) ? i : 1e6)), gp = g => g === SL_MIX ? leaf0 - .5 : pi(g);
   const L = [...U.values()].map(x => { const G = [...new Set(x.it.map(t => t.g))], k = G.length;
     const g = k > 1 && G.every(t => SL_LEAF.test(t)) ? SL_MIX : G.sort((a, b) => rk(a) - rk(b) || (cnt[b] - cnt[a]) || pi(a) - pi(b))[0];
     const own = x.it.filter(t => g === SL_MIX || t.g === g);
-    return { ...x, g, k, gram: x.it.reduce((t, v) => t + v.sz * v.q, 0), msz: Math.max(0, ...own.map(t => t.sz)), tq: x.it.reduce((t, v) => t + v.q, 0) }; });
-  L.sort((a, b) => gp(a.g) - gp(b.g) || (a.g === SL_MIX ? (b.gram - a.gram) || (b.k - a.k) : ((b.k > 1) - (a.k > 1)) || (b.k - a.k)) || (b.msz - a.msz) || (b.tq - a.tq) || (a.first - b.first));
+    return { ...x, g, k, gram: x.it.reduce((t, v) => t + v.sz * v.q, 0), msz: Math.max(0, ...own.map(t => t.sz)), st: own.some(t => t.star) ? 0 : 1, tq: x.it.reduce((t, v) => t + v.q, 0) }; });
+  L.sort((a, b) => gp(a.g) - gp(b.g) || (a.g === SL_MIX ? (b.gram - a.gram) || (b.k - a.k) : ((b.k > 1) - (a.k > 1)) || (b.k - a.k)) || (b.msz - a.msz) || (a.st - b.st) || (b.tq - a.tq) || (a.first - b.first));
   const pos = new Map(L.map((x, i) => [x.u, i])); return full.map((r, i) => i && rowU[i] !== undefined ? pos.get(rowU[i]) : -1);
 }
 document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#slsort')) return; try { localStorage.setItem(SL_KEY, slOn() ? '0' : '1'); } catch (er) {} slShow();
