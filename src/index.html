@@ -1910,6 +1910,8 @@ html.dark .ho-c{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.
 .ho-pd{display:flex;align-items:baseline;gap:8px;font-size:13px;color:var(--mute)}.ho-pd>span{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ho-pd b{font-size:17px;color:var(--ink)}
 .ho-box{background:var(--soft,#f5f6f4);border-radius:10px;padding:11px 13px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}.ho-box .pi{display:flex;gap:10px;align-items:flex-start}.ho-box .pi .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ho-box .pi small{color:#2f6db5;font-size:12.5px}html.dark .ho-box .pi small{color:#7fb0ef}.ho-box .pi .q{white-space:nowrap}
 .ho-box.rc{gap:3px;line-height:1.55}.ho-box.rc b{margin-right:4px}
+.ho-trk{font-size:12px;font-weight:700;color:#2f6db5}html.dark .ho-trk{color:#7fb0ef}.ho-cbox{max-height:480px;flex:none}
+.ho-tk{display:grid;grid-template-columns:40% minmax(0,1fr);gap:6px}.ho-tk span,.ho-tk b{height:40px;display:flex;align-items:center;padding:0 12px;border-radius:8px;font-size:14px}.ho-tk span{border:1px solid var(--line)}.ho-tk b{background:var(--soft,#f0f2ee);color:#2f6db5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html.dark .ho-tk b{color:#7fb0ef}.ho-tkd{font-size:12px;color:var(--mute);margin-top:-6px}
 .ho-pw{display:flex;flex-direction:column;gap:2px}.ho-why{margin:0;font-size:13px;color:var(--mute);overflow-wrap:anywhere}.ho-note{margin:0;font-size:11.5px;color:var(--mute)}
 .ho-pay{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;text-align:center;font-size:13px;margin-top:6px}.ho-pay div{border-right:1px solid var(--line)}.ho-pay div:last-child{border-right:0}.ho-pay span{display:block;padding:6px 4px;font-size:11.5px;color:var(--mute);background:var(--soft,var(--bg))}.ho-pay b{display:block;padding:8px 4px}
 .ho-pm{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--mute)}.ho-pm b{color:var(--ink)}
@@ -1929,6 +1931,7 @@ html.dark .ho-c{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.
 .mbox.ho-pop{width:calc(100vw - 16px);max-height:calc(100vh - 16px);padding:14px 14px}
 }
 .hmi[data-s=M] .ho-g{grid-template-columns:repeat(4,minmax(0,1fr))}
+html.dark .ho-c[data-hostc=ALL]{--c:#d6ddd2}.ho-lg{font-style:normal}@media(max-width:700px){.ho-lg{display:none}}.hmi[data-s=M] .ho-lg{display:none}
 @media(max-width:380px){.ho-c span{font-size:10.5px;letter-spacing:-.4px}.ho-c .mva{margin-left:0}.ho-dt{gap:3px}.ho-dt input{font-size:12px;padding:0 3px;letter-spacing:-.3px}.ho-dt>span:first-child{display:none}}
 
 .ost-c.mvc.sel{box-shadow:inset 0 0 0 2px var(--acc)}.ost-c .mva{font-style:normal;color:var(--acc);font-weight:800;margin-left:3px}
@@ -5083,8 +5086,12 @@ document.addEventListener('click', e => { if (e.target.closest && e.target.close
 // ---------- 홈 주문 조회 (주문 처리 현황 위젯 안): 상태 8칸 · 주문일 기간 · 검색 · 상태별 목록 · 상세 팝업 ----------
 // 받는 분 이름 · 전화 · 주소는 카페24에서 그때그때 불러와 화면에만 보여 주고 저장하지 않아요
 let hoSt = 'N20', hoD1 = '', hoD2 = '', hoQ = '', hoCnt = null, hoCntK = '', hoCntBusy = false, hoL = {}, hoPop = null;
-const HO_N = [['N00', '입금전'], ['N10', '상품준비중'], ['N22', '배송보류중'], ['N20', '배송준비중'], ['N21', '배송대기'], ['N30', '배송중'], ['N40', '배송완료'], ['CL', '취소·반품']];
-const HO_COL = { N00: '#7d857a', N10: '#b8860b', N22: '#8a4fb0', N20: '#2e7d4f', N21: '#1f8c8c', N30: '#2f6db5', N40: '#5e6b78', CL: '#c0392b' };
+const HO_N = [['N00', '입금전'], ['N10', '상품준비중'], ['N22', '배송보류중'], ['N20', '배송준비중'], ['N21', '배송대기'], ['N30', '배송중'], ['ALL', '전체 주문 조회'], ['CL', '취소·반품']];
+const HO_COL = { N00: '#7d857a', N10: '#b8860b', N22: '#8a4fb0', N20: '#2e7d4f', N21: '#1f8c8c', N30: '#2f6db5', N40: '#5e6b78', ALL: '#3d473b', CL: '#c0392b' };
+const HO_STN = { N00: '입금전', N10: '상품준비중', N20: '배송준비중', N21: '배송대기', N22: '배송보류중', N30: '배송중', N40: '배송완료', N50: '구매확정' };
+const hoStOf = (o, k) => { if (k && k !== 'ALL') return { n: hoName(k), c: HO_COL[k] }; const st = String(((o.items || [])[0] || {}).order_status || ''), t = ({ C: '취소', R: '반품', E: '교환' })[st[0]];
+  if (t) return { n: t, c: '#c0392b' }; const code = Object.keys(HO_STN).find(c => c === st) || ''; return { n: HO_STN[code] || st || '주문', c: HO_COL[code] || '#5e6b78', code }; };
+const hoShip = (o, k) => ['N21', 'N30', 'N40', 'N50'].includes(k === 'ALL' ? hoStOf(o).code : k);
 const hoName = k => (HO_N.find(x => x[0] === k) || [k, k])[1];
 function hoRange() { let a = hoD1, b = hoD2; if (a && b && a > b) [a, b] = [b, a]; return [a, b]; }
 const hoNoDate = () => !hoD1 && !hoD2;
@@ -5100,9 +5107,9 @@ function hoClaims() { const t = isoDate(new Date()), [a, b] = hoRange(); let L =
   return L.sort((x, y) => String(y.day).localeCompare(String(x.day)) || String(y.at).localeCompare(String(x.at))); }
 function hoCount(k) { const C = (ostD && ostD.counts) || null, H = (hoCnt && hoCnt.c) || {};
   if (k === 'CL') return hoClaims().length;
-  if (hoNoDate() && k !== 'N40') return C ? C[k] || 0 : null;
+  if (hoNoDate() && k !== 'ALL') return C ? C[k] || 0 : null;
   return H[k] === undefined || H[k] === null ? null : H[k]; }
-function hoLoad(code, force) { const t = isoDate(new Date()), [a, b] = hoRange(), from = hoNoDate() ? (code === 'N40' ? t : '') : (a || ''), to = hoNoDate() ? (code === 'N40' ? t : '') : (b || t), key = code + '|' + from + '~' + to, E = hoL[key];
+function hoLoad(code, force) { const t = isoDate(new Date()), [a, b] = hoRange(), from = hoNoDate() ? (code === 'ALL' ? t : '') : (a || ''), to = hoNoDate() ? (code === 'ALL' ? t : '') : (b || t), key = code + '|' + from + '~' + to, E = hoL[key];
   if (E && (E.busy || (!force && Date.now() - E.at < 300e3))) return E;
   hoL[key] = { busy: 1, at: Date.now() };
   c24Call(code === 'N22' ? '/ostorders?code=N22' : '/olist?code=' + code + '&from=' + from + '&to=' + to).then(d => { hoL[key] = { at: Date.now(), orders: d.orders || [], more: !!d.more }; })
@@ -5120,17 +5127,9 @@ function hoSimple(L) {   // 배송보류중: 주문 · 품목 두 칸 (주문을
   const M = new Map(); L.forEach(o => (o.items || []).forEach(i => { const k = i.product_name + (i.option_value ? ' ' + incOpt(i.option_value) : ''); M.set(k, (M.get(k) || 0) + (Number(i.quantity) || 0)); }));
   const itm = [...M.entries()].map(([k, q]) => `<div class="hwi-r hwi-i"><span class="nm"><b>${esc(k)}</b></span><b class="lf">${q}</b></div>`).join('');
   return `<div class="hwi-cols"><div class="hwi-col o"><small class="hwi-ch">주문 ${L.length}건</small><div class="hwi-box">${ord}</div></div><div class="hwi-col i"><small class="hwi-ch">품목</small><div class="hwi-box">${itm}</div></div></div>`; }
-function hoFull(L, code) {   // 배송대기 · 배송중 · 배송완료: 카페24 주문 목록처럼 (PC 표 · 휴대폰 카드)
-  const one = (o, i) => { const r = o.receiver || {}, it = o.items || [], i0 = it[0] || {}, tel = r.phone || r.virtual_phone_no || r.cellphone || '-', cell = r.cellphone || r.virtual_phone_no || r.phone || '-', trk = i0.tracking_no || '', co = i0.shipping_company_name || '';
-    const amt = Number(o.payment_amount) || it.reduce((t, x) => t + (Number(x.product_price) || 0) * (Number(x.quantity) || 0), 0), who = r.name || (o.buyer && o.buyer.name) || '이름 없음';
-    const its = it.map(x => `<span class="ho-it"><b>${esc(x.product_name)}</b>${x.option_value ? `<span class="op"> - 옵션 : ${esc(incOpt(x.option_value))}</span>` : ''}</span>`).join('');
-    return `<div class="ho-f"><div class="ho-fp"><div class="c"><span>${esc(hoDt(o.order_date))}</span><span>${hoChI(o)} <u>${esc(o.order_id)}</u></span></div><div class="c"><b>${esc((o.buyer && o.buyer.name) || who)}</b><small>${o.member_id ? '[회원]' : '[비회원]'}</small></div><div class="c"><span>${esc(hoDt(i0.shipped_date) || '-')}</span><small>${esc(i0.shipping_code || '')}</small></div><div class="c"><span>${esc(co || '-')}</span><b class="trk">${esc(trk || (code === 'N21' ? '송장 전' : '-'))}</b><small>${i0.tracking_no_updated_date ? '(' + esc(hoDt(i0.tracking_no_updated_date)) + ')' : ''}</small></div><div class="c l">${its}</div><div class="c">${it.map(x => `<span>${Number(x.quantity) || 0}</span>`).join('')}</div>
-      <div class="rcv"><span>수령자 : <b>${esc(who)}</b></span><span>일반전화 : ${esc(tel)}</span><span>휴대전화 : ${esc(cell)}</span><span>주소 : ${esc(hoAddr(r))}</span>${r.shipping_message ? `<span class="memo">배송 메모 : ${esc(r.shipping_message)}</span>` : ''}</div></div>
-      <div class="ho-fm"><div class="h">${hoChI(o)}<b>${esc(o.order_id)}</b></div><div class="d"><span>${esc(hoDt(o.order_date))}</span><b>${amt ? amt.toLocaleString('ko-KR') + '원' : ''}</b></div>
-        <div class="box">${it.map(x => `<div class="pi"><span class="nm"><b>${esc(x.product_name)}</b>${x.option_value ? `<small>• 옵션 : ${esc(incOpt(x.option_value))}</small>` : ''}</span><span class="q">/ ${Number(x.quantity) || 0}개</span></div>`).join('')}</div>
-        <div class="box rc"><span><b>수령자</b> ${esc(who)}</span><span><b>일반전화</b> ${esc(tel)}</span><span><b>휴대전화</b> ${esc(cell)}</span><span>${esc(hoAddr(r))}</span>${r.shipping_message ? `<span class="memo"><b>배송 메모</b> ${esc(r.shipping_message)}</span>` : ''}</div>
-        <div class="tk"><span>${esc(co || '택배사')}</span><b>${esc(trk || (code === 'N21' ? '송장 전' : '-'))}</b></div><div class="by">${esc((o.buyer && o.buyer.name) || '')}${o.member_id ? '' : '(비회원)'}</div></div></div>`; };
-  return `<div class="ho-full"><div class="ho-fhd"><span>주문일 / 주문번호</span><span>주문자</span><span>배송일 / 배송번호</span><span>운송장 정보<br>(송장번호 입력일)</span><span>상품명 / 옵션</span><span>수량</span></div>${L.map(one).join('')}</div>`; }
+function hoCompact(L, k) {   // 배송대기 · 배송중 · 전체 주문 조회: 짧게 (누르면 상세 팝업)
+  return `<div class="hwi-box ho-cbox">${L.map(o => { const r = o.receiver || {}, it = o.items || [], i0 = it[0] || {}, S = hoStOf(o, k), sh = hoShip(o, k), trk = i0.tracking_no || '';
+    return `<div class="hwi-r ho-click" data-hopop="${esc(o.order_id)}" data-hopk="${esc(k)}" title="눌러서 상세 보기"><span class="hwi-h"><b>${esc(r.name || (o.buyer && o.buyer.name) || '이름 없음')}</b>${hoChB(o)}${k === 'ALL' ? `<span class="ho-sb" style="--c:${S.c}">${esc(S.n)}</span>` : ''}<span class="sp"></span><small>${hoTm(o.order_date)}</small></span>${sh ? `<span class="ho-trk">🚚 ${trk ? esc((i0.shipping_company_name || '') + ' ' + trk) : '송장 전'}</span>` : ''}${it.map(i => `<span class="hwi-l"><span class="p">${esc(i.product_name)}</span><span class="o">${esc(incOpt(i.option_value || ''))}</span><span class="q">${Number(i.quantity) || 0}</span></span>`).join('')}</div>`; }).join('')}</div>`; }
 function hoClaimCards(L) {
   return `<div class="ho-cls">${L.map(x => { const lines = String(x.text || '').split('\n'), pos = (() => { try { return claimPosLine(x); } catch (e) { return ''; } })(), who = (() => { try { return claimWho(x); } catch (e) { return ''; } })();
     return `<button type="button" class="ho-cl" data-hocl="${esc(x.id)}" data-hoday="${esc(x.day)}"><span class="t"><span class="ho-ct ${({ '취소': 'c', '반품': 'r', '교환': 'e' })[x.ctype] || 'c'}">${esc(x.ctype || '클레임')}</span><b>${esc(x.item || '')}</b><span class="sp"></span><small>${esc(fmtDay(x.day))}</small></span>${who ? `<b class="who">${esc(who)}</b>` : ''}${pos ? `<b class="pos">${esc(pos)}</b>` : ''}<span class="tx">${esc(lines.join(' · '))}</span></button>`; }).join('')}</div>`; }
@@ -5141,7 +5140,7 @@ function hoListHtml() {
   else if (k === 'N20') body = hwIncBox(true);
   else if (k === 'CL') { const L = hoClaims().filter(x => hoHit(x.item, x.text, x.oid, (() => { try { return claimWho(x); } catch (e) { return ''; } })())); body = L.length ? hoClaimCards(L) : `<p class="hwi-empty">${hoNoDate() ? '오늘' : '이 기간에'} 취소 · 반품 · 교환이 없어요</p>`; }
   else { const E = hoLoad(k); if (E.busy && !E.orders) body = '<p class="hwi-empty">카페24에서 불러오는 중…</p>'; else if (E.err) body = `<p class="hwi-empty">⚠ ${esc(E.err)}</p>`;
-    else { const L = hoFilt(E.orders); body = !L.length ? `<p class="hwi-empty">${hoQ ? '찾는 주문이 없어요' : '이 기간에 ' + hoName(k) + ' 주문이 없어요'}</p>` : k === 'N22' ? hoSimple(L) : hoFull(L, k) + (E.more ? '<p class="msg">최근 1,000건까지만 보여요 · 날짜를 좁혀 보세요</p>' : ''); } }
+    else { const L = hoFilt(E.orders); body = !L.length ? `<p class="hwi-empty">${hoQ ? '찾는 주문이 없어요' : '이 기간에 ' + hoName(k) + ' 주문이 없어요'}</p>` : k === 'N22' ? hoSimple(L) : hoCompact(L, k) + (E.more ? '<p class="msg">최근 1,000건까지만 보여요 · 날짜를 좁혀 보세요</p>' : ''); } }
   return body; }
 function hoBarHtml() { const [a, b] = [hoD1, hoD2];
   return `<div class="ho-bar"><b class="ho-ttl">${esc(hoName(hoSt))}</b><span class="ho-dt"><span aria-hidden="true">📅</span><input type="date" id="ho-d1" value="${esc(a)}" aria-label="주문일 시작" max="${isoDate(new Date())}"><span>~</span><input type="date" id="ho-d2" value="${esc(b)}" aria-label="주문일 끝" max="${isoDate(new Date())}">${a || b ? '<button type="button" class="ho-dx" data-hodx="1" title="날짜 지우기" aria-label="날짜 지우기">×</button>' : ''}</span><span class="ho-q"><span aria-hidden="true">🔍</span><input id="ho-q" type="search" value="${esc(hoQ)}" placeholder="주문번호 · 품목 · 받는 분" aria-label="주문 찾기"></span></div>`; }
@@ -5151,7 +5150,7 @@ document.addEventListener('click', e => { if (!e.target.closest) return; let b;
   if ((b = e.target.closest('[data-hostc]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; hoPick(b.dataset.hostc); return; }
   if (e.target.closest('[data-hodx]')) { hoBlur(); hoD1 = ''; hoD2 = ''; homeSoon(); return; }
   if ((b = e.target.closest('[data-hopop]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; const id = b.dataset.hopop, k = b.dataset.hopk || hoSt;
-    let o = null; if (k === 'N20') o = ((incD && incD.orders) || []).find(x => String(x.order_id) === id); else { Object.values(hoL).some(E => (o = (E.orders || []).find(x => String(x.order_id) === id))); }
+    let o = null; if (k === 'N20') o = ((incD && incD.orders) || []).find(x => String(x.order_id) === id); else { const ks = Object.keys(hoL).sort((x, y) => (y.startsWith(k + '|') ? 1 : 0) - (x.startsWith(k + '|') ? 1 : 0)); ks.some(kk => (o = ((hoL[kk] || {}).orders || []).find(x => String(x.order_id) === id))); }
     if (o) { hoPop = { o, k }; hoPopRender(); } return; }
   if ((b = e.target.closest('[data-hocl]'))) { const x = hoClaims().find(y => y.id === b.dataset.hocl); if (x) { hoPop = { cl: x }; hoPopRender(); } return; }
   if (e.target.id === 'hoModal' || e.target.closest('[data-hopx]')) { hoPop = null; const m = $('hoModal'); if (m) m.classList.add('hidden'); } });
@@ -5168,10 +5167,12 @@ function hoPopRender() {
       ${who || pos ? `<div class="ho-pw">${who ? `<b>${esc(who)}</b>` : ''}${pos ? `<b class="pos">${esc(pos)}</b>` : ''}</div>` : ''}
       ${x.oid ? `<div data-cord="${esc(x.oid)}|${esc(x.oic || '')}">${claimOrdHtml(x.oid, x.oic || '')}</div>` : ''}<p class="ho-why">${esc(String(x.text || '').split('\n').join(' · '))}</p>`; }
   else { const o = hoPop.o, r = o.receiver || {}, it = o.items || [], amt = Number(o.payment_amount) || it.reduce((t, x) => t + ((Number(x.product_price) || 0) + (Number(x.option_price) || 0)) * (Number(x.quantity) || 0), 0);
-    h = `<div class="ho-ph">${hoChI(o)}<b>${esc(o.order_id)}</b><span class="ho-sb" style="--c:${HO_COL[hoPop.k] || '#2e7d4f'}">${esc(hoName(hoPop.k))}</span><span class="sp"></span><button class="ibtn" type="button" data-hopx="1" aria-label="닫기">✕</button></div>
+    const S = hoStOf(o, hoPop.k), i0 = it[0] || {}, sh = hoShip(o, hoPop.k);
+    h = `<div class="ho-ph">${hoChI(o)}<b>${esc(o.order_id)}</b><span class="ho-sb" style="--c:${S.c}">${esc(S.n)}</span><span class="sp"></span><button class="ibtn" type="button" data-hopx="1" aria-label="닫기">✕</button></div>
       <div class="ho-pd"><span>${esc(hoDt(o.order_date))} · ${hoChB(o)}</span><b>${amt ? amt.toLocaleString('ko-KR') + '원' : ''}</b></div>
       <div class="ho-box">${it.map(x => `<div class="pi"><span class="nm"><b>${esc(x.product_name)}</b>${x.option_value ? `<small>- 옵션 : ${esc(incOpt(x.option_value))}</small>` : ''}</span><span class="q">/ ${Number(x.quantity) || 0}개</span></div>`).join('')}</div>
       <div class="ho-box rc"><span><b>수령자</b> ${esc(r.name || '-')}</span><span><b>일반전화</b> ${esc(r.phone || r.virtual_phone_no || '-')}</span><span><b>휴대전화</b> ${esc(r.cellphone || r.virtual_phone_no || r.phone || '-')}</span><span>${esc(hoAddr(r) || '-')}</span>${r.shipping_message ? `<span class="memo"><b>배송 메모</b> ${esc(r.shipping_message)}</span>` : ''}</div>
+      ${sh ? `<div class="ho-tk"><span>${esc(i0.shipping_company_name || '택배사')}</span><b>${esc(i0.tracking_no || '송장 전')}</b></div><small class="ho-tkd">${[i0.shipped_date ? '배송일 ' + hoDt(i0.shipped_date) : '', i0.tracking_no_updated_date ? '송장 입력 ' + hoDt(i0.tracking_no_updated_date) : '', i0.shipping_code ? '배송번호 ' + i0.shipping_code : ''].filter(Boolean).map(esc).join(' · ')}</small>` : ''}
       ${hoPayHtml(String(o.order_id))}<p class="ho-note">🔒 이름 · 전화 · 주소는 화면에만 보이고 저장하지 않아요</p>`; }
   m.innerHTML = `<div class="mbox ho-pop">${h}</div>`; m.classList.remove('hidden'); }
 // 주문 처리 현황 위젯 아래: 들어온 주문 (칸 안에서만 스크롤)
@@ -5227,7 +5228,7 @@ const HW = {
     const foot = !ostOn() ? '로그인하는 웹 버전에서 카페24에 연결되면 보여요' : ostErr ? '⚠ ' + esc(ostErr) : ostBusy && !ostD ? '카페24에서 불러오는 중…' : '';
     return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요"><span class="k">카페24${tm ? ' · ' : ''}</span>${tm}</small></span><span class="ost-hb"><button class="ost-mk${mkWin ? ' on' : ''}" type="button" data-ostmk="1" ${ostOn() ? '' : 'disabled'} title="${U.mkt ? '카페24 배송준비중 관리 화면을 새 창으로 열어요 · 창을 닫으면 주문을 새로 받아요 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : '마켓 주문 수집 화면 주소 넣기'}"><i aria-hidden="true">🛒</i>${mkWin ? '수집 창 열림' : '마켓 주문 수집'}</button><button class="hm-more ost-re${ostBusy ? ' spin' : ''}" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="${ostBusy ? '받는 중' : '지금 새로 받기'}" title="${ostBusy ? '받는 중…' : '새로 받기'}"><i aria-hidden="true">↻</i></button></span></div>
       <div class="ho-g" role="tablist" aria-label="주문 상태">${HO_N.map(([k, n]) => { const c = ostOn() ? hoCount(k) : null, on = hoSt === k && ostOn(), dd = k === 'N00' || k === 'N10';
-        return `<button type="button" role="tab" aria-selected="${on}" class="ho-c${on ? ' on' : ''}${c ? ' has' : ''}" style="--c:${HO_COL[k]}" data-hostc="${k}" ${ostOn() ? '' : 'disabled'} title="${n} 주문 보기${dd ? ' · 배송준비중으로 넘기기' : ''}"><span>${n}${dd ? '<i class="mva" aria-hidden="true">▾</i>' : ''}</span><b>${c === null ? '–' : Number(c).toLocaleString('ko-KR')}</b></button>`; }).join('')}</div>
+        return `<button type="button" role="tab" aria-selected="${on}" class="ho-c${on ? ' on' : ''}${c ? ' has' : ''}" style="--c:${HO_COL[k]}" data-hostc="${k}" ${ostOn() ? '' : 'disabled'} title="${n} 주문 보기${dd ? ' · 배송준비중으로 넘기기' : ''}"><span>${k === 'ALL' ? '전체<i class="ho-lg"> 주문</i> 조회' : n}${dd ? '<i class="mva" aria-hidden="true">▾</i>' : ''}</span><b>${c === null ? '–' : Number(c).toLocaleString('ko-KR')}</b></button>`; }).join('')}</div>
       ${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}${ostOn() ? hoBarHtml() + `<div class="ho-list">${hoListHtml()}</div>` : ''}</div>`; },
   today() { const t = isoDate(new Date()), U = upl[t] || {}, am = U.am ? uplOrders(t, 'am') : 0, pm = U.pm ? uplOrders(t, 'pm') : 0, all = uplOrders(t), tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
     const sl = (k, n, lb) => `<span class="hm-slot ${U[k] ? 'done' : 'wait'}"><i></i>${lb} ${U[k] ? n + '건 · ' + esc(hhmm(U[k].at).replace(/^오[전후] /, '')) : '대기'}</span>`;

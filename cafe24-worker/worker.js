@@ -384,19 +384,19 @@ function oRange(q) { const ok = v => /^\d{4}-\d{2}-\d{2}$/.test(v || ''), today 
   if (a > b) [a, b] = [b, a]; if ((new Date(b) - new Date(a)) / 864e5 > 366) throw fail(400, 'range', '기간은 1년까지만 볼 수 있어요'); return [a, b]; }
 async function oCount(env, q) {
   const [from, to] = oRange(q), token = await accessToken(env), counts = {};
-  await Promise.all(OST_ALL.map(async ([code]) => { const d = await c24get(env, token, '/admin/orders/count', { order_status: code, start_date: from, end_date: to, date_type: 'order_date' }, '주문(Order) 읽기'); counts[code] = Number(d.count) || 0; }));
+  await Promise.all(OST_ALL.concat([['ALL', '전체']]).map(async ([code]) => { const d = await c24get(env, token, '/admin/orders/count', Object.assign(code === 'ALL' ? {} : { order_status: code }, { start_date: from, end_date: to, date_type: 'order_date' }), '주문(Order) 읽기'); counts[code] = Number(d.count) || 0; }));
   await Promise.all([['cancel', 'cancel_request_date'], ['return', 'return_request_date'], ['exchange', 'exchange_request_date']].map(async ([k, dt]) => {
     try { const d = await c24get(env, token, '/admin/orders/count', { start_date: from, end_date: to, date_type: dt }, '주문(Order) 읽기'); counts[k] = Number(d.count) || 0; } catch (e) { counts[k] = null; } }));
   return { from, to, at: new Date().toISOString(), counts };
 }
 async function oList(env, q) {
-  const code = String(q.get('code') || ''); if (!['N21', 'N30', 'N40'].includes(code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
+  const code = String(q.get('code') || ''); if (!['N21', 'N30', 'N40', 'ALL'].includes(code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
   const [from, to] = oRange(q), token = await accessToken(env), out = []; let more = false;
   for (let offset = 0; offset < 1000; offset += 250) {
-    const d = await c24get(env, token, '/admin/orders', { start_date: from, end_date: to, date_type: 'order_date', order_status: code, embed: 'items,receivers,buyer', limit: 250, offset }, '주문(Order) 읽기');
+    const d = await c24get(env, token, '/admin/orders', Object.assign({ start_date: from, end_date: to, date_type: 'order_date', embed: 'items,receivers,buyer', limit: 250, offset }, code === 'ALL' ? {} : { order_status: code }), '주문(Order) 읽기');
     const L = d.orders || [];
     L.forEach(o => { const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
-      const items = (o.items || []).filter(i => (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.quantity) || 0, product_code: i.product_code || '',
+      const items = (o.items || []).filter(i => code === 'ALL' || (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, order_status: i.order_status || '', product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.quantity) || 0, product_code: i.product_code || '',
         tracking_no: i.tracking_no || '', shipping_company_name: i.shipping_company_name || '', shipping_code: i.shipping_code || '', shipped_date: i.shipped_date || '', delivered_date: i.delivered_date || '', tracking_no_updated_date: i.tracking_no_updated_date || '' }));
       if (!items.length) return;
       out.push({ order_id: o.order_id, order_date: o.order_date, payment_amount: o.payment_amount || (o.actual_order_amount && o.actual_order_amount.payment_amount) || '', order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '', member_id: o.member_id ? 1 : 0,
