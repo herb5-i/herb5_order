@@ -1896,7 +1896,7 @@ html.dark .ds-n{background:rgba(255,255,255,.05)}html.dark .ds-n mark{background
 .scaltog-w{display:flex;justify-content:center}.scaltog{display:inline-flex;align-items:center;gap:4px;height:38px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--card,#fff);color:var(--mute);cursor:pointer}.scaltog:hover{color:var(--ink,inherit)}.scaltog .chev{transition:transform .2s}.scaltog.on{border-color:var(--acc);color:var(--acc);background:#e8f2ea}.scaltog.on .chev{transform:rotate(180deg)}html.dark .scaltog.on{background:rgba(76,175,110,.16)}
 #v-sum.sumpast #sumbody>.card,#v-sum.sumpast .sumtop{border:3px solid #e3a14a!important}#v-sum.sumpast .sslot button.on{background:#e3a14a!important;border-color:#e3a14a!important;color:#fff!important}#v-sum.sumpast .scal .hd.on{background:#e3a14a!important;color:#fff!important}.scal .hd.today{box-shadow:inset 0 0 0 2px var(--acc)}
 .sumpastbar{display:flex;align-items:center;gap:10px;background:#fff3e0;border:2px solid #e3a14a;border-radius:14px;padding:12px 14px;margin-bottom:12px}.sumpastbar .ic{font-size:22px}.sumpastbar div{display:flex;flex-direction:column;min-width:0}.sumpastbar div>b{font-size:15px;color:#a35d00}.sumpastbar span{font-size:12.5px;color:#8a5a1a;word-break:keep-all}html.dark .sumpastbar{background:#3d2e12;border-color:#a87a2a}html.dark .sumpastbar div>b{color:#f0c987}html.dark .sumpastbar span{color:#d8b77a}
-.btn.slsort{font-weight:700}.btn.slsort.on{background:#e8f2ea;border-color:var(--acc);color:var(--acc)}html.dark .btn.slsort.on{background:rgba(76,175,110,.16)}
+
 .qkb{width:26px;height:24px;padding:0;margin-right:4px;border:1px solid var(--line);border-radius:8px;background:var(--card,#fff);font-size:13px;line-height:1;cursor:pointer;opacity:.45;vertical-align:middle}.qkb:hover{opacity:1}.qkb.hint{opacity:1;border-color:#e3a14a;background:#fff3e0}.qkb.on{opacity:1;border-color:#e3a14a;background:#ffe2b8}
 tr.qkr td{opacity:.55;background:#fffaf2}tr.qkr td.rn{opacity:1}html.dark tr.qkr td{background:rgba(227,161,74,.08)}html.dark .qkb.hint,html.dark .qkb.on{background:#4a3818;border-color:#8a6420}
 .stab.qk-tab{color:#a35d00}html.dark .stab.qk-tab{color:#f0c987}.qk-ib.on{background:#fff3e0;border-color:#e3a14a;color:#a35d00}html.dark .qk-ib.on{background:#4a3818;color:#f0c987}
@@ -2988,7 +2988,6 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
         <div class="sh"><span class="num">2</span><div><h2>결과 확인 · 내려받기</h2><p>확인이 필요한 줄을 먼저 보고 내려받으세요</p></div>
           <div class="row shact">
             <button class="btn" id="rerun">규칙 다시 적용</button>
-            <button class="btn slsort" id="slsort" type="button" aria-pressed="true" title="엑셀(주문정리 · 수령인별)을 송장 뜯기 좋은 순서로 내려받아요: 같은 품목끼리 · 섞인 주문은 묶음 맨 앞 · 큰 것부터">📦 송장 순서 켜짐</button>
             <button class="btn pri big" id="dl">엑셀 내려받기</button>
           </div>
         </div>
@@ -9946,9 +9945,8 @@ function bandMarks() { const m = new Map(); ((rules.weather && rules.weather.ban
 // · 같은 품목끼리 모아요. 품목 순서는 집계 칸 순서
 // · 섞인 주문은 그 묶음 맨 앞: ① 식용꽃이 있으면 식용꽃 ② 자스민이 있으면 자스민 ③ 생잎끼리만이면 [생잎 섞임] 묶음(생잎 묶음들 맨 앞, 합친 무게 큰 순) ④ 나머지는 주문이 가장 많은 품목
 // · 섞인 주문끼리는 품목 많은 것부터, 단품은 큰 옵션 → 작은 옵션, 같은 옵션은 수량 많은 것부터. 한 주문(수령인별은 받는 분)의 줄은 늘 붙어 있어요
-const SL_KEY = 'h5_slsort', SL_LEAF = /애플민트|로즈마리|타임|스피아민트/, SL_MIX = '\u0000생잎 섞임';
-const slOn = () => { try { return localStorage.getItem(SL_KEY) !== '0'; } catch (e) { return true; } };
-function slShow() { const b = $('slsort'); if (!b) return; const on = slOn(); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.textContent = on ? '📦 송장 순서 켜짐' : '📦 송장 순서 꺼짐'; }
+const SL_LEAF = /애플민트|로즈마리|타임|스피아민트/, SL_MIX = '\u0000생잎 섞임';
+const slOn = () => true;   // 엑셀은 늘 송장 순서로 내려받아요 (켜고 끄는 버튼은 없앴어요)
 const slBase = n => String(n).replace(/^★\S+\s+/, '');   // ★단단 로즈마리 → 로즈마리 묶음 (같은 옵션이면 ★ 먼저)
 function slSize(t) { const m = String(t ?? '').match(/(\d+(?:\.\d+)?)\s*(kg|g|송이|잎|개)/i); return m ? parseFloat(m[1]) * (/kg/i.test(m[2]) ? 1000 : 1) : 0; }
 function slRank(full, unitCol) {   // 줄마다 순서 번호 (같은 주문 · 받는 분은 같은 번호)
@@ -9971,9 +9969,6 @@ function slRank(full, unitCol) {   // 줄마다 순서 번호 (같은 주문 · 
   L.sort((a, b) => gp(a.g) - gp(b.g) || (a.g === SL_MIX ? (b.gram - a.gram) || (b.k - a.k) : ((b.k > 1) - (a.k > 1)) || (b.k - a.k)) || (b.msz - a.msz) || (a.st - b.st) || (b.tq - a.tq) || (a.first - b.first));
   const pos = new Map(L.map((x, i) => [x.u, i])); return full.map((r, i) => i && rowU[i] !== undefined ? pos.get(rowU[i]) : -1);
 }
-document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#slsort')) return; try { localStorage.setItem(SL_KEY, slOn() ? '0' : '1'); } catch (er) {} slShow();
-  shareToast(slOn() ? '📦 송장 순서로 내려받아요 · 같은 품목끼리, 섞인 주문은 묶음 맨 앞' : '주문이 들어온 순서대로 내려받아요'); });
-setTimeout(slShow, 0);
 function buildXlsx() {
   const wb = XLSX.utils.book_new();
   const colorMap0 = new Map(result.colors.map(c => [c[0] + ',' + c[1], c[2]]));
