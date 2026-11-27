@@ -1151,6 +1151,9 @@ body.is-home .pagehead h2::after{display:none}
 .hm-up,.hm-ghost{display:inline-flex;align-items:center;gap:8px;font:600 14.5px/1 var(--body);border-radius:15px;padding:13px 18px;cursor:pointer;border:0;transition:transform .12s,box-shadow .12s}
 .hm-up{color:#fff;background:linear-gradient(180deg,#72b07a 0%,#4c8a5b 55%,#3c7550 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 22px -10px rgba(40,100,60,.7)}
 .hm-up svg{width:18px;height:18px}
+.h5f{position:relative;margin-left:auto;display:flex;align-items:center;gap:8px;height:44px;width:300px;max-width:100%;box-sizing:border-box;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.85);box-shadow:0 0 0 1px rgba(60,70,40,.1),0 6px 14px -8px rgba(40,60,30,.3)}.h5f:focus-within{box-shadow:0 0 0 2px #ff9800}.h5f input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:14px;color:var(--ink)}html.dark .h5f{background:rgba(255,255,255,.08)}
+.h5f-l{position:fixed;z-index:80;width:360px;max-width:calc(100vw - 24px);max-height:min(420px,calc(100vh - 120px));overflow-y:auto;background:var(--card,#fff);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.16);padding:6px;display:flex;flex-direction:column;gap:2px}.h5f-l button{display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;border-radius:10px;background:none;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}.h5f-l button.on,.h5f-l button:hover{background:#fff3e0}html.dark .h5f-l button.on,html.dark .h5f-l button:hover{background:rgba(255,152,0,.15)}.h5f-l .ic{font-size:17px}.h5f-l .tx{display:flex;flex-direction:column;min-width:0}.h5f-l .tx b{font-size:13.5px}.h5f-l .tx small{font-size:11.5px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.h5f-k{padding:4px 10px 4px;font-size:11px;color:var(--mute)}.h5f-no{margin:8px 10px;font-size:13px;color:var(--mute)}
+@media(max-width:700px){.h5f{width:100%;margin-left:0;order:9}}
 .hm-ghost{color:var(--moss2);background:rgba(255,255,255,.8);box-shadow:0 0 0 1px rgba(60,70,40,.08),0 6px 14px -8px rgba(40,60,30,.3)}
 .hm-up:hover,.hm-ghost:hover{transform:translateY(-1px)}
 .hm-up:active,.hm-ghost:active{transform:scale(.97)}
@@ -1501,6 +1504,9 @@ html.dark .sg-tile.st-low{background:rgba(216,97,60,.14)!important}html.dark .sg
 .hm-bell{display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-3px;background:#d8613c;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3a6 6 0 0 0-6 6v3.6L4.4 15.4A1 1 0 0 0 5.3 17h13.4a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zM9.5 18.5a2.5 2.5 0 0 0 5 0z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3a6 6 0 0 0-6 6v3.6L4.4 15.4A1 1 0 0 0 5.3 17h13.4a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zM9.5 18.5a2.5 2.5 0 0 0 5 0z'/%3E%3C/svg%3E") center/contain no-repeat}
 .hm-alert .hm-lb{color:#b04a33}
 .hm-alist{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.hmi[data-s]:has(.hm-stkall){grid-row:span 5}.hm-stkall{display:flex;flex-direction:column}.hm-stkl{flex:1;min-height:150px;max-height:330px;overflow-y:auto;border:1px solid var(--line);border-radius:14px;overscroll-behavior:contain}.hm-stkg{position:sticky;top:0;z-index:1;padding:5px 12px;font-size:12px;font-weight:800;color:var(--acc);background:#eef1ec}.hm-stkg small{font-weight:700;color:var(--mute)}html.dark .hm-stkg{background:#243027}
+.hm-stkr{display:grid;grid-template-columns:minmax(0,1fr) auto 44px;gap:8px;align-items:center;width:100%;padding:8px 12px;border:0;border-top:1px solid var(--line);background:none;color:inherit;text-align:left;cursor:pointer;font:inherit}.hm-stkr:hover{background:rgba(0,0,0,.03)}html.dark .hm-stkr:hover{background:rgba(255,255,255,.04)}.hm-stkr .nm{font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hm-stkr b{font-size:14px;font-weight:800;white-space:nowrap}.hm-stkr em{justify-self:end;font-style:normal;font-size:11.5px;font-weight:800;color:#fff;background:#c0392b;border-radius:99px;padding:2px 8px}.hm-stkr.out b{color:#c0392b;font-size:12.5px}
+.h5-hl{position:relative;z-index:2;outline:3px solid #ff9800!important;outline-offset:3px;animation:h5ring 3.2s ease-out forwards!important}.h5-hl::after{content:'';position:absolute;inset:0;border-radius:inherit;background:rgba(255,183,77,.38);pointer-events:none;animation:h5fade 3.2s ease-out forwards;z-index:3}@keyframes h5fade{0%,60%{opacity:1}100%{opacity:0}}@keyframes h5ring{0%,70%{outline-color:#ff9800}100%{outline-color:rgba(255,152,0,0)}}html.dark .h5-hl::after{background:rgba(255,152,0,.22)}
 .hm-al{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:11px 54px 11px 13px;border-radius:14px;border:1px solid rgba(214,96,64,.18);background:rgba(255,255,255,.75);font:inherit;color:var(--ink);text-align:left;cursor:pointer;min-width:0}
 .hm-al b{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hm-al span{font-size:12px;color:var(--mute)}
@@ -1859,7 +1865,7 @@ button.hmfb-nh{width:100%;border:0;background:none;padding:0;font:inherit;color:
 .svp-n{margin:0 0 6px;font-size:13px;color:var(--acc);font-weight:700}.svp-h{margin:14px 0 6px;font-size:12.5px;color:var(--mute);font-weight:600}
 .svp-r{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:5px}.svp-r.on{border-color:var(--acc);background:var(--acc2)}
 .svp-r label{flex:1;min-width:0;display:flex;align-items:center;gap:10px;cursor:pointer}.svp-r input{width:18px;height:18px;flex:none;accent-color:var(--acc)}.svp-r b{font-size:14.5px;overflow-wrap:anywhere;min-width:0}.svp-r .linkbtn{flex:none;font-size:13px}
-.svp-why{flex-basis:100%;font-size:13px;color:var(--mute);padding-left:28px}.svp-why ul{margin:4px 0 0;padding-left:16px;color:var(--ink)}.svp-why p{margin:4px 0 0;white-space:pre-line}
+.svp-why{flex-basis:100%;font-size:13px;color:var(--mute);padding-left:28px}.svp-why>span{display:block;margin-bottom:6px}.svp-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.svp-chip{font-size:12px;font-weight:700;color:var(--ink);background:var(--card,#fff);border:1px solid var(--line);border-radius:99px;padding:2px 9px}.svp-chip.bad{color:#c0392b;background:#fdecea;border-color:#f3c1bb}html.dark .svp-chip.bad{background:rgba(192,57,43,.18);color:#f2a49a;border-color:transparent}.svp-rec{background:var(--card,#fff);border:1px solid var(--line);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;gap:3px}.svp-rec>b{font-size:12px;color:var(--mute)}.svp-rec div{display:grid;grid-template-columns:44px minmax(0,1fr);gap:6px;font-size:12.5px;color:var(--ink)}.svp-rec div span:first-child{color:var(--mute)}.svp-rec div span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.svp-wy{color:var(--acc)!important;font-size:12.5px}.svp-none{font-size:12px}.svp-why ul{margin:4px 0 0;padding-left:16px;color:var(--ink)}.svp-why p{margin:4px 0 0;white-space:pre-line}
 .svp-all{margin-bottom:8px;background:var(--bg)}.svp-all small{margin-left:auto;color:var(--mute);font-size:12.5px;flex:none}.svp-in{font-style:normal;font-size:11px;font-weight:700;color:var(--acc);background:var(--card);border:1px solid var(--acc);border-radius:99px;padding:1px 7px;flex:none}
 .svp-unm{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:#fff3df;margin-bottom:10px;font-size:13.5px}.svp-unm span{flex:1;min-width:0}.svp-unm .btn.danger{background:#c0392b;color:#fff;border-color:#c0392b}html.dark .svp-unm{background:rgba(208,138,58,.15)}
 .svp-done{position:sticky;bottom:0;padding:12px 0 4px;background:var(--card)}.svp-done .btn{width:100%}html.dark .svp-done{background:inherit}
@@ -1957,6 +1963,57 @@ html.dark .tipbub{background:#eef2ea;color:#1b221d}
 .hwi-i .nm .op{font-weight:500;color:var(--mute);font-size:12px}
 @media(max-width:700px){.hwi-seg{display:flex}.hwi-cols{grid-template-columns:minmax(0,1fr)}.hwi-ch{display:none}.hwi[data-v=o] .hwi-col.i,.hwi[data-v=i] .hwi-col.o{display:none}}
 .hwi-empty{margin:0;padding:18px 12px;font-size:13px;color:var(--mute);text-align:center}
+/* 홈 주문 조회: 상태 8칸 · 기간 · 검색 · 목록 · 팝업 */
+.ho-g{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:4px 0 2px}
+.ho-c{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;padding:8px 4px;border-radius:12px;border:1.5px solid var(--line);background:var(--card,#fff);color:var(--c);font:inherit;cursor:pointer}
+.ho-c span{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;opacity:.9}.ho-c b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}.ho-c .mva{font-style:normal;margin-left:2px}
+.ho-c.on{background:var(--c);border-color:var(--c);color:#fff}.ho-c:focus-visible{outline:2px solid var(--c);outline-offset:2px}.ho-c:disabled{cursor:default;opacity:.7}
+html.dark .ho-c{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1);filter:brightness(1.35)}html.dark .ho-c.on{filter:none;color:#fff}
+.ho-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px dashed var(--line);margin-top:10px;padding-top:10px}.ho-ttl{font-size:14.5px;margin-right:2px}
+.ho-dt{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mute)}.ho-dt input{height:32px;border:1px solid var(--line);border-radius:10px;padding:0 6px;font:inherit;font-size:13px;color:var(--ink);background:var(--card,#fff);min-width:0}
+.ho-dx{width:26px;height:26px;border-radius:99px;border:1px solid var(--line);background:var(--card,#fff);color:var(--mute);cursor:pointer;padding:0;line-height:1}
+.ho-q{margin-left:auto;display:flex;align-items:center;gap:6px;height:32px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:var(--card,#fff);width:230px;max-width:100%;box-sizing:border-box}.ho-q input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:13px;color:var(--ink)}
+.ho-list{display:flex;flex-direction:column;min-height:0;flex:1;margin-top:8px}.ho-list>.hwi{border-top:0;margin-top:0;padding-top:0}.ho-list>.mv{margin-top:0}
+.ho-click{cursor:pointer!important}.ho-click:hover{background:rgba(46,125,79,.06)}html.dark .ho-click:hover{background:rgba(255,255,255,.04)}
+.ho-chi{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:99px;font-size:10.5px;font-weight:800;color:#fff;flex:none;vertical-align:middle}
+.ho-full{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:14px;background:var(--card,#fff);overscroll-behavior:contain}
+.ho-fhd,.ho-fp{display:grid;grid-template-columns:172px 86px 168px 150px minmax(180px,1fr) 44px;min-width:810px}.ho-fp .c:first-child span{white-space:nowrap}
+.ho-fhd{position:sticky;top:0;z-index:1;background:var(--soft,#f5f6f4);font-size:12px;font-weight:700;color:var(--mute);text-align:center;border-bottom:1px solid var(--line)}.ho-fhd span{padding:8px 6px;border-right:1px solid var(--line)}.ho-fhd span:last-child{border-right:0}
+.ho-f{border-bottom:1px solid var(--line);font-size:12.5px}.ho-fp .c{display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;text-align:center;padding:9px 6px;border-right:1px solid var(--line);border-bottom:1px dashed var(--line);min-width:0}.ho-fp .c:nth-child(6){border-right:0}.ho-fp .c.l{align-items:flex-start;text-align:left;padding:9px 10px}
+.ho-fp u{color:#2f6db5;font-weight:700}.ho-fp small{color:var(--mute);font-size:11.5px}.ho-fp .trk{color:#2f6db5}.ho-it .op{color:#2f6db5;font-size:12px}html.dark .ho-fp u,html.dark .ho-fp .trk,html.dark .ho-it .op{color:#7fb0ef}
+.ho-fp .rcv{grid-column:1/-1;display:flex;flex-direction:column;gap:1px;padding:8px 12px 9px 182px;line-height:1.6;background:var(--soft,#fbfcfa)}.ho-fp .rcv .memo,.ho-box .memo{color:#a35d00}html.dark .ho-fp .rcv .memo,html.dark .ho-box .memo{color:#f0b45c}
+.ho-fm{display:none}
+.ho-cls{display:flex;flex-direction:column;max-height:460px;overflow-y:auto;border:1px solid var(--line);border-radius:14px;background:var(--card,#fff)}
+.ho-cl{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:11px 12px;border:0;border-top:1px solid var(--line);background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;width:100%}.ho-cl:first-child{border-top:0}.ho-cl:hover{background:rgba(192,57,43,.04)}
+.ho-cl .t{display:flex;align-items:center;gap:6px;width:100%}.ho-cl .t b{font-size:14.5px}.ho-cl .sp{flex:1}.ho-cl small{color:var(--mute);font-size:11.5px}.ho-cl .who{font-size:13.5px}.ho-cl .pos,.ho-pw .pos{font-size:13px;color:#2f6db5}html.dark .ho-cl .pos,html.dark .ho-pw .pos{color:#7fb0ef}.ho-cl .tx{font-size:12.5px;color:var(--mute);overflow-wrap:anywhere}
+.ho-ct{font-size:12px;font-weight:800;color:#fff;border-radius:8px;padding:2px 9px;background:#c0392b;flex:none}.ho-ct.r{background:#b86b00}.ho-ct.e{background:#2f6db5}
+.mbox.ho-pop{width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 32px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:16px 18px}
+.ho-ph{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ho-ph>b{font-size:16px}.ho-ph .sp{flex:1}.ho-ph small{color:var(--mute);font-size:12.5px}
+.ho-sb{font-size:11.5px;font-weight:800;border-radius:99px;padding:1px 8px;color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.ho-pd{display:flex;align-items:baseline;gap:8px;font-size:13px;color:var(--mute)}.ho-pd>span{flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.ho-pd b{font-size:17px;color:var(--ink)}
+.ho-box{background:var(--soft,#f5f6f4);border-radius:10px;padding:11px 13px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}.ho-box .pi{display:flex;gap:10px;align-items:flex-start}.ho-box .pi .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ho-box .pi small{color:#2f6db5;font-size:12.5px}html.dark .ho-box .pi small{color:#7fb0ef}.ho-box .pi .q{white-space:nowrap}
+.ho-box.rc{gap:3px;line-height:1.55}.ho-box.rc b{margin-right:4px}
+.ho-pw{display:flex;flex-direction:column;gap:2px}.ho-why{margin:0;font-size:13px;color:var(--mute);overflow-wrap:anywhere}.ho-note{margin:0;font-size:11.5px;color:var(--mute)}
+.ho-pay{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;text-align:center;font-size:13px;margin-top:6px}.ho-pay div{border-right:1px solid var(--line)}.ho-pay div:last-child{border-right:0}.ho-pay span{display:block;padding:6px 4px;font-size:11.5px;color:var(--mute);background:var(--soft,var(--bg))}.ho-pay b{display:block;padding:8px 4px}
+.ho-pm{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--mute)}.ho-pm b{color:var(--ink)}
+.hmi[data-s]:has(.ho-list){grid-row:span 7}
+@media(max-width:700px){
+.ho-g{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}.ho-c{padding:6px 2px}.ho-c span{font-size:11px}.ho-c b{font-size:17px}
+.ho-ttl{width:100%}.ho-dt{width:100%}.ho-dt input{flex:1;height:36px}.ho-q{width:100%;margin-left:0;height:36px}
+.ho-fhd,.ho-fp{display:none}.ho-full{overflow-x:hidden;max-height:560px;background:var(--soft,#f0f2ee)}
+.ho-fm{display:flex;flex-direction:column;gap:9px;padding:0 0 10px;background:var(--card,#fff);border-bottom:8px solid var(--soft,#f0f2ee);font-size:13.5px}.ho-f{border-bottom:0}
+.ho-fm .h{display:flex;align-items:center;gap:8px;padding:11px 12px;border-bottom:1px solid var(--line)}.ho-fm .h b{font-size:15px}.ho-fm .h .ho-chi{width:20px;height:20px}
+.ho-fm .d{display:flex;align-items:baseline;padding:0 12px}.ho-fm .d span{flex:1;color:var(--mute);font-size:12.5px}.ho-fm .d b{font-size:15.5px}
+.ho-fm .box{margin:0 12px;background:var(--soft,#f5f6f4);border-radius:6px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}.ho-fm .pi{display:flex;gap:10px}.ho-fm .pi .nm{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.ho-fm .pi small{font-size:12.5px;color:var(--mute)}.ho-fm .pi .q{white-space:nowrap}
+.ho-fm .rc{gap:3px;line-height:1.55;font-size:13px}.ho-fm .rc b{margin-right:4px}
+.ho-fm .tk{margin:0 12px;display:grid;grid-template-columns:40% minmax(0,1fr);gap:6px}.ho-fm .tk span,.ho-fm .tk b{height:40px;display:flex;align-items:center;padding:0 12px;border-radius:6px}.ho-fm .tk span{border:1px solid var(--line)}.ho-fm .tk b{background:var(--soft,#f0f2ee);color:#2f6db5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}html.dark .ho-fm .tk b{color:#7fb0ef}
+.ho-fm .by{padding:8px 12px 0;border-top:1px solid var(--line);font-size:13px}
+.ho-pay{grid-template-columns:repeat(2,minmax(0,1fr))}.ho-pay div:nth-child(2){border-right:0}.ho-pay div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+.mbox.ho-pop{width:calc(100vw - 16px);max-height:calc(100vh - 16px);padding:14px 14px}
+}
+.hmi[data-s=M] .ho-g{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:380px){.ho-c span{font-size:10.5px;letter-spacing:-.4px}.ho-c .mva{margin-left:0}.ho-dt{gap:3px}.ho-dt input{font-size:12px;padding:0 3px;letter-spacing:-.3px}.ho-dt>span:first-child{display:none}}
+
 .ost-c.mvc.sel{box-shadow:inset 0 0 0 2px var(--acc)}.ost-c .mva{font-style:normal;color:var(--acc);font-weight:800;margin-left:3px}
 .mv{border:1px solid var(--line,#e3e7e1);border-radius:16px;background:var(--bg2,#f8fbf8);padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-top:6px}
 html.dark .mv{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.1)}html.dark .mv-list{border-color:rgba(255,255,255,.1)}
@@ -2922,6 +2979,7 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
       <button class="hm-ghost hm-share hidden" id="ph-share" type="button" data-share="today" data-sharevia="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12-4 4m4-4 4 4M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>오늘 요약 보내기</button>
       <button class="hm-ghost hm-bakcta hidden" type="button" id="hm-bakgo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bk-t">지금 백업</span><small class="bk-s"></small></button>
       <button class="hm-ghost hm-noti" type="button" id="hm-notib" aria-expanded="false" aria-controls="ntdrawer" title="알림" aria-label="알림"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b class="ntc hidden" id="hm-notic">0</b></button>
+      <div class="h5f" id="h5f"><span aria-hidden="true">🔍</span><input id="h5f-q" type="search" placeholder="어디로 갈까요? (예: 송장, 재고, 로즈마리)" aria-label="사이트 안에서 찾아가기" autocomplete="off" aria-controls="h5f-l" aria-expanded="false"><div class="h5f-l hidden" id="h5f-l" role="listbox" aria-label="찾은 곳"></div></div>
     </div>
   </div>
 
@@ -5037,7 +5095,7 @@ const claimOrdMem = new Map(); let claimOrdT = null;   // 주문번호 → { bus
 function claimOrdLoad(oid) {
   if (!oid || claimOrdMem.has(oid) || !c24Cfg().worker || !window.h5Fb) return; claimOrdMem.set(oid, { busy: 1 });
   c24Call('/claimord?order_id=' + encodeURIComponent(oid)).then(d => claimOrdMem.set(oid, { o: d.order })).catch(e => claimOrdMem.set(oid, { err: e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포하면 보여요' : (e.message || '불러오지 못했어요') }))
-    .finally(() => { document.querySelectorAll(`[data-cord^="${oid}|"]`).forEach(b => { const [o, c] = b.dataset.cord.split('|'); b.innerHTML = claimOrdHtml(o, c); }); clearTimeout(claimOrdT); claimOrdT = setTimeout(() => { try { if (issOpen()) renderIssue(); if (!$('issModal').classList.contains('hidden')) { const ys = $('iss-list').scrollTop; renderIssList(); $('iss-list').scrollTop = ys; } } catch (e) {} }, 150); });
+    .finally(() => { try { if (hoPop && $('hoModal') && !$('hoModal').classList.contains('hidden')) hoPopRender(); } catch (e) {} document.querySelectorAll(`[data-cord^="${oid}|"]`).forEach(b => { const [o, c] = b.dataset.cord.split('|'); b.innerHTML = claimOrdHtml(o, c); }); clearTimeout(claimOrdT); claimOrdT = setTimeout(() => { try { if (issOpen()) renderIssue(); if (!$('issModal').classList.contains('hidden')) { const ys = $('iss-list').scrollTop; renderIssList(); $('iss-list').scrollTop = ys; } } catch (e) {} }, 150); });
 }
 function claimOrdHtml(oid, oic) {
   const m = claimOrdMem.get(oid); if (!m) { setTimeout(() => claimOrdLoad(oid), 0); return c24Cfg().worker && window.h5Fb ? '<p class="msg">카페24 주문 정보를 불러오는 중…</p>' : ''; }
@@ -5295,6 +5353,43 @@ function h5Landing() { return /^https?:$/.test(location.protocol) && /\/shop\/(i
 document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('.brand .mark,.authhero .mark')) { e.preventDefault(); e.target.click(); } if (e.key === 'Escape' && $('instModal')) $('instModal').classList.add('hidden'); });
 instShow();
 
+
+// ---------- 🔍 바로가기 검색 (홈 맨 위): 한 단어만 쳐도 맞는 탭 · 칸 · 재고 품목으로 가서 주황 형광펜 ----------
+let h5fSel = 0, h5fHits = [];
+function h5fTab(t) { const b = document.querySelector('.tab[data-t="' + t + '"]'); return b ? String(b.getAttribute('aria-label') || b.title || b.textContent || t).replace(/\s+/g, ' ').trim() : t; }
+function h5fIdx() {
+  const out = [], seen = new Set(), boxes = new Set(), add = (t, path, to, ic) => { t = String(t || '').replace(/\s+/g, ' ').trim(); if (!t || t.length > 44 || seen.has(path)) return;
+    if (to.el) { const bx = to.el.closest('.card,details,.upcard') || to.el; if (boxes.has(bx) && to.el.tagName !== 'SUMMARY' && !to.el.closest('summary')) return; boxes.add(bx); } seen.add(path); out.push({ t, path, to, ic }); };
+  try { Object.entries(LAY).forEach(([t, L]) => { const sec = $(L.sec), tn = h5fTab(t); if (!sec) return; L.items.forEach(([k, n, sel]) => { const el = sec.querySelector(sel.split(',')[0]); if (!el || el.closest('.lay-off')) return; const sb = el.closest('[data-sub]'); add(n.replace(/\s*\(.*\)$/, ''), tn + ' › ' + n.replace(/\s*\(.*\)$/, ''), { t, sub: sb ? sb.dataset.sub : '', el }, '📍'); }); }); } catch (e) {}
+  [...new Set([...document.querySelectorAll('.tab[data-t]')].map(b => b.dataset.t))].forEach(t => { const sec = $('v-' + t); if (!sec || t === 'home') return; const tn = h5fTab(t); if (document.querySelector('.tab[data-t="' + t + '"]').closest('.hidden,.lay-off')) return;
+    add(tn, tn, { t }, '📂');
+    const subN = {}; document.querySelectorAll('.subtabs[data-subfor="' + t + '"] [data-subgo]').forEach(b => { const n = String(b.getAttribute('aria-label') || b.title || b.textContent || '').replace(/\s+/g, ' ').trim(); subN[b.dataset.subgo] = n; add(n, tn + ' › ' + n, { t, sub: b.dataset.subgo }, '📑'); });
+    sec.querySelectorAll('h2, h3, summary b, .sh b').forEach(h => { const hid = h.closest('.lay-off,.hidden,.modal,.sdrawer'); if (hid && hid !== sec) return; const c = h.cloneNode(true); c.querySelectorAll('button,svg,.tip,.info,i,small,.ib').forEach(x => x.remove()); const tx = String(c.textContent || '').replace(/[!ⓘ]+/g, '').replace(/\s+/g, ' ').trim(), sb = h.closest('[data-sub]'), sk = sb ? sb.dataset.sub : '';
+      add(tx, tn + (sk && subN[sk] && subN[sk] !== tx ? ' › ' + subN[sk] : '') + ' › ' + tx, { t, sub: sk, el: h }, '📍'); }); });
+  try { const ct = [...document.querySelectorAll('.tab[data-t]')].find(b => $('v-' + b.dataset.t) && $('v-' + b.dataset.t).querySelector('#crm-q,[data-crmp]')); if (ct) CRM_P.filter(p => CRM_TABS.includes(p[0])).forEach(p => add(p[1], h5fTab(ct.dataset.t) + ' › ' + p[1], { t: ct.dataset.t, crmp: p[0] }, '👥')); } catch (e) {}
+  try { stkCompute().items.forEach(x => add(x.key, h5fTab('stock') + ' › 재고 › ' + x.key, { t: 'stock', sub: 'cur', stk: x.key }, '🌿')); } catch (e) {}
+  return out; }
+function h5fFind(q) { const toks = String(q || '').toLowerCase().split(/\s+/).filter(Boolean); q = toks.join(''); if (!q) return []; const N = s => String(s).toLowerCase().replace(/\s+/g, ''), all = (s, T) => T.every(t => s.includes(t));
+  return h5fIdx().map(x => { const a = N(x.t), p = N(x.path); const sc = a === q ? 0 : a.startsWith(q) ? 1 : a.includes(q) ? 2 : all(a, toks) ? 2.5 : p.includes(q) ? 3 : all(p, toks) ? 4 : 9; return Object.assign({ sc }, x); }).filter(x => x.sc < 9).sort((a, b) => a.sc - b.sc || (a.ic === '🌿') - (b.ic === '🌿') || a.path.length - b.path.length).slice(0, 8); }
+function h5fShow() { const l = $('h5f-l'), q = $('h5f-q').value.trim(); if (!l) return; h5fHits = h5fFind(q); h5fSel = Math.min(h5fSel, Math.max(0, h5fHits.length - 1));
+  l.classList.toggle('hidden', !q); $('h5f-q').setAttribute('aria-expanded', !!q); h5fPlace();
+  l.innerHTML = h5fHits.length ? h5fHits.map((x, i) => `<button type="button" role="option" aria-selected="${i === h5fSel}" class="${i === h5fSel ? 'on' : ''}" data-h5f="${i}"><span class="ic" aria-hidden="true">${x.ic}</span><span class="tx"><b>${esc(x.t)}</b><small>${esc(x.path)}</small></span></button>`).join('') + '<small class="h5f-k">Enter = 첫 번째로 이동 · ↑↓ 고르기</small>' : '<p class="h5f-no">찾는 칸이 없어요 · 다른 말로 쳐 보세요</p>'; }
+function h5fPlace() { const l = $('h5f-l'), f = $('h5f'); if (!l || !f || l.classList.contains('hidden')) return; const r = f.getBoundingClientRect(), w = Math.min(360, innerWidth - 24);
+  l.style.width = (innerWidth <= 700 ? r.width : w) + 'px'; l.style.top = Math.round(r.bottom + 6) + 'px'; l.style.left = Math.round(innerWidth <= 700 ? r.left : Math.max(12, Math.min(r.right - w, innerWidth - w - 12))) + 'px'; }
+window.addEventListener('scroll', h5fPlace, { passive: true }); window.addEventListener('resize', h5fPlace);
+function h5fGo(x) { if (!x) return; const to = x.to; $('h5f-q').value = ''; h5fShow(); $('h5f-q').blur();
+  const T = document.querySelector('.tab[data-t="' + to.t + '"]'); if (T) T.click(); if (to.sub) { try { subSet(to.t, to.sub, true); } catch (e) {} }
+  if (to.crmp) { try { crmP = to.crmp; crmView = 'list'; crmRender(); } catch (e) {} }
+  setTimeout(() => { let el = to.el; if (to.crmp) el = document.querySelector('[data-crmp="' + to.crmp + '"]'); if (to.stk) el = [...document.querySelectorAll('[data-stkpick]')].find(e => e.dataset.stkpick === to.stk);
+    if (!el || !el.isConnected) el = to.sub ? $('v-' + to.t).querySelector('.subtabs') : $('v-' + to.t);
+    if (!el) return; const d = el.closest('details'); if (d) d.open = true; const fc = el.closest('.fold-c.folded'); if (fc) { try { foldSet(fc, false); } catch (e) {} }
+    const box = to.stk ? el : (el.closest('.card,details,.upcard') || el); h5Hl(box); }, 380); }
+document.addEventListener('input', e => { if (e.target.id === 'h5f-q') { h5fSel = 0; h5fShow(); } });
+document.addEventListener('keydown', e => { if (e.target.id !== 'h5f-q') return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!h5fHits.length) return; h5fSel = (h5fSel + (e.key === 'ArrowDown' ? 1 : -1) + h5fHits.length) % h5fHits.length; h5fShow(); }
+  else if (e.key === 'Enter') { e.preventDefault(); h5fGo(h5fHits[h5fSel]); } else if (e.key === 'Escape') { e.target.value = ''; h5fShow(); } });
+document.addEventListener('click', e => { if (!e.target.closest) return; const b = e.target.closest('[data-h5f]'); if (b) { h5fGo(h5fHits[+b.dataset.h5f]); return; }
+  if (!e.target.closest('#h5f')) { const l = $('h5f-l'); if (l && !l.classList.contains('hidden')) { l.classList.add('hidden'); } } });
 // ---------- 탭 안의 작은 메뉴 (정리하기 · 기록·통계) ----------
 function subSet(tab, key, noScroll) {
   const sec = $('v-' + tab); if (!sec) return;
@@ -5348,7 +5443,11 @@ document.addEventListener('click', e => {
   if (b.dataset.go === 'run') subSet('run', 'order', true);
   if (b.dataset.pick && $('file')) $('file').click();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (b.dataset.stkgo) { const k = b.dataset.stkgo; setTimeout(() => { const el = [...document.querySelectorAll('[data-stkpick]')].find(x => x.dataset.stkpick === k); if (el) h5Hl(el); }, 350); }
 });
+// 🔍 찾아간 칸을 주황 형광펜으로 3초 표시 (작은 칸은 가운데, 큰 칸은 위쪽으로 스크롤)
+function h5Hl(el) { if (!el) return; const big = el.getBoundingClientRect().height > innerHeight * .6; try { el.scrollIntoView({ behavior: 'smooth', block: big ? 'start' : 'center' }); } catch (e) { el.scrollIntoView(); }
+  el.classList.remove('h5-hl'); void el.offsetWidth; el.classList.add('h5-hl'); clearTimeout(el._h5hl); el._h5hl = setTimeout(() => el.classList.remove('h5-hl'), 3200); }
 
 
 // 단계 설명: 제목 옆 ⓘ 로 열고 닫기 · 확인 필요 목록 펼치기
@@ -5427,6 +5526,11 @@ const hwEmpty = t => `<ul class="hm-list"><li class="hm-empty">${t}</li></ul>`;
 const hwPct = (a, b) => b > 0 ? Math.round((a - b) / b * 100) : null;
 const hwCh = (p, unit) => p == null || (unit && !p) ? '' : `<em class="hw-ch ${p > 0 ? 'up' : p < 0 ? 'dn' : ''}">${p > 0 ? '▲' : p < 0 ? '▼' : ''}${Math.abs(p)}${unit || '%'}</em>`;
 const hwYm = (off) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (off || 0)); return isoDate(d).slice(0, 7); };
+// 재고 관리 화면과 같은 묶음 · 같은 순서 (홈 재고 위젯도 이걸 써요)
+function stkGroupsSorted(items) { const order = stkGroupOrder(), L = stkLayout(), lo = new Map((L.order || []).map((k, i) => [k, i])), lg = L.grp || {};
+  const groups = new Map(); items.forEach(x => { const g = lg[x.key] || x.group; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(x); });
+  const gidx = g => { const i = (L.gorder || []).indexOf(g); if (i >= 0) return i; const j = order.indexOf(g); return 1000 + (j < 0 ? 999 : j); }, oidx = k => lo.has(k) ? lo.get(k) : 1e6;
+  return [...groups.keys()].sort((a, b) => gidx(a) - gidx(b) || a.localeCompare(b, 'ko')).map(g => ({ g, L: groups.get(g).sort((a, b) => oidx(a.key) - oidx(b.key) || a.key.localeCompare(b.key, 'ko')) })); }
 function hwStk() { let items = []; try { items = stkCompute().items; } catch (e) {} const inp = items.filter(x => x.rec), out = inp.filter(x => x.cur <= 0), low = inp.filter(x => x.low && x.cur > 0), soon = inp.filter(x => !x.low && x.cur > 0 && x.days !== null && x.days < 3); return { inp, out, low, soon }; }
 function hwDayCnt(d) { const t = isoDate(new Date()); let n = 0; try { n = dayOrders(d); } catch (e) {} if (d === t) { try { n = Math.max(n, uplOrders(t)); } catch (e) {} } return n; }
 function hwMonthStat() { const t = isoDate(new Date()), ym = t.slice(0, 7), dd = +t.slice(8), pym = hwYm(-1); let rev = new Map(); try { rev = salesDayRev(); } catch (e) {}
@@ -5494,12 +5598,12 @@ function mvBox() {
   setTimeout(() => { const b = document.querySelector('.mv-list'); if (b) b.scrollTop = mvTop; }, 0);
   const head = n => `<div class="mv-h"><b>${MV_N[k]} 주문</b><span class="sp"></span>${D && D.orders.length ? `<label class="mv-all"><input type="checkbox" data-mvall="1"${D.orders.every(o => mvSel.has(String(o.order_id))) ? ' checked' : ''}>모두 고르기</label>` : ''}</div>`;
   if (!D) return `<div class="mv">${head('')}<p class="hwi-empty">${mvErr ? '⚠ ' + esc(mvErr) : '카페24에서 불러오는 중…'}</p></div>`;
-  const L = D.orders, picked = L.filter(o => mvSel.has(String(o.order_id))).length;
+  const L = hoFilt(D.orders), picked = L.filter(o => mvSel.has(String(o.order_id))).length;
   const rows = L.map(o => { const id = String(o.order_id), ch = mallChOf(o), C = MALL_CH.find(m => m[0] === ch) || MALL_CH[MALL_CH.length - 1], t = new Date(o.order_date || o.payment_date || ''), td = isNaN(t) ? '' : (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5);
     const who = (o.buyer && o.buyer.name) || (o.receiver && o.receiver.name) || '이름 없음', on = mvSel.has(id);
     return `<label class="mv-r${on ? ' on' : ''}"><input type="checkbox" data-mvck="${esc(id)}"${on ? ' checked' : ''}><span class="mv-b"><span class="mv-t"><b>${esc(who)}</b><span class="inc-ch" style="background:${C[2]}">${esc(C[1])}</span>${isPay ? `<span class="mv-pay">${esc(c24Pay(o) || '결제')} · ${mvAmt(o).toLocaleString('ko-KR')}원${o.payer_name && o.payer_name !== who ? ' · 입금자 ' + esc(o.payer_name) : ''}</span>` : ''}<span class="sp"></span><small>${td}</small></span><span class="mv-i">${(o.items || []).map(i => esc(i.product_name + (i.option_value ? ' ' + incOpt(i.option_value) : '')) + ' × ' + (Number(i.quantity) || 0)).join(' · ')}</span></span></label>`; }).join('');
   return `<div class="mv">${head(L.length + '건 · <span data-mvn>' + picked + '</span>건 고름')}
-    ${L.length ? `<div class="mv-list" tabindex="0" aria-label="${MV_N[k]} 주문 목록">${rows}</div>` : `<p class="hwi-empty">지금 ${MV_N[k]} 주문이 없어요</p>`}
+    ${L.length ? `<div class="mv-list" tabindex="0" aria-label="${MV_N[k]} 주문 목록">${rows}</div>` : `<p class="hwi-empty">${hoQ ? '찾는 주문이 없어요' : hoNoDate() ? '지금 ' + MV_N[k] + ' 주문이 없어요' : '이 기간에 ' + MV_N[k] + ' 주문이 없어요'}</p>`}
     ${isPay && L.length ? '<p class="mv-warn">⚠ 통장에 돈이 들어온 주문만 골라 주세요. 입금확인을 하면 카페24에서 결제 완료로 바뀌어요.</p>' : ''}
     ${mvErr ? `<p class="mv-warn">⚠ ${esc(mvErr)}</p>` : ''}
     ${L.length ? `<div class="mv-act">${admin ? '' : '<small class="msg">배송준비중으로 넘기기는 관리자 계정만 할 수 있어요</small>'}` : ''}${L.length ? `<button class="btn pri" type="button" data-mvgo="1"${!picked || !admin || mvBusy ? ' disabled' : ''}>${mvLbl(isPay, picked)}</button></div>` : ''}</div>`;
@@ -5555,12 +5659,106 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && mkTab) mkAfter(); });
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-ostre]')) { ostErr = ''; ostLoad(true); if (ostOn()) { incErr = ''; incLoad(); } } });
 
+// ---------- 홈 주문 조회 (주문 처리 현황 위젯 안): 상태 8칸 · 주문일 기간 · 검색 · 상태별 목록 · 상세 팝업 ----------
+// 받는 분 이름 · 전화 · 주소는 카페24에서 그때그때 불러와 화면에만 보여 주고 저장하지 않아요
+let hoSt = 'N20', hoD1 = '', hoD2 = '', hoQ = '', hoCnt = null, hoCntK = '', hoCntBusy = false, hoL = {}, hoPop = null;
+const HO_N = [['N00', '입금전'], ['N10', '상품준비중'], ['N22', '배송보류중'], ['N20', '배송준비중'], ['N21', '배송대기'], ['N30', '배송중'], ['N40', '배송완료'], ['CL', '취소·반품']];
+const HO_COL = { N00: '#7d857a', N10: '#b8860b', N22: '#8a4fb0', N20: '#2e7d4f', N21: '#1f8c8c', N30: '#2f6db5', N40: '#5e6b78', CL: '#c0392b' };
+const hoName = k => (HO_N.find(x => x[0] === k) || [k, k])[1];
+function hoRange() { let a = hoD1, b = hoD2; if (a && b && a > b) [a, b] = [b, a]; return [a, b]; }
+const hoNoDate = () => !hoD1 && !hoD2;
+function hoDayIn(iso) { if (hoNoDate()) return true; const [a, b] = hoRange(), d = iso ? isoDate(new Date(iso)) : ''; if (!d) return true; return (!a || d >= a) && (!b || d <= b); }
+const hoNorm = t => String(t || '').toLowerCase().replace(/\s+/g, '');
+function hoHit(...parts) { const q = hoNorm(hoQ); return !q || hoNorm(parts.flat().join(' ')).includes(q); }
+const hoOrdTxt = o => [o.order_id, o.buyer && o.buyer.name, o.receiver && o.receiver.name, (o.items || []).map(i => i.product_name + ' ' + (i.option_value || ''))];
+function hoFilt(L) { return (L || []).filter(o => hoDayIn(o.order_date || o.payment_date) && hoHit(hoOrdTxt(o))); }
+function hoCntLoad(force) { if (!ostOn()) return; const t = isoDate(new Date()), [a, b] = hoRange(), k = hoNoDate() ? t + '~' + t : (a || '') + '~' + (b || t);
+  if (hoCntBusy || (!force && hoCnt && hoCntK === k && Date.now() - hoCnt.t < 600e3)) return; hoCntBusy = true;
+  const [f, to] = k.split('~'); c24Call('/ocount?from=' + f + '&to=' + to).then(d => { hoCnt = { t: Date.now(), c: d.counts || {} }; hoCntK = k; }).catch(e => { hoCnt = { t: Date.now(), c: {}, err: e && e.code === 'not_found' ? 'new' : 1 }; hoCntK = k; }).finally(() => { hoCntBusy = false; homeSoon(); }); }
+function hoClaims() { const t = isoDate(new Date()), [a, b] = hoRange(); let L = []; try { L = issAllRaw().filter(x => x.cat === 'claim' && (hoNoDate() ? x.day === t : (!a || x.day >= a) && (!b || x.day <= (b || t)))); } catch (e) {}
+  return L.sort((x, y) => String(y.day).localeCompare(String(x.day)) || String(y.at).localeCompare(String(x.at))); }
+function hoCount(k) { const C = (ostD && ostD.counts) || null, H = (hoCnt && hoCnt.c) || {};
+  if (k === 'CL') return hoClaims().length;
+  if (hoNoDate() && k !== 'N40') return C ? C[k] || 0 : null;
+  return H[k] === undefined || H[k] === null ? null : H[k]; }
+function hoLoad(code, force) { const t = isoDate(new Date()), [a, b] = hoRange(), from = hoNoDate() ? (code === 'N40' ? t : '') : (a || ''), to = hoNoDate() ? (code === 'N40' ? t : '') : (b || t), key = code + '|' + from + '~' + to, E = hoL[key];
+  if (E && (E.busy || (!force && Date.now() - E.at < 300e3))) return E;
+  hoL[key] = { busy: 1, at: Date.now() };
+  c24Call(code === 'N22' ? '/ostorders?code=N22' : '/olist?code=' + code + '&from=' + from + '&to=' + to).then(d => { hoL[key] = { at: Date.now(), orders: d.orders || [], more: !!d.more }; })
+    .catch(e => { hoL[key] = { at: Date.now(), err: e && (e.code === 'not_found' || /404/.test(e.message || '')) ? '새 worker.js를 Cloudflare에 붙여 넣어 배포하면 보여요' : (e && e.message) || '불러오지 못했어요' }; }).finally(() => homeSoon());
+  return hoL[key]; }
+const hoBlur = () => { const a = document.activeElement; if (a && a.closest && a.closest('.hw-ost') && a.blur) a.blur(); };   // 위젯 안 입력칸에 커서가 있으면 홈이 다시 그려지지 않아요
+function hoPick(k) { hoBlur(); hoSt = k; hoQ = ''; if (k === 'N00' || k === 'N10') { mvOpen = k; mvErr = ''; mvTop = 0; mvSel = new Set(); mvLoad(k); } else mvOpen = ''; if (k === 'CL') { try { claimSync(); } catch (e) {} } homeSoon(); }
+const hoTm = iso => { const t = new Date(iso || ''); if (isNaN(t)) return ''; return (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5); };
+const hoDt = iso => { const t = new Date(iso || ''); return isNaN(t) ? '' : isoDate(t) + ' ' + t.toTimeString().slice(0, 8); };
+const hoChB = o => { const ch = mallChOf(o), C = MALL_CH.find(m => m[0] === ch) || MALL_CH[MALL_CH.length - 1]; return `<span class="inc-ch" style="background:${C[2]}">${esc(C[1])}</span>`; };
+const hoChI = o => { const ch = mallChOf(o), C = MALL_CH.find(m => m[0] === ch) || MALL_CH[MALL_CH.length - 1]; return `<span class="ho-chi" style="background:${C[2]}" title="${esc(C[1])}">${esc(C[3][0])}</span>`; };
+const hoAddr = r => (r.zipcode ? '[' + r.zipcode + '] ' : '') + [r.address1, r.address2].filter(Boolean).join(' ');
+function hoSimple(L) {   // 배송보류중: 주문 · 품목 두 칸 (주문을 누르면 상세)
+  const ord = L.map(o => `<div class="hwi-r ho-click" data-hopop="${esc(o.order_id)}" data-hopk="N22"><span class="hwi-h"><b>${esc((o.receiver && o.receiver.name) || (o.buyer && o.buyer.name) || '이름 없음')}</b>${hoChB(o)}<span class="sp"></span><small>${hoTm(o.order_date)}</small></span>${(o.items || []).map(i => `<span class="hwi-l"><span class="p">${esc(i.product_name)}</span><span class="o">${esc(incOpt(i.option_value || ''))}</span><span class="q">${Number(i.quantity) || 0}</span></span>`).join('')}</div>`).join('');
+  const M = new Map(); L.forEach(o => (o.items || []).forEach(i => { const k = i.product_name + (i.option_value ? ' ' + incOpt(i.option_value) : ''); M.set(k, (M.get(k) || 0) + (Number(i.quantity) || 0)); }));
+  const itm = [...M.entries()].map(([k, q]) => `<div class="hwi-r hwi-i"><span class="nm"><b>${esc(k)}</b></span><b class="lf">${q}</b></div>`).join('');
+  return `<div class="hwi-cols"><div class="hwi-col o"><small class="hwi-ch">주문 ${L.length}건</small><div class="hwi-box">${ord}</div></div><div class="hwi-col i"><small class="hwi-ch">품목</small><div class="hwi-box">${itm}</div></div></div>`; }
+function hoFull(L, code) {   // 배송대기 · 배송중 · 배송완료: 카페24 주문 목록처럼 (PC 표 · 휴대폰 카드)
+  const one = (o, i) => { const r = o.receiver || {}, it = o.items || [], i0 = it[0] || {}, tel = r.phone || r.virtual_phone_no || r.cellphone || '-', cell = r.cellphone || r.virtual_phone_no || r.phone || '-', trk = i0.tracking_no || '', co = i0.shipping_company_name || '';
+    const amt = Number(o.payment_amount) || it.reduce((t, x) => t + (Number(x.product_price) || 0) * (Number(x.quantity) || 0), 0), who = r.name || (o.buyer && o.buyer.name) || '이름 없음';
+    const its = it.map(x => `<span class="ho-it"><b>${esc(x.product_name)}</b>${x.option_value ? `<span class="op"> - 옵션 : ${esc(incOpt(x.option_value))}</span>` : ''}</span>`).join('');
+    return `<div class="ho-f"><div class="ho-fp"><div class="c"><span>${esc(hoDt(o.order_date))}</span><span>${hoChI(o)} <u>${esc(o.order_id)}</u></span></div><div class="c"><b>${esc((o.buyer && o.buyer.name) || who)}</b><small>${o.member_id ? '[회원]' : '[비회원]'}</small></div><div class="c"><span>${esc(hoDt(i0.shipped_date) || '-')}</span><small>${esc(i0.shipping_code || '')}</small></div><div class="c"><span>${esc(co || '-')}</span><b class="trk">${esc(trk || (code === 'N21' ? '송장 전' : '-'))}</b><small>${i0.tracking_no_updated_date ? '(' + esc(hoDt(i0.tracking_no_updated_date)) + ')' : ''}</small></div><div class="c l">${its}</div><div class="c">${it.map(x => `<span>${Number(x.quantity) || 0}</span>`).join('')}</div>
+      <div class="rcv"><span>수령자 : <b>${esc(who)}</b></span><span>일반전화 : ${esc(tel)}</span><span>휴대전화 : ${esc(cell)}</span><span>주소 : ${esc(hoAddr(r))}</span>${r.shipping_message ? `<span class="memo">배송 메모 : ${esc(r.shipping_message)}</span>` : ''}</div></div>
+      <div class="ho-fm"><div class="h">${hoChI(o)}<b>${esc(o.order_id)}</b></div><div class="d"><span>${esc(hoDt(o.order_date))}</span><b>${amt ? amt.toLocaleString('ko-KR') + '원' : ''}</b></div>
+        <div class="box">${it.map(x => `<div class="pi"><span class="nm"><b>${esc(x.product_name)}</b>${x.option_value ? `<small>• 옵션 : ${esc(incOpt(x.option_value))}</small>` : ''}</span><span class="q">/ ${Number(x.quantity) || 0}개</span></div>`).join('')}</div>
+        <div class="box rc"><span><b>수령자</b> ${esc(who)}</span><span><b>일반전화</b> ${esc(tel)}</span><span><b>휴대전화</b> ${esc(cell)}</span><span>${esc(hoAddr(r))}</span>${r.shipping_message ? `<span class="memo"><b>배송 메모</b> ${esc(r.shipping_message)}</span>` : ''}</div>
+        <div class="tk"><span>${esc(co || '택배사')}</span><b>${esc(trk || (code === 'N21' ? '송장 전' : '-'))}</b></div><div class="by">${esc((o.buyer && o.buyer.name) || '')}${o.member_id ? '' : '(비회원)'}</div></div></div>`; };
+  return `<div class="ho-full"><div class="ho-fhd"><span>주문일 / 주문번호</span><span>주문자</span><span>배송일 / 배송번호</span><span>운송장 정보<br>(송장번호 입력일)</span><span>상품명 / 옵션</span><span>수량</span></div>${L.map(one).join('')}</div>`; }
+function hoClaimCards(L) {
+  return `<div class="ho-cls">${L.map(x => { const lines = String(x.text || '').split('\n'), pos = (() => { try { return claimPosLine(x); } catch (e) { return ''; } })(), who = (() => { try { return claimWho(x); } catch (e) { return ''; } })();
+    return `<button type="button" class="ho-cl" data-hocl="${esc(x.id)}" data-hoday="${esc(x.day)}"><span class="t"><span class="ho-ct ${({ '취소': 'c', '반품': 'r', '교환': 'e' })[x.ctype] || 'c'}">${esc(x.ctype || '클레임')}</span><b>${esc(x.item || '')}</b><span class="sp"></span><small>${esc(fmtDay(x.day))}</small></span>${who ? `<b class="who">${esc(who)}</b>` : ''}${pos ? `<b class="pos">${esc(pos)}</b>` : ''}<span class="tx">${esc(lines.join(' · '))}</span></button>`; }).join('')}</div>`; }
+function hoListHtml() {
+  if (!ostOn()) return '';
+  const k = hoSt; let body = '';
+  if (k === 'N00' || k === 'N10') body = mvOpen === k ? mvBox() : '';
+  else if (k === 'N20') body = hwIncBox(true);
+  else if (k === 'CL') { const L = hoClaims().filter(x => hoHit(x.item, x.text, x.oid, (() => { try { return claimWho(x); } catch (e) { return ''; } })())); body = L.length ? hoClaimCards(L) : `<p class="hwi-empty">${hoNoDate() ? '오늘' : '이 기간에'} 취소 · 반품 · 교환이 없어요</p>`; }
+  else { const E = hoLoad(k); if (E.busy && !E.orders) body = '<p class="hwi-empty">카페24에서 불러오는 중…</p>'; else if (E.err) body = `<p class="hwi-empty">⚠ ${esc(E.err)}</p>`;
+    else { const L = hoFilt(E.orders); body = !L.length ? `<p class="hwi-empty">${hoQ ? '찾는 주문이 없어요' : '이 기간에 ' + hoName(k) + ' 주문이 없어요'}</p>` : k === 'N22' ? hoSimple(L) : hoFull(L, k) + (E.more ? '<p class="msg">최근 1,000건까지만 보여요 · 날짜를 좁혀 보세요</p>' : ''); } }
+  return body; }
+function hoBarHtml() { const [a, b] = [hoD1, hoD2];
+  return `<div class="ho-bar"><b class="ho-ttl">${esc(hoName(hoSt))}</b><span class="ho-dt"><span aria-hidden="true">📅</span><input type="date" id="ho-d1" value="${esc(a)}" aria-label="주문일 시작" max="${isoDate(new Date())}"><span>~</span><input type="date" id="ho-d2" value="${esc(b)}" aria-label="주문일 끝" max="${isoDate(new Date())}">${a || b ? '<button type="button" class="ho-dx" data-hodx="1" title="날짜 지우기" aria-label="날짜 지우기">×</button>' : ''}</span><span class="ho-q"><span aria-hidden="true">🔍</span><input id="ho-q" type="search" value="${esc(hoQ)}" placeholder="주문번호 · 품목 · 받는 분" aria-label="주문 찾기"></span></div>`; }
+document.addEventListener('input', e => { if (e.target.id !== 'ho-q') return; hoQ = e.target.value; const box = document.querySelector('.ho-list'); if (box) box.innerHTML = hoListHtml(); });
+document.addEventListener('change', e => { const t = e.target; if (t.id !== 'ho-d1' && t.id !== 'ho-d2') return; if (t.id === 'ho-d1') hoD1 = t.value; else hoD2 = t.value; hoBlur(); hoCntLoad(true); homeSoon(); });
+document.addEventListener('click', e => { if (!e.target.closest) return; let b;
+  if ((b = e.target.closest('[data-hostc]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; hoPick(b.dataset.hostc); return; }
+  if (e.target.closest('[data-hodx]')) { hoBlur(); hoD1 = ''; hoD2 = ''; homeSoon(); return; }
+  if ((b = e.target.closest('[data-hopop]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; const id = b.dataset.hopop, k = b.dataset.hopk || hoSt;
+    let o = null; if (k === 'N20') o = ((incD && incD.orders) || []).find(x => String(x.order_id) === id); else { Object.values(hoL).some(E => (o = (E.orders || []).find(x => String(x.order_id) === id))); }
+    if (o) { hoPop = { o, k }; hoPopRender(); } return; }
+  if ((b = e.target.closest('[data-hocl]'))) { const x = hoClaims().find(y => y.id === b.dataset.hocl); if (x) { hoPop = { cl: x }; hoPopRender(); } return; }
+  if (e.target.id === 'hoModal' || e.target.closest('[data-hopx]')) { hoPop = null; const m = $('hoModal'); if (m) m.classList.add('hidden'); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && hoPop) { hoPop = null; const m = $('hoModal'); if (m) m.classList.add('hidden'); } });
+function hoPayHtml(oid) { const m = claimOrdMem.get(oid); if (!m) { setTimeout(() => claimOrdLoad(oid), 0); return '<p class="msg">결제 정보를 불러오는 중…</p>'; } if (m.busy) return '<p class="msg">결제 정보를 불러오는 중…</p>'; if (m.err) return `<p class="msg err">${esc(m.err)}</p>`;
+  const o = m.o, won = v => v === null || v === undefined || v === '' ? '-' : Number(v).toLocaleString('ko-KR'), dt = v => v ? String(v).replace('T', ' ').slice(0, 19).replace(/\+.*$/, '') : '-';
+  return `<b class="cord-h">결제 정보</b><div class="ho-pay">${[['상품구매금액', o.price], ['배송비', o.shipping_fee], ['할인', o.discount], ['총 실결제금액', o.payment]].map(([k, v]) => `<div><span>${k}</span><b>${won(v)}</b></div>`).join('')}</div>
+    <div class="ho-pm"><span>주문자 <b>${esc(o.payer || '-')}</b></span><span>결제수단 <b>${esc((o.payment_method_name || []).join(', ') || '-')}</b></span><span>결제일 ${esc(dt(o.payment_date))}</span></div>`; }
+function hoPopRender() {
+  if (!hoPop) return; let m = $('hoModal'); if (!m) { m = document.createElement('div'); m.className = 'modal hidden'; m.id = 'hoModal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-label', '주문 상세'); document.body.appendChild(m); }
+  let h = '';
+  if (hoPop.cl) { const x = hoPop.cl, pos = (() => { try { return claimPosLine(x); } catch (e) { return ''; } })(), who = (() => { try { return claimWho(x); } catch (e) { return ''; } })();
+    h = `<div class="ho-ph"><span class="ho-ct ${({ '취소': 'c', '반품': 'r', '교환': 'e' })[x.ctype] || 'c'}">${esc(x.ctype || '클레임')}</span><b>${esc(x.item || '')}</b><span class="sp"></span>${x.oid ? `<small>주문 ${esc(x.oid)}</small>` : ''}<button class="ibtn" type="button" data-hopx="1" aria-label="닫기">✕</button></div>
+      ${who || pos ? `<div class="ho-pw">${who ? `<b>${esc(who)}</b>` : ''}${pos ? `<b class="pos">${esc(pos)}</b>` : ''}</div>` : ''}
+      ${x.oid ? `<div data-cord="${esc(x.oid)}|${esc(x.oic || '')}">${claimOrdHtml(x.oid, x.oic || '')}</div>` : ''}<p class="ho-why">${esc(String(x.text || '').split('\n').join(' · '))}</p>`; }
+  else { const o = hoPop.o, r = o.receiver || {}, it = o.items || [], amt = Number(o.payment_amount) || it.reduce((t, x) => t + ((Number(x.product_price) || 0) + (Number(x.option_price) || 0)) * (Number(x.quantity) || 0), 0);
+    h = `<div class="ho-ph">${hoChI(o)}<b>${esc(o.order_id)}</b><span class="ho-sb" style="--c:${HO_COL[hoPop.k] || '#2e7d4f'}">${esc(hoName(hoPop.k))}</span><span class="sp"></span><button class="ibtn" type="button" data-hopx="1" aria-label="닫기">✕</button></div>
+      <div class="ho-pd"><span>${esc(hoDt(o.order_date))} · ${hoChB(o)}</span><b>${amt ? amt.toLocaleString('ko-KR') + '원' : ''}</b></div>
+      <div class="ho-box">${it.map(x => `<div class="pi"><span class="nm"><b>${esc(x.product_name)}</b>${x.option_value ? `<small>- 옵션 : ${esc(incOpt(x.option_value))}</small>` : ''}</span><span class="q">/ ${Number(x.quantity) || 0}개</span></div>`).join('')}</div>
+      <div class="ho-box rc"><span><b>수령자</b> ${esc(r.name || '-')}</span><span><b>일반전화</b> ${esc(r.phone || r.virtual_phone_no || '-')}</span><span><b>휴대전화</b> ${esc(r.cellphone || r.virtual_phone_no || r.phone || '-')}</span><span>${esc(hoAddr(r) || '-')}</span>${r.shipping_message ? `<span class="memo"><b>배송 메모</b> ${esc(r.shipping_message)}</span>` : ''}</div>
+      ${hoPayHtml(String(o.order_id))}<p class="ho-note">🔒 이름 · 전화 · 주소는 화면에만 보이고 저장하지 않아요</p>`; }
+  m.innerHTML = `<div class="mbox ho-pop">${h}</div>`; m.classList.remove('hidden'); }
 // 주문 처리 현황 위젯 아래: 들어온 주문 (칸 안에서만 스크롤)
 let incHmTop = {};
 let incHmV = 'o';   // 휴대폰에서 보는 칸 (o: 주문, i: 품목). PC는 두 칸을 나란히 보여요
-function incAgg(R) {   // 품목 칸: 집계 보기와 같은 순서 (묶음 → 집계 순서)
+function incAgg(R, ids) {   // 품목 칸: 집계 보기와 같은 순서 (묶음 → 집계 순서). ids가 있으면 그 주문만 합쳐요 (날짜 · 검색)
   const day = isoDate(new Date()), rows = [HIST_HEAD];
-  ((incD && incD.orders) || []).forEach(o => (o.items || []).forEach(i => rows.push([o.order_id, day, i.product_name || '', i.option_value || '', Number(i.quantity) || 0, '', '', i.additional_option_value || ''])));
+  ((incD && incD.orders) || []).filter(o => !ids || ids.has(String(o.order_id))).forEach(o => (o.items || []).forEach(i => rows.push([o.order_id, day, i.product_name || '', i.option_value || '', Number(i.quantity) || 0, '', '', i.additional_option_value || ''])));
   let sh3 = []; try { sh3 = CORE.process(rows, rules, { regions: {}, places: {} }).sheet3.slice(1); } catch (e) { sh3 = []; }
   let comp = { items: [] }; try { comp = stkCompute(); } catch (e) {}
   const byKey = new Map(comp.items.map(x => [x.key, x])), claim = stkClaimer([...byKey.keys()]), alias = stkAliasFn(), need = new Map(R.rows.map(r => [r.key, r]));
@@ -5575,23 +5773,25 @@ function incAgg(R) {   // 품목 칸: 집계 보기와 같은 순서 (묶음 →
   groups.forEach(L => L.forEach(e => { if (e.merged) { e.o = ''; e.n = e.n.replace(/\s*\d+(?:\.\d+)?\s*(?:g|kg|송이|개)\s*$/i, '').trim() || e.n; } }));
   return groups;
 }
-function hwIncBox() {
+function hwIncBox(inHo) {
   incEnsure();
   let R = null; if (incD) { try { R = incCalc(); } catch (e) { R = null; } }
-  const n = R ? R.ords.length : 0;
+  const OD = new Map(((incD && incD.orders) || []).map(o => [String(o.order_id), o]));
+  const ords = R ? R.ords.filter(o => { const x = OD.get(String(o.id)) || {}; return hoDayIn(x.order_date || o.at) && hoHit(o.id, o.who, x.receiver && x.receiver.name, o.lines.map(l => l.p + ' ' + (l.op || ''))); }) : [];
+  const n = ords.length, fil = !hoNoDate() || !!hoQ;
   let body = '', ordB = '', itmB = '';
   if (!R) body = `<p class="hwi-empty">${incErr ? '⚠ ' + esc(incErr) : '카페24에서 확인하는 중…'}</p>`;
-  else if (!n) body = '<p class="hwi-empty">지금 배송준비중인 주문이 없어요</p>';
+  else if (!n) body = `<p class="hwi-empty">${fil ? (hoQ ? '찾는 주문이 없어요' : '이 기간에 배송준비중 주문이 없어요') : '지금 배송준비중인 주문이 없어요'}</p>`;
   else {
-    ordB = R.ords.map(o => { const t = o.at ? new Date(o.at) : null, td = t && !isNaN(t) ? (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5) : '';
-      return `<div class="hwi-r${o.short ? ' bad' : ''}"><span class="hwi-h"><b>${esc(o.who || '이름 없음')}</b><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span>${incNew.has(o.id) && Date.now() - incNewAt < 1800e3 ? '<span class="hwi-new">방금 수집</span>' : ''}<span class="sp"></span><small>${td}</small></span>${o.lines.map(l => `<span class="hwi-l${l.short ? ' bad' : ''}"><span class="p">${esc(l.p)}</span><span class="o">${esc(incOpt(l.op))}</span><span class="q">${l.q}</span></span>`).join('')}</div>`; }).join('');
-    let G = new Map(); try { G = incAgg(R); } catch (e) {}
+    ordB = ords.map(o => { const t = o.at ? new Date(o.at) : null, td = t && !isNaN(t) ? (isoDate(t) === isoDate(new Date()) ? '' : (t.getMonth() + 1) + '/' + t.getDate() + ' ') + t.toTimeString().slice(0, 5) : '';
+      return `<div class="hwi-r ho-click${o.short ? ' bad' : ''}" data-hopop="${esc(String(o.id))}" data-hopk="N20" title="눌러서 상세 보기"><span class="hwi-h"><b>${esc(o.who || '이름 없음')}</b><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span>${incNew.has(o.id) && Date.now() - incNewAt < 1800e3 ? '<span class="hwi-new">방금 수집</span>' : ''}<span class="sp"></span><small>${td}</small></span>${o.lines.map(l => `<span class="hwi-l${l.short ? ' bad' : ''}"><span class="p">${esc(l.p)}</span><span class="o">${esc(incOpt(l.op))}</span><span class="q">${l.q}</span></span>`).join('')}</div>`; }).join('');
+    let G = new Map(); try { G = incAgg(R, fil ? new Set(ords.map(o => String(o.id))) : null); } catch (e) {}
     itmB = [...G.entries()].map(([g, L]) => `<div class="hwi-g">${esc(g)}</div>` + L.map(x => { const r = x.r, tight = r && !x.bad && r.left !== null && r.left <= (stkIsW(r.unit) ? 200 : 2);
       return `<div class="hwi-r hwi-i${x.bad ? ' bad' : ''}"><span class="nm"><b>${esc(x.n)}${x.o ? ` <span class="op">${esc(x.o)}</span>` : ''}</b><small>${r ? '재고 ' + (r.cur === null ? '미입력' : esc(stkShow(r.unit, r.cur))) + ' · ' : ''}주문 ${x.merged && r ? esc(stkShow(r.unit, r.need)) : x.q}</small></span><b class="lf${x.bad ? ' bad' : tight ? ' lo' : ''}">${!r || r.left === null ? '' : x.bad ? esc(stkShow(r.unit, -r.left)) + ' 부족' : esc(stkShow(r.unit, r.left)) + ' 남음'}</b></div>`; }).join('')).join('') || '<p class="hwi-empty">집계할 품목이 없어요</p>';
   }
   setTimeout(() => document.querySelectorAll('.hwi-box').forEach(b => { b.scrollTop = incHmTop[b.dataset.k] || 0; }), 0);
   const seg = (k, t) => `<button type="button" role="tab" data-inchv="${k}" class="${incHmV === k ? 'on' : ''}" aria-selected="${incHmV === k}">${t}</button>`;
-  return `<div class="hwi" data-v="${incHmV}"><div class="hwi-t"><b>들어온 주문</b><span class="sp"></span>${body ? '' : `<span class="hwi-seg" role="tablist" aria-label="보기">${seg('o', '주문')}${seg('i', '품목')}</span>`}</div>
+  return `<div class="hwi" data-v="${incHmV}"><div class="hwi-t">${inHo ? `<small class="hwi-ch">주문 ${n}건</small>` : '<b>들어온 주문</b>'}<span class="sp"></span>${body ? '' : `<span class="hwi-seg" role="tablist" aria-label="보기">${seg('o', '주문')}${seg('i', '품목')}</span>`}</div>
     ${body ? `<div class="hwi-box" data-k="o">${body}</div>` : `<div class="hwi-cols"><div class="hwi-col o"><small class="hwi-ch">주문</small><div class="hwi-box" data-k="o" tabindex="0" aria-label="들어온 주문 목록">${ordB}</div></div><div class="hwi-col i"><small class="hwi-ch">품목</small><div class="hwi-box" data-k="i" tabindex="0" aria-label="품목 (집계 순서)">${itmB}</div></div></div>`}
 </div>`;
 }
@@ -5600,13 +5800,14 @@ document.addEventListener('click', e => { if (!e.target.closest) return; let b;
   if ((b = e.target.closest('[data-inchv]'))) { e.stopPropagation(); incHmV = b.dataset.inchv; const w = b.closest('.hwi'); if (w) { w.dataset.v = incHmV; w.querySelectorAll('[data-inchv]').forEach(x => { x.classList.toggle('on', x.dataset.inchv === incHmV); x.setAttribute('aria-selected', x.dataset.inchv === incHmV); }); } return; }
   if ((b = e.target.closest('[data-inchgo]'))) { if (typeof hmEditing !== 'undefined' && hmEditing) return; const id = b.dataset.inchgo; incView = id ? 'order' : 'item'; incQ = id; if (!id) incShort = false; hmOpenApp('inc'); } });
 const HW = {
-  ost() { ostEnsure(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
+  ost() { ostEnsure(); hoCntLoad(); const C = (ostD && ostD.counts) || null, v = k => C ? (C[k] || 0).toLocaleString('ko-KR') : '–';
     const U = c24Cfg().ostUrl || {}, NOGO = { N20: 1, N21: 1, N22: 1, N30: 1 }, cell = (k, n) => (k === 'N00' || k === 'N10') && ostOn() ? `<button type="button" class="ost-c${C && C[k] ? ' on' : ''} mvc${mvOpen === k ? ' sel' : ''}" data-ostmv="${k}" aria-expanded="${mvOpen === k}" title="${n} 주문 보기 · 배송준비중으로 넘기기"><span>${n}<i class="mva" aria-hidden="true">${mvOpen === k ? '▴' : '▾'}</i></span><b>${v(k)}</b></button>` : NOGO[k] || k === 'N10' || k === 'N00' ? `<div class="ost-c ng${C && C[k] ? ' on' : ''}"><span>${n}</span><b>${v(k)}</b></div>` : `<button type="button" class="ost-c${C && C[k] ? ' on' : ''}${U[k] ? ' lk' : ''}" data-ostgo="${k}" title="${U[k] ? '카페24 ' + n + ' 화면 열기 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : n + ' 화면 주소 넣기'}"><span>${n}</span><b>${v(k)}</b></button>`;
-    const t = ostD ? new Date(ostD.at) : null, tm = t ? String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') : '';
+    const t = ostD && ostD.at ? new Date(ostD.at) : null, tm = t && !isNaN(t) ? String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') : '';
     const foot = !ostOn() ? '로그인하는 웹 버전에서 카페24에 연결되면 보여요' : ostErr ? '⚠ ' + esc(ostErr) : ostBusy && !ostD ? '카페24에서 불러오는 중…' : '';
     return `<div class="hm-w hw-ost"><div class="hm-wt"><span class="hm-lb">주문 처리 현황 <small class="ost-src" title="10분마다 새로 받아요"><span class="k">카페24${tm ? ' · ' : ''}</span>${tm}</small></span><span class="ost-hb"><button class="ost-mk${mkWin ? ' on' : ''}" type="button" data-ostmk="1" ${ostOn() ? '' : 'disabled'} title="${U.mkt ? '카페24 배송준비중 관리 화면을 새 창으로 열어요 · 창을 닫으면 주문을 새로 받아요 · 주소 바꾸기는 오른쪽 클릭(휴대폰은 길게 누르기)' : '마켓 주문 수집 화면 주소 넣기'}"><i aria-hidden="true">🛒</i>${mkWin ? '수집 창 열림' : '마켓 주문 수집'}</button><button class="hm-more ost-re${ostBusy ? ' spin' : ''}" type="button" data-ostre="1" ${ostBusy || !ostOn() ? 'disabled' : ''} aria-label="${ostBusy ? '받는 중' : '지금 새로 받기'}" title="${ostBusy ? '받는 중…' : '새로 받기'}"><i aria-hidden="true">↻</i></button></span></div>
-      <div class="ost-g">${cell('N00', '입금전')}<div class="ost-pair">${cell('N10', '상품준비중')}${cell('N22', '배송보류중')}</div>${cell('N20', '배송준비중')}${cell('N21', '배송대기')}${cell('N30', '배송중')}</div>
-      ${mvOpen && ostOn() ? mvBox() : ''}${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}${ostOn() ? hwIncBox() : ''}</div>`; },
+      <div class="ho-g" role="tablist" aria-label="주문 상태">${HO_N.map(([k, n]) => { const c = ostOn() ? hoCount(k) : null, on = hoSt === k && ostOn(), dd = k === 'N00' || k === 'N10';
+        return `<button type="button" role="tab" aria-selected="${on}" class="ho-c${on ? ' on' : ''}${c ? ' has' : ''}" style="--c:${HO_COL[k]}" data-hostc="${k}" ${ostOn() ? '' : 'disabled'} title="${n} 주문 보기${dd ? ' · 배송준비중으로 넘기기' : ''}"><span>${n}${dd ? '<i class="mva" aria-hidden="true">▾</i>' : ''}</span><b>${c === null ? '–' : Number(c).toLocaleString('ko-KR')}</b></button>`; }).join('')}</div>
+      ${foot ? `<p class="hw-foot ${ostErr ? 'warn' : ''}">${foot}</p>` : ''}${ostOn() ? hoBarHtml() + `<div class="ho-list">${hoListHtml()}</div>` : ''}</div>`; },
   today() { const t = isoDate(new Date()), U = upl[t] || {}, am = U.am ? uplOrders(t, 'am') : 0, pm = U.pm ? uplOrders(t, 'pm') : 0, all = uplOrders(t), tot = am + pm, p = tot ? Math.round(am / tot * 100) : 0;
     const sl = (k, n, lb) => `<span class="hm-slot ${U[k] ? 'done' : 'wait'}"><i></i>${lb} ${U[k] ? n + '건 · ' + esc(hhmm(U[k].at).replace(/^오[전후] /, '')) : '대기'}</span>`;
     return `<button class="hm-w hm-today" type="button" data-go="sum"><div class="hm-wt"><span class="hm-lb">오늘 들어온 주문</span><span class="hm-arrow" aria-hidden="true"></span></div><div class="hm-tbody"><div><b class="hm-big">${all.toLocaleString('ko-KR')}<small>건</small></b><div class="hm-slots">${sl('am', am, '오전')}${sl('pm', pm, '오후')}</div></div><div class="hm-ring ${tot ? '' : 'empty'}" style="--p:${tot ? p : 0}"><span>${tot ? '<b>' + p + '%</b><small>오전</small>' : '<small>아직<br>없음</small>'}</span></div></div></button>`; },
@@ -5628,10 +5829,10 @@ const HW = {
     const row = d => { let lo = null, hi = null; Object.values(D[d] || {}).forEach(v => { if (v && Array.isArray(v.min)) lo = Math.min(lo == null ? 1e9 : lo, ...v.min); if (v && Array.isArray(v.max)) hi = Math.max(hi == null ? -1e9 : hi, ...v.max); }); return [d, lo, hi]; };
     const R = ks.map(row).filter(r => r[1] != null);
     return `<div class="hm-w">${hwHead('앞으로 날씨 · 전국', 'wx', '날씨')}${R.length ? `<ul class="hm-list hw-wx">${R.map(r => `<li><span class="nm">${r[0] === t ? '오늘' : esc(fmtDay(r[0]))}</span><span class="hw-tp"><i class="lo">${r[1]}°</i><i class="hi">${r[2]}°</i></span>${bandsFor({ min: r[1], max: r[2] }).map(b => `<span class="chip" style="background:#${esc(b.color)}">${esc(b.label)}</span>`).join('')}</li>`).join('')}</ul>` : hwEmpty(wdata ? '예보가 없어요' : '날씨를 불러오는 중…')}</div>`; },
-  alert() { const { out, low, soon } = hwStk(), alist = out.map(x => ({ x, t: 'out' })).concat(low.map(x => ({ x, t: 'low' })), soon.map(x => ({ x, t: 'soon' })));
-    return `<div class="hm-w hm-alert ${alist.length ? '' : 'calm'}">` + (alist.length ? `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span><button class="hm-more" type="button" data-go="stock">재고 관리</button></div><div class="hm-alist">` + alist.slice(0, 8).map(({ x, t }) =>
-      `<button type="button" class="hm-al ${t}" data-go="stock"><b>${esc(x.key)}</b><span>${t === 'out' ? '남은 재고 없음' : esc(stkShow(x.unit, x.cur))}${t === 'low' ? ' · 최소 ' + esc(stkShow(x.unit, x.min)) : ''}${x.days !== null ? ' · 약 ' + (x.days < 1 ? '1일 안' : Math.floor(x.days) + '일치') : ''}</span><em>${t === 'out' ? '품절' : t === 'low' ? '부족' : '곧 부족'}</em></button>`).join('') + '</div>'
-      : `<div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span></div><p class="hw-calm">품절 · 부족한 품목이 없어요</p>`) + '</div>'; },
+  alert() { let items = []; try { items = stkCompute().items; } catch (e) {}   // 모든 품목 · 재고 관리와 같은 묶음 · 순서 · 위젯 안에서만 스크롤 · 품절만 배지
+    const G = stkGroupsSorted(items.filter(x => x.rec || x.cur !== null));
+    return `<div class="hm-w hm-alert hm-stkall"><div class="hm-wt"><span class="hm-lb"><i class="hm-bell"></i>재고 알림</span><button class="hm-more" type="button" data-go="stock">재고 관리</button></div>` + (G.length ? `<div class="hm-stkl">` + G.map(({ g, L }) => `<div class="hm-stkg">${esc(g)} <small>${L.length}</small></div>` + L.map(x => { const out = x.cur !== null && x.cur <= 0;
+      return `<button type="button" class="hm-stkr${out ? ' out' : ''}" data-go="stock" data-stkgo="${esc(x.key)}"><span class="nm">${esc(x.key)}</span><b>${x.cur === null ? '미입력' : out ? '남은 재고 없음' : esc(stkShow(x.unit, x.cur))}</b>${out ? '<em>품절</em>' : '<i></i>'}</button>`; }).join('')).join('') + '</div>' : '<p class="hw-calm">재고 관리에 품목이 없어요</p>') + '</div>'; },
   inc(x) { incEnsure(); const sm = x && x.s === 'S', on = ostOn();
     const re = `<button class="hm-more ost-re${incBusy ? ' spin' : ''}" type="button" data-incre="1" ${incBusy || !on ? 'disabled' : ''} aria-label="${incBusy ? '확인 중' : '지금 다시 확인'}" title="지금 다시 확인"><i aria-hidden="true">↻</i></button>`;
     const head = `<div class="hm-wt"><span class="hm-lb">들어온 주문${incD ? ` <small class="hw-tm">${new Date(incD.at).toTimeString().slice(0, 5)}</small>` : ''}</span><span class="hw-inc-b">${re}<button class="hm-more" type="button" data-hmgo="inc">열기</button></span></div>`;
@@ -10538,15 +10739,32 @@ async function svcStock(key, d, why) {
 }
 async function svcUndoStock() { while (svcDed.length) { const d = svcDed[0]; if (d.d) await svcStock(d.key, -d.d, '서비스 취소'); svcDed.shift(); svcPersist(); } }
 // 손님 고르기 사이드창
+// 상세보기: 고객 관리 내용을 짧게 — 주문 수 · 주기 · 마지막 주문 · 태그 · 반품 이력, 최근 구입 3줄, 추천 이유 한 줄
+function svpDetail(c) {
+  let C = null; try { if (c.cid) C = crmData().map.get(c.cid); } catch (e) {}
+  const chip = t => `<span class="svp-chip">${esc(t)}</span>`, T = isoDate(new Date());
+  let stats = [], recent = [];
+  if (C) { stats.push(C.n > 1 ? '주문 ' + C.n + '번' : '첫 주문'); if (C.cyc) stats.push('보통 ' + C.cyc + '일마다'); stats.push('마지막 주문 ' + (C.ago === 0 ? '오늘' : crmAgoTxt(C.ago)));
+    (C.tags || []).forEach(t => stats.push(t));
+    const alias = mallAliasFn(); recent = C.orders.slice().sort((a, b) => b.d.localeCompare(a.d) || String(b.i).localeCompare(String(a.i))).slice(0, 3).map(o => { const L = (o.it || []).map(x => alias(x[0]) + ' × ' + (x[2] || 0));
+      return { d: Number(o.d.slice(5, 7)) + '/' + Number(o.d.slice(8)), t: L.slice(0, 2).join(' · ') + (L.length > 2 ? ' 외 ' + (L.length - 2) + '종' : '') }; }); }
+  else if (c.kt) { stats.push('카톡 거래 업체'); try { const P = ktList.filter(x => x.bizId === c.kt).sort((a, b) => String(b.day || b.no).localeCompare(String(a.day || a.no))); stats.push('주문 ' + P.length + '번');
+    recent = P.slice(0, 3).map(x => ({ d: String(x.day || '').slice(5).replace('-', '/').replace(/^0/, ''), t: x.items.slice(0, 2).map(i => i.p + ' × ' + (i.q || 1)).join(' · ') + (x.items.length > 2 ? ' 외 ' + (x.items.length - 2) + '종' : '') })); } catch (e) {} }
+  const claim = C && C.claims && C.claims.length ? `<span class="svp-chip bad">⚠ 반품 · 취소 ${C.claims.length}번</span>` : '';
+  const why = (c.why || []).filter(w => !/번 주문$|첫 주문 손님|두 번째 주문|거래처$|카톡 거래 업체/.test(w)).join(' · ') || (c.why || [])[0] || '';
+  return `<div class="svp-why"><span>${esc(c.o)}${C && C.r ? ' · ' + esc(C.r) : c.sub && c.sub !== '고객 관리에서 못 찾음' ? ' · ' + esc(c.sub) : ''}</span>${stats.length || claim ? `<div class="svp-chips">${stats.map(chip).join('')}${claim}</div>` : ''}
+    ${recent.length ? `<div class="svp-rec"><b>최근 구입</b>${recent.map(x => `<div><span>${esc(x.d)}</span><span>${esc(x.t)}</span></div>`).join('')}</div>` : '<p class="svp-none">고객 관리 기록이 없어요 (오늘 주문만 봤어요)</p>'}
+    ${why ? `<p class="svp-wy">💡 ${esc(why)}</p>` : ''}${c.note ? `<p>메모: ${esc(c.note)}</p>` : ''}</div>`;
+}
 function svcPickOpen(gi) { svcPickG = gi; svcOpenWhy = new Set(); svcPickRender(); $('svdrawer').classList.add('on'); $('svdrawer').setAttribute('aria-hidden', 'false'); $('svdback').classList.remove('hidden'); }
 function svcPickRender() {
   const g = svcG[svcPickG]; if (!g) return svdClose(); const L = svcCandsOf(g.key), top = L.filter(c => c.sc >= 4), rest = L.filter(c => c.sc < 4);
   $('svd-t').textContent = svcName(g.key) + ' · 손님 고르기';
   const row = c => `<div class="svp-r${g.sel.includes(c.o) ? ' on' : ''}"><label><input type="checkbox" data-svpk="${esc(c.o)}" ${g.sel.includes(c.o) ? 'checked' : ''}><b>${esc(c.label)}</b>${inK(c.o) ? '<em class="svp-in">엑셀에 합침</em>' : ''}</label><button type="button" class="linkbtn iczno" data-svpwhy="${esc(c.o)}">${svcOpenWhy.has(c.o) ? '접기' : '상세보기'}</button>
-    ${svcOpenWhy.has(c.o) ? `<div class="svp-why"><span>${esc(c.o)}${c.sub ? ' · ' + esc(c.sub) : ''}</span><ul>${c.why.map(w => '<li>' + esc(w) + '</li>').join('')}</ul>${c.note ? `<p>메모: ${esc(c.note)}</p>` : ''}</div>` : ''}</div>`;
+    ${svcOpenWhy.has(c.o) ? svpDetail(c) : ''}</div>`;
   const inK = o => { const v = svcIn.get(o); return !!(v && (v.keys || []).includes(g.key)); }, nIn = L.filter(c => inK(c.o)).length, nSel = L.filter(c => g.sel.includes(c.o)).length;
   const all = `<div class="svp-r svp-all${nSel && nSel === L.length ? ' on' : ''}"><label><input type="checkbox" id="svp-all" ${nSel && nSel === L.length ? 'checked' : ''}><b>전체 선택</b></label><small>${L.length}분</small></div>`;
-  $('svd-b').innerHTML = (L.length ? all : '') + `<p class="svp-n">${g.sel.length}분 골랐어요</p>${top.length ? `<h4 class="svp-h">추천 손님</h4>${top.map(row).join('')}` : ''}${rest.length ? `<h4 class="svp-h">${top.length ? '다른 손님' : '이번 주문 손님'}</h4>${rest.map(row).join('')}` : ''}${L.length ? '' : '<p class="help">이번 주문이 없어요.</p>'}<div class="svp-done"><button type="button" class="btn pri iczno" id="svp-ok">다 골랐어요</button></div>`; svpAllSync();
+  $('svd-b').innerHTML = (L.length ? all : '') + `<p class="svp-n">${g.sel.length}분 골랐어요</p>${top.length ? `<h4 class="svp-h">추천 손님</h4>${top.map(row).join('')}` : ''}${rest.length ? `<h4 class="svp-h">${top.length ? '다른 손님' : '이번 주문 손님'}</h4>${rest.map(row).join('')}` : ''}${L.length ? '' : '<p class="help">이번 주문이 없어요.</p>'}<div class="svp-done"><button type="button" class="btn pri iczno" id="svp-ok">확인</button></div>`; svpAllSync();
 }
 function svpAllSync() { const g = svcG[svcPickG], a = $('svp-all'); if (!g || !a) return; const L = svcCandsOf(g.key), n = L.filter(c => g.sel.includes(c.o)).length;
   a.checked = n > 0 && n === L.length; a.indeterminate = n > 0 && n < L.length; a.closest('.svp-r').classList.toggle('on', a.checked); }

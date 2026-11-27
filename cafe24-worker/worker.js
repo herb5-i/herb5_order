@@ -38,6 +38,8 @@ export default {
       if (url.pathname === '/ostorders') return json(await ostOrders(env, url.searchParams.get('code')), cors);   // 그 상태(배송준비중)인 주문 전부 (화면에만 보여 주고 저장 안 해요)
       if (url.pathname === '/ostids') return json(await ostIds(env, url.searchParams.get('code')), cors);   // 상태별 주문 번호 · 결제 시각만 (이름 · 연락처 없음)
       if (url.pathname === '/ostatus') return json(await ostatus(env, url.searchParams.get('fresh') === '1'), cors);
+      if (url.pathname === '/ocount') return json(await oCount(env, url.searchParams), cors);   // 홈 주문 조회: 기간 안 상태별 주문 수 (배송완료 · 취소 · 반품 · 교환 포함)
+      if (url.pathname === '/olist') return json(await oList(env, url.searchParams), cors);   // 홈 주문 조회: 배송대기 · 배송중 · 배송완료 주문 (받는 분 · 송장, 저장 안 해요)
       if (url.pathname === '/reviews') return json(await reviews(env, url.searchParams), cors);
       if (url.pathname === '/claims') return json(await claims(env, url.searchParams), cors);
       if (url.pathname === '/crm') { needAdmin(who); return json(await crm(env, url.searchParams), cors); }
@@ -375,6 +377,36 @@ async function ostatus(env, fresh) {
   return out;
 }
 
+// 홈 주문 조회: 기간(주문일, 한국 날짜) 안에서 상태별 주문 수. 배송완료(N40)와 취소 · 반품 · 교환(요청일 기준)도 같이 세요. 요청 10번
+const OST_ALL = [['N00', '입금전'], ['N10', '상품준비중'], ['N22', '배송보류중'], ['N20', '배송준비중'], ['N21', '배송대기'], ['N30', '배송중'], ['N40', '배송완료']];
+function oRange(q) { const ok = v => /^\d{4}-\d{2}-\d{2}$/.test(v || ''), today = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  let a = ok(q.get('from')) ? q.get('from') : '', b = ok(q.get('to')) ? q.get('to') : today; if (!a) a = new Date(new Date(b + 'T00:00:00Z').getTime() - 89 * 864e5).toISOString().slice(0, 10);
+  if (a > b) [a, b] = [b, a]; if ((new Date(b) - new Date(a)) / 864e5 > 366) throw fail(400, 'range', '기간은 1년까지만 볼 수 있어요'); return [a, b]; }
+async function oCount(env, q) {
+  const [from, to] = oRange(q), token = await accessToken(env), counts = {};
+  await Promise.all(OST_ALL.map(async ([code]) => { const d = await c24get(env, token, '/admin/orders/count', { order_status: code, start_date: from, end_date: to, date_type: 'order_date' }, '주문(Order) 읽기'); counts[code] = Number(d.count) || 0; }));
+  await Promise.all([['cancel', 'cancel_request_date'], ['return', 'return_request_date'], ['exchange', 'exchange_request_date']].map(async ([k, dt]) => {
+    try { const d = await c24get(env, token, '/admin/orders/count', { start_date: from, end_date: to, date_type: dt }, '주문(Order) 읽기'); counts[k] = Number(d.count) || 0; } catch (e) { counts[k] = null; } }));
+  return { from, to, at: new Date().toISOString(), counts };
+}
+async function oList(env, q) {
+  const code = String(q.get('code') || ''); if (!['N21', 'N30', 'N40'].includes(code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
+  const [from, to] = oRange(q), token = await accessToken(env), out = []; let more = false;
+  for (let offset = 0; offset < 1000; offset += 250) {
+    const d = await c24get(env, token, '/admin/orders', { start_date: from, end_date: to, date_type: 'order_date', order_status: code, embed: 'items,receivers,buyer', limit: 250, offset }, '주문(Order) 읽기');
+    const L = d.orders || [];
+    L.forEach(o => { const rc = (o.receivers || [])[0] || {}, by = o.buyer || {};
+      const items = (o.items || []).filter(i => (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', quantity: Number(i.quantity) || 0, product_code: i.product_code || '',
+        tracking_no: i.tracking_no || '', shipping_company_name: i.shipping_company_name || '', shipping_code: i.shipping_code || '', shipped_date: i.shipped_date || '', delivered_date: i.delivered_date || '', tracking_no_updated_date: i.tracking_no_updated_date || '' }));
+      if (!items.length) return;
+      out.push({ order_id: o.order_id, order_date: o.order_date, payment_amount: o.payment_amount || (o.actual_order_amount && o.actual_order_amount.payment_amount) || '', order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '', member_id: o.member_id ? 1 : 0,
+        buyer: { name: by.name || '' }, receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '', shipping_message: rc.shipping_message || '' }, items }); });
+    if (L.length < 250) break; if (offset + 250 >= 1000) more = true;
+  }
+  out.sort((a, b) => String(b.order_date).localeCompare(String(a.order_date)));
+  return { code, from, to, at: new Date().toISOString(), orders: out, more };
+}
+
 // 들어온 주문과 맞춰 보기: 그 상태(예: 배송준비중)인 주문 번호 · 결제 시각 · 주문 경로만 보내요
 async function ostIds(env, code) {
   code = String(code || 'N20'); if (!OST.some(([c]) => c === code)) throw fail(400, 'code', '주문 상태 코드가 맞지 않아요');
@@ -396,7 +428,7 @@ async function ostOrders(env, code) {
       const items = (o.items || []).filter(i => (i.order_status || '') === code).map(i => ({ order_item_code: i.order_item_code, product_name: i.product_name, option_value: i.option_value || '', additional_option_value: i.additional_option_value || '', quantity: Number(i.quantity) || 0, product_price: Number(i.product_price) || 0, option_price: Number(i.option_price) || 0 }));
       if (!items.length) return;
       out.push({ order_id: o.order_id, order_date: o.order_date, payment_date: o.payment_date, payment_method: o.payment_method || [], payment_amount: o.payment_amount || (o.actual_order_amount && o.actual_order_amount.payment_amount) || '', payer_name: code === 'N00' ? (o.payer_name || '') : '', order_place_id: o.order_place_id || '', market_id: o.market_id || '', order_place_name: o.order_place_name || '',
-        buyer: { name: by.name || '' }, receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '' }, items }); });
+        buyer: { name: by.name || '' }, receiver: { name: rc.name || '', phone: rc.phone || '', cellphone: rc.cellphone || '', virtual_phone_no: rc.virtual_phone_no || '', zipcode: rc.zipcode || '', address1: rc.address1 || '', address2: rc.address2 || '', shipping_message: rc.shipping_message || '' }, items }); });
     if (L.length < 200) break;
   }
   return { code, at: new Date(now).toISOString(), orders: out, count: out.length };
