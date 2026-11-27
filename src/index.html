@@ -27,6 +27,8 @@ h1{font-size:24px;margin:0 0 4px}
 .sumtbl{width:100%;border-collapse:collapse}
 .sumtbl td{padding:8px 14px;border-top:1px solid var(--line);vertical-align:middle}
 .sumtbl tr:first-child td{border-top:0}
+.sumre{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:34px;min-width:34px;padding:0 11px;border-radius:99px;border:1px solid var(--line);background:var(--card,#fff);color:var(--acc);font:inherit;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08)}.sumre svg{width:15px;height:15px;flex:none}.sumre b{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--acc)}
+.sumlive .sumre b{color:var(--acc)}.sumre.spin{padding:0;width:34px;background:var(--acc2,#eef6f1)}.sumre.spin svg{width:18px;height:18px;animation:incspin .9s linear infinite}@media(prefers-reduced-motion:reduce){.sumre.spin svg{animation-duration:3s}}
 .sumlive{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin:0 0 10px;font-size:12.5px;color:var(--mute)}.sumlive b{color:#b86b00}.sumlive .ibtn{width:32px;height:32px}
 .sumlv td.sl-s,.sumlv td.sl-n,.sumlv td.sl-l{text-align:right;white-space:nowrap;font-size:13px;padding-left:4px;padding-right:10px;width:1%}.sumlv td.q{width:1%;white-space:nowrap}
 .sumlv td.sl-s{color:var(--mute)}.sumlv td.sl-n{color:#b86b00;font-weight:700}.sumlv td.sl-n:not(.on){color:var(--mute);font-weight:400}.sumlv td.sl-l{font-weight:800;color:var(--acc)}.sumlv td.sl-l.bad{color:#c0392b}
@@ -6241,7 +6243,7 @@ function renderSum() {
   renderUFiles(); renderTrash();
   const res = sumSel ? uplResult(sumSel, sumSlot) : null;
   let live = null; if (res && sumSel === isoDate(new Date()) && ostOn()) { incEnsure(); sumLiveTick(); try { live = sumLiveCalc(sumSel, sumSlot); } catch (e) { live = null; } }
-  const liveErr = res && !live && sumSel === isoDate(new Date()) && ostOn() ? `<div class="sumlive"><span>${incErr ? '⚠ 새 주문을 못 불러왔어요: ' + esc(incErr) : '카페24 배송준비중 주문을 불러오는 중…'}</span><button type="button" class="ibtn iczno" data-sumre="1" title="다시 받기" aria-label="다시 받기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button></div>` : '';
+  const liveErr = res && !live && sumSel === isoDate(new Date()) && ostOn() ? `<div class="sumlive"><span>${incErr ? '⚠ 새 주문을 못 불러왔어요: ' + esc(incErr) : '카페24 배송준비중 주문을 불러오는 중…'}</span>${sumReBtn()}</div>` : '';
   body.innerHTML = res ? liveErr + sumCards(res.sheet3, live).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
 }
 let ufPick = new Set();
@@ -6432,7 +6434,7 @@ function sumCardsLive(groups, L) {
     if (shown.has(i.key)) return '<td class="sl-s"></td>' + nwT + '<td class="sl-l"></td>';
     shown.add(i.key); const st = (x.cur || 0) + (L.ded.get(x.key) || 0), left = st - (work.get(x.key) || 0) - (nw.get(x.key) || 0), round = v => stkIsW(x.unit) ? Math.round(v) : Math.round(v * 100) / 100;
     return `<td class="sl-s">${esc(stkShow(x.unit, round(st)))}</td>${nwT}<td class="sl-l${left < 0 ? ' bad' : ''}">${left < 0 ? esc(stkShow(x.unit, round(-left))) + ' 부족' : esc(stkShow(x.unit, round(left)))}</td>`; };
-  const html = `<div class="sumlive"><span>카페24 배송준비중 · 아직 정리 안 한 주문 <b>${L.nOrd}건</b> · ${new Date(L.at).toTimeString().slice(0, 5)}</span><button type="button" class="ibtn iczno${incBusy ? ' spin' : ''}" data-sumre="1" title="새로 받기" aria-label="새로 받기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button></div><div class="sumgrid lv">` + [...groups.entries()].map(([g, items]) => {
+  const html = `<div class="sumlive"><span>카페24 배송준비중 · 아직 정리 안 한 주문 <b>${L.nOrd}건</b> · ${new Date(L.at).toTimeString().slice(0, 5)}</span>${sumReBtn()}</div><div class="sumgrid lv">` + [...groups.entries()].map(([g, items]) => {
     const tot = items.reduce((a, b) => a + b.qty, 0); all += tot;
     const grams = items.every(i => gramOf(i.opt) !== null) ? items.reduce((a, i) => a + gramOf(i.opt) * i.qty, 0) : null;
     return `<div class="sumcard"><div class="sumhd"><b>${esc(g)}</b><span>${tot}개${grams ? ' · ' + fmtG(grams) : ''}</span></div><table class="sumtbl sumlv"><tr class="slh"><td></td><td class="q"><span class="lg">작업할 양</span><span class="sm">작업</span></td><td class="sl-s">재고</td><td class="sl-n"><span class="lg">새 주문</span><span class="sm">새 주문</span></td><td class="sl-l"><span class="lg">남은 재고</span><span class="sm">남음</span></td></tr>` +
@@ -6441,9 +6443,18 @@ function sumCardsLive(groups, L) {
   }).join('') + '</div>';
   return { html, total: all };
 }
-document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-sumre]')) { incErr = ''; incLoad(); } });
+// 새로고침 버튼: 받는 동안 빙글빙글 → 다 받으면 5:00 타이머 (0:00이 되면 저절로 다시 받기 · 타이머 중에도 누르면 바로 새로고침)
+const SUM_RE_MS = 300e3;
+const sumReLeft = () => incD ? Math.max(0, Math.ceil((incD.at + SUM_RE_MS - Date.now()) / 1000)) : 0;
+const sumReTxt = () => { const n = sumReLeft(); return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0'); };
+function sumReBtn() { const busy = incBusy || !incD, t = sumReTxt();
+  return `<button type="button" class="sumre iczno${busy ? ' spin' : ''}" data-sumre="1" title="${busy ? '받는 중…' : t + ' 뒤 자동 새로고침 · 누르면 지금 새로고침'}" aria-label="${busy ? '카페24에서 받는 중' : '지금 새로고침 (' + t + ' 뒤 자동)'}" aria-busy="${busy}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg>${busy ? '' : `<b>${t}</b>`}</button>`; }
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-sumre]'); if (!b) return; if (incBusy) return; incErr = ''; b.classList.add('spin'); const t = b.querySelector('b'); if (t) t.remove(); incLoad(); });
 let sumLiveT = null;
-function sumLiveTick() { clearInterval(sumLiveT); sumLiveT = setInterval(() => { const b = $('sumbody'); if (!b || !b.offsetParent || document.hidden) return; if (sumSel === isoDate(new Date())) { incErr = ''; incLoad(); } }, 300e3); }
+function sumLiveTick() { if (sumLiveT) return; sumLiveT = setInterval(() => { const b = $('sumbody'); if (!b || !b.offsetParent || document.hidden || sumSel !== isoDate(new Date()) || !ostOn()) return;
+    const btn = b.querySelector('[data-sumre]'); if (!btn || incBusy) return;
+    if (incD && sumReLeft() <= 0) { incErr = ''; btn.classList.add('spin'); const t = btn.querySelector('b'); if (t) t.remove(); incLoad(); return; }
+    const t = btn.querySelector('b'); if (t) { t.textContent = sumReTxt(); btn.title = sumReTxt() + ' 뒤 자동 새로고침 · 누르면 지금 새로고침'; } }, 1000); }
 document.addEventListener('click', e => {
   const p = e.target.dataset && e.target.dataset.reg;
   if (p === undefined) return;
@@ -10208,7 +10219,7 @@ srcLabel('규칙을 불러오는 중…');
 let incD = null, incBusy = false, incErr = '', incView = 'item', incQ = '', incShort = false, incOpen = new Set();
 const incOpenNow = () => { const v = $('v-run'); return !!v && !v.classList.contains('hidden') && v.dataset.cur === 'inc'; };
 async function incLoad() {   // 카페24에서 지금 배송준비중인 주문 전부
-  if (incBusy) return; incBusy = true; incErr = ''; incRender(); try { homeSoon(); } catch (e) {}
+  if (incBusy) return; incBusy = true; incErr = ''; incRender(); try { homeSoon(); } catch (e) {} try { const sb = $('sumbody'), b = sb && sb.querySelector('[data-sumre]'); if (b) { b.classList.add('spin'); const t = b.querySelector('b'); if (t) t.remove(); } } catch (e) {}
   try { const d = await c24Call('/ostorders?code=N20'); incD = { orders: d.orders || [], lab: '카페24 배송준비중 주문', at: Date.now() }; incOpen = new Set(); }
   catch (e) { incErr = e && e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포하면 배송준비중 주문이 보여요' : ((e && e.message) || String(e)); if (e && (e.code === 'not_connected' || e.code === 'expired')) try { c24Status(); } catch (er) {} }
   finally { incBusy = false; incRender(); try { homeSoon(); } catch (e) {} try { const b = $('sumbody'); if (b && b.offsetParent) renderSum(); } catch (e) {} }
