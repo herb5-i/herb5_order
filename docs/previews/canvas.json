@@ -260,6 +260,16 @@
       "x": -21780,
       "y": 0,
       "page": "page-1"
+    },
+    "FarmMemo.dc.html": {
+      "expand": "fill",
+      "h": 1250,
+      "is_interactive": true,
+      "title": "허브다섯메 · 개선 메모 (따로 모으기)",
+      "w": 900,
+      "x": -22760,
+      "y": 0,
+      "page": "page-1"
     }
   },
   "createdOnFiles": {
@@ -268,7 +278,7 @@
   },
   "designSystems": [],
   "launch": {
-    "file": "Polish.dc.html",
+    "file": "FarmMemo.dc.html",
     "view": "focused"
   },
   "notes": {},
@@ -298,6 +308,7 @@
     "CrmEasy.dc.html",
     "CrmFlow.dc.html",
     "Polish.dc.html",
+    "FarmMemo.dc.html",
     "Artboard-8yx0.dc.html"
   ],
   "pages": [
