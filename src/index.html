@@ -1810,6 +1810,7 @@ html.dark .ds-n{background:rgba(255,255,255,.05)}html.dark .ds-n mark{background
 .ds-lg{font-size:12px;color:var(--mute)}
 .ds-chip{height:30px;padding:0 11px;border-radius:99px;border:1px solid #e3c08a;background:#fdf3e2;color:#8a5a12;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;margin-left:6px}html.dark .ds-chip{background:#3a2f1c;color:#f0c987;border-color:#6b5520}
 .stabs:has(.ds-tab,.ds-chip){flex-wrap:wrap;min-width:0}.stabs:has(.ds-tab,.ds-chip) .stab{white-space:nowrap}.stabs .ds-chip{margin-left:0}
+.btn.slsort{font-weight:700}.btn.slsort.on{background:#e8f2ea;border-color:var(--acc);color:var(--acc)}html.dark .btn.slsort.on{background:rgba(76,175,110,.16)}
 .qkb{width:26px;height:24px;padding:0;margin-right:4px;border:1px solid var(--line);border-radius:8px;background:var(--card,#fff);font-size:13px;line-height:1;cursor:pointer;opacity:.45;vertical-align:middle}.qkb:hover{opacity:1}.qkb.hint{opacity:1;border-color:#e3a14a;background:#fff3e0}.qkb.on{opacity:1;border-color:#e3a14a;background:#ffe2b8}
 tr.qkr td{opacity:.55;background:#fffaf2}tr.qkr td.rn{opacity:1}html.dark tr.qkr td{background:rgba(227,161,74,.08)}html.dark .qkb.hint,html.dark .qkb.on{background:#4a3818;border-color:#8a6420}
 .stab.qk-tab{color:#a35d00}html.dark .stab.qk-tab{color:#f0c987}.qk-ib.on{background:#fff3e0;border-color:#e3a14a;color:#a35d00}html.dark .qk-ib.on{background:#4a3818;color:#f0c987}
@@ -2777,6 +2778,7 @@ html.dark .mkt{--mkb:#7fa8de;--mkr:#e8798a;--mkg:#6fd09c;--mkrb:rgba(232,121,138
         <div class="sh"><span class="num">2</span><div><h2>결과 확인 · 내려받기</h2><p>확인이 필요한 줄을 먼저 보고 내려받으세요</p></div>
           <div class="row shact">
             <button class="btn" id="rerun">규칙 다시 적용</button>
+            <button class="btn slsort" id="slsort" type="button" aria-pressed="true" title="엑셀(주문정리 · 수령인별)을 송장 뜯기 좋은 순서로 내려받아요: 같은 품목끼리 · 섞인 주문은 묶음 맨 앞 · 큰 것부터">📦 송장 순서 켜짐</button>
             <button class="btn pri big" id="dl">엑셀 내려받기</button>
           </div>
         </div>
@@ -9341,6 +9343,37 @@ c24Bind();
 // (규칙 관리 → 날씨 · 포장의 '엑셀 표시 기호'에 적으면 그 기호를 써요. 아이스팩 기준은 비워 두면 안 붙어요)
 function bandMarks() { const m = new Map(); ((rules.weather && rules.weather.bands) || []).forEach(b => { const l = String(b.label || '').trim(); if (!l || m.has(l)) return; const own = String(b.mark || '').trim(), cold = String(b.basis || '').includes('최저');
   const def = cold ? '@T' : ''; if (own || def) m.set(l, own || def); }); return m; }
+// ---------- 📦 송장 순서 (내려받는 엑셀 줄 순서) ----------
+// 송장을 뜯으면서 정리하기 쉽게, 주문정리 · 수령인별 시트를 이렇게 다시 놓아요 (화면 · 집계 · 재고는 그대로)
+// · 같은 품목끼리 모아요. 품목 순서는 집계 칸 순서
+// · 섞인 주문은 그 묶음 맨 앞: ① 식용꽃이 있으면 식용꽃 ② 자스민이 있으면 자스민 ③ 생잎끼리만이면 [생잎 섞임] 묶음(생잎 묶음들 맨 앞, 합친 무게 큰 순) ④ 나머지는 주문이 가장 많은 품목
+// · 섞인 주문끼리는 품목 많은 것부터, 단품은 큰 옵션 → 작은 옵션, 같은 옵션은 수량 많은 것부터. 한 주문(수령인별은 받는 분)의 줄은 늘 붙어 있어요
+const SL_KEY = 'h5_slsort', SL_LEAF = /애플민트|로즈마리|타임|스피아민트/, SL_MIX = '\u0000생잎 섞임';
+const slOn = () => { try { return localStorage.getItem(SL_KEY) !== '0'; } catch (e) { return true; } };
+function slShow() { const b = $('slsort'); if (!b) return; const on = slOn(); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.textContent = on ? '📦 송장 순서 켜짐' : '📦 송장 순서 꺼짐'; }
+function slSize(t) { const m = String(t ?? '').match(/(\d+(?:\.\d+)?)\s*(kg|g|송이|잎|개)/i); return m ? parseFloat(m[1]) * (/kg/i.test(m[2]) ? 1000 : 1) : 0; }
+function slRank(full, unitCol) {   // 줄마다 순서 번호 (같은 주문 · 받는 분은 같은 번호)
+  const H = full[0].map(v => String(v ?? '')), uc = H.indexOf(unitCol), nc = H.indexOf('주문상품명'), oc = H.indexOf('옵션'), qc = H.indexOf('수량');
+  if (uc < 0 || nc < 0) return null;
+  const merge = new Map(((rules.summary && rules.summary.merge) || []).map(m => [String(m.from ?? '').trim(), String(m.to ?? '').trim()]));
+  const P = []; ((result && result.sheet3) || []).slice(1).forEach(r => { const n = String(r[0] ?? '').trim(); if (n && !P.includes(n)) P.push(n); });
+  const U = new Map(), rowU = []; let cur = '';
+  full.forEach((r, i) => { if (!i || r.__kt) return; let u = String(r[uc] ?? '').trim(); if (unitCol === '수령인') { if (u) cur = u; u = cur; } if (!u) u = '#' + i; rowU[i] = u;
+    const n0 = String(r[nc] ?? '').trim(), g = merge.get(n0) || n0, opt = oc >= 0 ? r[oc] : '';
+    let x = U.get(u); if (!x) { x = { u, first: i, it: [] }; U.set(u, x); } x.it.push({ g, sz: slSize(opt) || slSize(n0), q: Number(r[qc]) || 0 }); });
+  const cnt = {}; U.forEach(x => new Set(x.it.map(t => t.g)).forEach(g => cnt[g] = (cnt[g] || 0) + 1));
+  const pi = g => { const i = P.indexOf(g); return i < 0 ? 1e6 : i; }, rk = g => /식용꽃/.test(g) ? 0 : /자스민/.test(g) ? 1 : 2;
+  const leaf0 = Math.min(1e6, ...P.map((g, i) => SL_LEAF.test(g) ? i : 1e6)), gp = g => g === SL_MIX ? leaf0 - .5 : pi(g);
+  const L = [...U.values()].map(x => { const G = [...new Set(x.it.map(t => t.g))], k = G.length;
+    const g = k > 1 && G.every(t => SL_LEAF.test(t)) ? SL_MIX : G.sort((a, b) => rk(a) - rk(b) || (cnt[b] - cnt[a]) || pi(a) - pi(b))[0];
+    const own = x.it.filter(t => g === SL_MIX || t.g === g);
+    return { ...x, g, k, gram: x.it.reduce((t, v) => t + v.sz * v.q, 0), msz: Math.max(0, ...own.map(t => t.sz)), tq: x.it.reduce((t, v) => t + v.q, 0) }; });
+  L.sort((a, b) => gp(a.g) - gp(b.g) || (a.g === SL_MIX ? (b.gram - a.gram) || (b.k - a.k) : ((b.k > 1) - (a.k > 1)) || (b.k - a.k)) || (b.msz - a.msz) || (b.tq - a.tq) || (a.first - b.first));
+  const pos = new Map(L.map((x, i) => [x.u, i])); return full.map((r, i) => i && rowU[i] !== undefined ? pos.get(rowU[i]) : -1);
+}
+document.addEventListener('click', e => { if (!e.target.closest || !e.target.closest('#slsort')) return; try { localStorage.setItem(SL_KEY, slOn() ? '0' : '1'); } catch (er) {} slShow();
+  shareToast(slOn() ? '📦 송장 순서로 내려받아요 · 같은 품목끼리, 섞인 주문은 묶음 맨 앞' : '주문이 들어온 순서대로 내려받아요'); });
+setTimeout(slShow, 0);
 function buildXlsx() {
   const wb = XLSX.utils.book_new();
   const colorMap0 = new Map(result.colors.map(c => [c[0] + ',' + c[1], c[2]]));
@@ -9353,11 +9386,13 @@ function buildXlsx() {
       if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
       // 카톡 주문은 맨 위로, 그다음 포장 방법끼리
-      if ((pc >= 0 || full.length > nBase) && full.length > 2) { const bl = ((rules.weather && rules.weather.bands) || []).map(b => String(b.label || '').trim());
+      // 📦 송장 순서가 켜져 있으면 같은 포장 묶음 안에서 품목끼리 (slRank)
+      if ((pc >= 0 || full.length > nBase || slOn()) && full.length > 2) { const bl = ((rules.weather && rules.weather.bands) || []).map(b => String(b.label || '').trim()), sp = slOn() ? slRank(full, '주문번호') : null;
         const rk = r => { if (pc < 0) return 0; const ls = String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => bl.indexOf(l.trim())).filter(i => i >= 0); return ls.length ? Math.min(...ls) : 1e9; };
-        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: r.__kt ? 0 : 1 })).sort((x, y) => x.kt - y.kt || x.k - y.k || x.i - y.i);
+        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: r.__kt ? 0 : 1, p: sp ? sp[i + 1] : 0 })).sort((x, y) => x.kt - y.kt || x.k - y.k || x.p - y.p || x.i - y.i);
         ord = [0, ...idx.map(o => o.i)]; full = ord.map(i => full[i]); } }
-    if (si === 1) full = qkFilter(nsFilter(full, 1), 1);
+    if (si === 1) { full = qkFilter(nsFilter(full, 1), 1); const sp = slOn() && full.length > 2 ? slRank(full, '수령인') : null;
+      if (sp) full = [full[0], ...full.slice(1).map((r, i) => ({ r, i: i + 1 })).sort((x, y) => sp[x.i] - sp[y.i] || x.i - y.i).map(x => x.r)]; }
     const drop = new Set(full[0].map((h, c) => wxHeads.has(String(h)) ? c : -1).filter(c => c >= 0));
     const aoa = drop.size ? full.map(r => r.filter((_, c) => !drop.has(c))) : full;
     const ws = XLSX.utils.aoa_to_sheet(aoa, { cellDates: true, dateNF: 'yyyy-mm-dd' });
