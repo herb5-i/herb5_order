@@ -1893,6 +1893,9 @@ html.dark .ds-n{background:rgba(255,255,255,.05)}html.dark .ds-n mark{background
 .ds-lg{font-size:12px;color:var(--mute)}
 .ds-chip{height:30px;padding:0 11px;border-radius:99px;border:1px solid #e3c08a;background:#fdf3e2;color:#8a5a12;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;margin-left:6px}html.dark .ds-chip{background:#3a2f1c;color:#f0c987;border-color:#6b5520}
 .stabs:has(.ds-tab,.ds-chip){flex-wrap:wrap;min-width:0}.stabs:has(.ds-tab,.ds-chip) .stab{white-space:nowrap}.stabs .ds-chip{margin-left:0}
+.scaltog-w{display:flex;justify-content:center}.scaltog{display:inline-flex;align-items:center;gap:4px;height:38px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--card,#fff);color:var(--mute);cursor:pointer}.scaltog:hover{color:var(--ink,inherit)}.scaltog .chev{transition:transform .2s}.scaltog.on{border-color:var(--acc);color:var(--acc);background:#e8f2ea}.scaltog.on .chev{transform:rotate(180deg)}html.dark .scaltog.on{background:rgba(76,175,110,.16)}
+#v-sum.sumpast #sumbody>.card,#v-sum.sumpast .sumtop{border:3px solid #e3a14a!important}#v-sum.sumpast .sslot button.on{background:#e3a14a!important;border-color:#e3a14a!important;color:#fff!important}#v-sum.sumpast .scal .hd.on{background:#e3a14a!important;color:#fff!important}.scal .hd.today{box-shadow:inset 0 0 0 2px var(--acc)}
+.sumpastbar{display:flex;align-items:center;gap:10px;background:#fff3e0;border:2px solid #e3a14a;border-radius:14px;padding:12px 14px;margin-bottom:12px}.sumpastbar .ic{font-size:22px}.sumpastbar div{display:flex;flex-direction:column;min-width:0}.sumpastbar div>b{font-size:15px;color:#a35d00}.sumpastbar span{font-size:12.5px;color:#8a5a1a;word-break:keep-all}html.dark .sumpastbar{background:#3d2e12;border-color:#a87a2a}html.dark .sumpastbar div>b{color:#f0c987}html.dark .sumpastbar span{color:#d8b77a}
 .btn.slsort{font-weight:700}.btn.slsort.on{background:#e8f2ea;border-color:var(--acc);color:var(--acc)}html.dark .btn.slsort.on{background:rgba(76,175,110,.16)}
 .qkb{width:26px;height:24px;padding:0;margin-right:4px;border:1px solid var(--line);border-radius:8px;background:var(--card,#fff);font-size:13px;line-height:1;cursor:pointer;opacity:.45;vertical-align:middle}.qkb:hover{opacity:1}.qkb.hint{opacity:1;border-color:#e3a14a;background:#fff3e0}.qkb.on{opacity:1;border-color:#e3a14a;background:#ffe2b8}
 tr.qkr td{opacity:.55;background:#fffaf2}tr.qkr td.rn{opacity:1}html.dark tr.qkr td{background:rgba(227,161,74,.08)}html.dark .qkb.hint,html.dark .qkb.on{background:#4a3818;border-color:#8a6420}
@@ -3090,7 +3093,8 @@ html.dark .ah-k{background:rgba(0,0,0,.25)}
   <section id="v-sum" class="hidden">
     <div id="sumbody"><div class="card sumempty">정리 탭에서 원본 엑셀을 올리면 여기에 집계가 나와요.</div></div>
     <div class="card sumtop">
-      <div class="hcal scal" id="scal"></div>
+      <div class="scaltog-w"><button type="button" class="scaltog" id="scaltog" aria-expanded="false" title="달력 펼치기 (다른 날 보기)" aria-label="달력 펼치기 (다른 날 보기)"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><svg class="chev" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></div>
+      <div class="hcal scal hidden" id="scal"></div>
       <div class="sslot" id="sslot"></div>
       <details class="oldup" id="oldup"><summary><b>예전 파일 올리기</b><span>사이트 만들기 전에 정리한 엑셀 · 기록·통계에만 들어가고 재고에는 안 빠져요</span></summary>
         <div class="oldup-in"><label>날짜<input type="date" id="oldday"></label><div class="oldslot" id="oldslot"><button type="button" data-oldslot="auto" class="on">자동</button><button type="button" data-oldslot="am">오전</button><button type="button" data-oldslot="pm">오후</button></div><input type="file" id="oldfile" accept=".xlsx,.xls,.csv" multiple hidden></div>
@@ -3757,7 +3761,7 @@ document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
   if (b.dataset.t === 'crm') crmOpen(); else document.body.classList.remove('crm-open');
   if (b.dataset.t === 'issue') renderIssue();
   if (b.dataset.t === 'stock') renderStock();
-  if (b.dataset.t === 'sum') renderSum();
+  if (b.dataset.t === 'sum') { if (sumPastAt) sumGoHome(); else renderSum(); }
   if (b.dataset.t === 'hist') { renderHist(); try { if (stkOpen()) renderStock(); } catch (e) {} }
   if (b.dataset.t === 'market') renderMarket();
 });
@@ -6842,12 +6846,25 @@ function groupOf(name) {
 const gramOf = o => { const m = String(o).match(/(\d+(?:\.\d+)?)\s*g\b/i); return m ? Number(m[1]) : null; };
 const fmtG = g => g >= 1000 ? (Math.round(g / 100) / 10).toLocaleString() + 'kg' : g + 'g';
 let sumSel = null, sumMonth = null, sumSlot = null;
+// 📅 다른 날 헷갈리지 않게: 달력은 평소 접어 두고(아이콘 버튼으로 펼치기), 다른 날을 보면 주황 테두리 + 안내 띠, 2분 뒤 · 탭을 다시 열면 오늘로
+let sumCalOpen = false, sumPastAt = 0, sumPastTm = null; const SUM_PAST_MS = 120e3;
+const sumHome = () => { const t = isoDate(new Date()); if (upl[t]) return t; const k = Object.keys(upl).sort(); return k[k.length - 1] || null; };
+function sumGoHome() { const h = sumHome(); sumSel = h; sumSlot = null; sumCalOpen = false; sumPastAt = 0; if (h) { const d = dOf(h); sumMonth = new Date(d.getFullYear(), d.getMonth(), 1); } clearInterval(sumPastTm); sumPastTm = null; renderSum(); }
+function sumPastLeft() { return Math.max(0, SUM_PAST_MS - (Date.now() - sumPastAt)); }
+function sumPastTick() { if (sumPastTm) return; sumPastTm = setInterval(() => { if (!sumPastAt) { clearInterval(sumPastTm); sumPastTm = null; return; }
+  const l = sumPastLeft(); if (l <= 0) { sumGoHome(); return; } const el = $('sumpastleft'); if (el) el.textContent = sumPastTxt(l); }, 1000); }
+const sumPastTxt = l => { const t = Math.ceil(l / 1e3); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
 function latestSlot(d) { const b = upl[d] || {}; const ks = ['am', 'pm'].filter(k => b[k]); return ks.sort((x, y) => (b[y].at || '').localeCompare(b[x].at || ''))[0] || 'all'; }
 function renderSum() {
   const body = $('sumbody'); if (!body) return;
   const keys = Object.keys(upl).sort();
   if (!sumSel || !upl[sumSel]) sumSel = keys[keys.length - 1] || null;
   if (!sumMonth) { const base = sumSel ? dOf(sumSel) : new Date(); sumMonth = new Date(base.getFullYear(), base.getMonth(), 1); }
+  const home = sumHome(), past = !!(sumSel && home && sumSel !== home);
+  if (past && !sumPastAt) sumPastAt = Date.now(); if (!past) sumPastAt = 0;
+  if (past && sumPastLeft() <= 0) { sumGoHome(); return; }
+  $('v-sum').classList.toggle('sumpast', past); if (past) sumPastTick();
+  $('scal').classList.toggle('hidden', !sumCalOpen); { const t = $('scaltog'); t.classList.toggle('on', sumCalOpen); t.setAttribute('aria-expanded', sumCalOpen); const tt = sumCalOpen ? '달력 접기' : '달력 펼치기 (다른 날 보기)'; t.title = tt; t.setAttribute('aria-label', tt); }
   renderSumCal();
   const b = (sumSel && upl[sumSel]) || {};
   if (!sumSlot || (sumSlot !== 'all' && !b[sumSlot])) sumSlot = sumSel ? latestSlot(sumSel) : 'all';
@@ -6862,7 +6879,8 @@ function renderSum() {
   const res = sumSel ? uplResult(sumSel, sumSlot) : null;
   let live = null; if (res && sumSel === isoDate(new Date()) && ostOn()) { incEnsure(); sumLiveTick(); try { live = sumLiveCalc(sumSel, sumSlot); } catch (e) { live = null; } }
   const liveErr = res && !live && sumSel === isoDate(new Date()) && ostOn() ? `<div class="sumlive"><span>${incErr ? '⚠ 새 주문을 못 불러왔어요: ' + esc(incErr) : '카페24 배송준비중 주문을 불러오는 중…'}</span>${sumReBtn()}</div>` : '';
-  body.innerHTML = res ? liveErr + sumCards(res.sheet3, live).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
+  const pastBar = past ? (() => { const l = sumPastLeft(); return `<div class="sumpastbar" role="status"><span class="ic" aria-hidden="true">⚠️</span><div><b>지금 ${esc(fmtDay(sumSel))} 기록을 보고 있어요</b><span>오늘 작업할 양이 아니에요 · <b id="sumpastleft">${sumPastTxt(l)}</b> 뒤 저절로 오늘로 돌아가요</span></div></div>`; })() : '';
+  body.innerHTML = res ? pastBar + liveErr + sumCards(res.sheet3, live).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
 }
 let ufPick = new Set();
 function renderUFiles() {
@@ -6986,6 +7004,7 @@ function renderSumCal() {
   el.innerHTML = g + '</div>';
 }
 document.addEventListener('click', e => {
+  if (e.target.closest && e.target.closest('#scaltog')) { sumCalOpen = !sumCalOpen; renderSum(); return; }
   const t = e.target.closest('[data-snav2],[data-sday],[data-sslot],#sdel'); if (!t) return;
   if (t.id !== 'sdel') $('sdelmsg').textContent = '';
   if (t.dataset.sslot) { sumSlot = t.dataset.sslot; renderSum(); return; }
@@ -9965,10 +9984,10 @@ function buildXlsx() {
       if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
       // 카톡 주문은 맨 위로, 그다음 포장 방법끼리
-      // 📦 송장 순서가 켜져 있으면 같은 포장 묶음 안에서 품목끼리 (slRank)
+      // 📦 송장 순서가 켜져 있으면 포장 방법과 상관없이 전체를 품목끼리 (slRank)
       if ((pc >= 0 || full.length > nBase || slOn()) && full.length > 2) { const bl = ((rules.weather && rules.weather.bands) || []).map(b => String(b.label || '').trim()), sp = slOn() ? slRank(full, '주문번호') : null;
         const rk = r => { if (pc < 0) return 0; const ls = String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => bl.indexOf(l.trim())).filter(i => i >= 0); return ls.length ? Math.min(...ls) : 1e9; };
-        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: r.__kt ? 0 : 1, p: sp ? sp[i + 1] : 0 })).sort((x, y) => x.kt - y.kt || x.k - y.k || x.p - y.p || x.i - y.i);
+        const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: r.__kt ? 0 : 1, p: sp ? sp[i + 1] : 0 })).sort((x, y) => x.kt - y.kt || (sp ? x.p - y.p || x.k - y.k : x.k - y.k) || x.i - y.i);   // 송장 순서가 켜져 있으면 품목끼리가 먼저, 같은 주문 순서 안에서만 포장 방법
         ord = [0, ...idx.map(o => o.i)]; full = ord.map(i => full[i]); } }
     if (si === 1) { full = qkFilter(nsFilter(full, 1), 1); const sp = slOn() && full.length > 2 ? slRank(full, '수령인') : null;
       if (sp) full = [full[0], ...full.slice(1).map((r, i) => ({ r, i: i + 1 })).sort((x, y) => sp[x.i] - sp[y.i] || x.i - y.i).map(x => x.r)]; }
