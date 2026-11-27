@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>퀵 · 직접 전달 표시 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1180px; position: relative; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 12.5px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 이름 · 🛵 버튼을 눌러 보세요</span>
+<span style="font-size: 13px; color: #5f6a5c">정리 › 주문 정리 결과 (메모 9번)</span>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button type="button" onClick="{{ t.go }}" style="{{ t.s }}">{{ t.n }}</button></sc-for>
+</div>
+
+<sc-if value="{{ isMain }}" hint-placeholder-val="{{ true }}">
+<div style="border: 1px solid #eceee9; border-radius: 14px; overflow: hidden">
+<div style="display: grid; grid-template-columns: 90px 96px minmax(0, 1fr) minmax(0, 1fr) 118px; gap: 8px; padding: 8px 12px; background: #f5f6f4; font-size: 12px; font-weight: 700; color: #5f6a5c"><span>수령인</span><span>판매처</span><span>품목</span><span>비고</span><span style="text-align: right">퀵 · 직접 전달</span></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+<div style="{{ r.row }}">
+<b style="font-size: 13.5px">{{ r.who }}</b>
+<span><span style="{{ r.chS }}">{{ r.ch }}</span></span>
+<span style="font-size: 13px; color: #4a5547">{{ r.items }}</span>
+<span style="font-size: 12.5px; color: #5f6a5c">{{ r.note }}<sc-if value="{{ r.cand }}" hint-placeholder-val="{{ false }}"><span style="margin-left: 6px; font-size: 11px; font-weight: 800; color: #a35d00; background: #fdf0dc; border-radius: 99px; padding: 1px 7px">퀵 후보</span></sc-if></span>
+<span style="text-align: right"><button type="button" onClick="{{ r.tog }}" style="{{ r.bS }}">{{ r.bT }}</button></span>
+</div>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #8a9186">주문정리 · 수령인별 엑셀(택배 송장 출력용)에는 퀵 주문이 빠져요. 집계와 재고에는 그대로 들어가요.</span>
+</sc-if>
+
+<sc-if value="{{ isQuick }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{ noQuick }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 24px; text-align: center; color: #8a9186; font-size: 13px">퀵으로 표시한 주문이 없어요</p></sc-if>
+<sc-for list="{{ quick }}" as="q" hint-placeholder-count="2">
+<div style="border: 1px solid #f0d3a6; background: #fffaf2; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><b style="font-size: 14.5px">🛵 {{ q.who }}</b><span style="{{ q.chS }}">{{ q.ch }}</span><span style="flex: 1"></span><span style="font-size: 12px; color: #8a9186">주문 {{ q.no }}</span></div>
+<span style="font-size: 13px; color: #4a5547">{{ q.items }}</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<button type="button" style="height: 32px; padding: 0 12px; border-radius: 10px; border: 1px solid #d5dad2; background: #fff; font-size: 12.5px; font-weight: 700">📋 주소 · 전화 복사</button>
+<button type="button" onClick="{{ q.ship }}" style="{{ q.shipS }}">{{ q.shipT }}</button>
+<button type="button" onClick="{{ q.undo }}" style="height: 32px; padding: 0 12px; border-radius: 10px; border: 0; background: none; color: #8a9186; font-size: 12.5px">퀵 표시 빼기</button>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #3d473b; line-height: 1.8">
+<b style="font-size: 14px">🛵 퀵으로 표시하면</b><br>
+· <b>택배 송장 엑셀</b>(주문정리 · 수령인별)에서 빠지고, 옆 <b>[🛵 퀵 · 직접]</b> 칸에 따로 모여요. 엑셀을 내려받으면 시트도 따로 생겨요.<br>
+· <b>재고 · 집계</b>에는 그대로 들어가요. 실제로 나갔으니까요.<br>
+· <b>송장 등록</b>에서 "송장 없음"으로 안 걸리고, <b>기록 · 통계</b>에 퀵 건수가 따로 보여요.<br>
+· 비고에 <b>"퀵"</b>이 적힌 주문은 <b>퀵 후보</b>로 표시해 줘요. 버튼은 사람이 눌러야 퀵이 돼요.<br>
+· [카페24 배송중으로]는 송장번호 없이 카페24를 '배송중'으로 바꿔요. 관리자만 · 확인 창을 거쳐요. 카페24에서 되는지 만들기 전에 먼저 확인할게요.<br>
+· 들어온 주문 화면에도 같은 [🛵] 버튼이 생겨서, 엑셀 정리 전에도 표시할 수 있어요.
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { tab: 'main', q: { o3: 1 }, shipped: {} }; }
+  renderVals() {
+    const s = this.state, chC = { '자사몰': '#3d7a4f', '스마트스토어': '#2f86c4', '쿠팡': '#d9663f' };
+    const chS = c => 'font-size: 11px; font-weight: 700; color: #fff; border-radius: 6px; padding: 1px 7px; background: ' + chC[c];
+    const O = [
+      { id: 'o1', who: '홍길동', ch: '자사몰', items: '식용꽃 혼합 30송이 × 2', note: '', no: '…0101' },
+      { id: 'o2', who: '김하늘', ch: '스마트스토어', items: '로즈마리 100g × 1', note: '부재시 문앞', no: '…0097' },
+      { id: 'o3', who: '○○카페', ch: '자사몰', items: '자스민 잎 100잎 × 30', note: '오늘 퀵으로 보내주세요', no: '…0081' },
+      { id: 'o4', who: '이도윤', ch: '쿠팡', items: '식용꽃 비올라 30송이 × 1', note: '', no: '…0075' },
+      { id: 'o5', who: '△△레스토랑', ch: '자사몰', items: '애플민트 작은잎 100g × 5', note: '직접 가지러 갈게요', no: '…0069' }];
+    const isQ = o => !!s.q[o.id], tog = id => () => { const q = { ...s.q }; if (q[id]) delete q[id]; else q[id] = 1; this.setState({ q }); };
+    const nQ = O.filter(isQ).length, main = O.filter(o => !isQ(o)).length;
+    const tab = (k, n, on, warm) => ({ n, go: () => this.setState({ tab: k }), s: 'height: 32px; padding: 0 13px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid ' + (on ? (warm ? '#e3a14a' : '#2e7d4f') : '#dfe3dc') + '; background: ' + (on ? (warm ? '#fff3e0' : '#2e7d4f') : '#fff') + '; color: ' + (on ? (warm ? '#a35d00' : '#fff') : (warm ? '#a35d00' : '#4a5547')) });
+    const tabs = [tab('main', '주문정리 (' + main + ')', s.tab === 'main'), tab('x', '수령인별 (' + main + ')', false), tab('y', '집계 (14)', false), tab('quick', '🛵 퀵 · 직접 (' + nQ + ')', s.tab === 'quick', true)];
+    const rows = O.map((o, i) => ({ ...o, chS: chS(o.ch), cand: /퀵|직접|가지러|방문/.test(o.note) && !isQ(o), tog: tog(o.id),
+      bT: isQ(o) ? '🛵 퀵 표시됨' : '🛵 퀵', bS: 'height: 30px; padding: 0 12px; border-radius: 99px; font-size: 12.5px; font-weight: 700; cursor: pointer; border: 1px solid ' + (isQ(o) ? '#e3a14a' : '#d5dad2') + '; background: ' + (isQ(o) ? '#fff3e0' : '#fff') + '; color: ' + (isQ(o) ? '#a35d00' : '#5f6a5c'),
+      row: 'display: grid; grid-template-columns: 90px 96px minmax(0, 1fr) minmax(0, 1fr) 118px; gap: 8px; align-items: center; padding: 10px 12px; border-top: ' + (i ? '1px solid #eef0ec' : '0') + (isQ(o) ? '; background: #fffaf2; opacity: .75' : '') }));
+    const quick = O.filter(isQ).map(o => ({ ...o, chS: chS(o.ch), undo: tog(o.id),
+      ship: () => this.setState({ shipped: { ...s.shipped, [o.id]: 1 } }),
+      shipT: s.shipped[o.id] ? '✓ 카페24 배송중' : '카페24 배송중으로',
+      shipS: 'height: 32px; padding: 0 12px; border-radius: 10px; font-size: 12.5px; font-weight: 800; cursor: pointer; border: 0; background: ' + (s.shipped[o.id] ? '#e8f2ea' : '#2e7d4f') + '; color: ' + (s.shipped[o.id] ? '#2e7d4f' : '#fff') }));
+    return { tabs, rows, quick, isMain: s.tab !== 'quick', isQuick: s.tab === 'quick', noQuick: !nQ };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>택배 사고 · 카페24 주문 상세 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}table{border-collapse:collapse}</style>
+</helmet>
+<div style="min-height: 1000px; box-sizing: border-box; padding: 28px 20px 48px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 가짜 이름 · 예시 번호</span>
+<span style="font-size: 13px; color: #5f6a5c">이슈 관리 › 택배 사고 › 송장번호를 누르면 뜨는 창</span>
+<span style="flex: 1"></span>
+<div style="display: flex; background: #e7eae5; border-radius: 99px; padding: 3px">
+<button type="button" onClick="{{ showOld }}" style="{{ tabOld }}">지금</button>
+<button type="button" onClick="{{ showNew }}" style="{{ tabNew }}">바뀐 뒤</button>
+</div>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px">
+<div><span style="font-size: 12.5px; color: #8a9186">11월 26일 (목)</span><div style="font-size: 22px; font-weight: 800">송장번호 111122225555</div></div>
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><b style="font-size: 15px">카페24 주문</b><span style="font-size: 12.5px; color: #8a9186">이미지 저장 때 같이 들어가요</span><span style="flex: 1"></span><span style="font-size: 12.5px; color: #8a9186">주문 20261126-0000143 · 쿠팡</span><button type="button" style="height: 30px; padding: 0 12px; border-radius: 8px; border: 1px solid #d5dad2; background: #fff; font-size: 12.5px">다시 찾기</button></div>
+
+<sc-if value="{{ isNew }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="overflow-x: auto"><table style="width: 100%; min-width: 640px; font-size: 13px; border-top: 2px solid #3d4a3a">
+<tr style="background: #f5f6f4; color: #5f6a5c"><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">품목별 주문번호<br>배송번호</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df; text-align: left">상품명 / 옵션</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">수량</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">상품구매금액<br>(판매가)</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">운송장번호</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">주문상태</th></tr>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="2">
+<tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9; line-height: 1.6">{{ r.ic }}<br><span style="color: #8a9186">{{ r.sc }}</span></td><td style="padding: 10px; border-bottom: 1px solid #eceee9"><b>{{ r.p }}</b><br><span style="color: #2f6db5; font-size: 12.5px">- 옵션 : {{ r.o }}</span></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9">{{ r.q }}</td><td style="padding: 10px; text-align: right; border-bottom: 1px solid #eceee9">{{ r.pr }}<br><span style="color: #8a9186">({{ r.pr }})</span></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9; font-weight: 700">111122225555</td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9"><b style="color: #2f6db5">배송완료</b></td></tr>
+</sc-for>
+</table></div>
+<div><b style="font-size: 14.5px">결제 정보</b>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; border: 1px solid #e1e4df; border-radius: 12px; overflow: hidden; font-size: 13px; text-align: center">
+<sc-for list="{{ pays }}" as="p" hint-placeholder-count="4"><div style="border-right: 1px solid #e1e4df"><div style="padding: 8px; background: #f5f6f4; color: #5f6a5c">{{ p.k }}</div><div style="padding: 10px; font-weight: 800">{{ p.v }}</div></div></sc-for>
+</div></div>
+<div><b style="font-size: 14.5px">결제수단</b>
+<div style="margin-top: 8px; border: 1px solid #e1e4df; border-radius: 12px; overflow: hidden; font-size: 13px">
+<sc-for list="{{ payer }}" as="p" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: 140px minmax(0, 1fr); border-top: 1px solid #eceee9"><span style="padding: 9px 12px; background: #f5f6f4; color: #5f6a5c">{{ p.k }}</span><span style="padding: 9px 12px">{{ p.v }}</span></div></sc-for>
+</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isOld }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px">
+<div style="display: grid; grid-template-columns: 90px 1fr 90px 1fr; gap: 6px 10px; background: #f7f9fc; border-radius: 10px; padding: 10px 12px"><span style="color: #5f6a5c">주문번호</span><b>20261126-0000143</b><span style="color: #5f6a5c">주문일</span><b>2026-11-26 08:40</b><span style="color: #5f6a5c">결제일</span><b>2026-11-26 08:43</b><span style="color: #5f6a5c">주문 경로</span><b>쿠팡</b></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="2"><div style="border-left: 4px solid #2c5f86; background: #f7f9fc; padding: 8px 12px; display: flex; gap: 8px; flex-wrap: wrap"><b>{{ r.p }}</b><small style="color: #5f6a5c">{{ r.o }}</small><span style="flex: 1"></span><span>{{ r.q }}개 · {{ r.pr }}원 · 배송완료</span></div></sc-for>
+<div style="display: grid; grid-template-columns: 110px 1fr 110px 1fr; gap: 6px 10px; background: #f7f9fc; border-radius: 10px; padding: 10px 12px"><span style="color: #5f6a5c">상품구매금액</span><b>6,000원</b><span style="color: #5f6a5c">할인</span><b>0원</b><span style="color: #5f6a5c">배송비</span><b>3,500원</b><span style="color: #5f6a5c">총 실결제금액</span><b>9,500원</b></div>
+</div>
+</sc-if>
+
+<div style="display: flex; gap: 8px"><div style="flex: 1; height: 120px; border-radius: 12px; background: #eceae4; display: flex; align-items: center; justify-content: center; color: #8a9186; font-size: 12.5px">사진</div><div style="flex: 1; height: 120px; border-radius: 12px; background: #eceae4; display: flex; align-items: center; justify-content: center; color: #8a9186; font-size: 12.5px">사진</div></div>
+<div style="font-size: 13.5px; background: #faf6ee; border-left: 4px solid #d6a15c; border-radius: 8px; padding: 10px 12px">박스 한쪽 찌그러짐 · 내용물 젖음 · 사고접수 예정</div>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.7">· 송장번호로 찾은 카페24 주문을 <b>취소 · 반품 · 교환 카드와 같은 모양</b>(카페24 주문 화면처럼 표 · 결제 정보 · 결제수단)으로 보여 줘요. PC에서는 창이 넓어져 한 화면에 보여요.<br>· 결제자 이름은 화면에만 보이고 저장하지 않아요. [다시 찾기] · 사진 · 메모 · 이미지 저장은 그대로예요.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":940,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { v: 'new' }; }
+  renderVals() {
+    const s = this.state, tab = on => 'height: 30px; padding: 0 12px; border-radius: 99px; border: 0; font-size: 12.5px; font-weight: 700; cursor: pointer; background: ' + (on ? '#fff' : 'transparent') + '; color: ' + (on ? '#1f2620' : '#5f6a5c') + (on ? '; box-shadow: 0 1px 3px rgba(0,0,0,.12)' : '');
+    return { isNew: s.v === 'new', isOld: s.v === 'old', tabNew: tab(s.v === 'new'), tabOld: tab(s.v === 'old'), showNew: () => this.setState({ v: 'new' }), showOld: () => this.setState({ v: 'old' }),
+      rows: [{ ic: '20261126-0000143-01', sc: 'D-20261126-0000143-00', p: '식용꽃 비올라 30송이', o: '30송이', q: 1, pr: '3,000' }, { ic: '20261126-0000143-02', sc: 'D-20261126-0000143-00', p: '로즈마리', o: '1개 100g', q: 1, pr: '3,000' }],
+      pays: [['상품구매금액', '6,000'], ['배송비', '3,500'], ['할인혜택', '0'], ['총 실결제금액', '9,500']].map(([k, v]) => ({ k, v })),
+      payer: [['결제(입금)자', '박서준'], ['결제수단', '기타'], ['결제(입금)확인일', '2026-11-26 08:43:54']].map(([k, v]) => ({ k, v })) };
+  }
+}
+</script>
+</body>
+</html>

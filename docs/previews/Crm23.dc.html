@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>고객 관리 · 다음 주문 예상일 + 그룹 · 문구 · 결과 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1500px; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 12.5px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 손님 · 묶음 · 손님 · 문구를 눌러 보세요</span>
+<span style="font-size: 13px; color: #5f6a5c">고객 관리</span>
+</div>
+
+<!-- ① 오늘 할 일 (다음 주문 예상일) -->
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap"><b style="font-size: 17px">📅 오늘 연락하면 좋은 손님</b><span style="font-size: 12.5px; color: #8a9186">손님마다 "보통 며칠마다 사는지"로 다음 주문 날을 계산해요</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px">
+<sc-for list="{{ today }}" as="t" hint-placeholder-count="3">
+<button type="button" onClick="{{ t.go }}" style="{{ t.s }}"><span style="font-size: 22px">{{ t.ic }}</span><span style="display: flex; flex-direction: column; align-items: flex-start; gap: 1px; flex: 1; min-width: 0"><b style="font-size: 14px">{{ t.t }}</b><small style="font-size: 12px; opacity: .8">{{ t.d }}</small></span><b style="font-size: 24px">{{ t.n }}</b></button>
+</sc-for>
+</div>
+</div>
+
+<!-- ② 추천 묶음 (+ 추가하기) -->
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap"><b style="font-size: 17px">🧺 손님 묶음</b><span style="font-size: 12.5px; color: #8a9186">주문이 들어올 때마다 손님이 저절로 들어가고 빠져요</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="6">
+<div style="{{ g.s }}">
+<div style="display: flex; align-items: center; gap: 6px"><span style="font-size: 18px">{{ g.ic }}</span><b style="font-size: 13.5px; flex: 1">{{ g.t }}</b></div>
+<small style="font-size: 11.5px; color: #8a9186; line-height: 1.45">{{ g.d }}</small>
+<div style="display: flex; align-items: center; gap: 6px; margin-top: auto"><b style="font-size: 20px; flex: 1">{{ g.n }}명</b><button type="button" onClick="{{ g.act }}" style="{{ g.bs }}">{{ g.bt }}</button></div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<!-- ③ 고른 묶음: 손님 목록 + 문구 레시피 + 결과 -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; align-items: start">
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-size: 20px">{{ sel.ic }}</span><b style="font-size: 16px; flex: 1">{{ sel.t }}</b><span style="font-size: 13px; color: #5f6a5c">{{ sel.n }}명</span></div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center">
+<div style="flex: 1; min-width: 160px; height: 34px; border: 1px solid #dfe3dc; border-radius: 10px; display: flex; align-items: center; gap: 6px; padding: 0 10px"><span style="color: #8a9186">🔍</span><input value="{{ q }}" onInput="{{ onQ }}" placeholder="이름 · 지역 · 품목" style="flex: 1; min-width: 0; border: 0; outline: none; font-size: 13px; background: transparent"></div>
+<button type="button" onClick="{{ sortGo }}" style="height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dfe3dc; background: #fff; font-size: 12.5px; font-weight: 700; color: #3d473b; cursor: pointer">{{ sortT }} ▾</button>
+<button type="button" style="height: 34px; padding: 0 11px; border-radius: 10px; border: 1px solid #dfe3dc; background: #fff; font-size: 12.5px; font-weight: 700; color: #3d473b">📋 표 복사</button>
+</div>
+<div style="border: 1px solid #eceee9; border-radius: 14px; overflow: hidden">
+<sc-for list="{{ people }}" as="p" hint-placeholder-count="5">
+<div style="{{ p.rs }}">
+<button type="button" onClick="{{ p.open }}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex: 1; min-width: 0; border: 0; background: none; padding: 0; text-align: left; cursor: pointer">
+<span style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap"><b style="font-size: 14px">{{ p.nm }}</b><span style="{{ p.ds }}">{{ p.dd }}</span><sc-for list="{{ p.tags }}" as="tg" hint-placeholder-count="1"><span style="font-size: 11px; font-weight: 700; color: #5f6a5c; background: #f0f2ee; border-radius: 99px; padding: 1px 7px">{{ tg }}</span></sc-for><sc-if value="{{ p.claim }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 800; color: #c0392b; background: #fdecea; border-radius: 99px; padding: 1px 7px">⚠ 반품 1번</span></sc-if><sc-if value="{{ p.memo }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 700; color: #2f6db5">📌 약속</span></sc-if></span>
+<small style="font-size: 12px; color: #5f6a5c">{{ p.item }} · 보통 {{ p.cyc }}일마다 · 마지막 {{ p.last }}</small>
+</button>
+<button type="button" onClick="{{ p.done }}" style="{{ p.bs }}">{{ p.bt }}</button>
+</div>
+</sc-for>
+</div>
+<small style="font-size: 12px; color: #8a9186">[연락했어요]를 누르면 2주 동안 이 목록에 다시 안 나와요 · 이름을 누르면 손님 상세가 열려요</small>
+<sc-if value="{{ showDemand }}" hint-placeholder-val="{{ false }}">
+<div style="border: 1px solid #d7e6d9; background: #f4faf5; border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 13.5px">📦 이번 주 예상 수요 <small style="font-weight: 500; color: #5f6a5c">(이 손님들이 평소대로 사면)</small></b>
+<sc-for list="{{ demand }}" as="d" hint-placeholder-count="3"><div style="display: flex; font-size: 13px"><span style="flex: 1">{{ d.n }}</span><b>{{ d.q }}</b><small style="width: 110px; text-align: right; color: #5f6a5c">재고 {{ d.st }}</small></div></sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 16px">📝 문구 레시피</b>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ recipes }}" as="r" hint-placeholder-count="4"><button type="button" onClick="{{ r.go }}" style="{{ r.s }}">{{ r.t }}</button></sc-for>
+</div>
+<div style="background: #fef9e7; border: 1px solid #f3e2a8; border-radius: 14px; padding: 12px 14px; font-size: 14px; line-height: 1.7; white-space: pre-line">{{ msg }}</div>
+<small style="font-size: 12px; color: #8a9186">{이름} · {품목} · {날짜}는 손님마다 저절로 바뀌어요 (위는 첫 번째 손님 예시)</small>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<button type="button" style="height: 38px; padding: 0 14px; border-radius: 10px; border: 1px solid #d5dad2; background: #fff; font-size: 13px; font-weight: 700">📋 문구 복사</button>
+<button type="button" style="height: 38px; padding: 0 14px; border-radius: 10px; border: 1px solid #d5dad2; background: #fff; font-size: 13px; font-weight: 700">⬇ 전화번호 엑셀 ({{ sel.n }}명)</button>
+<button type="button" onClick="{{ send }}" style="{{ sendS }}">{{ sendT }}</button>
+</div>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 16px">📈 보낸 결과 <small style="font-size: 12px; font-weight: 500; color: #8a9186">보낸 뒤 7일 안에 다시 주문했는지 저절로 세요</small></b>
+<sc-for list="{{ results }}" as="x" hint-placeholder-count="3">
+<div style="border: 1px solid #eceee9; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 6px"><b style="font-size: 13.5px; flex: 1">{{ x.t }}</b><small style="font-size: 11.5px; color: #8a9186">{{ x.d }}</small></div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px"><span>보냄 <b>{{ x.sent }}</b></span><span style="color: #c5cbc1">→</span><span>다시 주문 <b style="color: #2e7d4f">{{ x.back }}</b></span><span style="flex: 1"></span><b style="{{ x.ps }}">{{ x.pct }}</b></div>
+<div style="height: 6px; border-radius: 99px; background: #eef0ec; overflow: hidden"><i style="{{ x.bar }}"></i></div>
+<small style="font-size: 12px; color: #5f6a5c">{{ x.won }}</small>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ hasD }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeD }}" style="position: fixed; inset: 0; z-index: 50; background: rgba(20,28,20,.4); display: flex; justify-content: flex-end">
+<div onClick="{{ stop }}" style="width: 440px; max-width: 100%; height: 100%; overflow-y: auto; background: #fff; box-shadow: -10px 0 40px rgba(0,0,0,.2); padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px"><span style="width: 42px; height: 42px; border-radius: 99px; background: #e8f2ea; color: #2e7d4f; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px">{{ D.av }}</span><div style="flex: 1; min-width: 0; display: flex; flex-direction: column"><b style="font-size: 17px">{{ D.nm }}</b><small style="font-size: 12px; color: #8a9186">{{ D.sub }}</small></div><button type="button" onClick="{{ closeD }}" style="width: 34px; height: 34px; border-radius: 99px; border: 1px solid #dfe3dc; background: #fff; font-size: 17px; cursor: pointer">×</button></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{ D.pred }}" as="q" hint-placeholder-count="4"><div style="background: #f7faf6; border: 1px solid #e2ebdf; border-radius: 10px; padding: 7px 9px; display: flex; flex-direction: column; gap: 1px"><small style="font-size: 11px; color: #8a9186">{{ q.k }}</small><b style="{{ q.s }}">{{ q.v }}</b></div></sc-for>
+</div>
+<div style="background: #f5f6f4; border-radius: 12px; padding: 10px 12px; font-size: 13.5px; line-height: 1.6">{{ D.sent }}</div>
+<sc-if value="{{ D.claim }}" hint-placeholder-val="{{ false }}"><div style="font-size: 13px; font-weight: 700; color: #c0392b">⚠ 반품 · 취소 1번 (10/14 · 꽃 상태)</div></sc-if>
+<div style="border: 1px solid #d7e1f0; background: #f4f8fd; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px"><b style="font-size: 13.5px">📌 연락 약속 · 메모</b><span style="font-size: 13px">{{ D.memo }}</span><div style="display: flex; gap: 6px"><span style="height: 30px; padding: 0 10px; border: 1px solid #dfe3dc; border-radius: 8px; background: #fff; font-size: 12.5px; display: inline-flex; align-items: center">📅 날짜 정하기</span><span style="height: 30px; padding: 0 10px; border: 1px solid #dfe3dc; border-radius: 8px; background: #fff; font-size: 12.5px; display: inline-flex; align-items: center">✏️ 메모 쓰기</span></div></div>
+<div><b style="font-size: 13.5px">{{ D.lastH }}</b><div style="margin-top: 6px; background: #f5f6f4; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px"><sc-for list="{{ D.lastI }}" as="x" hint-placeholder-count="2"><div style="display: flex; font-size: 13px"><span style="flex: 1">{{ x.n }}</span><b>× {{ x.q }}</b></div></sc-for></div></div>
+<div><b style="font-size: 13.5px">이전 주문 <small style="font-weight: 500; color: #8a9186">눌러서 펼치기</small></b><div style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px"><sc-for list="{{ D.prev }}" as="x" hint-placeholder-count="3"><div style="display: flex; gap: 8px; font-size: 12.5px; padding: 6px 8px; border: 1px solid #eceee9; border-radius: 8px"><span style="color: #8a9186; width: 42px">{{ x.d }}</span><span style="flex: 1">{{ x.t }}</span></div></sc-for></div></div>
+<div><b style="font-size: 13.5px">자주 사는 품목</b><div style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap"><sc-for list="{{ D.top }}" as="x" hint-placeholder-count="3"><span style="font-size: 12.5px; border: 1px solid #dfe3dc; border-radius: 99px; padding: 3px 10px"><b>{{ x.n }}</b> {{ x.q }}</span></sc-for></div></div>
+<div><b style="font-size: 13.5px">태그</b><div style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap"><sc-for list="{{ D.tagsAll }}" as="x" hint-placeholder-count="4"><span style="{{ x.s }}">{{ x.t }}</span></sc-for></div></div>
+<div style="font-size: 13px; color: #5f6a5c; border-top: 1px dashed #e5e8e3; padding-top: 10px">▸ 최근 12개월 구매 달력 (눌러서 펼치기)</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap"><span style="height: 36px; padding: 0 12px; border-radius: 10px; background: #2e7d4f; color: #fff; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center">연락했어요</span><span style="height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid #dfe3dc; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center">연락처 · 주소 보기 🔒</span></div>
+</div>
+</div>
+</sc-if>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px">
+<button type="button" onClick="{{ anaGo }}" style="display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 0; cursor: pointer; text-align: left"><b style="font-size: 16px; flex: 1">📊 분석 (가끔 볼 때)</b><span style="font-size: 13px; color: #5f6a5c">{{ anaT }}</span></button>
+<sc-if value="{{ ana }}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px">
+<div style="border: 1px solid #eceee9; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px"><b style="font-size: 13.5px">🗺 지역별 손님</b>
+<sc-for list="{{ regions }}" as="r" hint-placeholder-count="4"><div style="display: grid; grid-template-columns: 80px minmax(0, 1fr) 40px; gap: 8px; align-items: center; font-size: 12.5px"><span>{{ r.n }}</span><div style="height: 8px; border-radius: 99px; background: #eef0ec; overflow: hidden"><i style="{{ r.bar }}"></i></div><b style="text-align: right">{{ r.v }}</b></div></sc-for>
+<small style="font-size: 11.5px; color: #8a9186">지금 있는 지도 그대로 (누르면 시 · 군 · 구)</small></div>
+<div style="border: 1px solid #eceee9; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px"><b style="font-size: 13.5px">🍩 손님 나눔</b>
+<sc-for list="{{ split }}" as="r" hint-placeholder-count="4"><div style="display: grid; grid-template-columns: 80px minmax(0, 1fr) 40px; gap: 8px; align-items: center; font-size: 12.5px"><span>{{ r.n }}</span><div style="height: 8px; border-radius: 99px; background: #eef0ec; overflow: hidden"><i style="{{ r.bar }}"></i></div><b style="text-align: right">{{ r.v }}</b></div></sc-for>
+<small style="font-size: 11.5px; color: #8a9186">판매처 · 단골 비율 (지금 있는 원 그래프)</small></div>
+</div>
+</sc-if>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #3d473b; line-height: 1.8">
+<b style="font-size: 14px">이렇게 써요</b><br>
+① 맨 위 <b>오늘 연락하면 좋은 손님</b>을 눌러요 (곧 다시 살 때 · 평소보다 늦음 · 연락 약속).<br>
+② 아래 목록에서 손님을 보고 → 오른쪽 <b>문구 레시피</b>를 골라요. 이름 · 품목이 저절로 들어가요.<br>
+③ 문구 복사 + 전화번호 엑셀로 보내고 <b>[보냈어요 기록]</b>을 누르면, 7일 뒤 <b>몇 명이 다시 주문했는지</b> 결과에 숫자로 나와요.<br>
+· 묶음 카드의 <b>[+ 추가하기]</b>로 쓰고 싶은 묶음만 위에 고정해 둘 수 있어요. 안 쓰는 묶음은 <b>[빼기]</b>.<br>
+· <b>살린 것</b>: 손님 상세 · 연락 약속 · 메모 · 태그 · 반품 표시 · 연락처 보기(저장 안 함) · 검색 · 예상 수요 · 표 복사 · 지도 · 원 그래프(📊 분석에 접어 둠).<br>
+· 예전 탭 3개(전체 · 이번 주 주문 예상 · 재주문 확인)와 필터(단골 · 새 · 잠든 · 거래처)는 위 카드 · 묶음으로 합쳤어요. 전체 손님은 묶음의 <b>👥 전체</b>.<br>
+· 전화번호는 엑셀 받을 때만 카페24에서 불러오고 사이트에 저장하지 않아요.
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { g: 'soon', on: { soon: 1, late: 1, promise: 1, all: 1, vip: 1, first30: 1 }, done: {}, open: '', rec: 'reorder', sent: false, q: '', sort: 0, ana: false }; }
+  renderVals() {
+    const s = this.state;
+    const P = [
+      { id: 'a', nm: '손님 A', item: '로즈마리 100g', cyc: 21, last: '19일 전', dd: 2, g: ['soon', 'vip'], spent: '38만 원', n: 14, risk: '낮음' },
+      { id: 'b', nm: '○○카페', item: '식용꽃 비올라', cyc: 14, last: '13일 전', dd: 1, g: ['soon', 'vip', 'biz'], spent: '126만 원', n: 31, risk: '낮음' },
+      { id: 'c', nm: '손님 C', item: '자스민 100잎', cyc: 30, last: '28일 전', dd: 2, g: ['soon'], spent: '9만 원', n: 4, risk: '보통', claim: 1 },
+      { id: 'd', nm: '손님 D', item: '애플민트 30g', cyc: 18, last: '26일 전', dd: -8, g: ['late'], spent: '21만 원', n: 9, risk: '높아지는 중' },
+      { id: 'e', nm: '△△식당', item: '식용꽃 혼합', cyc: 10, last: '19일 전', dd: -9, g: ['late', 'biz'], spent: '88만 원', n: 22, risk: '높아지는 중' },
+      { id: 'f', nm: '손님 F', item: '타임 30g', cyc: 25, last: '33일 전', dd: -8, g: ['late', 'promise'], spent: '12만 원', n: 5, risk: '보통', memo: '📌 오늘 연락 약속 · 타임 입고 알려 주기' },
+      { id: 'g', nm: '손님 G', item: '로즈마리 30g', cyc: null, last: '24일 전', dd: null, g: ['first30'], spent: '1만 6천 원', n: 1, risk: '—' },
+      { id: 'h', nm: '손님 H', item: '자스민 100잎', cyc: 35, last: '71일 전', dd: -36, g: ['sleep'], spent: '15만 원', n: 6, risk: '높음' }];
+    const G = [
+      ['soon', '🔜', '곧 다시 살 때', '다음 주문 예상일이 오늘 ~ 3일 안'], ['late', '⚠️', '평소보다 늦어요', '예상일보다 7일 넘게 지남'], ['promise', '📌', '오늘 연락 약속', '고객 관리에서 연락하기로 한 날'],
+      ['vip', '👑', '단골', '10번 이상 · 최근 60일 안에 주문'], ['first30', '🌱', '첫 주문 뒤 한 달', '한 번만 산 손님 · 두 번째 주문으로'], ['sleep', '💤', '잠든 손님', '60일 넘게 조용'], ['all', '👥', '전체 손님', '모든 손님 (예전 전체 탭)'], ['biz', '🏪', '거래처', '식당 · 카페 태그'], ['restock', '📦', '입고 알림 대상', '품절됐다 다시 들어온 품목을 산 손님']];
+    const cnt = k => k === 'all' ? P.length : k === 'restock' ? P.filter(p => /자스민|타임/.test(p.item) && !s.done[p.id]).length : P.filter(p => p.g.includes(k) && !s.done[p.id]).length;
+    const pick = k => () => this.setState({ g: k, open: '' });
+    const T = [['soon', '🔜', '곧 다시 살 때', '예상일 오늘 ~ 3일 안', '#2e7d4f', '#e8f2ea'], ['late', '⚠️', '평소보다 늦어요', '예상일 7일 넘게 지남', '#b86b00', '#fff3e0'], ['promise', '📌', '연락 약속', '오늘 하기로 한 연락', '#2f6db5', '#e8f0fb']];
+    const today = T.map(([k, ic, t, d, c, bg]) => ({ ic, t, d, n: cnt(k), go: pick(k), s: 'display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; cursor: pointer; text-align: left; color: ' + c + '; background: ' + bg + '; border: 2px solid ' + (s.g === k ? c : 'transparent') }));
+    const groups = G.map(([k, ic, t, d]) => { const on = !!s.on[k], cur = s.g === k;
+      return { ic, t, d, n: cnt(k), bt: on ? (cur ? '보는 중' : '보기') : '+ 추가하기',
+        act: () => { if (!on) { const o = { ...s.on, [k]: 1 }; this.setState({ on: o, g: k }); } else this.setState({ g: k, open: '' }); },
+        bs: 'height: 30px; padding: 0 11px; border-radius: 99px; font-size: 12px; font-weight: 800; cursor: pointer; border: 1px solid ' + (on ? '#2e7d4f' : '#d5dad2') + '; background: ' + (cur ? '#2e7d4f' : on ? '#e8f2ea' : '#fff') + '; color: ' + (cur ? '#fff' : on ? '#2e7d4f' : '#5f6a5c'),
+        s: 'display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 14px; min-height: 112px; box-sizing: border-box; border: ' + (cur ? '2px solid #2e7d4f' : '1px solid #e5e8e3') + '; background: ' + (on ? '#fff' : '#f7f8f6') + '; opacity: ' + (on ? 1 : .8) }; });
+    const g = G.find(x => x[0] === s.g);
+    const SORTS = ['예상일 순', '많이 늦은 순', '최근 주문 순', '주문 많은 순'];
+    const q = s.q.trim();
+    let list = s.g === 'all' ? P.slice() : s.g === 'restock' ? P.filter(p => /자스민|타임/.test(p.item)) : P.filter(p => p.g.includes(s.g));
+    if (q) list = list.filter(p => (p.nm + p.item + (p.r || '')).includes(q));
+    const sk = s.sort; list.sort((a, b) => sk === 0 ? (a.dd ?? 99) - (b.dd ?? 99) : sk === 1 ? (a.dd ?? 99) - (b.dd ?? 99) : sk === 2 ? parseInt(a.last) - parseInt(b.last) : b.n - a.n); if (sk === 0) list.sort((a, b) => Math.abs(a.dd ?? 99) - Math.abs(b.dd ?? 99));
+    const people = list.map(p => { const dn = !!s.done[p.id], op = s.open === p.id;
+      const dd = p.dd === null ? '첫 주문' : p.dd > 0 ? 'D-' + p.dd : p.dd === 0 ? '오늘' : (-p.dd) + '일 늦음';
+      const dc = p.dd === null ? '#5f6a5c' : p.dd >= 0 ? '#2e7d4f' : '#b86b00';
+      return { nm: p.nm, item: p.item, cyc: p.cyc || '—', last: p.last, dd, isOpen: op, tags: p.g.includes('biz') ? ['거래처'] : [], claim: !!p.claim, memo: !!p.memo,
+        ds: 'font-size: 11.5px; font-weight: 800; border-radius: 99px; padding: 1px 8px; color: ' + dc + '; background: ' + dc + '1a',
+        open: () => this.setState({ open: op ? '' : p.id }),
+        done: () => this.setState({ done: { ...s.done, [p.id]: !dn } }), bt: dn ? '✓ 연락함' : '연락했어요',
+        bs: 'height: 32px; padding: 0 12px; border-radius: 10px; font-size: 12.5px; font-weight: 800; cursor: pointer; white-space: nowrap; border: 1px solid ' + (dn ? '#2e7d4f' : '#d5dad2') + '; background: ' + (dn ? '#e8f2ea' : '#fff') + '; color: ' + (dn ? '#2e7d4f' : '#3d473b'),
+        rs: 'display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid #f0f2ee; opacity: ' + (dn ? .5 : 1),
+        pred: [['다음 주문 예상일', p.dd === null ? '아직 몰라요 (한 번 삼)' : p.dd >= 0 ? (p.dd ? p.dd + '일 뒤' : '오늘') : (-p.dd) + '일 지났어요'], ['떠날 위험', p.risk], ['지금까지', p.n + '번 · ' + p.spent], ['다음에 권할 것', /로즈마리/.test(p.item) ? '타임 같이' : /비올라|혼합/.test(p.item) ? '팬지 · 보리지' : /자스민/.test(p.item) ? '애플민트' : '로즈마리']].concat(p.memo ? [['메모', p.memo]] : []).map(([k, v]) => ({ k, v, s: 'font-size: 13px; color: ' + (/높/.test(v) || /지났/.test(v) ? '#b86b00' : '#1f2620') })) }; });
+    const DP = P.find(p => p.id === s.open);
+    const D = DP ? { nm: DP.nm, av: DP.nm.replace('손님 ', '')[0], sub: ['서울 마포구', DP.n + '회 주문', '첫 주문 2025-03-02', DP.g.includes('biz') ? '거래처' : '자사몰 ' + Math.ceil(DP.n * .7) + ' · 스마트스토어 ' + Math.floor(DP.n * .3)].join(' · '), claim: !!DP.claim,
+      pred: [['다음 주문 예상일', DP.dd === null ? '아직 몰라요' : DP.dd >= 0 ? (DP.dd ? DP.dd + '일 뒤' : '오늘') : (-DP.dd) + '일 지났어요'], ['떠날 위험', DP.risk], ['지금까지', DP.n + '번 · ' + DP.spent], ['다음에 권할 것', /로즈마리/.test(DP.item) ? '타임 같이' : /비올라|혼합/.test(DP.item) ? '팬지 · 보리지' : /자스민/.test(DP.item) ? '애플민트' : '로즈마리']].map(([k, v]) => ({ k, v, s: 'font-size: 13px; color: ' + (/높|지났/.test(v) ? '#b86b00' : '#1f2620') })),
+      sent: (DP.cyc ? '보통 ' + DP.cyc + '일마다 ' : '지금까지 한 번 ') + DP.item + ' 2개씩 사는 ' + (DP.g.includes('biz') ? '거래처예요' : '고객이에요') + '. 마지막 주문은 ' + DP.last + (DP.dd !== null && DP.dd < 0 ? ' (평소보다 ' + (-DP.dd) + '일 늦음).' : '.'),
+      memo: DP.memo || '아직 약속 · 메모가 없어요', lastH: '11월 ' + (27 - parseInt(DP.last)) + '일 주문 · ' + DP.last, lastI: [{ n: DP.item, q: 2 }].concat(DP.n > 3 ? [{ n: '타임 30g', q: 1 }] : []),
+      prev: [['10/16', DP.item + ' × 2'], ['9/25', DP.item + ' × 1 · 애플민트 30g × 1'], ['9/04', DP.item + ' × 2']].slice(0, DP.n > 1 ? 3 : 0).map(([d, t]) => ({ d, t })),
+      top: [[DP.item.split(' ')[0], (DP.n * 2) + '개'], ['타임', '4개'], ['애플민트', '2개']].slice(0, DP.n > 2 ? 3 : 1).map(([n, q]) => ({ n, q })),
+      tagsAll: ['거래처', '식당·카페', '도매', '포장 꼼꼼히', '정기 주문', '+ 새 태그'].map(t => { const on = t === '거래처' && DP.g.includes('biz'); return { t, s: 'font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 10px; border: 1px solid ' + (on ? '#2e7d4f' : '#dfe3dc') + '; background: ' + (on ? '#e8f2ea' : '#fff') + '; color: ' + (on ? '#2e7d4f' : '#5f6a5c') }; }) } : {};
+    const demand = [['로즈마리 100g', '2개', '7.4kg'], ['식용꽃 비올라', '8개', '18개'], ['자스민 100잎', '1개', '86개']].map(([n, q, st]) => ({ n, q, st }));
+    const bar = (v, mx, c) => 'display: block; height: 100%; width: ' + Math.round(v / mx * 100) + '%; background: ' + c;
+    const regions = [['서울', 142], ['경기', 118], ['부산', 31], ['대구', 18]].map(([n, v]) => ({ n, v, bar: bar(v, 142, '#2e7d4f') }));
+    const split = [['자사몰', 61], ['스마트스토어', 27], ['쿠팡', 12], ['단골 비율', 24]].map(([n, v]) => ({ n, v: v + '%', bar: bar(v, 100, '#2f6db5') }));
+    const R = { reorder: ['재주문 안내', '{이름}님, 안녕하세요 허브아이예요 🌿\n지난번 {품목} 받으신 지 {날짜}이 지났어요.\n떨어질 때쯤이라 미리 알려 드려요. 이번 주 주문하시면 싱싱하게 바로 보내 드릴게요!'],
+      late: ['늦어진 손님 안부', '{이름}님, 요즘도 {품목} 잘 쓰고 계세요? 🌿\n다음 주문 때 작은 덤을 같이 넣어 드릴게요. 필요하실 때 편하게 말씀 주세요.'],
+      restock: ['입고 알림', '{이름}님, 기다리시던 {품목}이 다시 들어왔어요! 🌱\n이번 입고분은 잎이 특히 좋아요. 넉넉할 때 주문해 주세요.'],
+      first: ['두 번째 주문 감사', '{이름}님, 처음 주문해 주셔서 감사해요 🌿\n{품목} 써 보시니 어떠셨어요? 두 번째 주문엔 덤을 챙겨 드릴게요.'] };
+    const p0 = list[0] || P[0];
+    const msg = R[s.rec][1].replace('{이름}', p0.nm).replace('{품목}', p0.item).replace('{날짜}', p0.last.replace(' 전', ''));
+    const recipes = Object.entries(R).map(([k, v]) => ({ t: v[0], go: () => this.setState({ rec: k }), s: 'height: 32px; padding: 0 12px; border-radius: 99px; font-size: 12.5px; font-weight: 700; cursor: pointer; border: 1px solid ' + (s.rec === k ? '#b86b00' : '#dfe3dc') + '; background: ' + (s.rec === k ? '#fff3e0' : '#fff') + '; color: ' + (s.rec === k ? '#a35d00' : '#3d473b') }));
+    const res = [['로즈마리 재주문 안내', '11/20 보냄 · 곧 다시 살 때', 12, 5, '매출 23만 원'], ['늦어진 손님 안부 + 덤', '11/13 보냄 · 평소보다 늦어요', 9, 2, '매출 7만 원'], ['비올라 입고 알림', '11/06 보냄 · 입고 알림 대상', 18, 9, '매출 41만 원']];
+    if (s.sent) res.unshift([R[s.rec][0], '방금 보냄 · ' + g[2] + ' · 7일 동안 세는 중', list.length, 0, '7일 뒤 결과가 나와요']);
+    const results = res.map(([t, d, sent, back, won]) => { const pct = sent ? Math.round(back / sent * 100) : 0; return { t, d, sent: sent + '명', back: back + '명', pct: d.includes('세는 중') ? '…' : pct + '%', won,
+      ps: 'font-size: 15px; color: ' + (pct >= 40 ? '#2e7d4f' : '#b86b00'), bar: 'display: block; height: 100%; width: ' + pct + '%; background: ' + (pct >= 40 ? '#2e7d4f' : '#e3a14a') }; });
+    return { today, groups, sel: { ic: g[1], t: g[2], n: list.length }, people, recipes, msg, results, q: s.q, onQ: e => this.setState({ q: e.target.value }), sortT: SORTS[s.sort], sortGo: () => this.setState({ sort: (s.sort + 1) % SORTS.length }),
+      hasD: !!DP, D, closeD: () => this.setState({ open: '' }), stop: e => e.stopPropagation(), showDemand: s.g === 'soon', demand, ana: s.ana, anaT: s.ana ? '접기 ▴' : '펼치기 ▾', anaGo: () => this.setState({ ana: !s.ana }), regions, split,
+      send: () => this.setState({ sent: !s.sent }), sendT: s.sent ? '✓ 보냈어요 기록됨' : '✅ 보냈어요 기록',
+      sendS: 'height: 38px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; border: 0; background: ' + (s.sent ? '#e8f2ea' : '#2e7d4f') + '; color: ' + (s.sent ? '#2e7d4f' : '#fff') };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>집계 보기 · 다른 날 헷갈리지 않게 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1100px; position: relative; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 12.5px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 숫자 · [다른 날 보기]를 눌러 보세요</span>
+<span style="font-size: 13px; color: #5f6a5c">집계 보기</span>
+</div>
+
+<div style="{{ cardS }}">
+<!-- 다른 날 보는 중 띠 -->
+<sc-if value="{{ past }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #fff3e0; border: 2px solid #e3a14a; border-radius: 14px; padding: 12px 14px">
+<span style="font-size: 22px">⚠️</span>
+<div style="flex: 1; min-width: 200px"><b style="font-size: 15px; color: #a35d00">지금 {{ dayTxt }} 기록을 보고 있어요</b><br><span style="font-size: 12.5px; color: #8a5a1a">오늘 작업할 양이 아니에요 · {{ leftTxt }}</span></div>
+</div>
+</sc-if>
+
+<!-- 달력: 평소엔 접혀 있어요 · 아이콘 버튼을 누르면 밑으로 펼쳐져요 -->
+<div style="display: flex; justify-content: center">
+<button type="button" onClick="{{ togCal }}" title="{{ calTitle }}" aria-label="{{ calTitle }}" aria-expanded="{{ calOpen }}" style="{{ calBtnS }}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="{{ chevS }}"><path d="M6 9l6 6 6-6"/></svg>
+</button>
+</div>
+<sc-if value="{{ calOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 15px; text-align: center">2026년 11월</b>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{ wk }}" as="w" hint-placeholder-count="7"><span style="{{ w.s }}">{{ w.t }}</span></sc-for>
+<sc-for list="{{ cells }}" as="c" hint-placeholder-count="30"><button type="button" onClick="{{ c.go }}" style="{{ c.s }}"><b style="font-size: 14px">{{ c.d }}</b><span style="font-size: 11px; font-weight: 700">{{ c.n }}</span></button></sc-for>
+</div>
+</div>
+</sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ slots }}" as="s" hint-placeholder-count="3"><div style="{{ s.s }}"><b style="font-size: 15px">{{ s.t }}</b><span style="font-size: 12px; opacity: .85">{{ s.n }}</span></div></sc-for>
+</div>
+
+<div style="{{ tableS }}">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 70px 70px; gap: 8px; padding: 8px 12px; font-size: 12px; font-weight: 700; color: #5f6a5c; border-bottom: 1px solid #eef0ec"><span>{{ tblTitle }}</span><span style="text-align: right">작업할 양</span><span style="text-align: right">주문</span></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="4"><div style="display: grid; grid-template-columns: minmax(0, 1fr) 70px 70px; gap: 8px; padding: 9px 12px; font-size: 13.5px; border-top: 1px solid #f3f4f1"><span>{{ r.n }}</span><b style="text-align: right">{{ r.q }}</b><span style="text-align: right; color: #8a9186">{{ r.o }}</span></div></sc-for>
+</div>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #3d473b; line-height: 1.8">
+<b style="font-size: 14px">📅 헷갈리지 않게 이렇게 바꿔요</b><br>
+① 집계 보기를 열면 <b>달력이 접혀 있고</b> 바로 오늘 집계가 보여요. 위의 <b>📅▾ 아이콘</b>을 누르면 달력이 밑으로 펼쳐지고, 한 번 더 누르면 접혀요.<br>
+② 다른 날을 누르면 화면 테두리가 <b>주황색</b>으로 바뀌고, 맨 위에 <b>"지금 11/24 기록을 보고 있어요"</b> 띠가 떠요. 표 제목도 "11/24 기록"으로 바뀌어요.<br>
+③ 달력에서 <b>오늘(27일)</b>을 누르면 바로 오늘로 돌아와요. 오늘은 초록 테두리로 표시돼요.<br>
+④ 다른 날을 본 채로 놔두면 <b>2분 뒤 저절로 오늘</b>로 돌아와요. 다른 탭에 갔다 와도 오늘로 돌아와 있어요.
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":940,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { day: 27, cal: false, left: 120 }; this.t = null; }
+  tick() { clearInterval(this.t); this.t = setInterval(() => { const l = this.state.left - 1; if (l <= 0) { clearInterval(this.t); this.setState({ day: 27, cal: false, left: 120 }); } else this.setState({ left: l }); }, 1000); }
+  renderVals() {
+    const s = this.state, past = s.day !== 27, N = { 18: 62, 19: 74, 20: 80, 23: 106, 24: 64, 25: 73, 26: 88, 27: 68 };
+    const pick = d => () => { if (!N[d]) return; if (d === 27) { clearInterval(this.t); this.setState({ day: 27, cal: false, left: 120 }); } else { this.setState({ day: d, left: 120 }); this.tick(); } };
+    const wk = ['일', '월', '화', '수', '목', '금', '토'].map((t, i) => ({ t, s: 'text-align: center; font-size: 12px; font-weight: 700; color: ' + (i === 0 ? '#c0392b' : i === 6 ? '#2f6fc4' : '#8a9186') }));
+    const cells = []; for (let i = 0; i < 30; i++) { const d = i + 1, n = N[d], on = d === s.day, today = d === 27;
+      cells.push({ d, n: n ? n + '건' : '', go: pick(d), s: 'height: 48px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: ' + (n ? 'pointer' : 'default') + '; border: ' + (today ? '2px solid #2e7d4f' : '1px solid transparent') + '; background: ' + (on ? (today ? '#2e7d4f' : '#e3a14a') : n ? '#b7d8a8' : 'transparent') + '; color: ' + (on ? '#fff' : n ? '#1f2620' : '#b8bdb4') }); }
+    const R = past ? [['로즈마리 100g', 9, 7], ['자스민 100잎', 14, 8], ['식용꽃 혼합 30송이', 5, 3], ['애플민트 30g', 3, 2]] : [['로즈마리 100g', 12, 9], ['자스민 100잎', 21, 10], ['식용꽃 혼합 30송이', 6, 2], ['타임 30g', 5, 4]];
+    const m = Math.floor(s.left / 60), sec = String(s.left % 60).padStart(2, '0');
+    const slot = (t, n, on) => ({ t, n, s: 'display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 14px; border: 1px solid ' + (on ? (past ? '#e3a14a' : '#2e7d4f') : '#e5e8e3') + '; background: ' + (on ? (past ? '#e3a14a' : '#2e7d4f') : '#fff') + '; color: ' + (on ? '#fff' : '#1f2620') });
+    const n = N[s.day];
+    return { past, calOpen: s.cal, wk, cells,
+      dayTxt: '11월 ' + s.day + '일', leftTxt: m + ':' + sec + ' 뒤 저절로 오늘로 돌아가요',
+      goToday: pick(27), togCal: () => this.setState({ cal: !s.cal }), calTitle: s.cal ? '달력 접기' : '달력 펼치기 (다른 날 보기)',
+      calBtnS: 'display: inline-flex; align-items: center; gap: 4px; height: 38px; padding: 0 14px; border-radius: 99px; cursor: pointer; border: 1px solid ' + (s.cal ? '#2e7d4f' : '#d5dad2') + '; background: ' + (s.cal ? '#e8f2ea' : '#fff') + '; color: ' + (s.cal ? '#2e7d4f' : '#5f6a5c'),
+      chevS: 'transition: transform .2s; transform: rotate(' + (s.cal ? 180 : 0) + 'deg)',
+      chipTop: past ? '지난 날 기록' : '오늘', chipDay: '11월 ' + s.day + '일 (' + '일월화수목금토'[(s.day - 1) % 7] + ') · ' + n + '건',
+      todayS: 'display: flex; flex-direction: column; padding: 8px 16px; border-radius: 14px; color: #fff; background: ' + (past ? '#e3a14a' : '#2e7d4f'),
+      slots: [slot('오전', Math.round(n * .7) + '건', false), slot('오후', (n - Math.round(n * .7)) + '건', true), slot('하루 전체', n + '건', false)],
+      tblTitle: past ? '11/' + s.day + ' 기록 (오늘 아님)' : '오늘 작업할 양', rows: R.map(r => ({ n: r[0], q: r[1], o: r[2] + '건' })),
+      tableS: 'border-radius: 14px; overflow: hidden; border: ' + (past ? '2px dashed #e3a14a' : '1px solid #eceee9') + '; background: ' + (past ? '#fffaf2' : '#fff'),
+      cardS: 'background: #fff; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; border: ' + (past ? '3px solid #e3a14a' : '1px solid #e5e8e3') };
+  }
+}
+</script>
+</body>
+</html>

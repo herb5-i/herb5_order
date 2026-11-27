@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>집계 보기 · 새로고침 버튼 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}@keyframes sp{to{transform:rotate(360deg)}}.spin svg{animation:sp .9s linear infinite}</style>
+</helmet>
+<div style="min-height: 560px; box-sizing: border-box; padding: 24px 16px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-size: 12.5px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 버튼을 눌러 보세요</span>
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; font-size: 13px; color: #5f6a5c">
+<span>카페24 배송준비중 · 아직 정리 안 한 주문 <b style="color: #b86b00">{{ n }}건</b> · {{ at }}</span>
+<button type="button" onClick="{{ press }}" class="{{ cls }}" title="{{ tip }}" aria-label="{{ tip }}" style="{{ btnS }}">
+<sc-if value="{{ busy }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></sc-if>
+<sc-if value="{{ idle }}" hint-placeholder-val="{{ true }}"><span style="display: flex; align-items: center; gap: 4px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg><b style="font-variant-numeric: tabular-nums; font-size: 13px">{{ left }}</b></span></sc-if>
+</button>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #5f6a5c; line-height: 1.8">
+<b style="color: #1f2620">버튼이 이렇게 움직여요</b><br>
+① 누르면 <b>빙글빙글 도는 모양</b>이 되면서 카페24에서 새 주문을 받아요<br>
+② 다 받으면 <b>5:00 타이머</b>로 바뀌고 1초씩 줄어요 (다음 자동 새로고침까지 남은 시간)<br>
+③ 0:00이 되면 저절로 다시 받아요<br>
+④ 타이머 중에도 <b>누르면 바로 새로고침</b>되고 타이머가 다시 5:00부터 시작해요<br>
+<span style="font-size: 12px">· 집계 보기를 처음 열 때도 받은 뒤 5:00부터 시작해요. 미리보기는 빨리 보이도록 받는 데 1.5초로 해 두었어요.</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":460,"height":560}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { busy: false, end: Date.now() + 300e3, n: 9, at: '11:52', now: Date.now() };
+    this._t = setInterval(() => { const s = this.state; if (!s.busy && Date.now() >= s.end) this.go(); else this.setState({ now: Date.now() }); }, 1000); }
+  go() { if (this.state.busy) return; this.setState({ busy: true });
+    setTimeout(() => { const d = new Date(); this.setState({ busy: false, end: Date.now() + 300e3, n: this.state.n + (Math.random() < .5 ? 1 : 0), at: String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'), now: Date.now() }); }, 1500); }
+  renderVals() {
+    const s = this.state, sec = Math.max(0, Math.ceil((s.end - s.now) / 1000)), left = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+    return { busy: s.busy, idle: !s.busy, left, n: s.n, at: s.at, cls: s.busy ? 'spin' : '',
+      tip: s.busy ? '받는 중…' : left + ' 뒤 자동 새로고침 · 누르면 지금 새로고침',
+      btnS: 'height: 36px; min-width: 36px; padding: 0 ' + (s.busy ? '0' : '11px') + '; border-radius: 99px; border: 1px solid #dfe3dc; background: ' + (s.busy ? '#eef6ef' : '#fff') + '; color: #2e7d4f; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.08)',
+      press: () => this.go() };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>홈 · 전체 주문 조회 + 바로가기 검색 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button,input{font-family:inherit}@keyframes hl{0%{box-shadow:0 0 0 0 rgba(255,152,0,.0)}20%{box-shadow:0 0 0 6px rgba(255,152,0,.55)}100%{box-shadow:0 0 0 3px rgba(255,152,0,.35)}}</style>
+</helmet>
+<div style="min-height: 1700px; position: relative; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 12.5px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 주문 · 검색칸에 "송장" "로즈마리" "재주문"을 쳐 보세요</span>
+</div>
+
+<!-- 홈 맨 위 카드 -->
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 13px; font-weight: 700; color: #2e7d4f">허브아이 · 2026년 11월 27일 금요일</span>
+<div style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 15px; font-weight: 700; color: #2e7d4f">오후</span><b style="font-size: 32px; letter-spacing: -1px">6:21</b></div>
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="height: 42px; padding: 0 14px; border: 1px solid #dfe3dc; border-radius: 14px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #2e7d4f">⬇ 지금 백업 <small style="font-size: 11.5px; color: #5f6a5c; background: #f0f2ee; border-radius: 99px; padding: 1px 7px">6일 전</small></span>
+<span style="position: relative; width: 46px; height: 42px; border: 1px solid #dfe3dc; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center">🔔<i style="position: absolute; top: -7px; right: -7px; width: 18px; height: 18px; border-radius: 99px; background: #d9443a; color: #fff; font-size: 11px; font-style: normal; font-weight: 800; display: flex; align-items: center; justify-content: center">1</i></span>
+<span style="flex: 1"></span>
+<!-- 바로가기 검색 -->
+<div style="position: relative; width: 300px; max-width: 100%">
+<div style="{{ qBoxS }}">
+<span style="color: #8a9186">🔍</span>
+<input value="{{ q }}" onInput="{{ onQ }}" placeholder="어디로 갈까요? (예: 송장, 재고, 로즈마리)" aria-label="사이트 안에서 찾아가기" style="flex: 1; min-width: 0; border: 0; outline: none; font-size: 14px; background: transparent; color: #1f2620">
+<sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ clearQ }}" style="border: 0; background: none; color: #8a9186; font-size: 16px; cursor: pointer">×</button></sc-if>
+</div>
+<sc-if value="{{ showList }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; z-index: 5; top: 48px; right: 0; width: 340px; max-width: calc(100vw - 40px); background: #fff; border: 1px solid #e5e8e3; border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.12); padding: 6px; display: flex; flex-direction: column">
+<sc-for list="{{ hits }}" as="h" hint-placeholder-count="4">
+<button type="button" onClick="{{ h.go }}" style="{{ h.s }}">
+<span style="font-size: 18px">{{ h.ic }}</span>
+<span style="display: flex; flex-direction: column; min-width: 0"><b style="font-size: 13.5px">{{ h.t }}</b><small style="font-size: 12px; color: #8a9186">{{ h.path }}</small></span>
+</button>
+</sc-for>
+<sc-if value="{{ noHit }}" hint-placeholder-val="{{ false }}"><p style="margin: 8px; font-size: 13px; color: #8a9186">찾는 칸이 없어요 · 다른 말로 쳐 보세요</p></sc-if>
+<small style="padding: 4px 10px 6px; font-size: 11.5px; color: #8a9186">Enter = 첫 번째로 이동 · ↑↓ 고르기</small>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+
+<!-- 주문 처리 현황 + 전체 주문 조회 (합침) -->
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<b style="font-size: 15px; color: #3d473b">주문 처리 현황</b>
+<span style="font-size: 12px; font-weight: 700; color: #5f6a5c; background: #f0f2ee; border-radius: 99px; padding: 2px 9px">카페24 · 18:21</span>
+<span style="flex: 1"></span>
+<span style="height: 34px; padding: 0 12px; border: 1px solid #2e7d4f; border-radius: 99px; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #2e7d4f; background: #f3f8f1">🛒 마켓 주문 수집</span>
+<span style="width: 34px; height: 34px; border: 1px solid #dfe3dc; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; color: #2e7d4f">↻</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="8">
+<button type="button" onClick="{{ s.go }}" style="{{ s.s }}"><span style="font-size: 11.5px; font-weight: 700; opacity: .85; white-space: nowrap">{{ s.t }}</span><b style="font-size: 20px">{{ s.n }}</b></button>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; border-top: 1px dashed #e5e8e3; padding-top: 12px">
+<b style="font-size: 14px; margin-right: 4px">{{ listTitle }}</b>
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+<span style="font-size: 12.5px; font-weight: 700; color: #5f6a5c">📅 주문일</span>
+<input type="date" value="{{ d1 }}" onInput="{{ onD1 }}" onChange="{{ onD1 }}" aria-label="시작 날짜" style="height: 32px; border: 1px solid #dfe3dc; border-radius: 10px; padding: 0 8px; font-size: 13px; color: #1f2620; background: #fff">
+<span style="color: #8a9186">~</span>
+<input type="date" value="{{ d2 }}" onInput="{{ onD2 }}" onChange="{{ onD2 }}" aria-label="끝 날짜" style="height: 32px; border: 1px solid #dfe3dc; border-radius: 10px; padding: 0 8px; font-size: 13px; color: #1f2620; background: #fff">
+</div>
+<span style="flex: 1"></span>
+<div style="height: 32px; border: 1px solid #dfe3dc; border-radius: 10px; display: flex; align-items: center; gap: 6px; padding: 0 10px; width: 210px; max-width: 100%">
+<span style="color: #8a9186; font-size: 13px">🔍</span><input value="{{ oq }}" onInput="{{ onOq }}" placeholder="주문번호 · 품목 · 받는 분" style="flex: 1; min-width: 0; border: 0; outline: none; font-size: 13px; background: transparent">
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span style="font-size: 12.5px; color: #5f6a5c">주문 {{ nRows }}건</span>
+<div style="border: 1px solid #e5e8e3; border-radius: 14px; overflow: hidden; max-height: 420px; overflow-y: auto">
+<sc-if value="{{ isClaim }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ claims }}" as="c" hint-placeholder-count="3">
+<button type="button" onClick="{{ c.open }}" style="width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 11px 12px; border: 0; border-bottom: 1px solid #f0f2ee; background: #fff; text-align: left; cursor: pointer">
+<div style="display: flex; align-items: center; gap: 6px; width: 100%"><span style="{{ c.badge }}">{{ c.type }}</span><b style="font-size: 14.5px">{{ c.item }}</b><span style="flex: 1"></span><small style="color: #8a9186">{{ c.tm }}</small></div>
+<span style="font-size: 13.5px; font-weight: 800">{{ c.who }}</span>
+<span style="font-size: 13px; font-weight: 700; color: #2f6db5">{{ c.pos }}</span>
+<span style="font-size: 12.5px; color: #5f6a5c">{{ c.st }} · {{ c.why }}</span>
+</button>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isFull }}" hint-placeholder-val="{{ false }}">
+<div style="overflow-x: auto">
+<div style="min-width: 780px; font-size: 12.5px">
+<div style="display: grid; grid-template-columns: 150px 80px 170px 150px minmax(0, 1fr) 44px; background: #f5f6f4; color: #5f6a5c; font-weight: 700; text-align: center; border-bottom: 1px solid #e1e4df">
+<span style="padding: 8px 6px; border-right: 1px solid #e8ebe6">주문일 / 주문번호</span><span style="padding: 8px 6px; border-right: 1px solid #e8ebe6">주문자</span><span style="padding: 8px 6px; border-right: 1px solid #e8ebe6">배송일 / 배송번호</span><span style="padding: 8px 6px; border-right: 1px solid #e8ebe6">운송장 정보<br>(송장번호 입력일)</span><span style="padding: 8px 6px; border-right: 1px solid #e8ebe6">상품명 / 옵션</span><span style="padding: 8px 6px">수량</span>
+</div>
+<sc-for list="{{ fulls }}" as="f" hint-placeholder-count="2">
+<div style="border-bottom: 1px solid #e1e4df">
+<div style="display: grid; grid-template-columns: 150px 80px 170px 150px minmax(0, 1fr) 44px; text-align: center; border-bottom: 1px dashed #eceee9">
+<div style="padding: 9px 6px; border-right: 1px solid #f0f2ee; display: flex; flex-direction: column; gap: 2px"><span>{{ f.odt }}</span><span><span style="{{ f.chS }}">{{ f.chS1 }}</span> <u style="color: #2f6db5">{{ f.oid }}</u></span></div>
+<div style="padding: 9px 6px; border-right: 1px solid #f0f2ee; display: flex; flex-direction: column; gap: 2px"><b>{{ f.buyer }}</b><span style="color: #8a9186">{{ f.mem }}</span></div>
+<div style="padding: 9px 6px; border-right: 1px solid #f0f2ee; display: flex; flex-direction: column; gap: 2px"><span>{{ f.sdt }}</span><span style="color: #5f6a5c">{{ f.sno }}</span></div>
+<div style="padding: 9px 6px; border-right: 1px solid #f0f2ee; display: flex; flex-direction: column; gap: 2px"><span>{{ f.co }}</span><b style="color: #2f6db5">{{ f.track }}</b><span style="color: #8a9186">{{ f.tdt }}</span></div>
+<div style="padding: 9px 10px; border-right: 1px solid #f0f2ee; text-align: left; display: flex; flex-direction: column; gap: 3px">
+<sc-for list="{{ f.its }}" as="x" hint-placeholder-count="1"><span><b>{{ x.n }}</b><span style="color: #2f6db5; font-size: 12px"> - 옵션 : {{ x.o }}</span></span></sc-for>
+</div>
+<div style="padding: 9px 6px; display: flex; flex-direction: column; gap: 3px"><sc-for list="{{ f.its }}" as="x" hint-placeholder-count="1"><span>{{ x.q }}</span></sc-for></div>
+</div>
+<div style="display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; padding: 8px 12px; background: #fbfcfa; line-height: 1.6">
+<span>수령자 : <b>{{ f.who }}</b></span><span>일반전화 : {{ f.tel }}</span>
+<span></span><span>휴대전화 : {{ f.tel }}</span>
+<span></span><span>주소 : {{ f.addr }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+<div onClick="{{ r.open }}" style="padding: 10px 12px; border-bottom: 1px solid #f0f2ee; display: flex; flex-direction: column; gap: 4px; background: #fbfcfa; cursor: pointer">
+<div style="display: flex; align-items: center; gap: 6px"><b style="font-size: 14px">{{ r.who }}</b><span style="{{ r.chS }}">{{ r.ch }}</span><span style="{{ r.stS }}">{{ r.st }}</span><span style="flex: 1"></span><small style="color: #8a9186">{{ r.tm }}</small></div>
+<sc-if value="{{ r.hasTrk }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #2f6db5; font-weight: 700">🚚 {{ r.trk }}</span></sc-if>
+<sc-for list="{{ r.its }}" as="x" hint-placeholder-count="1"><div style="display: grid; grid-template-columns: minmax(0, 1fr) 70px 24px; gap: 6px; font-size: 13px; color: #3d473b"><span>{{ x.n }}</span><span style="color: #8a9186">{{ x.o }}</span><b style="text-align: right">{{ x.q }}</b></div></sc-for>
+</div>
+</sc-for>
+<sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 22px; text-align: center; font-size: 13px; color: #8a9186">조건에 맞는 주문이 없어요</p></sc-if>
+</div>
+</div>
+<sc-if value="{{ showItems }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span style="font-size: 12.5px; color: #5f6a5c">품목 · 재고</span>
+<div style="border: 1px solid #e5e8e3; border-radius: 14px; overflow: hidden; max-height: 420px; overflow-y: auto">
+<sc-for list="{{ items }}" as="g" hint-placeholder-count="4">
+<div style="padding: 6px 12px; background: #eef1ec; font-size: 12.5px; font-weight: 800; color: #2e7d4f">{{ g.g }}</div>
+<sc-for list="{{ g.L }}" as="x" hint-placeholder-count="1">
+<div style="padding: 9px 12px; border-bottom: 1px solid #f0f2ee; display: flex; align-items: center; gap: 8px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column"><b style="font-size: 13.5px">{{ x.n }}</b><small style="font-size: 12px; color: #8a9186">재고 {{ x.st }} · 주문 {{ x.q }}</small></div>
+<b style="{{ x.leftS }}">{{ x.left }}</b>
+</div>
+</sc-for>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</div>
+
+<!-- 취소 · 반품 상세 팝업 (이슈 관리 › 취소 · 반품 · 교환과 같은 모양) -->
+<sc-if value="{{ hasPop }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closePop }}" style="position: fixed; inset: 0; z-index: 50; background: rgba(20,28,20,.45); display: flex; align-items: center; justify-content: center; padding: 16px">
+<div onClick="{{ stop }}" style="width: 760px; max-width: 100%; max-height: calc(100vh - 32px); overflow-y: auto; background: #fff; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.25)">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><span style="{{ pop.badge }}">{{ pop.type }}</span><b style="font-size: 17px">{{ pop.item }}</b><span style="flex: 1"></span><span style="font-size: 12.5px; color: #8a9186">주문 {{ pop.oid }} · {{ pop.ch }}</span><button type="button" onClick="{{ closePop }}" aria-label="닫기" style="width: 34px; height: 34px; border-radius: 99px; border: 1px solid #dfe3dc; background: #fff; font-size: 18px; cursor: pointer">×</button></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 15px">{{ pop.who }}</b><b style="font-size: 14px; color: #2f6db5">{{ pop.pos }}</b></div>
+<div style="overflow-x: auto"><table style="width: 100%; min-width: 640px; font-size: 13px; border-collapse: collapse; border-top: 2px solid #3d4a3a">
+<tr style="background: #f5f6f4; color: #5f6a5c"><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">품목별 주문번호<br>배송번호</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df; text-align: left">상품명 / 옵션</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">수량</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">상품구매금액<br>(판매가)</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">운송장번호</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">주문상태</th></tr>
+<tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9; line-height: 1.6">{{ pop.ic }}<br><span style="color: #8a9186">{{ pop.sc }}</span></td><td style="padding: 10px; border-bottom: 1px solid #eceee9"><b>{{ pop.item }}</b><br><span style="color: #2f6db5; font-size: 12.5px">- 옵션 : {{ pop.opt }}</span></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9">{{ pop.q }}</td><td style="padding: 10px; text-align: right; border-bottom: 1px solid #eceee9">{{ pop.price }}</td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9; font-weight: 700">{{ pop.track }}</td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9"><b style="color: #2f6db5">{{ pop.stat }}</b><br><span style="color: #8a9186">[{{ pop.by }}]</span></td></tr>
+</table></div>
+<div><b style="font-size: 14.5px">결제 정보</b>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; border: 1px solid #e1e4df; border-radius: 12px; overflow: hidden; font-size: 13px; text-align: center">
+<sc-for list="{{ pays }}" as="p" hint-placeholder-count="4"><div style="border-right: 1px solid #e1e4df"><div style="padding: 8px; background: #f5f6f4; color: #5f6a5c">{{ p.k }}</div><div style="padding: 10px; font-weight: 800">{{ p.v }}</div></div></sc-for>
+</div></div>
+<div><b style="font-size: 14.5px">결제수단</b>
+<div style="margin-top: 8px; border: 1px solid #e1e4df; border-radius: 12px; overflow: hidden; font-size: 13px">
+<sc-for list="{{ payer }}" as="p" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: 140px minmax(0, 1fr); border-top: 1px solid #eceee9"><span style="padding: 9px 12px; background: #f5f6f4; color: #5f6a5c">{{ p.k }}</span><span style="padding: 9px 12px">{{ p.v }}</span></div></sc-for>
+</div></div>
+<div style="font-size: 13.5px; line-height: 1.6"><b>사유</b><br>{{ pop.why }}</div>
+</div>
+</div>
+</sc-if>
+
+<!-- 주문 상세 팝업 (입금전 ~ 배송준비중 주문을 누르면) -->
+<sc-if value="{{ hasOpop }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeOpop }}" style="position: fixed; inset: 0; z-index: 50; background: rgba(20,28,20,.45); display: flex; align-items: center; justify-content: center; padding: 12px">
+<div onClick="{{ stop }}" style="width: 620px; max-width: 100%; max-height: calc(100vh - 24px); overflow-y: auto; background: #fff; border-radius: 20px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,.25); font-size: 14px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid #eef0ec"><span style="{{ op.chS }}">{{ op.chS1 }}</span><b style="font-size: 16px">{{ op.oid }}</b><span style="{{ op.stS }}">{{ op.st }}</span><span style="flex: 1"></span><button type="button" onClick="{{ closeOpop }}" aria-label="닫기" style="width: 34px; height: 34px; border-radius: 99px; border: 1px solid #dfe3dc; background: #fff; font-size: 18px; cursor: pointer">×</button></div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline"><span style="color: #8a9186; font-size: 13px; flex: 1">{{ op.odt }} · {{ op.ch }}</span><b style="font-size: 17px">{{ op.amt }}</b></div>
+<div style="background: #f5f6f4; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ op.its }}" as="x" hint-placeholder-count="2">
+<div style="display: flex; gap: 10px; align-items: flex-start">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px"><b>{{ x.n }}</b><span style="font-size: 13px; color: #2f6db5">- 옵션 : {{ x.o }}</span></div>
+<span style="white-space: nowrap">/ {{ x.q }}개</span>
+</div>
+</sc-for>
+</div>
+<div style="background: #f5f6f4; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; line-height: 1.55; font-size: 13.5px">
+<span><b>수령자</b>&nbsp;&nbsp; {{ op.who }}</span>
+<span><b>일반전화</b>&nbsp; {{ op.tel }}</span>
+<span><b>휴대전화</b>&nbsp; {{ op.tel }}</span>
+<span>{{ op.addr }}</span>
+<span style="color: #a35d00"><b>배송 메모</b>&nbsp; {{ op.memo }}</span>
+</div>
+<sc-if value="{{ op.hasTrk }}" hint-placeholder-val="{{ false }}"><div style="display: grid; grid-template-columns: 40% minmax(0, 1fr); gap: 6px"><span style="height: 40px; border: 1px solid #d5dad2; border-radius: 6px; display: flex; align-items: center; padding: 0 12px">{{ op.co }}</span><span style="height: 40px; border-radius: 6px; display: flex; align-items: center; padding: 0 12px; background: #f0f2ee; color: #2f6db5; font-weight: 700">{{ op.trkNo }}</span></div><span style="font-size: 12px; color: #8a9186">배송일 {{ op.sdt }} · 배송번호 D-{{ op.oid }}-00</span></sc-if>
+<div><b style="font-size: 14px">결제 정보</b>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 6px; border: 1px solid #e1e4df; border-radius: 10px; overflow: hidden; font-size: 13px">
+<sc-for list="{{ op.pays }}" as="p" hint-placeholder-count="4"><div style="display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #eceee9"><span style="color: #5f6a5c">{{ p.k }}</span><b>{{ p.v }}</b></div></sc-for>
+</div></div>
+<div style="display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: #5f6a5c"><span>주문자 <b style="color: #1f2620">{{ op.buyer }}</b></span><span>결제수단 <b style="color: #1f2620">{{ op.pm }}</b></span><span>결제일 {{ op.pdt }}</span></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<!-- 검색으로 이동한 곳 (예시) -->
+<sc-if value="{{ moved }}" hint-placeholder-val="{{ false }}">
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; color: #8a9186">↓ 검색해서 이동한 화면 (예시) · {{ dest.path }}</span>
+<div style="border-radius: 14px; padding: 14px 16px; background: #fff3c4; animation: hl 1.4s ease-out; box-shadow: 0 0 0 3px rgba(255,152,0,.35); border: 2px solid #ff9800">
+<b style="font-size: 15px; background: linear-gradient(transparent 55%, #ffb74d 55%); padding: 0 2px">{{ dest.t }}</b>
+<p style="margin: 6px 0 0; font-size: 13px; color: #5f6a5c">{{ dest.d }}</p>
+</div>
+<span style="font-size: 12px; color: #a35d00">주황 형광펜 표시는 3초 뒤 천천히 사라져요</span>
+</div>
+</sc-if>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #3d473b; line-height: 1.8">
+<b style="font-size: 14px">📋 주문 처리 현황 + 전체 주문 조회 (한 칸으로 합침)</b><br>
+· 위 숫자 칸 8개(입금전 · 상품준비중 · 배송보류중 · 배송준비중 · 배송대기 · 배송중 · 배송완료 · 취소·반품)를 <b>한 줄</b>에 작게 · 상태마다 색 글씨, 고른 칸은 색으로 채워요. 휴대폰에서는 4칸씩 두 줄이에요.<br>
+· <b>숫자 칸을 누르면</b> 아래 "들어온 주문"이 그 상태 주문으로 바뀌어요. 처음엔 <b>배송준비중</b>이 보여요.<br>
+· 아래 왼쪽은 <b>주문</b>, 오른쪽은 <b>품목 · 재고(남는 양)</b> — 지금 화면 그대로예요. <b>배송대기 · 배송중 · 배송완료 · 취소·반품</b>은 이미 나간 주문이라 품목 · 재고 칸 없이 주문 목록만 넓게 보여요. 주문번호 · 품목 · 받는 분 검색으로 더 좁힐 수 있어요.<br>
+· <b>📅 주문일 ____년 __월 __일 ~ ____년 __월 __일</b> 칸에 날짜를 직접 쓰거나 달력에서 골라요. 처음엔 오늘 ~ 오늘이에요. 위 숫자 칸 · 아래 목록 · 품목 모두 이 기간 주문으로 바뀌어요.<br>
+· <b>배송대기 · 배송중 · 배송완료</b>는 <b>카페24 주문 목록처럼</b> 표로 보여 줘요: 주문일 / 주문번호 · 주문자 · 배송일 / 배송번호 · 운송장 정보(택배사 · 송장번호 · 입력일) · 상품명 / 옵션 · 수량, 그 아래 줄에 <b>수령자 · 일반전화 · 휴대전화 · 주소</b>. (이름 · 주소 · 전화는 화면에만 보이고 저장하지 않아요)<br>
+· <b>취소·반품</b>을 누르면 이슈 관리 › 취소 · 반품 · 교환과 같은 카드가 나오고, 카드를 누르면 <b>팝업창</b>으로 카페24 주문 화면처럼 상세(품목 · 송장 · 상태 · 결제 정보 · 결제수단 · 사유)를 보여 줘요. 바깥이나 × 를 누르면 닫혀요.<br>
+· <b>입금전 ~ 배송준비중</b> 목록에서 손님을 누르면 <b>상세보기 팝업</b>: 주문번호 · 상태 · 금액 · 품목 / 옵션 · 수령자 · 일반전화 · 휴대전화 · 주소 · 배송 메모 · 결제 정보 · 주문자 · 결제수단.<br>
+· 입금전 · 상품준비중 ▾ 메뉴(배송준비중으로 넘기기)는 그대로 있어요.<br>
+<b style="font-size: 14px">🔍 바로가기 검색</b><br>
+· 백업 · 알림 버튼 줄 오른쪽 끝에 있어요. <b>송장 · 재고 · 날씨 · 재주문 · 로즈마리</b>처럼 한 단어만 쳐도 맞는 탭 · 칸이 떠요.<br>
+· 고르면(또는 Enter) 그 탭으로 가서 해당 칸까지 내려가고, <b>주황 형광펜</b>으로 3초 표시해요. 품목 이름을 치면 재고 칸의 그 품목 줄로 가요.<br>
+· 휴대폰에서는 시계 아래 한 줄을 다 써요.
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":940,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { q: '', dest: null, d1: '2026-11-27', d2: '2026-11-27', st: '', oq: '' }; }
+  renderVals() {
+    const s = this.state;
+    const IDX = [
+      { ic: '🚚', t: '송장 등록', path: '정리 › 송장 등록', k: '송장 운송장 택배 등록', d: '택배사 엑셀을 올려 카페24에 송장번호를 넣는 칸' },
+      { ic: '📦', t: '엑셀 내려받기 (송장 순서)', path: '정리 › 결과 확인 · 내려받기', k: '송장 엑셀 받기 내려받기 순서', d: '정리한 주문을 송장 순서로 내려받는 칸' },
+      { ic: '🌿', t: '로즈마리 재고', path: '재고 관리 › 재고 › 로즈마리', k: '로즈마리 재고', d: '로즈마리 남은 양 · 입고 · 폐기 기록' },
+      { ic: '🌿', t: '로즈마리 판매 (카페24)', path: '재고 관리 › 판매 › 로즈마리', k: '로즈마리 판매 품절 가격', d: '카페24 품절 · 판매 재개 · 가격' },
+      { ic: '📊', t: '재고 한눈에', path: '재고 관리 › 재고', k: '재고 남은 입고 폐기 반송', d: '품목별 남은 재고' },
+      { ic: '📞', t: '재주문 확인', path: '고객 관리 › 재주문 확인', k: '재주문 연락 고객 단골 전화', d: '평소보다 늦어진 손님 목록' },
+      { ic: '🌡', t: '지역별 기온 · 포장 확인', path: '정리 › 날씨', k: '날씨 기온 포장 아이스팩 영하', d: '받는 지역 기온과 포장 방법' },
+      { ic: '🛵', t: '퀵 · 직접 전달', path: '정리 › 결과 › 🛵 퀵 · 직접', k: '퀵 직접 방문 픽업', d: '퀵으로 표시한 주문 모음' },
+      { ic: '📅', t: '집계 보기', path: '집계 보기', k: '집계 작업 오늘 양', d: '오늘 작업할 양 · 재고 · 새 주문' }];
+    const q = s.q.trim().replace(/\s+/g, '');
+    const hits = q ? IDX.filter(x => (x.t + x.k + x.path).replace(/\s+/g, '').includes(q)).slice(0, 6) : [];
+    const go = x => () => this.setState({ dest: x, q: '' });
+    // 주문 예시 (카페24 상태 그대로 + 배송완료 · 취소)
+    const ST = [['입금전', '#8a9186'], ['상품준비중', '#c48a12'], ['배송보류중', '#8a4fb0'], ['배송준비중', '#2e7d4f'], ['배송대기', '#1f9c9c'], ['배송중', '#2f86c4'], ['전체 주문 조회', '#3d473b'], ['취소·반품', '#c0392b']];
+    const CH = { '자사몰': '#3d7a4f', '스마트스토어': '#2f86c4', '쿠팡': '#d9663f' };
+    const base = [
+      ['17:49', '쿠팡', '김*중', [['로즈마리', '1개 100g', 1, '로즈마리']], '배송준비중', 0], ['17:21', '쿠팡', '유*호', [['로즈마리', '1개 100g', 1, '로즈마리']], '배송준비중', 0],
+      ['16:50', '쿠팡', '양*윤', [['식용꽃 비올라 30송이', '30개', 1, '식용꽃']], '배송준비중', 0], ['14:56', '쿠팡', '김*수', [['애플민트 크기지정 X 100g', '100g 1개', 1, '애플민트']], '배송준비중', 0],
+      ['14:17', '스마트스토어', '김*교', [['식용꽃 팬지 30송이', '', 1, '식용꽃'], ['자스민 생잎 100잎', '', 1, '자스민']], '배송준비중', 0], ['13:44', '스마트스토어', '최*현', [['자스민 생잎 100잎', '', 1, '자스민']], '배송준비중', 0],
+      ['12:30', '자사몰', '○○카페', [['식용꽃 비올라 30송이', '', 10, '식용꽃']], '입금전', 0], ['11:58', '자사몰', '한*우', [['★단단 로즈마리', '100g', 2, '로즈마리']], '배송중', 0],
+      ['10:12', '스마트스토어', '정*민', [['자스민 생잎 100잎', '', 1, '자스민']], '취소·반품', 0], ['09:30', '자사몰', '서*진', [['타임', '10g', 3, '타임']], '배송중', 0],
+      ['어제', '쿠팡', '윤*아', [['식용꽃 팬지 30송이', '', 1, '식용꽃']], '배송중', 1], ['어제', '자사몰', '오*희', [['자스민 생잎 100잎', '', 4, '자스민']], '배송완료', 1],
+      ['3일 전', '자사몰', '△△식당', [['식용꽃 혼합 30송이', '', 6, '식용꽃']], '배송완료', 2], ['6일 전', '쿠팡', '장*호', [['로즈마리', '100g', 1, '로즈마리']], '배송완료', 6]];
+    const dayOf = r => { const d = new Date(2026, 10, 27 - r[5]); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+    const a1 = s.d1 <= s.d2 ? s.d1 : s.d2, a2 = s.d1 <= s.d2 ? s.d2 : s.d1;
+    const inPer = base.filter(r => { const d = dayOf(r); return (!a1 || d >= a1) && (!a2 || d <= a2); });
+    // 취소 · 반품 · 교환 예시 (이슈 관리 카드와 같은 내용)
+    const CL = [
+      { type: '취소', col: '#c0392b', item: '자스민 생잎 100잎', who: '정*민', pos: '11/27 오전 송장 12번째 - 111122225555', st: '취소 완료', why: '단순 변심', tm: '10:12', oid: '20261127-0000188', ch: '스마트스토어', ic: '20261127-0000188-01', sc: 'D-20261127-0000188-00', opt: '100잎', q: 1, price: '9,900', track: '111122225555', stat: '취소완료', by: '구매자', pays: [['상품구매금액', '9,900'], ['배송비', '3,000'], ['할인혜택', '0'], ['총 실결제금액', '12,900']], payer: [['결제(입금)자', '정*민'], ['결제수단', '네이버페이'], ['결제(입금)확인일', '2026-11-27 09:58:11']] },
+      { type: '반품', col: '#b86b00', item: '식용꽃 비올라 30송이', who: '김*아', pos: '11/26 오후 송장 23번째 - 111122224444', st: '반품 접수', why: '꽃 상태 불량 (시듦)', tm: '어제', oid: '20261126-0000141', ch: '자사몰', ic: '20261126-0000141-01', sc: 'D-20261126-0000141-00', opt: '30송이', q: 2, price: '17,800', track: '111122224444', stat: '반품접수', by: '구매자', pays: [['상품구매금액', '17,800'], ['배송비', '0'], ['할인혜택', '1,000'], ['총 실결제금액', '16,800']], payer: [['결제(입금)자', '김*아'], ['결제수단', '카드'], ['결제(입금)확인일', '2026-11-26 13:20:45']] },
+      { type: '교환', col: '#2f6db5', item: '로즈마리 100g', who: '박*호', pos: '11/25 오전 송장 8번째 - 111122223333', st: '교환 처리중', why: '잎 갈변 · 같은 상품으로 교환', tm: '2일 전', oid: '20261125-0000097', ch: '쿠팡', ic: '20261125-0000097-01', sc: 'D-20261125-0000097-00', opt: '100g', q: 1, price: '8,500', track: '111122223333', stat: '교환처리중', by: '판매자', pays: [['상품구매금액', '8,500'], ['배송비', '3,000'], ['할인혜택', '0'], ['총 실결제금액', '11,500']], payer: [['결제(입금)자', '박*호'], ['결제수단', '쿠팡 결제'], ['결제(입금)확인일', '2026-11-25 08:41:02']] }];
+    const clDay = c => c.tm === '어제' ? 1 : c.tm === '2일 전' ? 2 : 0;
+    const clIn = CL.filter(c => { const d = new Date(2026, 10, 27 - clDay(c)), k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); return k >= a1 && k <= a2; });
+    const badge = c => 'font-size: 12px; font-weight: 800; color: #fff; border-radius: 8px; padding: 2px 9px; background: ' + c;
+    const claims = clIn.map(c => ({ ...c, badge: badge(c.col), open: () => this.setState({ pop: c.oid }) }));
+    const P0 = CL.find(c => c.oid === s.pop);
+    // 위 숫자 칸: 입금전 ~ 배송중은 지금 카페24 상태 그대로(기간 무관), 배송완료 · 취소는 기간 안
+    const live = ['입금전', '상품준비중', '배송보류중', '배송준비중', '배송대기', '배송중'];
+    const big = { '배송중': 255 };
+    const cnt = st => st === '취소·반품' ? clIn.length : st === '전체 주문 조회' ? inPer.length : inPer.filter(r => r[4] === st).length;
+    const cur = s.st || '배송준비중';
+    const stats = ST.map(([t, c]) => { const on = cur === t, n = cnt(t), drop = t === '입금전' || t === '상품준비중';
+      return { t: t + (drop ? ' ▾' : ''), n, go: () => this.setState({ st: t, opop: null }),
+        s: 'display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; min-width: 0; border-radius: 12px; cursor: pointer; border: 1.5px solid ' + (on ? c : '#e5e8e3') + '; background: ' + (on ? c : '#fff') + '; color: ' + (on ? '#fff' : c) }; });
+    const tot = ST.reduce((a, [t]) => a + cnt(t), 0) || 1;
+    const bar = ST.map(([t, c]) => ({ s: 'display: block; height: 100%; width: ' + (cnt(t) / tot * 100) + '%; background: ' + c }));
+    const pool = cur === '전체 주문 조회' ? inPer : inPer.filter(r => r[4] === cur);
+    const oq = s.oq.trim();
+    const L = pool.filter(r => (!oq || (r[2] + r[3].map(x => x[0]).join(' ')).includes(oq)));
+    const stc = t => (ST.find(x => x[0] === t) || [])[1] || '#6b7a8a';
+    const FULL = ['배송대기', '배송중', '배송완료'].includes(cur), ADR = ['서울 마포구 월드컵로 ○○ 101동 1203호', '경기 성남시 분당구 판교로 ○○ 3층', '부산 해운대구 센텀중앙로 ○○', '대전 유성구 대학로 ○○ 상가 1층'];
+    const fulls = FULL ? L.map((r, i) => { const t = r[0].includes(':') ? r[0] : '09:10', dd = (() => { const d = new Date(2026, 10, 27 - r[5]); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+      const oid = dd.replace(/-/g, '') + '-0000' + (300 + i * 17), nm = r[2].replace('*', ['영', '민', '수', '현'][i % 4]);
+      return { odt: dd + ' ' + t + ':05', oid, chS1: { '자사몰': 'P', '스마트스토어': 'S', '쿠팡': 'C' }[r[1]], chS: 'display: inline-block; width: 16px; font-size: 11px; font-weight: 800; color: #fff; border-radius: 3px; background: ' + CH[r[1]],
+        buyer: nm, mem: '[비회원]', sdt: r[4] === '배송대기' ? '-' : dd + ' 13:22:19', sno: 'D-' + oid + '-00', co: r[4] === '배송대기' ? '-' : '한진택배', track: r[4] === '배송대기' ? '송장 전' : '5120093' + String(10457 + i * 311).slice(-5), tdt: r[4] === '배송대기' ? '' : '(' + dd + ' 13:15:02)',
+        who: nm, tel: '010-****-' + String(1234 + i * 1111).slice(-4), addr: '[' + (12345 + i * 211) + '] ' + ['경기 고양시 예시로 12 (예시동)', '서울 마포구 월드컵로 ○○ 101동 1203호', '부산 해운대구 센텀중앙로 ○○'][i % 3],
+        its: r[3].map(x => ({ n: x[0], o: x[1] || '기본', q: x[2] })) }; }) : [];
+    const OP0 = s.opop != null ? L[s.opop] : null;
+    const op = OP0 ? (() => { const r = OP0, i = s.opop, amt = r[3].reduce((t, x) => t + x[2] * 8000, 0), nm = r[2].replace('*', ['영', '민', '수', '현'][i % 4]);
+      return { oid: '20261127-0000' + (300 + i * 17), ch: r[1], chS1: { '자사몰': 'P', '스마트스토어': 'S', '쿠팡': 'C' }[r[1]], chS: 'display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; font-size: 11px; font-weight: 800; color: #fff; border-radius: 99px; background: ' + CH[r[1]],
+        st: r[4], stS: 'font-size: 11.5px; font-weight: 800; border-radius: 99px; padding: 1px 8px; color: ' + stc(r[4]) + '; background: ' + stc(r[4]) + '1a',
+        odt: '2026-11-27 ' + (r[0].includes(':') ? r[0] : '09:10') + ':21', amt: (amt + 3000).toLocaleString() + '원', its: r[3].map(x => ({ n: x[0], o: x[1] || '기본', q: x[2] })),
+        who: nm, tel: '010-****-' + String(1234 + i * 1111).slice(-4), addr: '[' + (12345 + i * 211) + '] ' + ['경기 고양시 예시로 12 (예시동)', '서울 마포구 월드컵로 ○○ 101동 1203호', '부산 해운대구 센텀중앙로 ○○'][i % 3], memo: ['부재 시 문 앞에 놓아 주세요', '배송 전 연락 주세요', '없음'][i % 3],
+        pays: [['상품구매금액', amt.toLocaleString()], ['배송비', '3,000'], ['할인', '0'], ['총 실결제금액', (amt + 3000).toLocaleString()]].map(([k, v]) => ({ k, v })),
+        hasTrk: ['배송대기', '배송중', '배송완료'].includes(r[4]), co: r[4] === '배송대기' ? '택배사' : '한진택배', trkNo: r[4] === '배송대기' ? '송장 전' : '5120093' + String(10457 + i * 311).slice(-5), sdt: r[4] === '배송대기' ? '-' : '2026-11-27 13:22:19',
+        buyer: nm + ' (비회원)', pm: ['카드', '네이버페이', '쿠팡 결제'][i % 3], pdt: '2026-11-27 ' + (r[0].includes(':') ? r[0] : '09:10') }; })() : {};
+    const SHIP = st => ['배송대기', '배송중', '배송완료'].includes(st), TRK = (r, i) => r[4] === '배송대기' ? '송장 전' : '한진택배 5120093' + String(10457 + i * 311).slice(-5);
+    const rows = L.map((r, i) => ({ open: () => this.setState({ opop: i }), hasTrk: SHIP(r[4]), trk: SHIP(r[4]) ? TRK(r, i) : '', full: FULL, addr: '(0' + (4000 + i * 137) + ') ' + ADR[i % ADR.length], tel: '010-****-' + String(1234 + i * 1111).slice(-4), track: r[4] === '배송대기' ? '송장 전' : 'CJ대한통운 11112222' + String(3512 + i * 97).padStart(4, '0'), tm: r[0], ch: r[1], who: FULL ? r[2].replace('*', ['영', '민', '수', '현'][i % 4]) : r[2], st: r[4], its: r[3].map(x => ({ n: x[0], o: x[1], q: x[2] })),
+      chS: 'font-size: 11px; font-weight: 700; color: #fff; border-radius: 6px; padding: 1px 7px; background: ' + CH[r[1]],
+      stS: 'font-size: 11px; font-weight: 800; border-radius: 99px; padding: 1px 7px; color: ' + stc(r[4]) + '; background: ' + stc(r[4]) + '1a' }));
+    // 품목 · 재고 (보고 있는 주문들 기준)
+    const STK = { '식용꽃 비올라 30송이': 18, '식용꽃 팬지 30송이': 18, '식용꽃 혼합 30송이': 12, '애플민트 크기지정 X 100g': '3.5kg', '로즈마리': '7.4kg', '★단단 로즈마리': '1.2kg', '자스민 생잎 100잎': 40, '타임': '2.1kg' };
+    const G = new Map(); L.forEach(r => r[3].forEach(x => { if (!G.has(x[3])) G.set(x[3], new Map()); const m = G.get(x[3]); m.set(x[0], (m.get(x[0]) || 0) + x[2]); }));
+    const GO = ['식용꽃', '애플민트', '로즈마리', '타임', '자스민'];
+    const items = [...G.entries()].sort((a, b) => GO.indexOf(a[0]) - GO.indexOf(b[0])).map(([g, m]) => ({ g, L: [...m.entries()].map(([n, q]) => { const st = STK[n] ?? 0, num = typeof st === 'number';
+      const left = num ? (st - q) + '개 남음' : st.replace(/[\d.]+/, v => (Math.round((parseFloat(v) - q * 0.1) * 100) / 100)) + ' 남음', low = num && st - q < 5;
+      return { n, q: num ? q + '개' : (q * 100) + 'g', st, left: low ? '⚠ ' + left : left, leftS: 'font-size: 13.5px; font-weight: 800; color: ' + (low ? '#c0392b' : '#2e7d4f') }; }) }));
+    const isLive = live.includes(cur);
+    return { q: s.q, hasQ: !!s.q, onQ: e => this.setState({ q: e.target.value }), clearQ: () => this.setState({ q: '' }),
+      qBoxS: 'height: 42px; border-radius: 14px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: #fff; border: 1.5px solid ' + (s.q ? '#ff9800' : '#dfe3dc'), showList: !!q, noHit: !!q && !hits.length,
+      hits: hits.map((x, i) => ({ ...x, go: go(x), s: 'display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 0; border-radius: 10px; text-align: left; cursor: pointer; background: ' + (i === 0 ? '#fff3e0' : 'transparent') })),
+      moved: !!s.dest, dest: s.dest || { t: '', d: '', path: '' },
+      hasOpop: !!OP0, op, closeOpop: () => this.setState({ opop: null }), isClaim: cur === '취소·반품', claims, isFull: false, fulls, showItems: !['배송대기', '배송중', '배송완료', '전체 주문 조회', '취소·반품'].includes(cur), hasPop: !!P0, pop: P0 ? { ...P0, badge: badge(P0.col) } : {}, pays: P0 ? P0.pays.map(([k, v]) => ({ k, v })) : [], payer: P0 ? P0.payer.map(([k, v]) => ({ k, v })) : [], closePop: () => this.setState({ pop: null }), stop: e => e.stopPropagation(),
+      d1: s.d1, d2: s.d2, onD1: e => this.setState({ d1: e.target.value }), onD2: e => this.setState({ d2: e.target.value }), stats, bar, oq: s.oq, onOq: e => this.setState({ oq: e.target.value }),
+      listTitle: cur, nRows: cur === '취소·반품' ? claims.length : rows.length, items,
+      rows: cur === '취소·반품' ? [] : rows, noRows: cur === '취소·반품' ? !claims.length : !rows.length, foot: a1.replace(/-/g, '.') + ' ~ ' + a2.replace(/-/g, '.') + ' 주문일 · ' + cur + ' · 위 숫자 칸을 누르면 그 상태 주문으로 바뀌어요 · 품목 칸은 보고 있는 주문만 합쳐요 (배송대기 · 배송중 · 배송완료 · 취소·반품은 품목 칸 없이 주문만)' };
+  }
+}
+</script>
+</body>
+</html>

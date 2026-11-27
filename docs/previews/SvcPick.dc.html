@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>서비스 손님 고르기 · 상세보기 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1000px; position: relative; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 860px; margin: 0 auto; display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start">
+
+<div style="width: 400px; max-width: 100%; background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column">
+<div style="padding: 14px 16px; border-bottom: 1px solid #eef0ec; display: flex; align-items: center; gap: 8px"><b style="font-size: 15px; flex: 1">자스민 잎 · 손님 고르기</b><span style="font-size: 20px; color: #8a9186">×</span></div>
+<div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e5e8e3; border-radius: 12px; background: #f5f6f4"><span style="width: 20px; height: 20px; border-radius: 5px; background: #2e7d4f; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800">−</span><b style="flex: 1">전체 선택</b><small style="color: #8a9186">5분</small></div>
+<span style="font-size: 12.5px; font-weight: 700; color: #2e7d4f">{{ nSelTxt }}</span>
+<span style="font-size: 12.5px; color: #8a9186">추천 손님</span>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+<div style="{{ r.boxS }}">
+<div style="display: flex; align-items: center; gap: 10px">
+<button type="button" onClick="{{ r.tog }}" style="{{ r.chkS }}">{{ r.chk }}</button>
+<b style="flex: 1; font-size: 14.5px">{{ r.who }}</b>
+<button type="button" onClick="{{ r.open }}" style="border: 0; background: none; color: #2e7d4f; text-decoration: underline; font-size: 13px; cursor: pointer">{{ r.openT }}</button>
+</div>
+<sc-if value="{{ r.isOpen }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12.5px; color: #5f6a5c">{{ r.sub }}</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ r.stats }}" as="s" hint-placeholder-count="3"><span style="font-size: 12px; font-weight: 700; color: #3d473b; background: #fff; border: 1px solid #dfe3dc; border-radius: 99px; padding: 2px 9px">{{ s }}</span></sc-for>
+<sc-if value="{{ r.claim }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; font-weight: 700; color: #c0392b; background: #fdecea; border-radius: 99px; padding: 2px 9px">⚠ 반품 · 취소 1번</span></sc-if>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 12px; font-weight: 800; color: #5f6a5c">최근 구입</span>
+<sc-for list="{{ r.recent }}" as="x" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 6px; font-size: 12.5px"><span style="color: #8a9186">{{ x.d }}</span><span style="color: #1f2620; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ x.t }}</span></div></sc-for>
+</div>
+<span style="font-size: 12px; color: #2e7d4f">💡 {{ r.why }}</span>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div style="padding: 12px 14px; border-top: 1px solid #eef0ec"><button type="button" style="width: 100%; height: 44px; border-radius: 12px; border: 0; background: #2e7d4f; color: #fff; font-size: 15px; font-weight: 800">확인</button></div>
+</div>
+
+<div style="flex: 1; min-width: 260px; background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #3d473b; line-height: 1.8">
+<b style="font-size: 14px">바뀌는 것</b><br>
+· 아래 버튼 <b>[다 골랐어요] → [확인]</b><br>
+· <b>[상세보기]</b>를 누르면 고객 관리 화면을 짧게 줄여서 보여 줘요<br>
+&nbsp;&nbsp;– 지역 · 주문 번호<br>
+&nbsp;&nbsp;– <b>주문 몇 번 · 보통 며칠마다 · 마지막 주문 언제</b>, 거래처 같은 태그, 반품 · 취소 이력<br>
+&nbsp;&nbsp;– <b>최근 구입 3줄</b>: 최근 주문 3번, 날짜 + 품목 (길면 "외 N종")<br>
+&nbsp;&nbsp;– 💡 왜 추천했는지 한 줄<br>
+· 연락처 · 주소 · 메모 같은 긴 내용은 빼요. 더 보려면 고객 관리 탭에서 봐요.<br>
+<span style="color: #8a9186">예시 이름 · 예시 품목이에요.</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: { a: 1, b: 1, c: 1 }, open: { c: 1 } }; }
+  renderVals() {
+    const s = this.state;
+    const C = [
+      { id: 'a', who: '손님 A', sub: '20261127-0000201 · 서울 마포구', stats: ['주문 8번', '보통 14일마다', '마지막 주문 오늘'], recent: [['11/27', '자스민 100잎 × 2'], ['11/13', '자스민 100잎 × 1 · 로즈마리 100g × 1'], ['10/30', '자스민 100잎 × 2']], why: '예전에 자스민을 6번 샀어요' },
+      { id: 'b', who: '손님 B', sub: '20261127-0000188 · 경기 성남시', stats: ['주문 3번', '보통 30일마다', '마지막 주문 오늘', '거래처'], recent: [['11/27', '식용꽃 비올라 × 10'], ['10/28', '식용꽃 비올라 × 8 · 자스민 100잎 × 1'], ['9/29', '식용꽃 혼합 × 5']], why: '단골 · 거래처' },
+      { id: 'c', who: '손님 C', sub: '20261127-0000205 · 서울 영등포구', stats: ['주문 5번', '보통 21일마다', '마지막 주문 오늘'], recent: [['11/27', '자스민 100잎 × 1 · 타임 30g × 1'], ['11/06', '자스민 100잎 × 2'], ['10/16', '로즈마리 100g × 1 · 애플민트 30g × 1 외 1종']], why: '예전에 5번 산 품목 · 이번에도 주문', claim: true },
+      { id: 'd', who: '손님 D', sub: '20261127-0000214 · 부산 해운대구', stats: ['주문 2번', '보통 45일마다', '마지막 주문 오늘'], recent: [['11/27', '로즈마리 100g × 2'], ['10/12', '자스민 100잎 × 1']], why: '예전에 한 번 산 품목' },
+      { id: 'e', who: '손님 E', sub: '20261127-0000222 · 대전 유성구', stats: ['첫 주문'], recent: [['11/27', '타임 30g × 1 · 애플민트 30g × 1']], why: '이번 주문 손님' }];
+    const rows = C.map(c => { const on = !!s.sel[c.id], op = !!s.open[c.id];
+      return { ...c, isOpen: op, openT: op ? '접기' : '상세보기', chk: on ? '✓' : '', claim: !!c.claim,
+        recent: c.recent.map(x => ({ d: x[0], t: x[1] })),
+        tog: () => { const sel = { ...s.sel }; if (sel[c.id]) delete sel[c.id]; else sel[c.id] = 1; this.setState({ sel }); },
+        open: () => { const o = { ...s.open }; if (o[c.id]) delete o[c.id]; else o[c.id] = 1; this.setState({ open: o }); },
+        chkS: 'width: 20px; height: 20px; padding: 0; border-radius: 5px; cursor: pointer; font-weight: 800; font-size: 13px; color: #fff; border: 1.5px solid ' + (on ? '#2e7d4f' : '#c5cbc1') + '; background: ' + (on ? '#2e7d4f' : '#fff'),
+        boxS: 'padding: 10px 12px; border-radius: 12px; border: 1px solid ' + (on ? '#2e7d4f' : '#e5e8e3') + '; background: ' + (on ? '#eaf3e6' : '#fff') }; });
+    return { rows, nSelTxt: Object.keys(s.sel).length + '분 골랐어요' };
+  }
+}
+</script>
+</body>
+</html>

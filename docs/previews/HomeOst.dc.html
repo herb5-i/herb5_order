@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>홈 · 주문 처리 현황 + 들어온 주문 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f4f5f3}
+button{font-family:inherit}
+.scr::-webkit-scrollbar{width:8px}.scr::-webkit-scrollbar-thumb{background:#d6dad3;border-radius:8px}
+</style>
+</helmet>
+<div style="min-height: 1000px; box-sizing: border-box; padding: 28px 20px 48px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 숫자 · 가짜 이름</span>
+<span style="font-size: 13px; color: #5f6a5c">홈 화면 '주문 처리 현황' 위젯이에요</span>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.03)">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="flex: 1; font-size: 14px; font-weight: 700; color: #5f6a5c">주문 처리 현황 <small style="font-weight: 500; font-size: 12px; color: #8a9186">카페24 · 22:50</small></span>
+<button type="button" aria-label="새로 받기" style="width: 30px; height: 30px; border-radius: 99px; border: 0; background: #eef4ee; color: #2e7d4f; font-size: 15px; cursor: pointer">↻</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px">
+<sc-for list="{{ cells }}" as="c" hint-placeholder-count="6">
+<div style="{{ c.box }}"><span style="font-size: 12.5px; color: #5f6a5c">{{ c.n }}</span><b style="{{ c.num }}">{{ c.v }}</b></div>
+</sc-for>
+</div>
+<div style="border-top: 1px dashed #e1e5df; padding-top: 12px; display: flex; flex-direction: column; gap: 8px">
+<b style="font-size: 14.5px">들어온 주문</b>
+<div style="display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="font-size: 12px; font-weight: 700; color: #8a9186; padding-left: 2px">주문</span>
+<div class="scr" style="height: 300px; overflow-y: auto; border: 1px solid #eceee9; border-radius: 14px; background: #fbfcfa; overscroll-behavior: contain">
+<sc-for list="{{ ords }}" as="o" hint-placeholder-count="6">
+<div style="{{ o.row }}">
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+<b style="font-size: 13.5px">{{ o.who }}</b>
+<span style="{{ o.chStyle }}">{{ o.ch }}</span>
+<span style="flex: 1"></span>
+<span style="font-size: 11.5px; color: #8a9186">{{ o.at }}</span>
+</div>
+<sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="2">
+<div style="{{ l.row }}"><span style="min-width: 0">{{ l.p }}</span><span style="color: #8a9186; min-width: 0">{{ l.o }}</span><b style="text-align: right">{{ l.q }}</b></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="font-size: 12px; font-weight: 700; color: #8a9186; padding-left: 2px">품목</span>
+<div class="scr" style="height: 300px; overflow-y: auto; border: 1px solid #eceee9; border-radius: 14px; background: #fbfcfa; overscroll-behavior: contain">
+<sc-for list="{{ items }}" as="r" hint-placeholder-count="6">
+<sc-if value="{{ r.head }}" hint-placeholder-val="{{ false }}"><div style="{{ r.hStyle }}">{{ r.group }}</div></sc-if>
+<div style="{{ r.row }}">
+<span style="flex: 1; min-width: 0"><b style="font-size: 13.5px">{{ r.name }}</b><span style="display: block; font-size: 11.5px; color: #8a9186">재고 {{ r.cur }} · 주문 {{ r.need }}</span></span>
+<b style="{{ r.lf }}">{{ r.left }}</b>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<span style="font-size: 12px; color: #8a9186">22:50 확인</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.6">· 주문 칸과 품목 칸은 각각 따로 스크롤돼요 (홈 화면 전체는 안 움직여요).<br>· 품목 칸은 집계 보기와 같은 순서예요: 묶음(식용꽃 · 생잎 …)마다 제목이 붙고, 그 안은 집계 순서대로요. 모자란 품목은 빨갛게 표시만 하고 순서는 안 바꿔요.<br>· 로즈마리 · 타임처럼 옵션(10g · 30g · 100g)이 달라도 같은 재고에서 빠지는 품목은 이름을 한 번만 쓰고, 주문은 g로 합쳐서 보여 줘요.<br>· 휴대폰처럼 좁은 화면에서는 주문 칸 아래에 품목 칸이 와요.<br>· 주문을 누르면 정리 › 들어온 주문에서 그 주문을 바로 보여 줘요.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":820,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { view: 'ord' }; }
+  renderVals() {
+    const s = this.state;
+    const C = [['입금전', 3], ['상품준비중', 0], ['배송보류중', 1], ['배송준비중', 18], ['배송대기', 0], ['배송중', 42]];
+    const cells = C.map(([n, v]) => ({ n, v: String(v), box: 'display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 14px; background: ' + (v ? '#eef6ef' : '#f5f6f4'), num: 'font-size: 20px; font-weight: 800; color: ' + (v ? '#1f2620' : '#a3aaa0') }));
+    const chC = { '자사몰': '#3d7a4f', '스마트스토어': '#2f86c4', '쿠팡': '#d9663f', '카톡': '#b8860b', '네이버페이': '#1fae5b' };
+    const O = [
+      ['김하늘', '스마트스토어', '22:41', '타임 100g 1 · 로즈마리 100g 1', false],
+      ['박서준', '자사몰', '22:12', '식용꽃 혼합 50송이 3 · 미니장미 5송이 2', true],
+      ['이도윤', '쿠팡', '21:55', '식용꽃 비올라 30송이 2', false],
+      ['레스토랑 봄날', '카톡', '21:20', '애플민트 작은잎 100g 3 · 식용꽃 혼합 50송이 2 · 미니장미 3', true],
+      ['최유나', '네이버페이', '20:48', '식용꽃 팬지 20송이 1 · 애플민트 보통잎 100g 1', false],
+      ['정민호', '스마트스토어', '20:10', '식용꽃 비올라 30송이 1 · 로즈마리 10g 2', false],
+      ['한지원', '쿠팡', '19:40', '식용꽃 혼합 50송이 2', true],
+      ['오세린', '자사몰', '19:02', '타임 10g 2 · 애플민트 작은잎 100g 1', false],
+      ['카페 숲길', '카톡', '18:30', '식용꽃 비올라 30송이 4', false]];
+    const lineRow = bad => 'display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 22px; gap: 8px; font-size: 12.5px; margin-top: 3px' + (bad ? '; color: #c0392b' : '');
+    const shortNames = ['식용꽃 혼합', '미니장미'];
+    const ords = O.map(([who, ch, at, items, sh], i) => ({ who, ch, at, short: sh,
+      lines: items.split(' · ').map(t => { const m = t.match(/^(.*?)\s+(\d+)$/), body = m ? m[1] : t, q = m ? m[2] : '1', mm = body.match(/^(.*?)\s+(\d+\s*(?:송이|g|개).*)$/);
+        const p = mm ? mm[1] : body, o = mm ? mm[2] : ''; return { p, o, q, row: lineRow(shortNames.some(n => p.indexOf(n) === 0)) }; }),
+      chStyle: 'font-size: 11px; font-weight: 700; color: #fff; border-radius: 6px; padding: 1px 7px; background: ' + chC[ch],
+      row: 'padding: 10px 14px; border-top: ' + (i ? '1px solid #eef0ec' : '0') + (sh ? '; background: #fdf5f3' : '') }));
+    // 집계 보기와 같은 순서: 묶음(식용꽃 → 생잎 → 장식용 꽃) 안에서 집계 순서대로
+    const I = [['식용꽃', '식용꽃 비올라 30송이', 12, 20], ['식용꽃', '식용꽃 팬지 20송이', 5, 9], ['식용꽃', '식용꽃 혼합 50송이', 7, 4],
+      ['생잎', '애플민트 작은잎 100g', 8, 15], ['생잎', '애플민트 보통잎 100g', 3, 6], ['생잎', '로즈마리', 1160, 6500, 'g'], ['생잎', '타임', 420, 3000, 'g'],
+      ['장식용 꽃', '미니장미 5송이', 5, 2]];
+    const fmt = (v, u) => u === 'g' ? (v >= 1000 ? (Math.round(v / 10) / 100) + 'kg' : v + 'g') : v + '개';
+    const items = I.map(([group, name, need, cur, u], i) => { const l = cur - need, bad = l < 0, tight = !bad && l <= (u === 'g' ? 200 : 2), head = !i || I[i - 1][0] !== group;
+      return { group, head, name, need: fmt(need, u), cur: fmt(cur, u), left: bad ? fmt(-l, u) + ' 부족' : fmt(l, u) + ' 남음',
+        hStyle: 'padding: 7px 14px 5px; font-size: 12px; font-weight: 800; color: #3d7a4f; background: #f1f5ef; border-top: ' + (i ? '1px solid #e4e9e2' : '0'),
+        lf: 'font-size: 13px; white-space: nowrap; color: ' + (bad ? '#c0392b' : tight ? '#b86b00' : '#2e7d4f'),
+        row: 'display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-top: 1px solid #eef0ec' + (bad ? '; background: #fdf5f3' : '') }; });
+    const seg = on => 'height: 30px; padding: 0 12px; border-radius: 8px; border: 0; font-size: 13px; font-weight: 800; cursor: pointer; ' + (on ? 'background: #fff; color: #1f2620; box-shadow: 0 1px 3px rgba(0,0,0,.12)' : 'background: transparent; color: #5f6a5c');
+    const nShort = I.filter(([, , n, c]) => c - n < 0).length;
+    return { cells, ords, items, nOrd: O.length, nShort, hasShort: nShort > 0,
+      isOrd: s.view === 'ord' ? 'true' : 'false', isItem: s.view === 'item' ? 'true' : 'false', isOrdB: s.view === 'ord', isItemB: s.view === 'item',
+      vOrd: () => this.setState({ view: 'ord' }), vItem: () => this.setState({ view: 'item' }), vOrdStyle: seg(s.view === 'ord'), vItemStyle: seg(s.view === 'item') };
+  }
+}
+</script>
+</body>
+</html>

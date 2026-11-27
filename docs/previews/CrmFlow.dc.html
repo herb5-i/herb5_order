@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>고객 관리 · 순서대로 (손님 → 문자 → 보내기 → 결과) 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(14deg)}40%{transform:rotate(-12deg)}60%{transform:rotate(8deg)}80%{transform:rotate(-4deg)}}</style>
+</helmet>
+<div style="min-height: 1700px; position: relative; box-sizing: border-box; padding: 24px 16px 48px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
+<span style="align-self: flex-start; font-size: 12px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 손님 · ①부터 차례로 눌러 보세요</span>
+
+<!-- 맨 위: 손님 정보 4가지 → 문자 한 통 -->
+<div style="background: #fff; border-radius: 26px; padding: 22px 18px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: 0 1px 0 #e5e8e3, 0 14px 30px -22px rgba(0,0,0,.3)">
+<b style="font-size: 20px; text-align: center">손님을 알면, 딱 맞는 문자 한 통</b>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%">
+<sc-for list="{{ src }}" as="x" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="{{ x.s }}">{{ x.ic }}</span><b style="font-size: 15px">{{ x.t }}</b><small style="font-size: 12px; color: #8a9186">{{ x.d }}</small></div>
+</sc-for>
+</div>
+<div style="width: 78%; height: 16px; border: 2px solid #c9cfc5; border-top: 0; border-radius: 0 0 14px 14px; position: relative"></div>
+<span style="font-size: 34px; margin-top: -8px; animation: ring 1.6s ease-in-out infinite; transform-origin: 50% 10%">🔔</span>
+<div style="position: relative; width: 100%; box-sizing: border-box; background: #f6f7f5; border-radius: 18px; padding: 16px 18px; text-align: center; font-size: 16px; font-weight: 700; line-height: 1.6; white-space: pre-line">{{ bubble }}</div>
+</div>
+
+<!-- 단계 (위에서 아래로 차례대로) -->
+<div style="display: flex; gap: 14px">
+<div style="display: flex; flex-direction: column; align-items: center; flex: none; width: 44px">
+<span style="{{ s0.numS }}">{{ s0.num }}</span>
+<i style="{{ s0.lineS }}"></i>
+</div>
+<div style="{{ s0.boxS }}">
+<div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap"><b style="font-size: 19px">{{ s0.t }}</b><span style="font-size: 14px; color: #8a9186">{{ s0.d }}</span></div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ big }}" as="b" hint-placeholder-count="3"><button type="button" onClick="{{ b.go }}" style="{{ b.s }}"><span style="font-size: 26px">{{ b.ic }}</span><b style="font-size: 28px; line-height: 1">{{ b.n }}</b><span style="font-size: 14px; font-weight: 800">{{ b.t }}</span></button></sc-for>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap"><sc-for list="{{ more }}" as="m" hint-placeholder-count="5"><button type="button" onClick="{{ m.go }}" style="{{ m.s }}">{{ m.t }}</button></sc-for></div>
+<div style="border: 1px solid #eceee9; border-radius: 16px; overflow: hidden">
+<sc-for list="{{ people }}" as="p" hint-placeholder-count="3">
+<div style="{{ p.rs }}">
+<span style="{{ p.avS }}">{{ p.av }}</span>
+<span style="display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0"><b style="font-size: 16px">{{ p.nm }} <span style="{{ p.ds }}">{{ p.dd }}</span></b><span style="font-size: 13.5px; color: #5f6a5c">{{ p.item }}</span></span>
+<button type="button" onClick="{{ p.tog }}" style="{{ p.bs }}">{{ p.bt }}</button>
+</div>
+</sc-for>
+</div>
+
+</div>
+</div>
+<div style="display: flex; gap: 14px">
+<div style="display: flex; flex-direction: column; align-items: center; flex: none; width: 44px">
+<span style="{{ s1.numS }}">{{ s1.num }}</span>
+<i style="{{ s1.lineS }}"></i>
+</div>
+<div style="{{ s1.boxS }}">
+<div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap"><b style="font-size: 19px">{{ s1.t }}</b><span style="font-size: 14px; color: #8a9186">{{ s1.d }}</span></div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ recipes }}" as="r" hint-placeholder-count="4"><button type="button" onClick="{{ r.go }}" style="{{ r.s }}"><span style="font-size: 28px">{{ r.ic }}</span><b style="font-size: 14px">{{ r.t }}</b></button></sc-for>
+</div>
+<div style="display: flex; gap: 10px; align-items: flex-start"><span style="font-size: 26px">💬</span><div style="flex: 1; background: #fef3c7; border-radius: 4px 18px 18px 18px; padding: 12px 14px; font-size: 15px; line-height: 1.7; white-space: pre-line">{{ msg }}</div></div>
+
+</div>
+</div>
+<div style="display: flex; gap: 14px">
+<div style="display: flex; flex-direction: column; align-items: center; flex: none; width: 44px">
+<span style="{{ s2.numS }}">{{ s2.num }}</span>
+<i style="{{ s2.lineS }}"></i>
+</div>
+<div style="{{ s2.boxS }}">
+<div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap"><b style="font-size: 19px">{{ s2.t }}</b><span style="font-size: 14px; color: #8a9186">{{ s2.d }}</span></div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<button type="button" onClick="{{ cp }}" style="{{ cpS }}">{{ cpT }}</button>
+<button type="button" onClick="{{ xl }}" style="{{ xlS }}">{{ xlT }}</button>
+</div>
+<button type="button" onClick="{{ send }}" style="{{ sendS }}">{{ sendT }}</button>
+
+</div>
+</div>
+<div style="display: flex; gap: 14px">
+<div style="display: flex; flex-direction: column; align-items: center; flex: none; width: 44px">
+<span style="{{ s3.numS }}">{{ s3.num }}</span>
+
+</div>
+<div style="{{ s3.boxS }}">
+<div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap"><b style="font-size: 19px">{{ s3.t }}</b><span style="font-size: 14px; color: #8a9186">{{ s3.d }}</span></div>
+
+<sc-for list="{{ results }}" as="x" hint-placeholder-count="2">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #f0f2ee">
+<span style="font-size: 26px">{{ x.ic }}</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0"><span style="font-size: 14.5px"><b>{{ x.t }}</b> <small style="color: #8a9186">{{ x.d }}</small></span><div style="height: 10px; border-radius: 99px; background: #eef0ec; overflow: hidden"><i style="{{ x.bar }}"></i></div><small style="font-size: 13px; color: #5f6a5c">{{ x.line }}</small></div>
+<b style="{{ x.ps }}">{{ x.pct }}</b>
+</div>
+</sc-for>
+
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { g: 'soon', off: {}, rec: 'reorder', cp: false, xl: false, sent: false }; }
+  renderVals() {
+    const s = this.state;
+    const P = [
+      { id: 'a', nm: '김하늘', item: '로즈마리 100g', dd: 2, g: ['soon', 'vip'] }, { id: 'b', nm: '○○카페', item: '식용꽃 비올라', dd: 1, g: ['soon', 'vip', 'biz'] },
+      { id: 'c', nm: '이도윤', item: '자스민 100잎', dd: 2, g: ['soon'] }, { id: 'd', nm: '박서연', item: '애플민트 30g', dd: -8, g: ['late'] },
+      { id: 'e', nm: '△△식당', item: '식용꽃 혼합', dd: -9, g: ['late', 'biz'] }, { id: 'f', nm: '최민준', item: '타임 30g', dd: -8, g: ['late', 'promise'] },
+      { id: 'g', nm: '정유나', item: '로즈마리 30g', dd: null, g: ['first'] }, { id: 'h', nm: '한지우', item: '자스민 100잎', dd: -36, g: ['sleep'] }];
+    const B = [['soon', '🔜', '곧 살 손님', '#2e7d4f', '#e3f1e6'], ['late', '⏰', '늦은 손님', '#b86b00', '#fff0d9'], ['promise', '📌', '약속한 손님', '#2f6db5', '#e6eefb']];
+    const M = [['vip', '👑 단골'], ['first', '🌱 처음 온 손님'], ['sleep', '💤 잠든 손님'], ['biz', '🏪 거래처'], ['all', '👥 전체']];
+    const inG = (p, k) => k === 'all' || p.g.includes(k);
+    const L = P.filter(p => inG(p, s.g)), pick = L.filter(p => !s.off[p.id]);
+    const big = B.map(([k, ic, t, c, bg]) => { const on = s.g === k; return { ic, t, n: P.filter(p => inG(p, k)).length, go: () => this.setState({ g: k, off: {}, sent: false, cp: false, xl: false }),
+      s: 'display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 6px; border-radius: 18px; cursor: pointer; border: 0; color: ' + (on ? '#fff' : c) + '; background: ' + (on ? c : bg) }; });
+    const more = M.map(([k, t]) => { const on = s.g === k; return { t: t + ' ' + P.filter(p => inG(p, k)).length, go: () => this.setState({ g: k, off: {}, sent: false, cp: false, xl: false }), s: 'height: 32px; padding: 0 12px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid ' + (on ? '#2e7d4f' : '#dfe3dc') + '; background: ' + (on ? '#2e7d4f' : '#fff') + '; color: ' + (on ? '#fff' : '#3d473b') }; });
+    const col = p => p.dd === null ? '#5f6a5c' : p.dd >= 0 ? '#2e7d4f' : '#b86b00';
+    const ddT = p => p.dd === null ? '처음 온 손님' : p.dd > 0 ? p.dd + '일 뒤 다시 살 때' : p.dd === 0 ? '오늘' : (-p.dd) + '일 늦음';
+    const people = L.map(p => { const on = !s.off[p.id]; return { nm: p.nm, item: p.item, av: p.nm.replace(/[○△]/g, '')[0], dd: ddT(p),
+      avS: 'width: 42px; height: 42px; flex: none; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #fff; background: ' + col(p),
+      ds: 'font-size: 12.5px; font-weight: 800; color: ' + col(p), tog: () => this.setState({ off: { ...s.off, [p.id]: on } }), bt: on ? '✓ 보내요' : '빼기',
+      bs: 'height: 36px; padding: 0 12px; border-radius: 99px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; border: 1.5px solid ' + (on ? '#2e7d4f' : '#d5dad2') + '; background: ' + (on ? '#e8f2ea' : '#fff') + '; color: ' + (on ? '#2e7d4f' : '#8a9186'),
+      rs: 'display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-top: 1px solid #f0f2ee; opacity: ' + (on ? 1 : .45) }; });
+    const R = { reorder: ['🔁', '다시 살 때', '{이름}님, 허브아이예요 🌿\n{품목} 떨어질 때 됐어요.\n이번 주 주문하시면 바로 보내 드릴게요!'], late: ['💌', '안부 인사', '{이름}님, 요즘 {품목} 잘 쓰세요? 🌿\n다음 주문 때 작은 덤을 넣어 드릴게요.'],
+      restock: ['📦', '다시 들어왔어요', '{이름}님, {품목}이 다시 들어왔어요! 🌱\n넉넉할 때 주문해 주세요.'], thanks: ['🙏', '고마워요', '{이름}님, 주문해 주셔서 고마워요 🌿\n다음 주문엔 덤을 챙겨 드릴게요.'] };
+    const p0 = pick[0] || P[0], msg = R[s.rec][2].replace('{이름}', p0.nm).replace('{품목}', p0.item);
+    const recipes = Object.entries(R).map(([k, [ic, t]]) => { const on = s.rec === k; return { ic, t, go: () => this.setState({ rec: k }), s: 'display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 4px; border-radius: 16px; cursor: pointer; border: 2px solid ' + (on ? '#b86b00' : '#eceee9') + '; background: ' + (on ? '#fff3e0' : '#fff') }; });
+    const okB = (on, t1, t2) => ({ t: on ? '✓ ' + t2 : t1, s: 'height: 52px; border-radius: 14px; font-size: 15.5px; font-weight: 800; cursor: pointer; border: 1.5px solid ' + (on ? '#2e7d4f' : '#d5dad2') + '; background: ' + (on ? '#e8f2ea' : '#fff') + '; color: ' + (on ? '#2e7d4f' : '#1f2620') });
+    const cpB = okB(s.cp, '📋 문구 복사', '복사했어요'), xlB = okB(s.xl, '⬇ 번호 엑셀', '받았어요');
+    const res = [['🔁', '다시 살 때', '11/20 · 곧 살 손님', 12, 5, '23만 원'], ['💌', '안부 인사', '11/13 · 늦은 손님', 9, 2, '7만 원']];
+    if (s.sent) res.unshift([R[s.rec][0], R[s.rec][1], '방금 · ' + pick.length + '명', pick.length, null, '']);
+    const results = res.map(([ic, t, d, n, back, won]) => { const pct = back === null ? 0 : Math.round(back / n * 100); return { ic, t, d, pct: back === null ? '…' : pct + '%',
+      line: back === null ? '7일 동안 다시 주문하는지 세고 있어요' : n + '명 중 ' + back + '명 다시 주문 · ' + won,
+      ps: 'font-size: 22px; color: ' + (back === null ? '#8a9186' : pct >= 40 ? '#2e7d4f' : '#b86b00'), bar: 'display: block; height: 100%; width: ' + pct + '%; background: ' + (pct >= 40 ? '#2e7d4f' : '#e3a14a') }; });
+    const doneN = [pick.length > 0, true, s.sent, s.sent];
+    const cur = !pick.length ? 0 : !s.sent ? 2 : 3;
+    const ST = [['누구에게?', '손님 고르기 · ' + pick.length + '명'], ['무슨 말을?', '문자 고르기'], ['보내기', '복사하고 보내기'], ['어땠나요?', '7일 뒤 다시 주문했는지']];
+    const steps = ST.map(([t, d], i) => { const done = i < cur || (i === 3 && s.sent), act = i === cur || (i === 1 && cur >= 1);
+      return { num: done && i < 3 ? '✓' : String(i + 1), t, d, line: i < 3, is1: i === 0, is2: i === 1, is3: i === 2, is4: i === 3,
+        numS: 'width: 44px; height: 44px; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 900; ' + (done && i < 3 ? 'background: #2e7d4f; color: #fff' : act ? 'background: #fff; color: #2e7d4f; border: 3px solid #2e7d4f; box-sizing: border-box' : 'background: #e9ece7; color: #8a9186'),
+        lineS: 'display: block; width: 3px; flex: 1; min-height: 20px; margin: 4px 0; border-radius: 2px; background: ' + (done ? '#2e7d4f' : '#dfe3dc'),
+        boxS: 'flex: 1; min-width: 0; margin-bottom: 14px; background: #fff; border-radius: 22px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 0 #e5e8e3, 0 12px 26px -22px rgba(0,0,0,.35); border: 2px solid ' + (act && !(done && i < 3) ? '#2e7d4f' : 'transparent') }; });
+    const g = B.find(x => x[0] === s.g);
+    return { src: [['🧾', '주문 기록', '언제 · 얼마나', '#fdecea'], ['🌿', '자주 사는 것', '좋아하는 품목', '#e3f1e6'], ['🔁', '다시 사는 날', '보통 며칠마다', '#e6eefb'], ['🏷', '태그 · 메모', '거래처 · 약속', '#fff0d9']].map(([ic, t, d, bg]) => ({ ic, t, d, s: 'width: 64px; height: 64px; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-size: 32px; background: ' + bg })),
+      bubble: msg.split('\n').slice(0, 2).join('\n'), big, more, people, recipes, msg, results, s0: steps[0], s1: steps[1], s2: steps[2], s3: steps[3],
+      cp: () => this.setState({ cp: true }), cpT: cpB.t, cpS: cpB.s, xl: () => this.setState({ xl: true }), xlT: xlB.t, xlS: xlB.s,
+      send: () => this.setState({ sent: !s.sent }), sendT: s.sent ? '✓ 보냈어요 · ④에서 결과를 볼 수 있어요' : '✅ 다 보냈어요',
+      sendS: 'height: 56px; border-radius: 16px; border: 0; font-size: 17px; font-weight: 800; cursor: pointer; background: ' + (s.sent ? '#e8f2ea' : '#2e7d4f') + '; color: ' + (s.sent ? '#2e7d4f' : '#fff') };
+  }
+}
+</script>
+</body>
+</html>

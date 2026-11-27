@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>비고 날짜 지정 주문 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button,select{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1250px; position: relative; box-sizing: border-box; padding: 28px 20px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 가짜 이름 · 눌러 보세요</span>
+<span style="font-size: 13px; color: #5f6a5c">정리 › 주문 정리 (오늘 11/27 금)</span>
+<span style="flex: 1"></span>
+<div style="display: flex; background: #e7eae5; border-radius: 99px; padding: 3px">
+<button type="button" onClick="{{ dayA }}" style="{{ tabA }}">오늘 (11/27)</button>
+<button type="button" onClick="{{ dayB }}" style="{{ tabB }}">11/30 (월) 그날</button>
+</div>
+</div>
+
+<sc-if value="{{ isToday }}" hint-placeholder-val="{{ true }}">
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<b style="font-size: 15.5px">📅 날짜를 정해 둔 주문</b>
+<span style="font-size: 12px; font-weight: 700; color: #8a5a12; background: #fdf3e2; border-radius: 99px; padding: 2px 9px">{{ cntTxt }}</span>
+<span style="flex: 1"></span>
+<span style="font-size: 12px; color: #8a9186">비고에서 날짜를 찾았어요</span>
+</div>
+<sc-if value="{{ hasRows }}" hint-placeholder-val="{{ true }}">
+<div style="border: 1px solid #eceee9; border-radius: 14px; overflow: hidden">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+<div style="{{ r.box }}">
+<input type="checkbox" checked="{{ r.on }}" onChange="{{ r.tog }}" style="width: 17px; height: 17px; margin-top: 3px; accent-color: #2e7d4f; flex-shrink: 0">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px">
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap"><b style="font-size: 13.5px">{{ r.who }}</b><span style="{{ r.chS }}">{{ r.ch }}</span><span style="font-size: 12.5px; color: #4a5547">{{ r.items }}</span></div>
+<div style="font-size: 12.5px; background: #f6f7f5; border-radius: 8px; padding: 6px 9px; color: #4a5547">비고: {{ r.pre }}<mark style="background: #ffe7a8; color: #1f2620; border-radius: 3px; padding: 0 2px">{{ r.hit }}</mark>{{ r.post }}</div>
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12.5px">
+<span style="color: #5f6a5c">보낼 날</span>
+<select onChange="{{ r.pick }}" value="{{ r.day }}" style="height: 30px; border-radius: 8px; border: 1px solid #cfd6cc; background: #fff; font-size: 12.5px; padding: 0 6px">
+<sc-for list="{{ r.opts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}">{{ o.t }}</option></sc-for>
+</select>
+<sc-if value="{{ r.warn }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #a05a00">{{ r.warn }}</span></sc-if>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; align-items: center">
+<span style="font-size: 12px; color: #8a9186; flex: 1; min-width: 200px">고른 주문은 카페24에서 <b>배송보류 + 희망배송일</b>로 바뀌고, 오늘 엑셀에서 빠져요.</span>
+<button type="button" onClick="{{ ask }}" disabled="{{ none }}" style="{{ goS }}">{{ goT }}</button>
+</div>
+</sc-if>
+<sc-if value="{{ doneMsg }}" hint-placeholder-val="{{ false }}"><div style="font-size: 13px; color: #2e7d4f; font-weight: 700; background: #eef6ef; border-radius: 10px; padding: 9px 12px">{{ doneMsg }}</div></sc-if>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px"><b style="font-size: 15px">오늘 엑셀 (택배 송장용)</b><span style="font-size: 12px; color: #8a9186">{{ xlCnt }}</span></div>
+<div style="border: 1px solid #eceee9; border-radius: 12px; overflow: hidden; font-size: 12.5px">
+<div style="display: grid; grid-template-columns: 70px 1fr 1.4fr; gap: 8px; padding: 7px 12px; background: #f5f6f4; color: #5f6a5c"><span>수령인</span><span>품목</span><span>비고</span></div>
+<sc-for list="{{ xl }}" as="x" hint-placeholder-count="5"><div style="{{ x.box }}"><span>{{ x.who }}</span><span>{{ x.items }}</span><span style="{{ x.nS }}">{{ x.note }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDay }}" hint-placeholder-val="{{ false }}">
+<div style="background: #fff; border: 2px solid #2e7d4f; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap"><b style="font-size: 15.5px">📦 오늘 보낼 날짜 지정 주문</b><span style="font-size: 12px; font-weight: 700; color: #fff; background: #2e7d4f; border-radius: 99px; padding: 2px 9px">{{ dueCnt }}</span></div>
+<div style="border: 1px solid #eceee9; border-radius: 14px; overflow: hidden">
+<sc-for list="{{ due }}" as="r" hint-placeholder-count="2"><div style="{{ r.box }}"><div style="flex: 1; min-width: 0"><b style="font-size: 13.5px">{{ r.who }}</b> <span style="{{ r.chS }}">{{ r.ch }}</span><div style="font-size: 12.5px; color: #5f6a5c; margin-top: 3px">{{ r.items }} · 비고 "{{ r.note }}"</div></div><span style="{{ r.stS }}">{{ r.st }}</span></div></sc-for>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px; align-items: center; flex-wrap: wrap">
+<span style="font-size: 12px; color: #8a9186; flex: 1; min-width: 200px">보류를 풀면 배송준비중으로 돌아와서, 오늘 카페24 엑셀에 다시 들어가요.</span>
+<button type="button" onClick="{{ unhold }}" disabled="{{ dueDone }}" style="{{ unS }}">{{ unT }}</button>
+</div>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c">홈 '주문 처리 현황'에도 그날 아침 "오늘 보낼 날짜 지정 주문 N건"이 떠요.</p>
+</sc-if>
+
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.75">· 엑셀을 올리면 비고에서 <b>"29일에", "11/29", "토요일에", "다음주 월요일", "주말에"</b> 같은 날짜를 찾아 위에 모아 보여 줘요. 오늘 · 지난 날짜는 빼요.<br>· 보낼 날이 배송 쉬는 날(일요일 · 휴무일)이면 다음 배송일로 바꿔 주고 ⚠로 알려 줘요. 보낼 날은 직접 바꿀 수도 있어요.<br>· [카페24에 반영]을 누르면 확인 창이 뜨고 (관리자만), 카페24에서 그 주문이 <b>배송보류</b>가 되고 <b>희망배송일</b>이 적혀요. 오늘 엑셀 · 집계에서도 빠져요.<br>· 보낼 날이 되면 [보류 풀기]로 배송준비중으로 돌려요. 그날 카페24 엑셀에 다시 들어가요.</p>
+</div>
+<sc-if value="{{ cf }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(20,25,20,.3)"></div>
+<div style="position: absolute; top: 300px; left: 50%; transform: translateX(-50%); width: min(440px, 90%); background: #fff; border-radius: 18px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<b style="font-size: 16px">{{ cfT }}</b>
+<div style="font-size: 13px; color: #4a5547; line-height: 1.7; background: #f6f7f5; border-radius: 10px; padding: 10px 12px"><sc-for list="{{ cfL }}" as="x" hint-placeholder-count="2"><div>{{ x }}</div></sc-for></div>
+<span style="font-size: 12.5px; color: #8a9186">카페24에서 배송보류 + 희망배송일로 바뀌고, 오늘 엑셀에서 빠져요.</span>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" onClick="{{ cfNo }}" style="height: 38px; padding: 0 16px; border-radius: 10px; border: 1px solid #d5dad2; background: #fff; font-size: 13.5px; cursor: pointer">취소</button>
+<button type="button" onClick="{{ cfYes }}" style="height: 38px; padding: 0 16px; border-radius: 10px; border: 0; background: #2e7d4f; color: #fff; font-size: 13.5px; font-weight: 800; cursor: pointer">반영하기</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":820,"height":1250}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p);
+    this.state = { view: 'a', cf: false, done: false, un: false,
+      sel: { h1: true, h2: true, h3: true },
+      day: { h1: '11/30', h2: '11/28', h3: '12/02' } }; }
+  renderVals() {
+    const s = this.state, chC = { '자사몰': '#3d7a4f', '스마트스토어': '#2f86c4', '쿠팡': '#d9663f' };
+    const chS = ch => 'font-size: 11px; font-weight: 700; color: #fff; border-radius: 6px; padding: 1px 7px; background: ' + chC[ch];
+    const D = { '11/28': '11/28 (토)', '11/30': '11/30 (월)', '12/01': '12/01 (화)', '12/02': '12/02 (수)', '12/03': '12/03 (목)' };
+    const opts = Object.keys(D).map(v => ({ v, t: D[v] }));
+    const H = [
+      { id: 'h1', who: '김하늘', ch: '스마트스토어', items: '식용꽃 비올라 30송이 × 2', note: '29일에 보내주세요~ 행사 전날 받고 싶어요', hit: '29일에 보내주세요', warn: '⚠ 29일(일)은 배송 쉬는 날이라 30일(월)로 바꿨어요' },
+      { id: 'h2', who: '카페 숲길', ch: '자사몰', items: '애플민트 작은잎 100g × 3', note: '토요일에 받게 해주세요', hit: '토요일에', warn: '' },
+      { id: 'h3', who: '박서준', ch: '쿠팡', items: '로즈마리 1개 100g × 1', note: '문앞에 놔주세요. 다음주 수요일 발송 부탁드려요', hit: '다음주 수요일 발송', warn: '' }];
+    const rows = H.map((r, i) => { const k = r.note.indexOf(r.hit); return { ...r, chS: chS(r.ch), on: !!s.sel[r.id], day: s.day[r.id], opts,
+      pre: r.note.slice(0, k), post: r.note.slice(k + r.hit.length), warn: s.day[r.id] === '11/30' && r.id === 'h1' ? r.warn : '',
+      tog: () => this.setState({ sel: { ...s.sel, [r.id]: !s.sel[r.id] } }),
+      pick: e => this.setState({ day: { ...s.day, [r.id]: e.target.value } }),
+      box: 'display: flex; gap: 10px; padding: 12px 14px; border-top: ' + (i ? '1px solid #eef0ec' : '0') + (s.sel[r.id] ? '; background: #fbfdf9' : '') }; });
+    const picked = H.filter(r => s.sel[r.id]), none = !picked.length || s.done;
+    const others = [['이도윤', '식용꽃 혼합 50송이 × 1', ''], ['최유나', '애플민트 작은잎 100g × 2', '경비실에 맡겨 주세요'], ['정민호', '타임 30g × 1', ''], ['한지원', '로즈마리 10g × 3', '부재시 문앞']];
+    const gone = s.done ? new Set(picked.map(r => r.id)) : new Set();
+    const xlRows = H.filter(r => !gone.has(r.id)).map(r => [r.who, r.items, r.note, true]).concat(others.map(x => x.concat([false])));
+    const xl = xlRows.map(([who, items, note, hl], i) => ({ who, items, note, box: 'display: grid; grid-template-columns: 70px 1fr 1.4fr; gap: 8px; padding: 7px 12px; border-top: 1px solid #eef0ec' + (hl ? '; background: #fffaf0' : ''), nS: hl ? 'color: #8a5a12' : 'color: #5f6a5c' }));
+    const tab = on => 'height: 30px; padding: 0 12px; border-radius: 99px; border: 0; font-size: 12.5px; font-weight: 700; cursor: pointer; background: ' + (on ? '#fff' : 'transparent') + '; color: ' + (on ? '#1f2620' : '#5f6a5c') + (on ? '; box-shadow: 0 1px 3px rgba(0,0,0,.12)' : '');
+    const due = [{ who: '김하늘', ch: '스마트스토어', items: '식용꽃 비올라 30송이 × 2', note: '29일에 보내주세요~' }].map(r => ({ ...r, chS: chS(r.ch), box: 'display: flex; gap: 10px; align-items: center; padding: 12px 14px',
+      st: s.un ? '배송준비중' : '배송보류', stS: 'font-size: 12px; font-weight: 800; border-radius: 99px; padding: 3px 10px; white-space: nowrap; ' + (s.un ? 'color: #fff; background: #2e7d4f' : 'color: #8a5a12; background: #fdf3e2') }));
+    return { isToday: s.view === 'a', isDay: s.view === 'b', tabA: tab(s.view === 'a'), tabB: tab(s.view === 'b'),
+      dayA: () => this.setState({ view: 'a' }), dayB: () => this.setState({ view: 'b' }),
+      hasRows: !s.done, rows, cntTxt: s.done ? '반영 끝' : H.length + '건',
+      none, goT: s.done ? '반영했어요' : picked.length ? '카페24에 반영하고 엑셀에서 빼기 (' + picked.length + '건)' : '주문을 골라 주세요',
+      goS: 'height: 38px; padding: 0 16px; border-radius: 10px; border: 0; font-size: 13px; font-weight: 800; cursor: ' + (none ? 'default' : 'pointer') + '; background: ' + (none ? '#dfe3dc' : '#2e7d4f') + '; color: ' + (none ? '#8a9186' : '#fff'),
+      ask: () => !none && this.setState({ cf: true }),
+      doneMsg: s.done ? '✓ ' + picked.length + '건을 카페24에 배송보류로 바꾸고 희망배송일을 적었어요. 오늘 엑셀에서 뺐어요. (' + picked.map(r => r.who + ' ' + s.day[r.id]).join(', ') + ')' : '',
+      xl, xlCnt: xlRows.length + '건' + (s.done ? ' · 날짜 지정 ' + picked.length + '건 빠짐' : ''),
+      cf: s.cf, cfT: picked.length + '건을 날짜 지정 주문으로 돌릴까요?', cfL: picked.map(r => r.who + ' · ' + r.ch + ' → ' + D[s.day[r.id]] + '에 보내기'),
+      cfNo: () => this.setState({ cf: false }), cfYes: () => this.setState({ cf: false, done: true }),
+      due, dueCnt: '1건', dueDone: s.un, unT: s.un ? '✓ 배송준비중으로 돌렸어요' : '보류 풀고 오늘 보내기 (1건)',
+      unS: 'height: 38px; padding: 0 16px; border-radius: 10px; border: 0; font-size: 13px; font-weight: 800; cursor: pointer; background: ' + (s.un ? '#dfe3dc' : '#2e7d4f') + '; color: ' + (s.un ? '#5f6a5c' : '#fff'),
+      unhold: () => this.setState({ un: true }) };
+  }
+}
+</script>
+</body>
+</html>

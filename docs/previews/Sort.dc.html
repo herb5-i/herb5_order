@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>송장 순서 · 품목끼리 모아 내려받기 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1700px; position: relative; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 12.5px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 11/27 올려 주신 엑셀 · 이름은 빼고 주문번호 끝자리만</span>
+<span style="font-size: 13px; color: #5f6a5c">정리 › 결과 확인 · 내려받기</span>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<b style="font-size: 16px">결과 확인 · 내려받기</b>
+<span style="flex: 1"></span>
+<button type="button" style="height: 40px; padding: 0 18px; border-radius: 12px; border: 0; background: #2e7d4f; color: #fff; font-size: 14px; font-weight: 800">⬇ 받기</button>
+</div>
+<span style="font-size: 12.5px; color: #5f6a5c">받기를 누르면 늘 아래 순서로 내려받아요. 같은 품목끼리 모이고, 섞인 주문은 묶음 맨 앞에 와요.</span>
+
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2"><button type="button" onClick="{{ t.go }}" style="{{ t.s }}">{{ t.n }}</button></sc-for>
+</div>
+
+<div style="border: 1px solid #eceee9; border-radius: 14px; overflow: hidden">
+<div style="display: grid; grid-template-columns: 44px 64px minmax(0, 1fr); gap: 8px; padding: 8px 12px; background: #f5f6f4; font-size: 12px; font-weight: 700; color: #5f6a5c"><span>송장</span><span>주문</span><span>품목 · 옵션 × 수량</span></div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="11">
+<sc-if value="{{ r.head }}" hint-placeholder-val="{{ false }}"><div style="{{ r.headS }}">{{ r.headT }}</div></sc-if>
+<div style="{{ r.row }}">
+<b style="font-size: 13px; color: #8a9186">{{ r.n }}</b>
+<span style="font-size: 12.5px; color: #5f6a5c">{{ r.no }}</span>
+<span style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center">
+<sc-for list="{{ r.chips }}" as="c" hint-placeholder-count="2"><span style="{{ c.s }}">{{ c.t }}</span></sc-for>
+<sc-if value="{{ r.mix }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 800; color: #a35d00; background: #fdf0dc; border-radius: 99px; padding: 1px 7px">섞임</span></sc-if>
+</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 18px; padding: 14px 16px; font-size: 13px; color: #3d473b; line-height: 1.8">
+<b style="font-size: 14px">📦 송장 순서로 정리하면</b><br>
+· 엑셀을 내려받을 때 <b>주문정리 · 수령인별</b> 줄 순서가 바뀌어요. 송장이 이 순서로 뽑혀요.<br>
+· <b>같은 품목끼리</b> 모여요. 품목 순서는 <b>집계 칸 순서</b>를 따라요 (식용꽃 → 허브 잎 → 생잎 …).<br>
+· 여러 품목이 <b>섞인 주문</b>은 그 묶음 <b>맨 앞</b>에 와요. 어느 묶음으로 갈지는 이 순서로 정해요.<br>
+&nbsp;&nbsp;① <b>식용꽃</b>이 하나라도 있으면 → 식용꽃 묶음 (예: 혼합 + 자스민 + 애플 → 혼합)<br>
+&nbsp;&nbsp;② <b>자스민</b>이 있으면 → 자스민 묶음 (예: 자스민 + 로즈마리 → 자스민)<br>
+&nbsp;&nbsp;③ <b>생잎끼리만</b> 섞이면 → <b>생잎 섞임</b> 묶음 하나로, 합친 무게가 큰 것부터 (예: 30g × 4 = 120g → 50g → 20g)<br>
+&nbsp;&nbsp;④ 나머지는 <b>주문이 가장 많은 품목</b> 묶음 (예: 로즈마리 + 타임 → 로즈마리)<br>
+· 섞인 주문끼리는 <b>품목 많은 것</b>부터, 단품은 <b>큰 옵션 → 작은 옵션</b>, 같은 옵션은 <b>수량 많은 것</b>부터예요.<br>
+&nbsp;&nbsp;예: 로즈마리 100g → 로즈마리 30g / 자스민 2개 → 자스민 1개<br>
+· <b>★단단 로즈마리</b>처럼 ★ 붙은 품목은 원래 품목(로즈마리) 묶음에 들어가고, 같은 옵션이면 ★가 먼저예요.<br>
+· 한 주문의 여러 줄은 항상 붙어 있어요. 화면 · 집계 · 재고는 그대로예요.<br>
+· 켜고 끄는 버튼 없이 늘 이 순서로 내려받아요.
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sorted: true, tab: 'sheet1' }; }
+  renderVals() {
+    const s = this.state;
+    // 11/27 실제 엑셀 (주문번호 끝 4자리 · 품목만, 이름 · 주소 없음)
+    const P = ["식용꽃 혼합 30송이", "식용꽃 비올라 30송이", "애플민트", "로즈마리", "타임", "자스민 100잎", "★단단 로즈마리"];
+    const col = {"식용꽃 혼합 30송이": "#d9467a", "식용꽃 비올라 30송이": "#7b5cc4", "애플민트": "#2f9a6b", "로즈마리": "#2f86c4", "타임": "#6b7a2f", "자스민 100잎": "#c48a12", "★단단 로즈마리": "#8a4fb0"};
+    const O = [{"no": "0239", "it": [["식용꽃 혼합 30송이", "식용꽃 혼합 30송이", 30, 1], ["자스민 100잎", "자스민 100잎", 100, 1]]}, {"no": "0195", "it": [["식용꽃 혼합 30송이", "식용꽃 혼합 30송이", 30, 1]]}, {"no": "0281", "it": [["자스민 100잎", "자스민 100잎", 100, 1], ["식용꽃 비올라 30송이", "식용꽃 비올라 30송이", 30, 2]]}, {"no": "0187", "it": [["식용꽃 비올라 30송이", "식용꽃 비올라 30송이", 30, 10]]}, {"no": "0205", "it": [["식용꽃 비올라 30송이", "식용꽃 비올라 30송이", 30, 2]]}, {"no": "0326", "it": [["식용꽃 비올라 30송이", "식용꽃 비올라 30송이", 30, 1]]}, {"no": "0213", "it": [["타임", "타임 10g", 10, 4], ["애플민트", "애플민트 [보통잎] 10g", 10, 2]]}, {"no": "0168", "it": [["타임", "타임 10g", 10, 1], ["애플민트", "애플민트 [보통잎] 30g", 30, 1]]}, {"no": "0311", "it": [["로즈마리", "로즈마리 100g", 100, 2]]}, {"no": "0257", "it": [["로즈마리", "로즈마리 100g", 100, 1]]}, {"no": "0225", "it": [["로즈마리", "로즈마리 100g", 100, 1]]}, {"no": "0291", "it": [["로즈마리", "로즈마리 30g", 30, 2]]}, {"no": "0336", "it": [["타임", "타임 30g", 30, 1]]}, {"no": "0274", "it": [["로즈마리", "로즈마리 30g", 30, 1], ["자스민 100잎", "자스민 100잎", 100, 1], ["타임", "타임 30g", 30, 1]]}, {"no": "0262", "it": [["자스민 100잎", "자스민 100잎", 100, 1], ["타임", "타임 30g", 30, 1], ["로즈마리", "로즈마리 100g", 100, 1]]}, {"no": "0308", "it": [["로즈마리", "로즈마리 100g", 100, 1], ["자스민 100잎", "자스민 100잎", 100, 1]]}, {"no": "0171", "it": [["로즈마리", "로즈마리 100g", 100, 1], ["자스민 100잎", "자스민 100잎", 100, 1]]}, {"no": "0243", "it": [["★단단 로즈마리", "★단단 로즈마리 100g", 100, 2]]}].map(o => ({ no: '…' + o.no, it: o.it }));
+    // ★단단 로즈마리처럼 ★ 붙은 품목은 원래 품목(로즈마리) 묶음으로, 같은 옵션이면 ★ 먼저
+    const base = g => g.replace(/^★\S+\s+/, ''); O.forEach(o => o.it.forEach(x => { if (x[4] === undefined) x[4] = /^★/.test(x[0]); x[0] = base(x[0]); }));
+    { const Q = P.filter(g => !/^★/.test(g)).concat(P.map(base)); P.length = 0; Q.forEach(g => { if (!P.includes(g)) P.push(g); }); }
+    // 1) 품목별 주문 수
+    const cnt = {}; O.forEach(o => new Set(o.it.map(x => x[0])).forEach(g => cnt[g] = (cnt[g] || 0) + 1));
+    const pi = g => P.indexOf(g);
+    // 2) 주문마다 들어갈 묶음: 주문이 가장 많은 품목 (같으면 집계 순서 앞)
+    // 섞인 주문 묶음: ① 식용꽃이 하나라도 있으면 식용꽃 ② 자스민이 있으면 자스민 ③ 나머지는 주문이 가장 많은 품목
+    const rank = g => /식용꽃/.test(g) ? 0 : /자스민/.test(g) ? 1 : 2;
+    // ④ 생잎(애플민트 · 로즈마리 · 타임 · 스피아민트)끼리만 섞인 주문은 [생잎 섞임] 묶음 하나로 (생잎 묶음들 맨 앞)
+    const LEAF = /애플민트|로즈마리|타임|스피아민트/, MIXL = '생잎 섞임';
+    const main = o => { const G = [...new Set(o.it.map(x => x[0]))]; if (G.length > 1 && G.every(g => LEAF.test(g))) return MIXL;
+      return G.sort((a, b) => rank(a) - rank(b) || cnt[b] - cnt[a] || pi(a) - pi(b))[0]; };
+    if (!P.includes(MIXL)) { const f = P.findIndex(g => LEAF.test(g)); P.splice(f < 0 ? P.length : f, 0, MIXL); col[MIXL] = '#3d7a4f'; }
+    const gram = o => o.it.reduce((t, x) => t + x[2] * x[3], 0);   // 생잎 섞임: 모두 합친 무게 (30g × 2 = 60g)
+    const kinds = o => new Set(o.it.map(x => x[0])).size;
+    const star = o => o.it.some(x => x[4] && (x[0] === o.g || o.g === MIXL)) ? 0 : 1;
+    const msz = o => Math.max(...o.it.filter(x => x[0] === o.g || o.g === MIXL).map(x => x[2]));
+    const L = O.map((o, i) => ({ ...o, i, g: main(o), k: kinds(o) }));
+    const S = s.sorted ? [...L].sort((a, b) => pi(a.g) - pi(b.g) || (b.k > 1) - (a.k > 1) || b.k - a.k
+      || (a.g === MIXL ? gram(b) - gram(a) : 0) || (msz(b) - msz(a)) || (star(a) - star(b)) || (b.it.reduce((t, x) => t + x[3], 0) - a.it.reduce((t, x) => t + x[3], 0)) || a.i - b.i) : L;
+    let prev = '';
+    const rows = S.map((o, n) => { const head = s.sorted && o.g !== prev; prev = o.g;
+      return { n: n + 1, no: o.no, mix: o.k > 1, head, headT: '● ' + o.g + (o.g === MIXL ? ' (애플민트 · 로즈마리 · 타임 · 스피아민트끼리 · 합친 무게 큰 순)' : ' 묶음'),
+        headS: 'padding: 6px 12px; font-size: 12px; font-weight: 800; color: ' + (col[o.g] || '#3d7a4f') + '; background: #fafbf9; border-top: 1px solid #eef0ec',
+        chips: o.it.map(x => { const c = col[x[0]] || '#5f6a5c'; return { t: x[1] + ' × ' + x[3], s: 'font-size: 12.5px; font-weight: 700; border-radius: 8px; padding: 2px 8px; color: ' + c + '; background: ' + c + '14; border: 1px solid ' + c + '40' }; }),
+        row: 'display: grid; grid-template-columns: 44px 64px minmax(0, 1fr); gap: 8px; align-items: center; padding: 9px 12px; border-top: 1px solid #eef0ec' + (o.k > 1 && s.sorted ? '; background: #fffaf2' : '') }; });
+    const tab = (k, n) => ({ n, go: () => this.setState({ tab: k }), s: 'height: 32px; padding: 0 13px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid ' + (s.tab === k ? '#2e7d4f' : '#dfe3dc') + '; background: ' + (s.tab === k ? '#2e7d4f' : '#fff') + '; color: ' + (s.tab === k ? '#fff' : '#4a5547') });
+    return { rows, tabs: [tab('sheet1', '주문정리 (18건 · 28줄)')],
+      togSort: () => this.setState({ sorted: !s.sorted }),
+      sortT: s.sorted ? '📦 송장 순서로 정리 켜짐' : '📦 송장 순서로 정리 꺼짐',
+      sortS: 'height: 40px; padding: 0 14px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; border: 1px solid ' + (s.sorted ? '#2e7d4f' : '#d5dad2') + '; background: ' + (s.sorted ? '#e8f2ea' : '#fff') + '; color: ' + (s.sorted ? '#2e7d4f' : '#5f6a5c'),
+      sortHelp: s.sorted ? '받은 엑셀이 아래 순서예요. 같은 품목끼리 모이고, 섞인 주문은 묶음 맨 앞에 와요.' : '지금처럼 주문이 들어온 순서대로 내려받아요. 버튼을 눌러 바뀐 순서를 보세요.' };
+  }
+}
+</script>
+</body>
+</html>

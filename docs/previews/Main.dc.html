@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>판매 관리 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f4f1e8}
+a{color:#2e7d4f}a:hover{color:#1f5c39}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 1500px; box-sizing: border-box; padding: 32px 20px 48px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f1e8">
+<div style="max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 실제 카페24는 안 바뀌어요</span>
+<span style="font-size: 13px; color: #5f6a5c">재고 관리 탭 안에 들어갈 칸이에요</span>
+</div>
+<div style="background: #fffdf8; border: 1px solid #e4dfd0; border-radius: 20px; padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap">
+<div style="flex: 1 1 320px; min-width: 0">
+<h2 style="margin: 0; font-size: 21px; font-weight: 800">판매 관리 <span style="font-size: 13px; font-weight: 500; color: #5f6a5c">카페24 품절 · 가격 · 상품 수정</span></h2>
+<p style="margin: 6px 0 0; font-size: 13.5px; color: #5f6a5c; line-height: 1.55">카페24 상품을 품절로 바꾸면 마켓플러스로 연결된 스마트스토어 · 쿠팡도 같이 바뀌어요. 관리자만 누를 수 있어요.</p>
+<sc-if value="{{ isHid }}" hint-placeholder-val="{{ false }}"><p style="margin: 8px 0 0; font-size: 13.5px; font-weight: 700; color: #6b5a8e">카페24에서 ‘진열 안 함’으로 숨겨 둔 상품이에요. 손님에게는 안 보여요.</p></sc-if>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<button type="button" onClick="{{ fAll }}" style="{{ fAllStyle }}">전체 {{ nAll }}</button>
+<button type="button" onClick="{{ fOn }}" style="{{ fOnStyle }}">판매 중 {{ nOn }}</button>
+<button type="button" onClick="{{ fOff }}" style="{{ fOffStyle }}">품절 {{ nOff }}</button>
+<button type="button" onClick="{{ fHid }}" style="{{ fHidStyle }}">숨김 {{ nHid }}</button>
+</div>
+</div>
+<div role="tablist" aria-label="카테고리" style="display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid #e4dfd0; padding-bottom: 12px">
+<sc-for list="{{ cats }}" as="c" hint-placeholder-count="4">
+<button type="button" role="tab" aria-selected="{{ c.on }}" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.name }} <span style="{{ c.nStyle }}">{{ c.n }}</span></button>
+</sc-for>
+</div>
+<label style="display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 14px; border: 1px solid #d8d3c4; border-radius: 12px; background: #fff">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5f6a5c" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input value="{{ q }}" onInput="{{ onQ }}" placeholder="상품 이름 검색 (예: 비올)" aria-label="상품 검색" style="flex: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 15px; background: transparent; color: #1f2620">
+</label>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+<p style="margin: 8px 0; font-size: 14px; color: #5f6a5c">맞는 상품이 없어요</p>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 22px">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+<section style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+<h3 style="margin: 0; font-size: 17px; font-weight: 800">{{ g.name }}</h3>
+<span style="font-size: 13px; color: #5f6a5c">{{ g.sum }}</span>
+</div>
+<sc-for list="{{ g.rows }}" as="p" hint-placeholder-count="3">
+<div style="{{ p.cardStyle }}">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<b style="font-size: 16px">{{ p.name }}</b>
+<span style="{{ p.badgeStyle }}">{{ p.badge }}</span>
+<sc-if value="{{ p.hid }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; font-weight: 700; border-radius: 99px; padding: 2px 9px; color: #fff; background: #6b5a8e">숨김</span></sc-if>
+</div>
+<span style="font-size: 14px"><b>{{ p.price }}</b> <s style="font-size: 12.5px; color: #8a9186">{{ p.retail }}</s></span>
+<span style="font-size: 12.5px; color: #5f6a5c">상품번호 {{ p.no }} · 연결: 자사몰 · 스마트스토어 · 쿠팡</span>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<button type="button" onClick="{{ p.edit }}" style="height: 44px; padding: 0 16px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; border: 1px solid #d8d3c4; background: #fff; color: #1f2620">수정</button>
+<button type="button" onClick="{{ p.act }}" style="{{ p.btnStyle }}">{{ p.btn }}</button>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px">
+<sc-for list="{{ p.opts }}" as="o" hint-placeholder-count="2">
+<div style="{{ o.style }}">
+<span style="font-size: 14px; font-weight: 600">{{ o.name }}</span>
+<span style="font-size: 12.5px; color: #5f6a5c">{{ o.add }}</span>
+<span style="{{ o.qtyStyle }}">{{ o.qty }}</span>
+<span style="{{ o.tagStyle }}">{{ o.tag }}</span>
+<button type="button" onClick="{{ o.act }}" aria-label="{{ o.aria }}" style="{{ o.btnStyle }}">{{ o.btn }}</button>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</section>
+</sc-for>
+</div>
+</div>
+<div style="background: #fffdf8; border: 1px solid #e4dfd0; border-radius: 20px; padding: 18px 22px">
+<h3 style="margin: 0 0 10px; font-size: 15px; font-weight: 800">처리 기록</h3>
+<sc-if value="{{ noLog }}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 13.5px; color: #5f6a5c">아직 바꾼 상품이 없어요. 위에서 [품절]이나 [수정]을 눌러 보세요.</p>
+</sc-if>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ log }}" as="l" hint-placeholder-count="2">
+<div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 13.5px; padding: 8px 12px; border-radius: 10px; background: #f4f1e8">
+<span style="color: #5f6a5c">{{ l.at }}</span><b>{{ l.who }}</b><span>{{ l.text }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+<sc-if value="{{ hasEd }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ edBg }}" style="position: fixed; inset: 0; background: rgba(20,25,20,.35); z-index: 15"></div>
+<aside role="dialog" aria-modal="true" aria-label="상품 수정" style="position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: #fffdf8; z-index: 16; box-shadow: -20px 0 40px -24px rgba(0,0,0,.4); display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 10px; padding: 18px 20px; border-bottom: 1px solid #e4dfd0">
+<div style="flex: 1; min-width: 0"><b style="font-size: 18px">상품 수정</b><div style="font-size: 12.5px; color: #5f6a5c">상품번호 {{ edNo }}</div></div>
+<button type="button" onClick="{{ edClose }}" aria-label="닫기" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #d8d3c4; background: #fff; font-size: 20px; cursor: pointer; color: #1f2620">×</button>
+</div>
+<div style="flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 18px">
+<label style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13.5px; font-weight: 700">상품명</span>
+<input value="{{ edName }}" onInput="{{ edOnName }}" style="height: 46px; padding: 0 12px; border: 1px solid #d8d3c4; border-radius: 12px; font: inherit; font-size: 15px; background: #fff; color: #1f2620"></label>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13.5px; font-weight: 700">카테고리</span>
+<div style="display: flex; gap: 6px; flex-wrap: wrap"><sc-for list="{{ edCats }}" as="c" hint-placeholder-count="3"><button type="button" onClick="{{ c.pick }}" style="{{ c.style }}">{{ c.name }}</button></sc-for></div></div>
+<div style="display: flex; gap: 12px; flex-wrap: wrap">
+<label style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13.5px; font-weight: 700">판매가 <span style="font-weight: 500; color: #5f6a5c">손님이 내는 값</span></span>
+<span style="display: flex; align-items: center; gap: 6px; height: 46px; padding: 0 12px; border: 1px solid #d8d3c4; border-radius: 12px; background: #fff"><input inputmode="numeric" value="{{ edPrice }}" onInput="{{ edOnPrice }}" style="flex: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 16px; font-weight: 700; background: transparent; color: #1f2620; text-align: right">원</span></label>
+<label style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13.5px; font-weight: 700">소비자가 <span style="font-weight: 500; color: #5f6a5c">줄 그어 보이는 값</span></span>
+<span style="display: flex; align-items: center; gap: 6px; height: 46px; padding: 0 12px; border: 1px solid #d8d3c4; border-radius: 12px; background: #fff"><input inputmode="numeric" value="{{ edRetail }}" onInput="{{ edOnRetail }}" style="flex: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 16px; background: transparent; color: #1f2620; text-align: right">원</span></label>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 13.5px; font-weight: 700">진열 상태</span>
+<div style="display: flex; gap: 6px"><button type="button" onClick="{{ edShowOn }}" style="{{ edShowOnStyle }}">진열함</button><button type="button" onClick="{{ edShowOff }}" style="{{ edShowOffStyle }}">진열 안 함 (숨김)</button></div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><span style="font-size: 13.5px; font-weight: 700">옵션</span>
+<sc-for list="{{ edOpts }}" as="o" hint-placeholder-count="2">
+<div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px; border: 1px solid #e4dfd0; border-radius: 14px; background: #fff">
+<input value="{{ o.name }}" onInput="{{ o.onName }}" aria-label="옵션 이름" style="flex: 1 1 140px; min-width: 0; height: 42px; padding: 0 10px; border: 1px solid #d8d3c4; border-radius: 10px; font: inherit; font-size: 14.5px; color: #1f2620">
+<span style="display: flex; align-items: center; gap: 4px; flex: 0 1 130px; height: 42px; padding: 0 10px; border: 1px solid #d8d3c4; border-radius: 10px"><span style="font-size: 12.5px; color: #5f6a5c">+</span><input inputmode="numeric" value="{{ o.add }}" onInput="{{ o.onAdd }}" aria-label="추가 금액" style="width: 100%; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14.5px; text-align: right; color: #1f2620">원</span>
+<span style="display: flex; align-items: center; gap: 4px; flex: 0 1 110px; height: 42px; padding: 0 10px; border: 1px solid #d8d3c4; border-radius: 10px"><span style="font-size: 12.5px; color: #5f6a5c; white-space: nowrap">수량</span><input inputmode="numeric" value="{{ o.qty }}" onInput="{{ o.onQty }}" aria-label="판매 수량" style="width: 100%; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14.5px; font-weight: 700; text-align: right; color: #1f2620">개</span>
+<button type="button" onClick="{{ o.toggle }}" style="{{ o.style }}">{{ o.label }}</button>
+</div>
+</sc-for>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.55">추가 금액은 판매가에 더해지는 값이에요. 수량은 카페24에서 팔 수 있는 남은 개수예요. 0개가 되면 자동으로 품절로 바뀌어요.</p></div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.55">상세 설명 · 사진 · 배송비 같은 건 지금처럼 카페24 관리자에서 고쳐요.</p>
+</div>
+<div style="display: flex; gap: 8px; padding: 14px 20px; border-top: 1px solid #e4dfd0">
+<span style="flex: 1; align-self: center; font-size: 13px; color: #5f6a5c">{{ edDiffN }}</span>
+<button type="button" onClick="{{ edClose }}" style="height: 46px; padding: 0 18px; border-radius: 12px; border: 1px solid #d8d3c4; background: #fff; font-size: 15px; font-weight: 700; color: #1f2620; cursor: pointer">취소</button>
+<button type="button" onClick="{{ edSave }}" style="{{ edSaveStyle }}">저장</button>
+</div>
+</aside>
+</sc-if>
+<sc-if value="{{ hasCf }}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; inset: 0; background: rgba(20,25,20,.45); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 30">
+<div role="dialog" aria-modal="true" aria-label="확인" style="width: 100%; max-width: 420px; background: #fffdf8; border-radius: 22px; padding: 22px; box-shadow: 0 24px 48px -20px rgba(0,0,0,.4)">
+<b style="font-size: 18px">{{ cfTitle }}</b>
+<p style="margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; white-space: pre-line">{{ cfBody }}</p>
+<p style="margin: 10px 0 0; font-size: 12.5px; color: #5f6a5c">연결된 판매처에 반영되기까지 몇 분 걸릴 수 있어요</p>
+<div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px">
+<button type="button" onClick="{{ cfNo }}" style="height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid #d8d3c4; background: #fff; font-size: 15px; font-weight: 700; color: #1f2620; cursor: pointer">취소</button>
+<button type="button" onClick="{{ cfYes }}" style="{{ cfBtnStyle }}">{{ cfBtn }}</button>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { q: '', f: 'all', cat: '전체', cf: null, ed: null, log: [], items: [
+    { id: 1, cat: '식용꽃', no: 'P0000BKA', shown: true, name: '식용꽃 비올라', price: 12000, retail: 15000, opts: [{ id: 'a', name: '30송이', add: 0, qty: 40, sold: false }, { id: 'b', name: '50송이', add: 6000, qty: 25, sold: false }] },
+    { id: 2, cat: '식용꽃', no: 'P0000BKB', shown: true, name: '식용꽃 팬지', price: 11000, retail: 0, opts: [{ id: 'a', name: '20송이', add: 0, qty: 30, sold: false }, { id: 'b', name: '40송이', add: 8000, qty: 0, sold: true }] },
+    { id: 3, cat: '식용꽃', no: 'P0000BKD', shown: true, name: '식용꽃 쥬리안', price: 13000, retail: 0, opts: [{ id: 'a', name: '30송이', add: 0, qty: 18, sold: false }] },
+    { id: 4, cat: '식용꽃', no: 'P0000BKE', shown: true, name: '식용꽃 혼합 (랜덤)', price: 15000, retail: 18000, opts: [{ id: 'a', name: '50송이', add: 0, qty: 22, sold: false }, { id: 'b', name: '100송이', add: 12000, qty: 35, sold: false }] },
+    { id: 9, cat: '식용꽃', no: 'P0000BJX', shown: false, name: '식용꽃 금어초 (시즌 끝)', price: 14000, retail: 0, opts: [{ id: 'a', name: '30송이', add: 0, qty: 12, sold: true }] },
+    { id: 5, cat: '생잎', no: 'P0000BKF', shown: true, name: '애플민트 생잎', price: 9000, retail: 0, opts: [{ id: 'a', name: '작은잎 100g', add: 0, qty: 0, sold: false }, { id: 'b', name: '보통잎 [랜덤] 100g', add: -1000, qty: 30, sold: false }] },
+    { id: 6, cat: '생잎', no: 'P0000BKC', shown: true, name: '로즈마리 생잎', price: 5000, retail: 0, opts: [{ id: 'a', name: '10g', add: 0, qty: 28, sold: false }, { id: 'b', name: '100g', add: 15000, qty: 15, sold: true }] },
+    { id: 7, cat: '생잎', no: 'P0000BKG', shown: true, name: '타임 생잎', price: 5000, retail: 0, opts: [{ id: 'a', name: '10g', add: 0, qty: 0, sold: false }, { id: 'b', name: '50g', add: 9000, qty: 20, sold: false }] },
+    { id: 10, cat: '생잎', no: 'P0000BJY', shown: false, name: '레몬밤 생잎 (테스트)', price: 6000, retail: 0, opts: [{ id: 'a', name: '10g', add: 0, qty: 16, sold: false }] },
+    { id: 8, cat: '장식용 꽃', no: 'P0000BKM', shown: true, name: '미니장미 생화 5송이(장식용)', price: 8000, retail: 0, opts: [{ id: 'a', name: '혼합색', add: 0, qty: 9, sold: true }] }
+  ] }; }
+  ask(p, o, sold) { this.setState({ cf: { pid: p.id, oid: o ? o.id : null, sold } }); }
+  openEd(p) { this.setState({ ed: JSON.parse(JSON.stringify(p)) }); }
+  setEd(f) { const e = JSON.parse(JSON.stringify(this.state.ed)); f(e); this.setState({ ed: e }); }
+  diff() { const e = this.state.ed; if (!e) return []; const o = this.state.items.find(p => p.id === e.id), w = n => n.toLocaleString('ko-KR') + '원', out = [];
+    if (o.name !== e.name) out.push('상품명: ' + o.name + ' → ' + e.name);
+    if (o.cat !== e.cat) out.push('카테고리: ' + o.cat + ' → ' + e.cat);
+    if (o.price !== e.price) out.push('판매가: ' + w(o.price) + ' → ' + w(e.price));
+    if (o.retail !== e.retail) out.push('소비자가: ' + w(o.retail) + ' → ' + w(e.retail));
+    if (o.shown !== e.shown) out.push('진열: ' + (e.shown ? '진열 안 함 → 진열함' : '진열함 → 진열 안 함 (숨김)'));
+    e.opts.forEach((x, i) => { const y = o.opts[i]; if (y.name !== x.name) out.push('옵션 이름: ' + y.name + ' → ' + x.name);
+      if (y.add !== x.add) out.push(x.name + ' 추가 금액: ' + w(y.add) + ' → ' + w(x.add));
+      if (y.qty !== x.qty) out.push(x.name + ' 수량: ' + y.qty + '개 → ' + x.qty + '개');
+      if (y.sold !== x.sold) out.push(x.name + ': ' + (x.sold ? '품절' : '판매 재개')); });
+    return out; }
+  apply() { const c = this.state.cf; if (!c) return; let txt = '';
+    if (c.edit) { const e = this.state.ed, d0 = new Date(), at0 = (d0.getMonth() + 1) + '/' + d0.getDate() + ' ' + String(d0.getHours()).padStart(2, '0') + ':' + String(d0.getMinutes()).padStart(2, '0');
+      this.setState({ items: this.state.items.map(p => p.id === e.id ? e : p), ed: null, cf: null, log: [{ at: at0, who: 'herbi55', text: e.name + ' 수정 — ' + c.lines.join(', ') }].concat(this.state.log).slice(0, 8) }); return; }
+    const items = this.state.items.map(p => { if (p.id !== c.pid) return p; const opts = p.opts.map(o => (c.oid === null || o.id === c.oid) ? Object.assign({}, o, { sold: c.sold }) : o);
+      txt = p.name + (c.oid ? ' · ' + p.opts.find(o => o.id === c.oid).name : ' (옵션 전체)') + (c.sold ? ' → 품절' : ' → 판매 재개'); return Object.assign({}, p, { opts }); });
+    const d = new Date(), at = (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    this.setState({ items, cf: null, log: [{ at, who: 'herbi55', text: txt }].concat(this.state.log).slice(0, 8) }); }
+  renderVals() {
+    const s = this.state, q = s.q.replace(/\s+/g, '');
+    const stat = p => p.opts.every(o => o.sold) ? 'off' : p.opts.some(o => o.sold) ? 'part' : 'on';
+    const chip = on => 'height: 38px; padding: 0 14px; border-radius: 99px; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid ' + (on ? '#2e7d4f; background: #2e7d4f; color: #fff' : '#d8d3c4; background: #fff; color: #1f2620');
+    const CATS = ['식용꽃', '생잎', '장식용 꽃'];
+    const won = n => n.toLocaleString('ko-KR') + '원', num = v => { const t = String(v).replace(/[^0-9-]/g, ''); return t === '' || t === '-' ? 0 : parseInt(t, 10); };
+    const vis = p => s.f === 'hid' ? !p.shown : p.shown;
+    const found = s.items.filter(p => !q || p.name.replace(/\s+/g, '').includes(q));
+    const inCat = s.items.filter(p => (!q || p.name.replace(/\s+/g, '').includes(q)) && (s.cat === '전체' || p.cat === s.cat));
+    const all = found.filter(p => s.cat === '전체' || p.cat === s.cat);
+    const cats = ['전체'].concat(CATS).map(c => { const on = s.cat === c, n = found.filter(p => vis(p) && (c === '전체' || p.cat === c)).length;
+      return { name: c, n, on: on ? 'true' : 'false', pick: () => this.setState({ cat: c }), nStyle: 'font-size: 12px; font-weight: 700; opacity: .75',
+        style: 'height: 40px; padding: 0 16px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; border: 1px solid ' + (on ? '#1f2620; background: #1f2620; color: #fff' : '#e4dfd0; background: #fbfaf5; color: #1f2620') }; });
+    const mk = all.filter(vis).filter(p => s.f === 'all' || s.f === 'hid' || (s.f === 'off' ? stat(p) !== 'on' : stat(p) !== 'off')).map(p => { const st = stat(p), off = st === 'off';
+      return { cat: p.cat, name: p.name, no: p.no, hid: !p.shown, edit: () => this.openEd(p), price: '판매가 ' + won(p.price), retail: p.retail > p.price ? won(p.retail) : '', badge: off ? '품절' : st === 'part' ? '일부 품절' : '판매 중',
+        badgeStyle: 'font-size: 12px; font-weight: 700; border-radius: 99px; padding: 2px 9px; color: #fff; background: ' + (off ? '#c0392b' : st === 'part' ? '#b86b00' : '#2e7d4f'),
+        cardStyle: 'border: 1px solid ' + (off ? '#e7b9b3' : '#e4dfd0') + '; border-radius: 16px; padding: 14px 16px; background: ' + (off ? '#fbf1ef' : '#fff'),
+        btn: off ? '전체 판매 재개' : '전체 품절', act: () => this.ask(p, null, !off),
+        btnStyle: 'height: 44px; padding: 0 18px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; border: 1px solid ' + (off ? '#2e7d4f; background: #fff; color: #2e7d4f' : '#c0392b; background: #c0392b; color: #fff'),
+        opts: p.opts.map(o => ({ qty: '수량 ' + o.qty + '개', qtyStyle: 'font-size: 12.5px; font-weight: 700; color: ' + (o.qty === 0 ? '#c0392b' : o.qty <= 10 ? '#b86b00' : '#5f6a5c'), name: o.name, add: o.add ? (o.add > 0 ? '+' : '') + won(o.add) : '', tag: o.sold ? '품절' : '판매 중', aria: p.name + ' ' + o.name + (o.sold ? ' 판매 재개' : ' 품절'),
+          style: 'display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px; border-radius: 12px; border: 1px solid ' + (o.sold ? '#e7b9b3; background: #fbf1ef' : '#e4dfd0; background: #fbfaf5'),
+          tagStyle: 'font-size: 12px; font-weight: 700; color: ' + (o.sold ? '#c0392b' : '#2e7d4f'),
+          btn: o.sold ? '재개' : '품절', act: () => this.ask(p, o, !o.sold),
+          btnStyle: 'height: 34px; padding: 0 12px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid ' + (o.sold ? '#2e7d4f; background: #fff; color: #2e7d4f' : '#d9a9a2; background: #fff; color: #c0392b') })) }; });
+    const rows = mk;
+    const groups = CATS.map(c => { const r = mk.filter(x => x.cat === c), src = all.filter(p => p.cat === c && vis(p)), off = src.filter(p => stat(p) === 'off').length, part = src.filter(p => stat(p) === 'part').length;
+      return { name: c, rows: r, sum: src.length + '개 상품' + (off ? ' · 품절 ' + off : '') + (part ? ' · 일부 품절 ' + part : '') }; }).filter(g => g.rows.length);
+    const c = s.cf, cp = c && !c.edit && s.items.find(p => p.id === c.pid), co = c && c.oid && cp.opts.find(o => o.id === c.oid);
+    const ed = s.ed, dl = this.diff(), seg = on => 'flex: 1; height: 44px; border-radius: 12px; font-size: 14.5px; font-weight: 800; cursor: pointer; border: 1px solid ' + (on ? '#2e7d4f; background: #2e7d4f; color: #fff' : '#d8d3c4; background: #fff; color: #1f2620');
+    const edV = ed ? { hasEd: true, edNo: ed.no, edName: ed.name, edPrice: ed.price.toLocaleString('ko-KR'), edRetail: ed.retail ? ed.retail.toLocaleString('ko-KR') : '',
+      edOnName: e => { const v = e.target.value; this.setEd(x => { x.name = v; }); },
+      edOnPrice: e => { const v = num(e.target.value); this.setEd(x => { x.price = Math.max(0, v); }); },
+      edOnRetail: e => { const v = num(e.target.value); this.setEd(x => { x.retail = Math.max(0, v); }); },
+      edCats: CATS.map(c => ({ name: c, pick: () => this.setEd(x => { x.cat = c; }), style: 'height: 40px; padding: 0 14px; border-radius: 99px; font-size: 14px; font-weight: 700; cursor: pointer; border: 1px solid ' + (ed.cat === c ? '#2e7d4f; background: #2e7d4f; color: #fff' : '#d8d3c4; background: #fff; color: #1f2620') })),
+      edShowOn: () => this.setEd(x => { x.shown = true; }), edShowOff: () => this.setEd(x => { x.shown = false; }),
+      edShowOnStyle: seg(ed.shown), edShowOffStyle: seg(!ed.shown).replace('#2e7d4f; background: #2e7d4f', '#6b5a8e; background: #6b5a8e'),
+      edOpts: ed.opts.map((o, i) => ({ qty: String(o.qty), onQty: e => { const v = num(e.target.value); this.setEd(x => { x.opts[i].qty = Math.max(0, v); if (x.opts[i].qty === 0) x.opts[i].sold = true; }); }, name: o.name, add: o.add ? o.add.toLocaleString('ko-KR') : '0',
+        onName: e => { const v = e.target.value; this.setEd(x => { x.opts[i].name = v; }); },
+        onAdd: e => { const v = num(e.target.value); this.setEd(x => { x.opts[i].add = v; }); },
+        toggle: () => this.setEd(x => { x.opts[i].sold = !x.opts[i].sold; }), label: o.sold ? '품절' : '판매 중',
+        style: 'height: 42px; min-width: 78px; padding: 0 12px; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; border: 1px solid ' + (o.sold ? '#c0392b; background: #fbf1ef; color: #c0392b' : '#2e7d4f; background: #eef6f0; color: #2e7d4f') })),
+      edDiffN: dl.length ? '바뀐 곳 ' + dl.length + '개' : '아직 바뀐 곳이 없어요',
+      edClose: () => this.setState({ ed: null }), edBg: () => this.setState({ ed: null }),
+      edSave: () => { if (dl.length) this.setState({ cf: { edit: true, lines: dl } }); },
+      edSaveStyle: 'height: 46px; padding: 0 22px; border-radius: 12px; border: 0; font-size: 15px; font-weight: 800; color: #fff; cursor: ' + (dl.length ? 'pointer; background: #2e7d4f' : 'default; background: #b9c2b6') } : { hasEd: false };
+    return Object.assign(edV, { cats, groups, q: s.q, onQ: e => this.setState({ q: e.target.value }), rows, empty: !rows.length,
+      nAll: all.filter(p => p.shown).length, nOn: all.filter(p => p.shown && stat(p) !== 'off').length, nOff: all.filter(p => p.shown && stat(p) !== 'on').length,
+      nHid: inCat.filter(p => !p.shown).length, isHid: s.f === 'hid', fHid: () => this.setState({ f: 'hid' }), fHidStyle: chip(s.f === 'hid').replace(/#2e7d4f/g, '#6b5a8e'),
+      fAll: () => this.setState({ f: 'all' }), fOn: () => this.setState({ f: 'on' }), fOff: () => this.setState({ f: 'off' }),
+      fAllStyle: chip(s.f === 'all'), fOnStyle: chip(s.f === 'on'), fOffStyle: chip(s.f === 'off'),
+      log: s.log, noLog: !s.log.length, hasCf: !!c,
+      cfTitle: c && c.edit ? '카페24에 저장할까요?' : c ? (c.sold ? '품절로 바꿀까요?' : '다시 판매할까요?') : '',
+      cfBody: c && c.edit ? s.ed.name + '\n' + c.lines.map(l => '· ' + l).join('\n') : c ? cp.name + (co ? ' · ' + co.name : ' (옵션 전체)') + '\n자사몰 · 스마트스토어 · 쿠팡에서 ' + (c.sold ? '품절로 보여요.' : '다시 살 수 있어요.') : '',
+      cfBtn: c && c.edit ? '저장하기' : c && c.sold ? '품절로 바꾸기' : '판매 재개',
+      cfBtnStyle: 'height: 44px; padding: 0 18px; border-radius: 12px; border: 0; font-size: 15px; font-weight: 800; color: #fff; cursor: pointer; background: ' + (c && c.sold && !c.edit ? '#c0392b' : '#2e7d4f'),
+      cfNo: () => this.setState({ cf: null }), cfYes: () => this.apply() });
+  }
+}
+</script>
+</body>
+</html>

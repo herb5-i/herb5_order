@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>탭 화면 구성 · 들어온 주문 숨기기 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 640px; box-sizing: border-box; padding: 28px 20px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 눌러 보세요</span>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 16px">규칙 관리 › 탭 화면 구성 · 정리</b>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+<div style="{{ r.row }}"><span style="flex: 1; font-size: 14px">{{ r.name }}</span><button type="button" onClick="{{ r.toggle }}" style="{{ r.btn }}">{{ r.lab }}</button></div>
+</sc-for>
+</div>
+<span style="font-size: 13px; color: #5f6a5c">↓ 정리 탭 위쪽 메뉴</span>
+<div style="display: flex; gap: 6px; padding: 6px; background: #fff; border: 1px solid #e5e8e3; border-radius: 16px">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+<div style="{{ t.style }}"><span style="font-size: 18px">{{ t.ic }}</span><span style="font-size: 12px; font-weight: 700">{{ t.name }}</span></div>
+</sc-for>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.6">· '들어온 주문'을 숨기면 정리 탭 위쪽 메뉴에서 그 아이콘도 같이 사라져요. 다시 넣으면 아이콘도 돌아와요.<br>· 숨겨도 홈 화면 '주문 처리 현황' 아래 들어온 주문 칸은 그대로예요 (홈은 홈 꾸미기에서 따로 정해요).</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":640}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { off: false }; }
+  renderVals() {
+    const s = this.state;
+    const R = [['원본 엑셀 올리기', false], ['결과 확인 · 내려받기', false], ['송장번호 등록 파일 만들기', false], ['들어온 주문 (들어온 주문 메뉴)', true]];
+    const rows = R.map(([name, isInc]) => { const off = isInc && s.off;
+      return { name, lab: off ? '숨김' : '보임', toggle: () => { if (isInc) this.setState({ off: !s.off }); },
+        row: 'display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid #eceee9; border-radius: 12px' + (off ? '; opacity: .55' : ''),
+        btn: 'height: 32px; min-width: 64px; border-radius: 9px; font-size: 13px; font-weight: 800; cursor: ' + (isInc ? 'pointer' : 'default') + '; border: 1px solid ' + (off ? '#c9cec6; background: #f1f3ef; color: #8a9186' : '#2e7d4f; background: #eef6ef; color: #2e7d4f') }; });
+    const T = [['⬆', '주문 정리', true], ['📥', '들어온 주문', false], ['🚚', '배송', false]].filter(t => !(s.off && t[1] === '들어온 주문'));
+    const tabs = T.map(([ic, name, on]) => ({ ic, name, style: 'flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; border-radius: 11px; ' + (on ? 'background: #2e7d4f; color: #fff' : 'color: #5f6a5c') }));
+    return { rows, tabs };
+  }
+}
+</script>
+</body>
+</html>

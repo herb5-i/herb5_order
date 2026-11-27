@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>이슈 관리 · 취소 반품 교환 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}table{border-collapse:collapse}</style>
+</helmet>
+<div style="min-height: 1250px; box-sizing: border-box; padding: 28px 20px 48px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 가짜 이름 · 예시 번호</span>
+<span style="font-size: 13px; color: #5f6a5c">이슈 관리 › 취소 · 반품 · 교환 · 카드를 눌러 보세요</span>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+<div><span style="font-size: 12.5px; color: #b5651d; font-weight: 700">고른 날</span><div style="font-size: 22px; font-weight: 800">11월 26일 (목)</div></div>
+<sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+<button type="button" onClick="{{ c.open }}" style="{{ c.box }}">
+<span style="{{ c.badge }}">{{ c.type }}</span>
+<b style="font-size: 17px; margin-top: 6px">{{ c.item }}</b>
+<span style="font-size: 14px; font-weight: 800; color: #1f2620; margin-top: 4px">{{ c.who }}</span>
+<span style="font-size: 14px; font-weight: 700; color: #2f6db5">{{ c.pos }}</span>
+<span style="font-size: 13.5px; color: #3d4a3a; margin-top: 4px">{{ c.st }}</span>
+<span style="font-size: 13.5px; color: #3d4a3a">{{ c.opt }}</span>
+<span style="font-size: 13.5px; color: #5f6a5c">{{ c.why }}</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="{{ s.badge }}">{{ s.type }}</span><b style="font-size: 17px">{{ s.item }}</b><span style="flex: 1"></span><span style="font-size: 12.5px; color: #8a9186">주문 {{ s.oid }} · {{ s.ch }}</span></div>
+<div style="overflow-x: auto"><table style="width: 100%; min-width: 640px; font-size: 13px; border-top: 2px solid #3d4a3a">
+<tr style="background: #f5f6f4; color: #5f6a5c"><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">품목별 주문번호<br>배송번호</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df; text-align: left">상품명 / 옵션</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">수량</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">상품구매금액<br>(판매가)</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">운송장번호</th><th style="padding: 9px; font-weight: 700; border-bottom: 1px solid #e1e4df">주문상태</th></tr>
+<tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9; line-height: 1.6">{{ s.ic }}<br><span style="color: #8a9186">{{ s.sc }}</span></td><td style="padding: 10px; border-bottom: 1px solid #eceee9"><span style="font-size: 11px; font-weight: 700; color: #fff; background: #1f3f7a; padding: 1px 5px">마켓상품</span><br><b>{{ s.item }}</b><br><span style="color: #2f6db5; font-size: 12.5px">- 옵션 : {{ s.optv }}</span></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9">{{ s.q }}</td><td style="padding: 10px; text-align: right; border-bottom: 1px solid #eceee9">{{ s.price }}<br><span style="color: #8a9186">({{ s.price }})</span></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9; font-weight: 700">{{ s.track }}</td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #eceee9"><b style="color: #2f6db5">{{ s.stat }}</b><br><span style="color: #8a9186">[{{ s.by }}]</span></td></tr>
+</table></div>
+<div><b style="font-size: 14.5px">결제 정보</b>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 8px; border: 1px solid #e1e4df; border-radius: 12px; overflow: hidden; font-size: 13px; text-align: center">
+<sc-for list="{{ pays }}" as="p" hint-placeholder-count="4"><div style="border-right: 1px solid #e1e4df"><div style="padding: 8px; background: #f5f6f4; color: #5f6a5c">{{ p.k }}</div><div style="padding: 10px; font-weight: 800">{{ p.v }}</div></div></sc-for>
+</div></div>
+<div><b style="font-size: 14.5px">결제수단</b>
+<div style="margin-top: 8px; border: 1px solid #e1e4df; border-radius: 12px; overflow: hidden; font-size: 13px">
+<sc-for list="{{ payer }}" as="p" hint-placeholder-count="3"><div style="display: grid; grid-template-columns: 140px minmax(0, 1fr); border-top: 1px solid #eceee9"><span style="padding: 9px 12px; background: #f5f6f4; color: #5f6a5c">{{ p.k }}</span><span style="padding: 9px 12px">{{ p.v }}</span></div></sc-for>
+</div></div>
+<div style="font-size: 13.5px; line-height: 1.6"><b>사유</b><br>{{ s.why }}</div>
+</div>
+</sc-if>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.7">· 카드 맨 위 굵은 줄: 손님 이름, 그 아래 파란 줄: <b>그날 주문에서 몇 번째 송장인지 - 송장번호</b> (예: 11/26 오후 송장 23번째 - 111122225555).<br>· 우리가 올린 주문 묶음(오전 · 오후)에 없는 주문이면 "송장번호만" 보여 줘요. 아직 안 나간 취소는 "송장 전 취소"로 보여요.<br>· 카드를 누르면 카페24 화면처럼 주문 정보 · 결제 정보 · 결제수단을 보여 줘요. 이름 · 결제 정보는 누를 때만 카페24에서 불러오고 저장하지 않아요.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":940,"height":1250}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { sel: 1 }; }
+  data() { return [
+    { type: '취소', col: '#7d847a', item: '로즈마리', who: '김하늘', pos: '송장 전 취소 (아직 안 나감)', st: '취소 완료 · 스마트스토어 · 주문 20261126-0000098', opt: '옵션 10g · 1개', why: '사유: 잘못 주문 (판매자 주문취소)',
+      oid: '20261126-0000098', ch: '스마트스토어', ic: '20261126-0000098-01', sc: 'D-20261126-0000098-00', optv: '10g', q: 1, price: '5,000', track: '-', stat: '취소완료', by: '판매자', pays: [['상품구매금액', '5,000'], ['배송비', '3,500'], ['할인혜택', '0'], ['총 실결제금액', '8,500']], payer: [['결제(입금)자', '김하늘'], ['결제수단', '기타'], ['결제(입금)확인일', '2026-11-26 07:12:08']] },
+    { type: '반품', col: '#d9663f', item: '식용꽃 비올라', who: '박서준', pos: '11/26 오후 송장 23번째 - 111122225555', st: '반품 신청 · 쿠팡 · 주문 20261126-0000143', opt: '옵션 30개 · 1개', why: '사유: [다른 사이트의 가격이 더 저렴함] 고객변심 > 타사 가격 저렴',
+      oid: '20261126-0000143', ch: '쿠팡', ic: '20261126-0000143-01', sc: 'D-20261126-0000143-00', optv: '30개', q: 1, price: '3,000', track: '111122225555', stat: '반품신청', by: '구매자', pays: [['상품구매금액', '3,000'], ['배송비', '3,500'], ['할인혜택', '0'], ['총 실결제금액', '6,500']], payer: [['결제(입금)자', '박서준'], ['결제수단', '기타'], ['결제(입금)확인일', '2026-11-26 08:43:54']] }]; }
+  renderVals() {
+    const s = this.state, D = this.data();
+    const cards = D.map((c, i) => ({ type: c.type, item: c.item, who: c.who, pos: c.pos, st: c.st, opt: c.opt, why: c.why, open: () => this.setState({ sel: i }),
+      badge: 'align-self: flex-start; font-size: 12px; font-weight: 800; color: #fff; border-radius: 99px; padding: 2px 9px; background: ' + c.col,
+      box: 'display: flex; flex-direction: column; align-items: flex-start; gap: 1px; text-align: left; width: 100%; padding: 14px 16px; border-radius: 16px; cursor: pointer; font: inherit; color: #1f2620; background: #fdf8f3; border: ' + (s.sel === i ? '2px solid #d9663f' : '1px solid #f0e3d6') }));
+    const x = D[s.sel];
+    return { cards, hasSel: s.sel != null, s: Object.assign({}, x, { badge: 'font-size: 12px; font-weight: 800; color: #fff; border-radius: 99px; padding: 2px 9px; background: ' + x.col }),
+      pays: x.pays.map(([k, v]) => ({ k, v })), payer: x.payer.map(([k, v]) => ({ k, v })) };
+  }
+}
+</script>
+</body>
+</html>

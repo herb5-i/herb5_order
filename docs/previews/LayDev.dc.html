@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>탭 화면 구성 · 휴대폰 · PC 따로 숨기기 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 980px; box-sizing: border-box; padding: 28px 20px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 휴대폰 / PC 버튼을 눌러 보세요</span>
+
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px">
+<b style="font-size: 16px">규칙 관리 › 탭 화면 구성</b><span style="flex: 1"></span>
+<span style="font-size: 12px; color: #5f6a5c">초록 = 보임 · 회색 = 숨김</span>
+</div>
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column">
+<b style="font-size: 14px; color: #2e7d4f; margin: 10px 0 4px">{{ t.n }}</b>
+<sc-for list="{{ t.rows }}" as="r" hint-placeholder-count="4">
+<div style="{{ r.row }}">
+<span style="flex: 1; min-width: 140px; font-size: 13.5px">{{ r.name }}<span style="{{ r.tagS }}">{{ r.tag }}</span></span>
+<span style="display: flex; gap: 4px"><button type="button" style="width: 30px; height: 30px; border-radius: 8px; border: 1px solid #dfe3dc; background: #fff; color: #8a9186">▲</button><button type="button" style="width: 30px; height: 30px; border-radius: 8px; border: 1px solid #dfe3dc; background: #fff; color: #8a9186">▼</button></span>
+<span style="display: flex; gap: 6px">
+<button type="button" onClick="{{ r.tm }}" style="{{ r.mS }}">📱</button>
+<button type="button" onClick="{{ r.tp }}" style="{{ r.pS }}">🖥</button>
+</span>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start">
+<div style="flex: 0 0 230px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #5f6a5c">📱 휴대폰에서 보이는 정리 탭</span>
+<div style="border: 8px solid #2a302b; border-radius: 26px; background: #f4f5f3; padding: 10px; min-height: 300px; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ mob }}" as="c" hint-placeholder-count="3"><div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 10px; padding: 9px 10px; font-size: 12px; font-weight: 700">{{ c }}</div></sc-for>
+</div>
+</div>
+<div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #5f6a5c">🖥 PC에서 보이는 정리 탭</span>
+<div style="border: 1px solid #cfd3cc; border-radius: 12px; background: #f4f5f3; overflow: hidden">
+<div style="height: 22px; background: #e3e6e1; display: flex; align-items: center; gap: 5px; padding: 0 8px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #e0605a"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #e7b84a"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #5cb85c"></span></div>
+<div style="padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-height: 270px; align-content: start">
+<sc-for list="{{ pc }}" as="c" hint-placeholder-count="4"><div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 10px; padding: 12px; font-size: 12.5px; font-weight: 700; min-height: 40px">{{ c }}</div></sc-for>
+</div>
+</div>
+</div>
+</div>
+
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.75">· 칸마다 <b>📱</b>(휴대폰) · <b>🖥</b>(PC) 아이콘 버튼이 따로 있어요. 초록이면 보임, 흐리면 숨김이에요.<br>· 휴대폰 = 아래쪽 메뉴가 나오는 화면(폰 · 작은 태블릿), PC = 왼쪽 메뉴가 나오는 화면이에요.<br>· 둘 다 숨기면 지금처럼 그 칸이 아예 빠져요. 하위 메뉴(들어온 주문 · 판매)도 그 화면에서 칸이 모두 숨겨지면 아이콘까지 숨겨져요.<br>· <b>📱 휴대폰 설정은 이 기기에만</b> 저장돼요(휴대폰마다 따로). <b>🖥 PC 설정과 순서는 모든 기기에 같이</b> 적용돼요.<br>· 순서(▲▼)는 휴대폰 · PC가 같이 바뀌어요. 지금 숨겨 둔 칸은 휴대폰 · PC 둘 다 숨김으로 옮겨 와요.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":940,"height":980}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { m: { nship: 1, wxcal: 1, inv: 1 }, p: { inc: 1 } }; }
+  renderVals() {
+    const s = this.state;
+    const T = [['정리', [['up', '원본 엑셀 올리기'], ['out', '결과 확인 · 내려받기'], ['nship', '배송 불가 주문'], ['wxcal', '배송일 고르기'], ['inv', '송장번호 등록 파일 만들기'], ['inc', '들어온 주문 (들어온 주문 메뉴)']]],
+      ['재고 관리', [['cur', '현재 재고'], ['ret', '입고 · 반송'], ['sale', '판매 관리 (판매 메뉴)']]]];
+    const pill = on => 'width: 38px; height: 30px; padding: 0; opacity: ' + (on ? 1 : .45) + '; border-radius: 99px; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; border: 1px solid ' + (on ? '#2e7d4f' : '#d5dad2') + '; background: ' + (on ? '#eef6ef' : '#f1f2f0') + '; color: ' + (on ? '#2e7d4f' : '#8a9186') + '';
+    const tog = (w, k) => () => { const o = { ...s[w] }; if (o[k]) delete o[k]; else o[k] = 1; this.setState({ [w]: o }); };
+    const tabs = T.map(([n, R]) => ({ n, rows: R.map(([k, name], i) => { const mOn = !s.m[k], pOn = !s.p[k];
+      const tag = !mOn && !pOn ? ' 빠짐' : !mOn ? ' 휴대폰에서만 숨김' : !pOn ? ' PC에서만 숨김' : '';
+      return { name, tag, tagS: 'margin-left: 6px; font-size: 11.5px; font-weight: 700; color: ' + (!mOn && !pOn ? '#a05a00' : '#8a9186'),
+        mL: mOn ? '보임' : '숨김', pL: pOn ? '보임' : '숨김', mS: pill(mOn), pS: pill(pOn), tm: tog('m', k), tp: tog('p', k),
+        row: 'display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 10px; border-radius: 10px; border-top: ' + (i ? '1px solid #eef0ec' : '0') + (!mOn && !pOn ? '; background: #fafaf8' : '') }; }) }));
+    const R0 = T[0][1];
+    return { tabs, mob: R0.filter(([k]) => !s.m[k]).map(x => x[1]), pc: R0.filter(([k]) => !s.p[k]).map(x => x[1]) };
+  }
+}
+</script>
+</body>
+</html>

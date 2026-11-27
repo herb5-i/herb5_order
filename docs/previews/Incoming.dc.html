@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>지금까지 들어온 주문 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f4f1e8}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 1700px; box-sizing: border-box; padding: 32px 20px 48px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f1e8">
+<div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 숫자예요</span>
+<span style="font-size: 13px; color: #5f6a5c">정리 탭 안의 새 하위 메뉴예요</span>
+</div>
+<div role="tablist" aria-label="정리 하위 메뉴" style="display: flex; gap: 6px; padding: 6px; background: #fffdf8; border: 1px solid #e4dfd0; border-radius: 16px; overflow-x: auto">
+<sc-for list="{{ subs }}" as="t" hint-placeholder-count="5">
+<button type="button" role="tab" aria-selected="{{ t.on }}" style="{{ t.style }}">{{ t.name }}</button>
+</sc-for>
+</div>
+<div style="background: #fffdf8; border: 1px solid #e4dfd0; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap">
+<div style="flex: 1 1 300px; min-width: 0">
+<h2 style="margin: 0; font-size: 21px; font-weight: 800">지금까지 들어온 주문</h2>
+<p style="margin: 6px 0 0; font-size: 13.5px; color: #5f6a5c; line-height: 1.55">아직 엑셀 · 송장 처리 안 한 주문만 모아 봐요. 보기만 하는 칸이라 엑셀 · 송장 · 재고는 안 바뀌어요.</p>
+</div>
+<button type="button" onClick="{{ load }}" style="{{ loadStyle }}">{{ loadTxt }}</button>
+</div>
+<div role="tablist" aria-label="받는 날" style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ days }}" as="d" hint-placeholder-count="2">
+<button type="button" role="tab" aria-selected="{{ d.on }}" onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.name }}</button>
+</sc-for>
+</div>
+<p style="margin: -6px 0 0; font-size: 12.5px; color: #5f6a5c">{{ stamp }}</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px">
+<div style="border: 1px solid #e4dfd0; border-radius: 14px; padding: 12px 14px; background: #fff"><div style="font-size: 12.5px; color: #5f6a5c">주문</div><div style="font-size: 26px; font-weight: 800">{{ nOrd }}<span style="font-size: 14px; font-weight: 700"> 건</span></div><div style="font-size: 12px; color: #2e7d4f; font-weight: 700">{{ newTxt }}</div></div>
+<div style="border: 1px solid #e4dfd0; border-radius: 14px; padding: 12px 14px; background: #fff"><div style="font-size: 12.5px; color: #5f6a5c">상품</div><div style="font-size: 26px; font-weight: 800">{{ nQty }}<span style="font-size: 14px; font-weight: 700"> 개</span></div><div style="font-size: 12px; color: #5f6a5c">{{ nKind }}가지 품목</div></div>
+<div style="{{ shortBox }}"><div style="font-size: 12.5px; color: #5f6a5c">모자란 품목</div><div style="{{ shortNum }}">{{ nShort }}<span style="font-size: 14px; font-weight: 700"> 가지</span></div><div style="font-size: 12px; color: #5f6a5c">지금 재고 기준</div></div>
+</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{ chans }}" as="c" hint-placeholder-count="4">
+<span style="font-size: 13px; border: 1px solid #e4dfd0; border-radius: 99px; padding: 4px 11px; background: #fbfaf5">{{ c.name }} <b>{{ c.n }}건</b></span>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border-top: 1px solid #e4dfd0; padding-top: 14px">
+<div role="tablist" aria-label="보기 방식" style="display: flex; gap: 4px; padding: 4px; background: #f1ede1; border-radius: 12px">
+<button type="button" role="tab" aria-selected="{{ isItem }}" onClick="{{ vItem }}" style="{{ vItemStyle }}">품목별</button>
+<button type="button" role="tab" aria-selected="{{ isOrd }}" onClick="{{ vOrd }}" style="{{ vOrdStyle }}">주문자별</button>
+</div>
+<span style="flex: 1"></span>
+<sc-if value="{{ isOrdB }}" hint-placeholder-val="{{ false }}">
+<label style="display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px; border: 1px solid #d8d3c4; border-radius: 12px; background: #fff; flex: 0 1 240px; min-width: 160px"><span style="color: #8a9186">⌕</span><input value="{{ q }}" onInput="{{ onQ }}" placeholder="주문자 · 받는 분 · 상품 검색" aria-label="주문 검색" style="flex: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; background: transparent; color: #1f2620"></label>
+</sc-if>
+</div>
+<sc-if value="{{ isItemB }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<h3 style="margin: 0; font-size: 16px; font-weight: 800; flex: 1">품목별 수량</h3>
+<button type="button" onClick="{{ toggleShort }}" aria-pressed="{{ onlyShort }}" style="{{ shortBtn }}">모자란 것만 보기</button>
+</div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 72px 72px 96px; gap: 0; font-size: 14px; border: 1px solid #e4dfd0; border-radius: 14px; overflow: hidden; background: #fff">
+<div style="padding: 9px 12px; background: #f1ede1; font-size: 12.5px; font-weight: 700; color: #5f6a5c">품목</div>
+<div style="padding: 9px 8px; background: #f1ede1; font-size: 12.5px; font-weight: 700; color: #5f6a5c; text-align: right">주문</div>
+<div style="padding: 9px 8px; background: #f1ede1; font-size: 12.5px; font-weight: 700; color: #5f6a5c; text-align: right">재고</div>
+<div style="padding: 9px 12px; background: #f1ede1; font-size: 12.5px; font-weight: 700; color: #5f6a5c; text-align: right">남음 · 부족</div>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+<div style="{{ r.c1 }}"><b>{{ r.name }}</b><div style="font-size: 12px; color: #5f6a5c">{{ r.cat }}</div></div>
+<div style="{{ r.c2 }}"><b>{{ r.qty }}</b></div>
+<div style="{{ r.c2 }}">{{ r.stock }}</div>
+<div style="{{ r.c3 }}">{{ r.left }}</div>
+</sc-for>
+</div>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 14px; color: #5f6a5c; text-align: center">모자란 품목이 없어요 👍</p></sc-if>
+</sc-if>
+<sc-if value="{{ isOrdB }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ ords }}" as="o" hint-placeholder-count="4">
+<div style="{{ o.box }}">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid #eee8da">
+<b style="font-size: 15.5px">{{ o.who }}</b><span style="font-size: 12px; color: #5f6a5c">{{ o.member }}</span>
+<span style="{{ o.chanStyle }}">{{ o.chan }}</span>
+<sc-if value="{{ o.short }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11.5px; font-weight: 700; color: #fff; background: #c0392b; border-radius: 99px; padding: 2px 8px">재고 부족 포함</span></sc-if>
+<span style="flex: 1"></span>
+<span style="font-size: 12px; color: #5f6a5c">{{ o.no }} · {{ o.at }}</span>
+</div>
+<sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="2">
+<div style="{{ l.row }}">
+<div style="width: 40px; height: 40px; border-radius: 9px; background: #efeadc; flex: none; display: grid; place-items: center; font-size: 18px">{{ l.ic }}</div>
+<div style="flex: 1 1 160px; min-width: 0"><div style="font-size: 14.5px; font-weight: 700">{{ l.name }}</div><div style="font-size: 12.5px; color: #2f6db5">- 옵션 : {{ l.opt }}</div></div>
+<div style="font-size: 14px; min-width: 44px; text-align: right">{{ l.qty }}</div>
+<div style="font-size: 14px; min-width: 76px; text-align: right">{{ l.price }}</div>
+<div style="{{ l.tag }}">{{ l.st }}</div>
+</div>
+</sc-for>
+<div style="display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; padding: 11px 14px; background: #fbfaf5; border-top: 1px solid #eee8da; font-size: 13.5px">
+<span>받는 분 <b>{{ o.to }}</b></span>
+<button type="button" onClick="{{ o.toggle }}" style="height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid #d8d3c4; background: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer; color: #1f2620">{{ o.ctBtn }}</button>
+<span style="flex: 1"></span>
+<span style="color: #5f6a5c">{{ o.pay }}</span>
+<span>총 결제 <b style="font-size: 15px">{{ o.total }}</b></span>
+</div>
+<sc-if value="{{ o.ctOpen }}" hint-placeholder-val="{{ false }}"><div style="padding: 10px 14px; border-top: 1px dashed #e4dfd0; font-size: 13px; line-height: 1.7; color: #3d4a3a">휴대전화 : {{ o.tel }}<br>주소 : {{ o.addr }}<br><span style="font-size: 12px; color: #8a9186">전화 · 주소는 누를 때만 카페24에서 불러오고 저장하지 않아요</span></div></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{ noOrd }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 14px; color: #5f6a5c; text-align: center">맞는 주문이 없어요</p></sc-if>
+</div>
+</sc-if>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.6">· 카페24에서 아직 [배송 준비중]으로 안 넘긴 주문을 받는 날 기준으로 모아요. 카톡 주문도 같이 세요.<br>· 품목 이름은 엑셀 정리할 때와 같은 규칙으로 묶고, 재고는 재고 관리 탭 숫자와 비교해요.<br>· 주문자별 보기는 카페24 주문 목록처럼 한 주문에 담긴 상품을 묶어 보여 줘요. 이름은 이 기기에만 잠깐 두고, 전화 · 주소는 누를 때만 불러와요.<br>· 예시 이름 · 번호 · 주소는 모두 가짜예요.</p>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1700}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { day: 0, only: false, busy: false, at: '21:36', view: 'item', q: '', open: {} }; }
+  data() { return [
+    { name: '11/27 (금) 내일', ord: 23, newN: 4, chans: [['자사몰', 9], ['스마트스토어', 8], ['쿠팡', 4], ['카톡', 2]], items: [
+      ['식용꽃 비올라 30송이', '식용꽃', 12, 20], ['식용꽃 혼합 50송이', '식용꽃', 7, 4], ['식용꽃 팬지 20송이', '식용꽃', 5, 9], ['애플민트 작은잎 100g', '생잎', 8, 15], ['애플민트 보통잎 100g', '생잎', 3, 6], ['로즈마리 10g', '생잎', 6, 6], ['타임 10g', '생잎', 2, 10], ['미니장미 5송이', '장식용 꽃', 5, 2] ] },
+    { name: '11/28 (토) 모레', ord: 9, newN: 1, chans: [['자사몰', 4], ['스마트스토어', 3], ['쿠팡', 2], ['카톡', 0]], items: [
+      ['식용꽃 비올라 30송이', '식용꽃', 4, 20], ['애플민트 작은잎 100g', '생잎', 3, 15], ['로즈마리 10g', '생잎', 2, 6], ['식용꽃 혼합 50송이', '식용꽃', 2, 4] ] } ]; }
+  orders() { return [
+    [{ no: '20261126-0000412', at: '11/26 20:41', who: '김하늘', member: '[비회원]', chan: '스마트스토어', to: '김하늘', pay: '스마트스토어 결제', tel: '010-0000-1111', addr: '서울시 ○○구 ○○로 12 (예시)', lines: [['타임', '10g', 1, 12000], ['로즈마리', '10g', 1, 11900]] },
+     { no: '20261126-0000398', at: '11/26 19:12', who: '박서준', member: '[회원]', chan: '자사몰', to: '카페 숲속 (박서준)', pay: '카드', tel: '010-0000-2222', addr: '경기도 ○○시 ○○길 3 (예시)', lines: [['식용꽃 혼합', '50송이', 3, 15000], ['미니장미 5송이', '혼합색', 2, 8000]] },
+     { no: '20261126-0000377', at: '11/26 17:55', who: '이도윤', member: '[비회원]', chan: '쿠팡', to: '이도윤', pay: '쿠팡 결제', tel: '0502-0000-3333', addr: '부산시 ○○구 ○○대로 45 (예시)', lines: [['식용꽃 비올라', '30송이', 2, 12000]] },
+     { no: '카톡-1126-02', at: '11/26 16:20', who: '레스토랑 봄날', member: '[카톡 업체]', chan: '카톡', to: '레스토랑 봄날', pay: '계좌이체', tel: '010-0000-4444', addr: '대구시 ○○구 ○○로 7 (예시)', lines: [['애플민트 작은잎', '100g', 3, 9000], ['식용꽃 혼합', '50송이', 2, 15000], ['미니장미 5송이', '혼합색', 3, 8000]] },
+     { no: '20261126-0000351', at: '11/26 15:03', who: '최유나', member: '[회원]', chan: '자사몰', to: '최유나', pay: '네이버페이', tel: '010-0000-5555', addr: '광주시 ○○구 ○○로 88 (예시)', lines: [['식용꽃 팬지', '20송이', 1, 11000], ['애플민트 보통잎', '100g', 1, 8000]] }],
+    [{ no: '20261126-0000420', at: '11/26 21:10', who: '정민호', member: '[비회원]', chan: '스마트스토어', to: '정민호', pay: '스마트스토어 결제', tel: '010-0000-6666', addr: '인천시 ○○구 ○○로 5 (예시)', lines: [['식용꽃 비올라', '30송이', 1, 12000], ['로즈마리', '10g', 2, 5000]] },
+     { no: '20261126-0000403', at: '11/26 19:40', who: '한지원', member: '[회원]', chan: '쿠팡', to: '한지원', pay: '쿠팡 결제', tel: '0502-0000-7777', addr: '대전시 ○○구 ○○로 21 (예시)', lines: [['식용꽃 혼합', '50송이', 2, 15000]] }] ][this.state.day]; }
+  renderVals() {
+    const s = this.state, D = this.data(), d = D[s.day];
+    const items = d.items.map(([name, cat, qty, stock]) => ({ name, cat, qty, stock, left: stock - qty }));
+    const short = items.filter(x => x.left < 0);
+    const list = (s.only ? short : items).slice().sort((a, b) => a.left - b.left || b.qty - a.qty);
+    const cell = 'padding: 10px 12px; border-top: 1px solid #eee8da; ';
+    const rows = list.map(x => { const bad = x.left < 0, tight = !bad && x.left <= 2, bg = bad ? 'background: #fbf1ef; ' : '';
+      return { name: x.name, cat: x.cat, qty: x.qty + '개', stock: x.stock + '개', left: bad ? (-x.left) + '개 부족' : x.left + '개 남음',
+        c1: cell + bg + 'min-width: 0', c2: cell + bg + 'text-align: right; padding-left: 8px; padding-right: 8px',
+        c3: cell + bg + 'text-align: right; font-weight: 800; color: ' + (bad ? '#c0392b' : tight ? '#b86b00' : '#2e7d4f') }; });
+    const qty = items.reduce((a, x) => a + x.qty, 0);
+    const SUBS = ['주문 정리', '들어온 주문', '송장 등록', '날씨', '공지 이미지'];
+    const shortNames = new Set(short.map(x => x.name.split(' ').slice(0, -1).join(' ')));
+    const isShortLine = n => short.some(x => x.name.indexOf(n) === 0);
+    const won = n => n.toLocaleString('ko-KR') + '원', q = s.q.replace(/\s+/g, '');
+    const chanCol = { '자사몰': '#2e7d4f', '스마트스토어': '#1e9e48', '쿠팡': '#c4302b', '카톡': '#b8860b' };
+    const ords = this.orders().filter(o => !q || (o.who + o.to + o.lines.map(l => l[0]).join('')).replace(/\s+/g, '').includes(q)).map(o => {
+      const sh = o.lines.some(l => isShortLine(l[0])), op = !!s.open[o.no];
+      return { no: o.no, at: o.at, who: o.who, member: o.member, chan: o.chan, to: o.to, pay: o.pay, short: sh, tel: o.tel, addr: o.addr, ctOpen: op,
+        ctBtn: op ? '전화 · 주소 닫기' : '전화 · 주소 보기', toggle: () => this.setState({ open: Object.assign({}, s.open, { [o.no]: !op }) }),
+        total: won(o.lines.reduce((a, l) => a + l[2] * l[3], 0)),
+        chanStyle: 'font-size: 11.5px; font-weight: 700; color: #fff; border-radius: 6px; padding: 2px 7px; background: ' + chanCol[o.chan],
+        box: 'border: 1px solid ' + (sh ? '#e7b9b3' : '#e4dfd0') + '; border-radius: 14px; overflow: hidden; background: #fff',
+        lines: o.lines.map(l => { const b = isShortLine(l[0]); return { name: l[0], opt: l[1], qty: l[2] + '개', price: won(l[3] * l[2]), ic: l[0].indexOf('식용꽃') === 0 || l[0].indexOf('미니') === 0 ? '🌸' : '🌿',
+          st: b ? '재고 부족' : '재고 있음', tag: 'font-size: 12px; font-weight: 700; min-width: 64px; text-align: right; color: ' + (b ? '#c0392b' : '#2e7d4f'),
+          row: 'display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border-top: 1px solid #f3efe4' + (b ? '; background: #fdf6f4' : '') }; }) }; });
+    const seg = on => 'height: 36px; padding: 0 16px; border-radius: 9px; border: 0; font-size: 14px; font-weight: 800; cursor: pointer; ' + (on ? 'background: #fff; color: #1f2620; box-shadow: 0 1px 3px rgba(0,0,0,.12)' : 'background: transparent; color: #5f6a5c');
+    return {
+      subs: SUBS.map(n => ({ name: n, on: n === '들어온 주문' ? 'true' : 'false', style: 'flex: none; height: 42px; padding: 0 16px; border-radius: 11px; border: 0; font-size: 14.5px; font-weight: 800; cursor: default; ' + (n === '들어온 주문' ? 'background: #2e7d4f; color: #fff' : 'background: transparent; color: #5f6a5c') })),
+      isItem: s.view === 'item' ? 'true' : 'false', isOrd: s.view === 'order' ? 'true' : 'false', isItemB: s.view === 'item', isOrdB: s.view === 'order',
+      vItem: () => this.setState({ view: 'item' }), vOrd: () => this.setState({ view: 'order' }), vItemStyle: seg(s.view === 'item'), vOrdStyle: seg(s.view === 'order'),
+      q: s.q, onQ: e => this.setState({ q: e.target.value }), ords, noOrd: !ords.length,
+      days: D.map((x, i) => ({ name: x.name, on: s.day === i ? 'true' : 'false', pick: () => this.setState({ day: i }),
+        style: 'height: 40px; padding: 0 16px; border-radius: 12px; font-size: 14.5px; font-weight: 800; cursor: pointer; border: 1px solid ' + (s.day === i ? '#1f2620; background: #1f2620; color: #fff' : '#e4dfd0; background: #fbfaf5; color: #1f2620') })),
+      load: () => { if (s.busy) return; this.setState({ busy: true }); setTimeout(() => { const t = new Date(); this.setState({ busy: false, at: String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0') }); }, 900); },
+      loadTxt: s.busy ? '카페24 확인 중…' : '지금 확인',
+      loadStyle: 'height: 46px; padding: 0 20px; border-radius: 12px; border: 0; font-size: 15px; font-weight: 800; color: #fff; cursor: pointer; background: ' + (s.busy ? '#8fb39c' : '#2e7d4f'),
+      stamp: '마지막 확인 ' + s.at + ' · 처리 안 한 주문만 세요',
+      nOrd: d.ord, newTxt: '지난 확인 뒤 새 주문 ' + d.newN + '건', nQty: qty, nKind: items.length, nShort: short.length,
+      shortBox: 'border: 1px solid ' + (short.length ? '#e7b9b3; background: #fbf3f1' : '#e4dfd0; background: #fff') + '; border-radius: 14px; padding: 12px 14px',
+      shortNum: 'font-size: 26px; font-weight: 800; color: ' + (short.length ? '#c0392b' : '#1f2620'),
+      chans: d.chans.map(([name, n]) => ({ name, n })),
+      onlyShort: s.only ? 'true' : 'false', toggleShort: () => this.setState({ only: !s.only }),
+      shortBtn: 'height: 38px; padding: 0 14px; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid ' + (s.only ? '#c0392b; background: #c0392b; color: #fff' : '#d8d3c4; background: #fff; color: #1f2620'),
+      rows, empty: s.only && !short.length
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>고객 관리 · 쉬운 화면 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1150px; position: relative; box-sizing: border-box; padding: 24px 16px 40px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px">
+<span style="align-self: flex-start; font-size: 12px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 예시 손님</span>
+
+<!-- 큰 버튼 3개 -->
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{ big }}" as="b" hint-placeholder-count="3">
+<button type="button" onClick="{{ b.go }}" style="{{ b.s }}"><span style="font-size: 30px">{{ b.ic }}</span><b style="font-size: 34px; line-height: 1">{{ b.n }}</b><span style="font-size: 15px; font-weight: 800">{{ b.t }}</span></button>
+</sc-for>
+</div>
+
+<!-- 다른 묶음 (작게) -->
+<div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center">
+<span style="font-size: 13px; color: #8a9186; margin-right: 2px">다른 손님</span>
+<sc-for list="{{ more }}" as="m" hint-placeholder-count="5"><button type="button" onClick="{{ m.go }}" style="{{ m.s }}">{{ m.t }}</button></sc-for>
+</div>
+
+<!-- 목록 -->
+<div style="background: #fff; border-radius: 22px; box-shadow: 0 1px 0 #e5e8e3, 0 10px 24px -18px rgba(0,0,0,.25); overflow: hidden">
+<div style="display: flex; align-items: center; gap: 10px; padding: 16px 18px 10px"><span style="font-size: 26px">{{ cur.ic }}</span><b style="font-size: 20px; flex: 1">{{ cur.t }}</b><span style="font-size: 14px; color: #8a9186">{{ cur.hint }}</span></div>
+<sc-for list="{{ people }}" as="p" hint-placeholder-count="3">
+<div style="{{ p.rs }}">
+<button type="button" onClick="{{ p.open }}" style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; border: 0; background: none; padding: 0; text-align: left; cursor: pointer">
+<span style="{{ p.avS }}">{{ p.av }}</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><b style="font-size: 17px">{{ p.nm }}</b><span style="font-size: 14px; color: #5f6a5c">{{ p.item }}</span></span>
+</button>
+<span style="{{ p.ds }}">{{ p.dd }}</span>
+<button type="button" onClick="{{ p.done }}" aria-label="연락했어요" style="{{ p.bs }}">{{ p.bt }}</button>
+</div>
+</sc-for>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 30px; text-align: center; font-size: 16px; color: #8a9186">🎉 다 연락했어요!</p></sc-if>
+<div style="padding: 14px 18px 18px"><button type="button" onClick="{{ openSend }}" style="width: 100%; height: 56px; border-radius: 16px; border: 0; background: #2e7d4f; color: #fff; font-size: 18px; font-weight: 800; cursor: pointer">📩 이 손님들에게 문자 보내기</button></div>
+</div>
+
+<!-- 지난번 결과 한 줄 -->
+<div style="background: #fff; border-radius: 18px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 0 #e5e8e3">
+<span style="font-size: 28px">👍</span>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 15px">지난번 문자 <b>12명</b> 중 <b style="color: #2e7d4f">5명</b>이 다시 주문했어요</span><div style="height: 10px; border-radius: 99px; background: #eef0ec; overflow: hidden"><i style="display: block; height: 100%; width: 42%; background: #2e7d4f"></i></div></div>
+<b style="font-size: 22px; color: #2e7d4f">42%</b>
+</div>
+</div>
+
+<!-- 손님 한 명 (누르면) -->
+<sc-if value="{{ hasP }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeP }}" style="position: fixed; inset: 0; z-index: 50; background: rgba(20,28,20,.45); display: flex; align-items: center; justify-content: center; padding: 16px">
+<div onClick="{{ stop }}" style="width: 420px; max-width: 100%; max-height: calc(100vh - 32px); overflow-y: auto; background: #fff; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.25)">
+<div style="display: flex; align-items: center; gap: 12px"><span style="{{ P.avS }}">{{ P.av }}</span><b style="font-size: 22px; flex: 1">{{ P.nm }}</b><button type="button" onClick="{{ closeP }}" style="width: 38px; height: 38px; border-radius: 99px; border: 1px solid #dfe3dc; background: #fff; font-size: 18px; cursor: pointer">×</button></div>
+<sc-if value="{{ P.claim }}" hint-placeholder-val="{{ false }}"><div style="background: #fdecea; color: #c0392b; border-radius: 12px; padding: 10px 12px; font-size: 15px; font-weight: 800">⚠ 반품한 적 있어요</div></sc-if>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ P.facts }}" as="f" hint-placeholder-count="4"><div style="background: #f5f7f4; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 22px">{{ f.ic }}</span><small style="font-size: 12.5px; color: #8a9186">{{ f.k }}</small><b style="{{ f.s }}">{{ f.v }}</b></div></sc-for>
+</div>
+<div style="background: #eef4fc; border-radius: 14px; padding: 12px 14px; font-size: 15px">📌 {{ P.memo }}</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<button type="button" onClick="{{ P.done }}" style="height: 50px; border-radius: 14px; border: 0; background: #2e7d4f; color: #fff; font-size: 16px; font-weight: 800; cursor: pointer">✓ 연락했어요</button>
+<button type="button" style="height: 50px; border-radius: 14px; border: 1px solid #dfe3dc; background: #fff; font-size: 16px; font-weight: 800">📞 전화번호 보기</button>
+</div>
+<small style="text-align: center; font-size: 13px; color: #8a9186">▸ 주문 기록 · 태그 · 메모 쓰기 더 보기</small>
+</div>
+</div>
+</sc-if>
+
+<!-- 문자 보내기 (2단계) -->
+<sc-if value="{{ hasSend }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSend }}" style="position: fixed; inset: 0; z-index: 50; background: rgba(20,28,20,.45); display: flex; align-items: center; justify-content: center; padding: 16px">
+<div onClick="{{ stop }}" style="width: 460px; max-width: 100%; max-height: calc(100vh - 32px); overflow-y: auto; background: #fff; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.25)">
+<div style="display: flex; align-items: center; gap: 10px"><b style="font-size: 20px; flex: 1">📩 문자 보내기 · {{ cur.n }}명</b><button type="button" onClick="{{ closeSend }}" style="width: 38px; height: 38px; border-radius: 99px; border: 1px solid #dfe3dc; background: #fff; font-size: 18px; cursor: pointer">×</button></div>
+<b style="font-size: 15px">① 어떤 문자?</b>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ recipes }}" as="r" hint-placeholder-count="4"><button type="button" onClick="{{ r.go }}" style="{{ r.s }}"><span style="font-size: 26px">{{ r.ic }}</span><b style="font-size: 15px">{{ r.t }}</b></button></sc-for>
+</div>
+<div style="background: #fef9e7; border-radius: 16px; padding: 14px; font-size: 15px; line-height: 1.7; white-space: pre-line">{{ msg }}</div>
+<b style="font-size: 15px">② 보내기</b>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<button type="button" style="height: 50px; border-radius: 14px; border: 1px solid #dfe3dc; background: #fff; font-size: 15px; font-weight: 800">📋 문구 복사</button>
+<button type="button" style="height: 50px; border-radius: 14px; border: 1px solid #dfe3dc; background: #fff; font-size: 15px; font-weight: 800">⬇ 번호 엑셀</button>
+</div>
+<button type="button" onClick="{{ sent }}" style="{{ sentS }}">{{ sentT }}</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":1150}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { g: 'soon', done: {}, open: '', send: false, rec: 'reorder', sent: false }; }
+  renderVals() {
+    const s = this.state;
+    const P = [
+      { id: 'a', nm: '김하늘', item: '로즈마리 100g', dd: 2, g: ['soon', 'vip'], cyc: 21, n: 14, spent: '38만 원' },
+      { id: 'b', nm: '○○카페', item: '식용꽃 비올라', dd: 1, g: ['soon', 'vip', 'biz'], cyc: 14, n: 31, spent: '126만 원' },
+      { id: 'c', nm: '이도윤', item: '자스민 100잎', dd: 2, g: ['soon'], cyc: 30, n: 4, spent: '9만 원', claim: 1 },
+      { id: 'd', nm: '박서연', item: '애플민트 30g', dd: -8, g: ['late'], cyc: 18, n: 9, spent: '21만 원' },
+      { id: 'e', nm: '△△식당', item: '식용꽃 혼합', dd: -9, g: ['late', 'biz'], cyc: 10, n: 22, spent: '88만 원' },
+      { id: 'f', nm: '최민준', item: '타임 30g', dd: -8, g: ['late', 'promise'], cyc: 25, n: 5, spent: '12만 원', memo: '오늘 연락 약속 · 타임 입고 알려 주기' },
+      { id: 'g', nm: '정유나', item: '로즈마리 30g', dd: null, g: ['first'], cyc: null, n: 1, spent: '1만 6천 원' },
+      { id: 'h', nm: '한지우', item: '자스민 100잎', dd: -36, g: ['sleep'], cyc: 35, n: 6, spent: '15만 원' }];
+    const B = [['soon', '🔜', '곧 살 손님', '#2e7d4f', '#e3f1e6', '곧 떨어질 때예요'], ['late', '⏰', '늦은 손님', '#b86b00', '#fff0d9', '평소보다 늦어요'], ['promise', '📌', '약속', '#2f6db5', '#e6eefb', '연락하기로 한 날']];
+    const M = [['vip', '👑 단골'], ['first', '🌱 처음 온 손님'], ['sleep', '💤 잠든 손님'], ['biz', '🏪 거래처'], ['all', '👥 전체']];
+    const inG = (p, k) => k === 'all' || p.g.includes(k);
+    const cnt = k => P.filter(p => inG(p, k) && !s.done[p.id]).length;
+    const big = B.map(([k, ic, t, c, bg]) => { const on = s.g === k; return { ic, t, n: cnt(k), go: () => this.setState({ g: k }),
+      s: 'display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 8px; border-radius: 22px; cursor: pointer; color: ' + c + '; background: ' + (on ? c : bg) + '; border: 0; ' + (on ? 'color: #fff; box-shadow: 0 10px 20px -10px ' + c : '') }; });
+    const more = M.map(([k, t]) => { const on = s.g === k; return { t: t + ' ' + cnt(k), go: () => this.setState({ g: k }), s: 'height: 34px; padding: 0 12px; border-radius: 99px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid ' + (on ? '#2e7d4f' : '#dfe3dc') + '; background: ' + (on ? '#2e7d4f' : '#fff') + '; color: ' + (on ? '#fff' : '#3d473b') }; });
+    const curB = B.find(x => x[0] === s.g), curM = M.find(x => x[0] === s.g);
+    const cur = curB ? { ic: curB[1], t: curB[2], hint: curB[5] } : { ic: curM[1].split(' ')[0], t: curM[1].split(' ').slice(1).join(' '), hint: '' };
+    const col = p => p.dd === null ? '#5f6a5c' : p.dd >= 0 ? '#2e7d4f' : '#b86b00';
+    const avS = (p, sz) => 'width: ' + sz + 'px; height: ' + sz + 'px; flex: none; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: ' + Math.round(sz * .42) + 'px; color: #fff; background: ' + col(p);
+    const ddT = p => p.dd === null ? '처음' : p.dd > 0 ? p.dd + '일 뒤' : p.dd === 0 ? '오늘' : (-p.dd) + '일 늦음';
+    const L = P.filter(p => inG(p, s.g)).sort((a, b) => (!!s.done[a.id]) - (!!s.done[b.id]));
+    const people = L.map(p => { const dn = !!s.done[p.id];
+      return { nm: p.nm, item: p.item, av: p.nm.replace(/[○△]/g, '')[0], avS: avS(p, 46), dd: ddT(p),
+        ds: 'font-size: 15px; font-weight: 900; color: ' + col(p) + '; white-space: nowrap',
+        open: () => this.setState({ open: p.id }), done: () => this.setState({ done: { ...s.done, [p.id]: !dn } }), bt: dn ? '✓' : '○',
+        bs: 'width: 46px; height: 46px; flex: none; border-radius: 99px; font-size: 22px; font-weight: 900; cursor: pointer; border: 2px solid ' + (dn ? '#2e7d4f' : '#d5dad2') + '; background: ' + (dn ? '#2e7d4f' : '#fff') + '; color: ' + (dn ? '#fff' : '#c5cbc1'),
+        rs: 'display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-top: 1px solid #f0f2ee; opacity: ' + (dn ? .45 : 1) }; });
+    const O = P.find(p => p.id === s.open);
+    const tip = O ? (/로즈마리/.test(O.item) ? '타임' : /비올라|혼합/.test(O.item) ? '팬지' : /자스민/.test(O.item) ? '애플민트' : '로즈마리') : '';
+    const Pd = O ? { nm: O.nm, av: O.nm.replace(/[○△]/g, '')[0], avS: avS(O, 52), claim: !!O.claim, memo: O.memo || '아직 메모가 없어요',
+      facts: [['🗓', '다음 주문', ddT(O)], ['🌿', '자주 사는 것', O.item], ['🔁', '이만큼 샀어요', O.n + '번'], ['💡', '같이 권해 보기', tip]].map(([ic, k, v]) => ({ ic, k, v, s: 'font-size: 17px; color: ' + (/늦음/.test(v) ? '#b86b00' : '#1f2620') })),
+      done: () => this.setState({ done: { ...s.done, [O.id]: true }, open: '' }) } : {};
+    const R = { reorder: ['🔁', '다시 살 때', '{이름}님, 허브아이예요 🌿\n{품목} 떨어질 때 됐어요.\n이번 주 주문하시면 바로 보내 드릴게요!'],
+      late: ['💌', '안부 인사', '{이름}님, 요즘 {품목} 잘 쓰세요? 🌿\n다음 주문 때 작은 덤을 넣어 드릴게요.'],
+      restock: ['📦', '다시 들어왔어요', '{이름}님, {품목}이 다시 들어왔어요! 🌱\n넉넉할 때 주문해 주세요.'],
+      thanks: ['🙏', '고마워요', '{이름}님, 주문해 주셔서 고마워요 🌿\n다음 주문엔 덤을 챙겨 드릴게요.'] };
+    const p0 = L[0] || P[0];
+    const recipes = Object.entries(R).map(([k, [ic, t]]) => { const on = s.rec === k; return { ic, t, go: () => this.setState({ rec: k }), s: 'display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border-radius: 16px; cursor: pointer; border: 2px solid ' + (on ? '#b86b00' : '#eceee9') + '; background: ' + (on ? '#fff3e0' : '#fff') }; });
+    return { big, more, cur: Object.assign(cur, { n: L.filter(p => !s.done[p.id]).length }), people, empty: !L.some(p => !s.done[p.id]),
+      hasP: !!O, P: Pd, closeP: () => this.setState({ open: '' }), stop: e => e.stopPropagation(),
+      hasSend: s.send, openSend: () => this.setState({ send: true, sent: false }), closeSend: () => this.setState({ send: false }), recipes,
+      msg: R[s.rec][2].replace('{이름}', p0.nm).replace('{품목}', p0.item),
+      sent: () => this.setState({ sent: true }), sentT: s.sent ? '✓ 기록했어요 · 7일 뒤 결과가 나와요' : '✅ 보냈어요',
+      sentS: 'height: 54px; border-radius: 16px; border: 0; font-size: 17px; font-weight: 800; cursor: pointer; background: ' + (s.sent ? '#e8f2ea' : '#2e7d4f') + '; color: ' + (s.sent ? '#2e7d4f' : '#fff') };
+  }
+}
+</script>
+</body>
+</html>

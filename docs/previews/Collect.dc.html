@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>마켓 주문 수집 팝업 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1050px; position: relative; box-sizing: border-box; padding: 28px 20px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 가짜 이름 · 눌러 보세요</span>
+<span style="font-size: 13px; color: #5f6a5c">홈 '주문 처리 현황' 위젯</span>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 14px; font-weight: 700; color: #5f6a5c">주문 처리 현황 <small style="font-weight: 600; font-size: 11px; background: #eef0ec; border-radius: 99px; padding: 2px 7px; margin-left: 4px">카페24 · {{ ostAt }}</small></span>
+<span style="flex: 1"></span>
+<button type="button" onClick="{{ openPop }}" style="height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid #2e7d4f; background: #eef6ef; color: #2e7d4f; font-size: 12.5px; font-weight: 800; cursor: pointer">🛒 마켓 주문 수집</button>
+<button type="button" aria-label="새로 받기" style="width: 32px; height: 32px; border-radius: 99px; border: 0; background: #eef4ee; color: #2e7d4f; font-size: 15px; cursor: pointer">↻</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px">
+<sc-for list="{{ cells }}" as="c" hint-placeholder-count="6"><div style="{{ c.box }}"><span style="font-size: 12px; color: #5f6a5c">{{ c.n }}</span><b style="{{ c.num }}">{{ c.v }}</b></div></sc-for>
+</div>
+<div style="border-top: 1px dashed #e1e5df; padding-top: 10px"><b style="font-size: 14.5px">들어온 주문</b></div>
+<div style="height: 340px; overflow-y: auto; border: 1px solid #eceee9; border-radius: 14px; background: #fbfcfa">
+<sc-for list="{{ ords }}" as="o" hint-placeholder-count="5">
+<div style="{{ o.row }}">
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+<b style="font-size: 13.5px">{{ o.who }}</b><span style="{{ o.chStyle }}">{{ o.ch }}</span>
+<sc-if value="{{ o.pre }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 800; color: #8a5a12; background: #fdf3e2; border: 1px solid #e3c08a; border-radius: 6px; padding: 1px 6px">발주 확인 전</span></sc-if>
+<sc-if value="{{ o.isNew }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 800; color: #fff; background: #2e7d4f; border-radius: 6px; padding: 1px 6px">방금 수집</span></sc-if>
+<span style="flex: 1"></span><span style="font-size: 11.5px; color: #8a9186">{{ o.at }}</span>
+</div>
+<sc-for list="{{ o.lines }}" as="l" hint-placeholder-count="2">
+<div style="display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 22px; gap: 8px; font-size: 12.5px; margin-top: 3px"><span>{{ l.p }}</span><span style="color: #8a9186">{{ l.o }}</span><b style="text-align: right">{{ l.q }}</b></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #8a9186">{{ foot }}</span>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.7">· [🛒 마켓 주문 수집] 버튼은 주문 처리 현황 새로고침(↻) 바로 옆에 있어요. 누르면 카페24 마켓플러스 주문 수집 화면이 작은 팝업 창으로 열려요 (휴대폰은 새 탭).<br>· 팝업에서 [주문수집]을 누르고 창을 닫으면, 들어온 주문이 자동으로 새로 불러와져요. 방금 들어온 주문에는 '방금 수집'이 붙어요.<br>· 배송준비중 주문에 더해, 수집은 됐지만 아직 발주 확인 전인 마켓 주문도 '발주 확인 전' 표시와 함께 보여 줘요.<br>· 팝업 주소는 처음 한 번만 넣어 두면 돼요 (관리자).</p>
+</div>
+<sc-if value="{{ pop }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(20,25,20,.25)"></div>
+<div style="position: absolute; top: 120px; left: 50%; transform: translateX(-50%); width: min(520px, 92%); background: #fff; border-radius: 12px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); overflow: hidden; border: 1px solid #cfd3cc">
+<div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #eceeea; font-size: 12px; color: #5f6a5c"><span style="width: 10px; height: 10px; border-radius: 50%; background: #e0605a"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #e7b84a"></span><span style="width: 10px; height: 10px; border-radius: 50%; background: #5cb85c"></span><span style="flex: 1; text-align: center">팝업 창 · 카페24 마켓플러스 › 주문 수집</span></div>
+<div style="padding: 18px; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px">
+<b style="font-size: 15px">마켓 주문 수집 (카페24 화면 예시)</b>
+<div style="border: 1px solid #e1e4df; border-radius: 8px; overflow: hidden"><div style="display: grid; grid-template-columns: 1fr 1fr 90px; padding: 8px 10px; background: #f5f6f4; color: #5f6a5c; font-size: 12px"><span>마켓</span><span>마지막 수집</span><span></span></div>
+<div style="display: grid; grid-template-columns: 1fr 1fr 90px; padding: 8px 10px; align-items: center; border-top: 1px solid #eceee9"><span>스마트스토어</span><span style="color: #8a9186">{{ last }}</span><button type="button" onClick="{{ collect }}" style="height: 30px; border-radius: 6px; border: 1px solid #3d4a3a; background: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer">주문수집</button></div>
+<div style="display: grid; grid-template-columns: 1fr 1fr 90px; padding: 8px 10px; align-items: center; border-top: 1px solid #eceee9"><span>쿠팡</span><span style="color: #8a9186">{{ last }}</span><button type="button" onClick="{{ collect }}" style="height: 30px; border-radius: 6px; border: 1px solid #3d4a3a; background: #fff; font-size: 12.5px; font-weight: 700; cursor: pointer">주문수집</button></div></div>
+<span style="color: #2e7d4f; font-weight: 700">{{ popMsg }}</span>
+<button type="button" onClick="{{ closePop }}" style="align-self: flex-end; height: 36px; padding: 0 16px; border-radius: 8px; border: 0; background: #3d4a3a; color: #fff; font-weight: 700; cursor: pointer">창 닫기</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":1050}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pop: false, got: false, shown: false, at: '01:35' }; }
+  renderVals() {
+    const s = this.state, chC = { '자사몰': '#3d7a4f', '스마트스토어': '#2f86c4', '쿠팡': '#d9663f' };
+    const base = [['김하늘', '스마트스토어', '01:20', [['타임', '1개 100g', 1], ['로즈마리', '1개 100g', 1]], false], ['박서준', '자사몰', '00:52', [['식용꽃 비올라', '30송이', 2]], false],
+      ['이도윤', '쿠팡', '00:31', [['식용꽃 혼합', '50송이', 1]], true], ['최유나', '스마트스토어', '어제 22:10', [['애플민트 작은잎', '100g', 2]], false]];
+    const neu = [['정민호', '쿠팡', '01:33', [['식용꽃 팬지', '20송이', 1], ['타임', '1개 30g', 1]], true], ['한지원', '스마트스토어', '01:29', [['로즈마리', '1개 10g', 3]], true]];
+    const L = (s.shown ? neu.map(x => x.concat([true])) : []).concat(base.map(x => x.concat([false])));
+    const ords = L.map(([who, ch, at, lines, pre, isNew], i) => ({ who, ch, at, pre, isNew, lines: lines.map(([p, o, q]) => ({ p, o, q })),
+      chStyle: 'font-size: 11px; font-weight: 700; color: #fff; border-radius: 6px; padding: 1px 7px; background: ' + chC[ch],
+      row: 'padding: 10px 14px; border-top: ' + (i ? '1px solid #eef0ec' : '0') + (isNew ? '; background: #f1f8f2' : '') }));
+    const C = [['입금전', 3], ['상품준비중', 0], ['배송보류중', 1], ['배송준비중', s.shown ? 20 : 18], ['배송대기', 0], ['배송중', 42]];
+    const cells = C.map(([n, v]) => ({ n, v: String(v), box: 'display: flex; flex-direction: column; gap: 2px; padding: 9px 11px; border-radius: 12px; background: ' + (v ? '#eef6ef' : '#f5f6f4'), num: 'font-size: 19px; font-weight: 800; color: ' + (v ? '#1f2620' : '#a3aaa0') }));
+    return { cells, ostAt: s.shown ? '01:36' : '01:35', ords, pop: s.pop, last: s.got ? '방금' : '25분 전', popMsg: s.got ? '새 주문 2건을 수집했어요' : '',
+      foot: (s.shown ? '01:36' : s.at) + ' 확인' + (s.shown ? ' · 팝업을 닫아서 자동으로 새로 불러왔어요' : ''),
+      openPop: () => this.setState({ pop: true }), collect: () => this.setState({ got: true }),
+      closePop: () => this.setState({ pop: false, shown: s.got || s.shown }) };
+  }
+}
+</script>
+</body>
+</html>

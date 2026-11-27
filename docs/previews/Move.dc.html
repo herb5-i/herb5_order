@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>입금전 · 상품준비중 → 배송준비중 넘기기 미리보기</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f5f3}button{font-family:inherit}</style>
+</helmet>
+<div style="min-height: 1100px; position: relative; box-sizing: border-box; padding: 28px 20px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: #1f2620; background: #f4f5f3">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 3px 10px">미리보기 · 가짜 이름 · 눌러 보세요</span>
+<span style="font-size: 13px; color: #5f6a5c">홈 '주문 처리 현황' 위젯</span>
+</div>
+<div style="background: #fff; border: 1px solid #e5e8e3; border-radius: 22px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-size: 14px; font-weight: 700; color: #5f6a5c">주문 처리 현황 <small style="font-weight: 600; font-size: 11px; background: #eef0ec; border-radius: 99px; padding: 2px 7px; margin-left: 4px">카페24 · 01:56</small></span>
+<span style="flex: 1"></span>
+<button type="button" style="height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid #2e7d4f; background: #eef6ef; color: #2e7d4f; font-size: 12.5px; font-weight: 800; cursor: pointer">🛒 마켓 주문 수집</button>
+<button type="button" aria-label="새로 받기" style="width: 32px; height: 32px; border-radius: 99px; border: 0; background: #eef4ee; color: #2e7d4f; font-size: 15px; cursor: pointer">↻</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px">
+<sc-for list="{{ cells }}" as="c" hint-placeholder-count="6"><div onClick="{{ c.click }}" style="{{ c.box }}"><span style="font-size: 12px; color: #5f6a5c">{{ c.n }}<span style="{{ c.arrStyle }}">{{ c.arr }}</span></span><b style="{{ c.num }}">{{ c.v }}</b></div></sc-for>
+</div>
+<sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+<div style="border: 1px solid #d7e6da; border-radius: 16px; background: #f8fbf8; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<b style="font-size: 14px">{{ title }}</b>
+<span style="flex: 1"></span>
+<label style="display: flex; align-items: center; gap: 5px; font-size: 12.5px; cursor: pointer"><input type="checkbox" checked="{{ allOn }}" onChange="{{ toggleAll }}" style="width: 16px; height: 16px; accent-color: #2e7d4f">모두 고르기</label>
+</div>
+<div style="max-height: 300px; overflow-y: auto; border: 1px solid #eceee9; border-radius: 12px; background: #fff">
+<sc-for list="{{ list }}" as="o" hint-placeholder-count="3">
+<label style="{{ o.row }}">
+<input type="checkbox" checked="{{ o.on }}" onChange="{{ o.tog }}" style="width: 17px; height: 17px; margin-top: 2px; accent-color: #2e7d4f; flex-shrink: 0">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap"><b style="font-size: 13.5px">{{ o.who }}</b><span style="{{ o.chStyle }}">{{ o.ch }}</span><sc-if value="{{ o.pay }}" hint-placeholder-val="{{ false }}"><span style="font-size: 11.5px; color: #8a5a12; background: #fdf3e2; border-radius: 6px; padding: 1px 6px">{{ o.pay }}</span></sc-if><span style="flex: 1"></span><span style="font-size: 11.5px; color: #8a9186">{{ o.at }}</span></div>
+<span style="font-size: 12.5px; color: #4a5547">{{ o.items }}</span>
+</div>
+</label>
+</sc-for>
+</div>
+<sc-if value="{{ isPay }}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 12px; color: #a05a00; line-height: 1.6">⚠ 통장에 돈이 들어온 주문만 골라 주세요. 입금확인을 하면 카페24에서 결제 완료로 바뀌어요.</p></sc-if>
+<div style="display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap">
+<button type="button" onClick="{{ ask }}" disabled="{{ none }}" style="{{ goStyle }}">{{ goLabel }}</button>
+</div>
+</div>
+</sc-if>
+<span style="font-size: 12px; color: #2e7d4f; font-weight: 700">{{ msg }}</span>
+</div>
+<p style="margin: 0; font-size: 12.5px; color: #5f6a5c; line-height: 1.7">· <b>입금전</b> · <b>상품준비중</b> 칸을 누르면 아래에 그 주문 목록이 펼쳐져요 (다시 누르면 접혀요).<br>· 넘길 주문을 고르고 버튼을 누르면 확인 창이 한 번 더 떠요. 관리자 계정만 누를 수 있어요.<br>· 입금전 주문은 <b>입금확인 → 배송준비중</b>까지 한 번에 넘어가요.<br>· 넘긴 기록은 기록 탭에 '언제 · 누가 · 몇 건'으로 남아요. 들어온 주문 목록은 이 아래에 그대로 있어요 (미리보기에선 생략).</p>
+</div>
+<sc-if value="{{ cf }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; inset: 0; background: rgba(20,25,20,.3)"></div>
+<div style="position: absolute; top: 260px; left: 50%; transform: translateX(-50%); width: min(420px, 90%); background: #fff; border-radius: 18px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<b style="font-size: 16px">{{ cfTitle }}</b>
+<div style="font-size: 13px; color: #4a5547; line-height: 1.7; background: #f6f7f5; border-radius: 10px; padding: 10px 12px">
+<sc-for list="{{ cfList }}" as="x" hint-placeholder-count="2"><div>{{ x }}</div></sc-for>
+</div>
+<span style="font-size: 12.5px; color: #8a9186">{{ cfNote }}</span>
+<div style="display: flex; justify-content: flex-end; gap: 8px">
+<button type="button" onClick="{{ cfNo }}" style="height: 38px; padding: 0 16px; border-radius: 10px; border: 1px solid #d5dad2; background: #fff; font-size: 13.5px; cursor: pointer">취소</button>
+<button type="button" onClick="{{ cfYes }}" style="height: 38px; padding: 0 16px; border-radius: 10px; border: 0; background: #2e7d4f; color: #fff; font-size: 13.5px; font-weight: 800; cursor: pointer">넘기기</button>
+</div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":800,"height":1100}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p);
+    this.state = { open: 'N10', cf: false, msg: '', sel: { a1: true, a2: true, a3: true, b1: false, b2: false },
+      O: {
+        N00: [{ id: 'b1', who: '오세린', ch: '자사몰', at: '11/26 21:40', items: '식용꽃 비올라 30송이 × 2 · 타임 100g × 1', pay: '무통장 · 28,400원' },
+              { id: 'b2', who: '카페 숲길', ch: '자사몰', at: '01:12', items: '애플민트 작은잎 100g × 3', pay: '무통장 · 19,500원' }],
+        N10: [{ id: 'a1', who: '정민호', ch: '쿠팡', at: '01:33', items: '식용꽃 팬지 20송이 × 1 · 타임 30g × 1' },
+              { id: 'a2', who: '한지원', ch: '스마트스토어', at: '01:29', items: '로즈마리 10g × 3' },
+              { id: 'a3', who: '이도윤', ch: '쿠팡', at: '00:31', items: '식용꽃 혼합 50송이 × 1' }] },
+      N20: 18 }; }
+  renderVals() {
+    const s = this.state, chC = { '자사몰': '#3d7a4f', '스마트스토어': '#2f86c4', '쿠팡': '#d9663f' };
+    const cnt = { N00: s.O.N00.length, N10: s.O.N10.length, N22: 1, N20: s.N20, N21: 0, N30: 42 };
+    const C = [['N00', '입금전'], ['N10', '상품준비중'], ['N22', '배송보류중'], ['N20', '배송준비중'], ['N21', '배송대기'], ['N30', '배송중']];
+    const cells = C.map(([k, n]) => { const v = cnt[k], can = (k === 'N00' || k === 'N10') && v > 0, on = s.open === k;
+      return { n, v: String(v), arr: can ? (on ? ' ▴' : ' ▾') : '', arrStyle: 'color: #2e7d4f; font-weight: 800',
+        click: () => can && this.setState({ open: on ? '' : k, msg: '' }),
+        box: 'display: flex; flex-direction: column; gap: 2px; padding: 9px 11px; border-radius: 12px; cursor: ' + (can ? 'pointer' : 'default') + '; background: ' + (v ? '#eef6ef' : '#f5f6f4') + (on ? '; box-shadow: inset 0 0 0 2px #2e7d4f' : ''),
+        num: 'font-size: 19px; font-weight: 800; color: ' + (v ? '#1f2620' : '#a3aaa0') }; });
+    const L = s.open ? s.O[s.open] : [], isPay = s.open === 'N00', picked = L.filter(o => s.sel[o.id]);
+    const list = L.map((o, i) => ({ ...o, on: !!s.sel[o.id], pay: o.pay || '',
+      tog: () => this.setState({ sel: { ...s.sel, [o.id]: !s.sel[o.id] } }),
+      chStyle: 'font-size: 11px; font-weight: 700; color: #fff; border-radius: 6px; padding: 1px 7px; background: ' + chC[o.ch],
+      row: 'display: flex; gap: 10px; padding: 10px 12px; cursor: pointer; border-top: ' + (i ? '1px solid #eef0ec' : '0') + (s.sel[o.id] ? '; background: #f1f8f2' : '') }));
+    const allOn = L.length > 0 && picked.length === L.length;
+    const none = !picked.length;
+    return { cells, open: !!s.open && L.length > 0, isPay, list, allOn, none, msg: s.msg,
+      title: isPay ? '입금전 주문' : '상품준비중 주문', sub: L.length + '건 · ' + picked.length + '건 고름',
+      goLabel: none ? '주문을 골라 주세요' : (isPay ? '입금확인하고 배송준비중으로 (' + picked.length + '건)' : '배송준비중으로 넘기기 (' + picked.length + '건)'),
+      goStyle: 'height: 36px; padding: 0 16px; border-radius: 10px; border: 0; font-size: 13px; font-weight: 800; cursor: ' + (none ? 'default' : 'pointer') + '; background: ' + (none ? '#dfe3dc' : '#2e7d4f') + '; color: ' + (none ? '#8a9186' : '#fff'),
+      toggleAll: () => { const n = { ...s.sel }; L.forEach(o => { n[o.id] = !allOn; }); this.setState({ sel: n }); },
+      close: () => this.setState({ open: '' }),
+      ask: () => !none && this.setState({ cf: true }),
+      cf: s.cf, cfTitle: picked.length + '건을 배송준비중으로 넘길까요?',
+      cfList: picked.map(o => o.who + ' · ' + o.ch + (o.pay ? ' · ' + o.pay.replace('무통장 · ', '') : '')),
+      cfNote: isPay ? '입금확인 후 배송준비중으로 바뀌어요. 카페24에 바로 반영돼요.' : '카페24에 바로 반영돼요.',
+      cfNo: () => this.setState({ cf: false }),
+      cfYes: () => { const k = s.open, keep = s.O[k].filter(o => !s.sel[o.id]);
+        this.setState({ cf: false, O: { ...s.O, [k]: keep }, N20: s.N20 + picked.length, open: keep.length ? k : '', msg: '✓ ' + picked.length + '건을 배송준비중으로 넘겼어요' }); } };
+  }
+}
+</script>
+</body>
+</html>
