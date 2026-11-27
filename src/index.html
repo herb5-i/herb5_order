@@ -1810,6 +1810,11 @@ html.dark .ds-n{background:rgba(255,255,255,.05)}html.dark .ds-n mark{background
 .ds-lg{font-size:12px;color:var(--mute)}
 .ds-chip{height:30px;padding:0 11px;border-radius:99px;border:1px solid #e3c08a;background:#fdf3e2;color:#8a5a12;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;margin-left:6px}html.dark .ds-chip{background:#3a2f1c;color:#f0c987;border-color:#6b5520}
 .stabs:has(.ds-tab,.ds-chip){flex-wrap:wrap;min-width:0}.stabs:has(.ds-tab,.ds-chip) .stab{white-space:nowrap}.stabs .ds-chip{margin-left:0}
+.qkb{width:26px;height:24px;padding:0;margin-right:4px;border:1px solid var(--line);border-radius:8px;background:var(--card,#fff);font-size:13px;line-height:1;cursor:pointer;opacity:.45;vertical-align:middle}.qkb:hover{opacity:1}.qkb.hint{opacity:1;border-color:#e3a14a;background:#fff3e0}.qkb.on{opacity:1;border-color:#e3a14a;background:#ffe2b8}
+tr.qkr td{opacity:.55;background:#fffaf2}tr.qkr td.rn{opacity:1}html.dark tr.qkr td{background:rgba(227,161,74,.08)}html.dark .qkb.hint,html.dark .qkb.on{background:#4a3818;border-color:#8a6420}
+.stab.qk-tab{color:#a35d00}html.dark .stab.qk-tab{color:#f0c987}.qk-ib.on{background:#fff3e0;border-color:#e3a14a;color:#a35d00}html.dark .qk-ib.on{background:#4a3818;color:#f0c987}
+td.qk-wrap{padding:12px!important;white-space:normal!important;background:none!important}.qk-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:10px}.qk-c{border:1px solid #f0d3a6;background:#fffaf2;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;text-align:left}html.dark .qk-c{background:rgba(227,161,74,.07);border-color:#6b5520}
+.qk-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.qk-h b{font-size:14.5px}.qk-h .sp{flex:1}.qk-h small,.qk-m{font-size:12px;color:var(--mute)}.qk-i{font-size:13px;overflow-wrap:anywhere}.qk-n{font-size:12.5px;color:var(--mute);overflow-wrap:anywhere}.qk-a{display:flex;gap:6px;flex-wrap:wrap}.qk-tip{margin:10px 2px 0;font-size:12px}
 .ds-chip.ds-none{background:none;border-color:var(--line);color:var(--mute);font-weight:600}
 .stab.ds-tab{color:#8a5a12}html.dark .stab.ds-tab{color:#f0c987}.ds-td{font-weight:800;white-space:nowrap}
 .sdback{position:fixed;inset:0;background:rgba(20,25,20,.35);z-index:900}.sdback.hidden{display:none}
@@ -6155,6 +6160,38 @@ async function dsRelease(ids) {
   dsBusy = false; if (d) { const n = d.done || 0; dsMsg = n ? '✓ ' + n + '건을 배송준비중으로 돌렸어요' : '⚠ ' + ((d.res && d.res[ids[0]] && d.res[ids[0]].msg) || '풀지 못했어요'); try { ostErr = ''; ostLoad(true); incErr = ''; incLoad(); } catch (e) {} }
   await dsLoadHolds();
 }
+// ---------- 🛵 퀵 · 직접 전달 (메모 9번) ----------
+// 주문을 퀵 · 직접 전달로 표시하면: 택배 송장 엑셀(주문정리 · 수령인별)에서 빠지고 [🛵 퀵 · 직접] 칸 · 시트에 따로 모여요.
+// 재고 · 집계에는 그대로 들어가요. 표시는 공용 저장소 stock/quickmarks 에 [주문번호 · 표시한 날 · 누가]만 적어요 (손님 정보 없음, 30일 뒤 지워져요).
+const QK_ID = 'quickmarks', QK_HINT = /퀵|직접\s*(?:수령|가지러|가져|찾으러|방문|픽업|전달)|가지러|찾으러|방문\s*수령|픽업/;
+const qkList = () => (stock[QK_ID] && stock[QK_ID].kind === 'quick' && Array.isArray(stock[QK_ID].list)) ? stock[QK_ID].list : [];
+const qkHas = o => !!o && qkList().some(x => x.o === String(o));
+async function qkToggle(o, on) { o = String(o || '').trim(); if (!o) return; const lim = isoDate(new Date(Date.now() - 30 * 864e5));
+  const L = qkList().filter(x => x.o !== o && (x.day || '') >= lim); if (on) L.push({ o, day: isoDate(new Date()), at: new Date().toISOString(), who: (typeof saleMe === 'function' ? saleMe() : '') });
+  await stockWrite(QK_ID, { kind: 'quick', name: '__quickmarks', list: L, updatedAt: new Date().toISOString() });
+  try { stkEvSig = ''; } catch (e) {} if (srcRows) runProcess(); try { incCache = null; incRender(); } catch (e) {} try { const b = $('sumbody'); if (b && b.offsetParent) renderSum(); } catch (e) {} }
+function qkOrdersIn(aoa) { const H = aoa[0], oc = H.indexOf('주문번호'); const S = new Set(); if (oc < 0) return S; aoa.slice(1).forEach(r => { const o = String(r[oc] ?? '').trim(); if (qkHas(o)) S.add(o); }); return S; }
+function qkFilter(full, si) { if (!full || full.length < 2 || !qkList().length) return full; const H = full[0];
+  if (si === 0) { const oc = H.indexOf('주문번호'); if (oc < 0) return full; return full.filter((r, i) => !i || r.__kt || !qkHas(String(r[oc] ?? '').trim())); }
+  if (si === 1) { const rc = H.indexOf('수령인'), s1 = result.sheet1, h1 = s1[0], oc = h1.indexOf('주문번호'), rc1 = h1.indexOf('수령인'); if (rc < 0 || oc < 0 || rc1 < 0) return full;
+    const keep = new Set(), gone = new Set(); s1.slice(1).forEach(r => { const n = String(r[rc1] ?? '').trim(); (qkHas(String(r[oc] ?? '').trim()) ? gone : keep).add(n); });
+    let cur = ''; return full.filter((r, i) => { if (!i) return true; const n = String(r[rc] ?? '').trim(); if (n) cur = n; return !(gone.has(cur) && !keep.has(cur)); }); }
+  return full; }
+function qkSheet() {   // 화면 · 엑셀용 [🛵 퀵 · 직접] 칸: 주문마다 한 묶음
+  if (!result || !result.sheet1 || !srcRows) return []; const H = srcRows[0].map(v => String(v ?? '')), ix = h => H.indexOf(h), oc = ix('주문번호');
+  if (oc < 0) return []; const G = new Map();
+  srcRows.slice(1).forEach(r => { if (!r) return; const o = String(r[oc] ?? '').trim(); if (!qkHas(o)) return; let g = G.get(o); if (!g) { g = { o, who: String(r[ix('수령인')] ?? ''), mall: String(r[ix('쇼핑몰')] ?? ''), tel: String(r[ix('핸드폰')] || r[ix('수령지전화')] || r[ix('전화번호')] || ''), addr: String(r[ix('주소')] ?? ''), zip: String(r[ix('우편번호')] ?? ''), note: String(r[ix('비고')] ?? ''), items: [] }; G.set(o, g); }
+    g.items.push(String(r[ix('주문상품명')] ?? '') + (r[ix('옵션')] ? ' ' + incOpt(String(r[ix('옵션')])) : '') + ' × ' + (Number(r[ix('수량')]) || 0)); });
+  return [...G.values()]; }
+function qkRender() { const L = qkSheet();
+  $('tbl').innerHTML = '<tbody><tr><td class="qk-wrap">' + (L.length ? '<div class="qk-cards">' + L.map(g => `<div class="qk-c"><div class="qk-h"><b>🛵 ${esc(g.who || '이름 없음')}</b>${g.mall ? `<span class="qk-m">${esc(g.mall)}</span>` : ''}<span class="sp"></span><small>주문 ${esc(g.o)}</small></div>
+      <div class="qk-i">${esc(g.items.join(' · '))}</div>${g.note ? `<div class="qk-n">비고: ${esc(g.note)}</div>` : ''}
+      <div class="qk-a"><button type="button" class="btn sm" data-qkcopy="${esc(g.o)}">📋 주소 · 전화 복사</button><button type="button" class="btn sm ghost" data-qk="${esc(g.o)}" data-qkon="0">퀵 표시 빼기</button></div></div>`).join('') + '</div>' : '<p class="hwi-empty">퀵으로 표시한 주문이 없어요 · 주문정리 칸의 줄 번호 옆 🛵를 누르면 여기로 와요</p>') + '<p class="msg qk-tip">카페24에는 아직 배송준비중으로 남아 있어요. 카페24에서 배송 처리하면 들어온 주문 목록에서도 빠져요.</p></td></tr></tbody>';
+  $('tbl').classList.remove('editing'); edButtons(); $('edstart').classList.add('hidden'); }
+document.addEventListener('click', e => { if (!e.target.closest) return; let b;
+  if ((b = e.target.closest('[data-qk]'))) { e.preventDefault(); e.stopPropagation(); const o = b.dataset.qk, on = b.dataset.qkon ? b.dataset.qkon === '1' : !qkHas(o); b.disabled = true; qkToggle(o, on).then(() => shareToast(on ? '🛵 퀵 · 직접 전달로 표시했어요 · 택배 엑셀에서 빠져요' : '퀵 표시를 뺐어요 · 다시 택배 엑셀에 들어가요')).catch(er => shareToast('저장하지 못했어요: ' + (er && er.message || er))); return; }
+  if ((b = e.target.closest('[data-qkcopy]'))) { const g = qkSheet().find(x => x.o === b.dataset.qkcopy); if (!g) return; const t = `${g.who}\n${g.tel}\n${g.zip ? '(' + g.zip + ') ' : ''}${g.addr}\n${g.items.join(', ')}${g.note ? '\n비고: ' + g.note : ''}`;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => shareToast('주소 · 전화를 복사했어요 · 퀵 기사님께 붙여 넣어 보내세요'), () => shareToast('복사하지 못했어요')); } }, true);
 function runProcess() {
   try { const R0 = (srcRows[0] || []).includes('품목별 주문번호') && !(rules.dropColumns || []).includes('품목별 주문번호') ? Object.assign({}, rules, { dropColumns: (rules.dropColumns || []).concat('품목별 주문번호') }) : rules; result = CORE.process(srcRows, R0, wxCtx()); applyUserEdits(result, dsApply(result)); }
   catch (e) { $('runmsg').className = 'msg err'; $('runmsg').textContent = e.message; $('out').classList.add('hidden'); return; }
@@ -6406,6 +6443,7 @@ function sumCards(sheet3, live) {
 function sumLiveCalc(day, slot) {
   if (!incD) return null;
   const done = new Set(); Object.keys(upl).filter(d => d >= isoDate(new Date(Date.now() - 7 * 864e5)) || d === day).forEach(d => ['am', 'pm'].forEach(sl => ((upl[d][sl] && upl[d][sl].rows) || []).forEach(x => { if (x.o) done.add(String(x.o)); })));
+  qkList().forEach(x => done.add(x.o));   // 🛵 퀵으로 나간 주문은 새 주문으로 세지 않아요
   const rows = [HIST_HEAD], today = isoDate(new Date()); let nOrd = 0;
   (incD.orders || []).forEach(o => { if (done.has(String(o.order_id))) return; nOrd++; (o.items || []).forEach(i => rows.push([o.order_id, today, i.product_name || '', i.option_value || '', Number(i.quantity) || 0, '', '', i.additional_option_value || ''])); });
   let sh3 = []; try { sh3 = rows.length > 1 ? CORE.process(rows, rules, { regions: {}, places: {} }).sheet3.slice(1) : []; } catch (e) { sh3 = []; }
@@ -6466,10 +6504,13 @@ document.addEventListener('click', e => {
 function renderSheetTabs() {
   const ktn = ktOn().reduce((n, o) => n + o.items.length, 0);
   if (curSheet === 3 && !(result.sheetD && result.sheetD.length > 1)) curSheet = 0;
-  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0)})</button>`).join('') + (result.sheetD && result.sheetD.length > 1 ? `<button class="stab ds-tab ${curSheet === 3 ? 'on' : ''}" data-s="3">날짜 지정 (${result.sheetD.length - 1})</button>` : '') + dsChip();
+  const qkN = qkSheet().length, qkLess = i => i === 0 ? result.sheet1.length - qkFilter(result.sheet1, 0).length : i === 1 ? result.sheet2.length - qkFilter(result.sheet2, 1).length : 0;
+  if (curSheet === 4 && !qkN && !qkList().length) curSheet = 0;
+  $('stabs').innerHTML = SHEETS.map((s, i) => `<button class="stab ${i === curSheet ? 'on' : ''}" data-s="${i}">${s[0]} (${result[s[1]].length - 1 + (i === 0 ? ktn : 0) - qkLess(i)})</button>`).join('') + (qkN || curSheet === 4 ? `<button class="stab qk-tab ${curSheet === 4 ? 'on' : ''}" data-s="4">🛵 퀵 · 직접 (${qkN})</button>` : '') + (result.sheetD && result.sheetD.length > 1 ? `<button class="stab ds-tab ${curSheet === 3 ? 'on' : ''}" data-s="3">날짜 지정 (${result.sheetD.length - 1})</button>` : '') + dsChip();
   $('stabs').querySelectorAll('.stab[data-s]').forEach(b => b.onclick = () => { if (edMode) edCollect(); curSheet = +b.dataset.s; renderSheetTabs(); renderSheet(); });
 }
 function renderSheet() {
+  if (curSheet === 4) { if (edMode) { edMode = false; edDraft = new Map(); } qkRender(); return; }
   if (curSheet === 3 && result.sheetD) { const D = result.sheetD; if (edMode) { edMode = false; edDraft = new Map(); }
     $('tbl').innerHTML = '<thead><tr><th>#</th>' + D[0].map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' + D.slice(1).map((r, i) => `<tr><td class="msg rn">${i + 1}</td>` + r.map((v, j) => `<td${j === 0 ? ' class="ds-td"' : ''}>${esc(fmt(v))}</td>`).join('') + '</tr>').join('') + '</tbody>';
     $('tbl').classList.remove('editing'); edButtons(); $('edstart').classList.add('hidden'); return; }
@@ -6480,10 +6521,12 @@ function renderSheet() {
   const colorMap = new Map(result.colors.map(c => [c[0] + ',' + c[1], c[2]]));
   let h = '<thead><tr><th>#</th>' + aoa[0].map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>';
   const sk = SHEETS[curSheet][1], rmap = (result.rowMaps && result.rowMaps[sk]) || aoa.map((_, i) => i);
+  const qoc = curSheet === 0 ? aoa[0].indexOf('주문번호') : -1, qnc = curSheet === 0 ? aoa[0].indexOf('비고') : -1;
   for (let i = 1; i < aoa.length; i++) {
     const oi = rmap[i] ?? i, dk = sk + '|' + oi + '|__del', delDraft = edDraft.get(dk) === true;
-    const cls = (hl.has(i) ? 'hl' : flagged.has(i) ? 'fl' : '') + (delDraft ? ' deld' : '');
-    h += `<tr class="${cls}"><td class="msg rn">${edMode && oi >= 0 ? `<button class="rdel${delDraft ? ' on' : ''}" data-rdel="${esc(dk)}" title="${delDraft ? '지우기 취소' : '이 줄 지우기'}" aria-label="${delDraft ? '지우기 취소' : '이 줄 지우기'}">${delDraft ? '↺' : '×'}</button>` : ''}<span>${i + 1}</span></td>` + aoa[i].map((v, j) => {
+    const qo = qoc >= 0 ? String(aoa[i][qoc] ?? '').trim() : '', qon = qo && qkHas(qo), qhint = qo && !qon && qnc >= 0 && QK_HINT.test(String((srcRows[oi] && srcRows[oi][srcRows[0].indexOf('비고')]) ?? aoa[i][qnc] ?? ''));
+    const cls = (hl.has(i) ? 'hl' : flagged.has(i) ? 'fl' : '') + (delDraft ? ' deld' : '') + (qon ? ' qkr' : '');
+    h += `<tr class="${cls}"><td class="msg rn">${qo && !edMode ? `<button type="button" class="qkb${qon ? ' on' : ''}${qhint ? ' hint' : ''}" data-qk="${esc(qo)}" title="${qon ? '퀵 · 직접 전달 표시됨 · 누르면 빼요' : qhint ? '비고에 퀵 · 직접 전달 같은 말이 있어요 · 누르면 퀵으로 표시해요' : '퀵 · 직접 전달로 표시 (택배 엑셀에서 빠져요)'}" aria-pressed="${!!qon}" aria-label="${qon ? '퀵 표시 빼기' : '퀵으로 표시'}">🛵</button>` : ''}${edMode && oi >= 0 ? `<button class="rdel${delDraft ? ' on' : ''}" data-rdel="${esc(dk)}" title="${delDraft ? '지우기 취소' : '이 줄 지우기'}" aria-label="${delDraft ? '지우기 취소' : '이 줄 지우기'}">${delDraft ? '↺' : '×'}</button>` : ''}<span>${i + 1}</span></td>` + aoa[i].map((v, j) => {
       let ch = false;
       if (curSheet === 0 && changedCol.includes(j) && oi >= 0 && srcRows[oi]) { const o = srcRows[oi][srcRows[0].indexOf(aoa[0][j])]; ch = String(o ?? '') !== String(v ?? ''); }
       const col = curSheet === 0 && colorMap.get(i + ',' + j);
@@ -8382,7 +8425,7 @@ function invBuild(rows) {
   // 품목별 주문번호 없이 같은 주문에 송장이 여러 개면 카페24가 헷갈리니 첫 송장만 넣고 나머지는 따로 알려줘요
   const firstOnly = new Set(); { const seenO = new Set(); out.forEach((x, i) => { if (x.item) return; if (seenO.has(x.order)) firstOnly.add(i); else seenO.add(x.order); }); }
   const extra = out.filter((_, i) => firstOnly.has(i)); for (let i = out.length - 1; i >= 0; i--) if (firstOnly.has(i)) out.splice(i, 1);
-  const missing = S && S.fromSrc ? [...S.orders.values()].filter(x => x.name && !perOrder.has(x.o)).map(x => x.o) : [];
+  const missing = S && S.fromSrc ? [...S.orders.values()].filter(x => x.name && !perOrder.has(x.o) && !qkHas(x.o)).map(x => x.o) : [];
   const tpl = (cfg.template && cfg.template.length ? cfg.template : INV_TPL0);
   const aoa = [tpl].concat(out.map(x => tpl.map(h => { const ro = invRole(h); return ro === 'order' ? x.order : ro === 'item' ? x.item : ro === 'carrier' ? String(cfg.carrier || '') : ro === 'track' ? x.track : ''; })));
   return { C, out, bad, multi, missing, aoa, tpl, S, extra };
@@ -9305,7 +9348,7 @@ function buildXlsx() {
   const wxHeads = new Set(['예보기온(최저/최고)', (rules.weather && rules.weather.col) || '포장방법']);
   SHEETS.forEach(([name, key], si) => {
     let full = result[key], ord = null;
-    if (si === 0) { const nBase = full.length; full = full.concat(ktSheetRows(full[0], true).map(r => { r.__kt = 1; return r; })); full = svcApplyRows(full); full = nsFilter(full, 0); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
+    if (si === 0) { const nBase = full.length; full = full.concat(ktSheetRows(full[0], true).map(r => { r.__kt = 1; return r; })); full = svcApplyRows(full); full = nsFilter(full, 0); full = qkFilter(full, 0); const pc = full[0].indexOf((rules.weather && rules.weather.col) || '포장방법'), nc = full[0].indexOf('비고'), tc = full[0].indexOf('예보기온(최저/최고)'), BM = bandMarks();
       const loOf = r => { const m = String(tc >= 0 ? r[tc] ?? '' : '').match(/^\s*(-?\d+(?:\.\d+)?)/); return m ? '[' + Number(m[1]) + '도]' : ''; };
       if (pc >= 0 && nc >= 0 && BM.size) full = full.map((r, i) => { if (!i) return r; const mk = [...new Set(String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => BM.get(l.trim())).filter(Boolean))].map(x => x === '@T' ? loOf(r) : x).filter(Boolean).join(' '); if (!mk) return r; const c = r.slice(), nt = String(c[nc] ?? '').trim(); c[nc] = nt ? nt + '\n' + mk : mk; return c; });
       // 포장 방법끼리 묶어 정렬: 규칙의 날씨 기준 순서(배송X → 두껍게 → 얇게 → 아이스팩 …), 기준 없는 줄은 맨 뒤. 같은 묶음 안에서는 원래 순서 그대로
@@ -9314,7 +9357,7 @@ function buildXlsx() {
         const rk = r => { if (pc < 0) return 0; const ls = String(r[pc] || '').split(/\s*\/\s*|\s*·\s*|,\s*/).map(l => bl.indexOf(l.trim())).filter(i => i >= 0); return ls.length ? Math.min(...ls) : 1e9; };
         const idx = full.slice(1).map((r, i) => ({ i: i + 1, k: rk(r), kt: r.__kt ? 0 : 1 })).sort((x, y) => x.kt - y.kt || x.k - y.k || x.i - y.i);
         ord = [0, ...idx.map(o => o.i)]; full = ord.map(i => full[i]); } }
-    if (si === 1) full = nsFilter(full, 1);
+    if (si === 1) full = qkFilter(nsFilter(full, 1), 1);
     const drop = new Set(full[0].map((h, c) => wxHeads.has(String(h)) ? c : -1).filter(c => c >= 0));
     const aoa = drop.size ? full.map(r => r.filter((_, c) => !drop.has(c))) : full;
     const ws = XLSX.utils.aoa_to_sheet(aoa, { cellDates: true, dateNF: 'yyyy-mm-dd' });
@@ -9331,6 +9374,7 @@ function buildXlsx() {
     });
     XLSX.utils.book_append_sheet(wb, ws, name);
   });
+  { const Q = qkSheet(); if (Q.length) { const A = [['수령인', '주문번호', '쇼핑몰', '품목', '비고']].concat(Q.map(g => [g.who, g.o, g.mall, g.items.join(', '), g.note])); const ws = XLSX.utils.aoa_to_sheet(A); ws['!cols'] = [{ wch: 12 }, { wch: 20 }, { wch: 12 }, { wch: 60 }, { wch: 40 }]; XLSX.utils.book_append_sheet(wb, ws, '퀵 · 직접'); } }
   if (result.sheetD && result.sheetD.length > 1) { const ws = XLSX.utils.aoa_to_sheet(result.sheetD, { cellDates: true, dateNF: 'yyyy-mm-dd' }); const wl = v => [...String(fmt(v))].reduce((t, ch) => t + (ch.charCodeAt(0) > 255 ? 2 : 1), 0); ws['!cols'] = result.sheetD[0].map((h, c) => ({ wch: Math.min(Math.max(Math.max(...result.sheetD.slice(0, 200).map(r => wl(r[c]))) + 2, 8), 60) })); XLSX.utils.book_append_sheet(wb, ws, '날짜 지정'); }
   return XLSX.write(wb, { bookType: 'xlsx', type: 'array', cellStyles: true });
 }
@@ -10288,9 +10332,9 @@ function incRender() {
     const q = incQ.replace(/\s+/g, '').toLowerCase(), L = ords.filter(o => !q || (o.id + o.who + o.to + o.lines.map(l => l.p + l.op).join('')).replace(/\s+/g, '').toLowerCase().includes(q));
     const w = n => n ? n.toLocaleString('ko-KR') + '원' : '';
     main = L.length ? `<div class="inc-os">${L.map(o => { const op = incOpen.has(o.id), t = o.at ? new Date(o.at) : null;
-      return `<div class="inc-o${o.short ? ' bad' : ''}"><div class="inc-oh"><b>${esc(o.who || '이름 없음')}</b><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span>${o.short ? '<span class="inc-ch" style="background:#c0392b">재고 부족 포함</span>' : ''}<span class="sp"></span><small>${esc(o.id)}${t && !isNaN(t) ? ' · ' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.toTimeString().slice(0, 5) : ''}</small></div>
+      return `<div class="inc-o${o.short ? ' bad' : ''}"><div class="inc-oh"><b>${esc(o.who || '이름 없음')}</b><span class="inc-ch" style="background:${o.col}">${esc(o.ch)}</span>${qkHas(o.id) ? '<span class="inc-ch" style="background:#c77a12">🛵 퀵으로 보냄</span>' : ''}${o.short ? '<span class="inc-ch" style="background:#c0392b">재고 부족 포함</span>' : ''}<span class="sp"></span><small>${esc(o.id)}${t && !isNaN(t) ? ' · ' + (t.getMonth() + 1) + '/' + t.getDate() + ' ' + t.toTimeString().slice(0, 5) : ''}</small></div>
         ${o.lines.map(l => `<div class="inc-ol${l.short ? ' bad' : ''}"><span class="n"><b>${esc(l.p)}</b>${l.op ? `<small>- 옵션 : ${esc(incOpt(l.op))}</small>` : ''}</span><span class="q">${l.q}개</span><span class="p">${w(l.pr)}</span><span class="s">${l.short ? '재고 부족' : ''}</span></div>`).join('')}
-        <div class="inc-of"><span>받는 분 <b>${esc(o.to || '—')}</b></span><button type="button" class="btn sm" data-incct="${esc(o.id)}" aria-expanded="${op}">${op ? '전화 · 주소 닫기' : '전화 · 주소 보기'}</button><span class="sp"></span><span class="pm">${esc(o.pay)}</span>${o.total ? `<span>총 <b>${w(o.total)}</b></span>` : ''}</div>
+        <div class="inc-of"><span>받는 분 <b>${esc(o.to || '—')}</b></span><button type="button" class="btn sm" data-incct="${esc(o.id)}" aria-expanded="${op}">${op ? '전화 · 주소 닫기' : '전화 · 주소 보기'}</button><button type="button" class="btn sm qk-ib${qkHas(o.id) ? ' on' : ''}" data-qk="${esc(o.id)}" aria-pressed="${qkHas(o.id)}">${qkHas(o.id) ? '🛵 퀵 표시됨' : '🛵 퀵'}</button><span class="sp"></span><span class="pm">${esc(o.pay)}</span>${o.total ? `<span>총 <b>${w(o.total)}</b></span>` : ''}</div>
         ${op ? `<div class="inc-ct">휴대전화 : ${esc(o.tel || '—')}<br>주소 : ${esc(o.addr || '—')}</div>` : ''}</div>`; }).join('')}</div>` : '<div class="sumempty">맞는 주문이 없어요</div>';
   }
   const fq = document.activeElement && document.activeElement.id === 'inc-q', cp = fq ? document.activeElement.selectionStart : 0;
