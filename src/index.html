@@ -1445,8 +1445,9 @@ html.dark .hm-bak{background:linear-gradient(160deg,#1c262b,#182024)!important}
 .iss-ph.pend button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:11px;cursor:pointer}
 .iss-cam{display:inline-block;width:14px;height:14px;vertical-align:-2px;background:#c0663f;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.6-2h5.8l1.6 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5zM12 16.4a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.6-2h5.8l1.6 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5zM12 16.4a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8z'/%3E%3C/svg%3E") center/contain no-repeat}
 .iss-t small{font-size:11px;color:#c0663f;font-weight:700;margin-left:2px}
+.hmfb-im{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px;margin-top:8px}.hmfb-im button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card,#fff);cursor:zoom-in;line-height:0}.hmfb-im img{display:block;width:120px;height:80px;object-fit:cover;object-position:top}.hmfb-im small{font-size:11.5px;color:var(--mute)}
 .phbox{z-index:220!important;background:rgba(10,14,10,.86)!important;cursor:zoom-out}
-.phbox img{max-width:min(94vw,1100px);max-height:88vh;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.phbox img{max-width:min(calc(100vw - 32px),1100px);max-height:88vh;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .phbox .iss-close{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.15);color:#fff}
 html.dark .iss-phbtn{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:var(--mute)}
 .invset{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0 4px}
@@ -9460,10 +9461,16 @@ setTimeout(() => { try { ntRender(); } catch (e) {} }, 3000);
 // ---------- 홈 개선 메모 (고정 칸 · 중계 서버에 모아 둬요 · 마이크로 말해서 적기) ----------
 let hmfbBusy = false, hmfbL = null, hmfbAll = false, hmfbT = null, hmfbRec = null, hmfbVoice = false;
 const hmfbOk = () => !!(c24Cfg().worker && window.h5Fb);
+// 처리 내용에 붙인 미리보기 사진 (fb_notes.json의 img: 저장소 fb_img/ 안의 파일) — 작게 보여 주고 누르면 크게
+const fbImgSrc = f => { const base = /\/shop\/(index\.html)?$/.test(location.pathname) ? '../' : './'; return base + 'fb_img/' + encodeURIComponent(String(f).replace(/^.*\//, '')); };
+const fbImgs = n => { const L = [].concat(n.img || []).filter(Boolean); return L.length ? `<div class="hmfb-im">${L.map(f => `<button type="button" class="iczno" data-fbimg="${esc(fbImgSrc(f))}" title="눌러서 크게 보기" aria-label="미리보기 사진 크게 보기"><img src="${esc(fbImgSrc(f))}" alt="미리보기 사진" loading="lazy"></button>`).join('')}<small>사진을 누르면 크게 보여요</small></div>` : ''; };
+document.addEventListener('click', e => { const v = e.target.closest && e.target.closest('[data-fbimg]'); if (!v) return; e.preventDefault(); e.stopPropagation();
+  let m = $('phbox'); if (!m) { m = document.createElement('div'); m.id = 'phbox'; m.className = 'modal phbox'; m.innerHTML = '<img alt="이슈 사진"><button type="button" class="iss-close" aria-label="닫기">✕</button>'; document.body.appendChild(m); m.addEventListener('click', () => m.classList.add('hidden')); }
+  m.querySelector('img').src = v.dataset.fbimg; m.classList.remove('hidden'); }, true);
 // AI 처리 내용: 저장소의 fb_notes.json (Claude가 메모를 처리할 때마다 적어 둬요)
 let hmfbNotes = {}, hmfbNotesAt = 0, hmfbOpenCm = new Set();
 // 처리 내용이 새로 올라오면 알림(종 · 앱 아이콘 숫자)으로 알려요. 본 것은 이 기기에 기억해요
-const FBN_KEY = 'herb5_fbnote_seen', fbnSig = (no, n) => no + '|' + (n.at || '') + '|' + String(n.t || '').length;
+const FBN_KEY = 'herb5_fbnote_seen', fbnSig = (no, n) => no + '|' + (n.at || '') + '|' + String(n.t || '').length + ([].concat(n.img || []).length ? '|i' + [].concat(n.img).length : '');
 const fbnSeen = () => { try { return JSON.parse(localStorage.getItem(FBN_KEY) || '[]'); } catch (e) { return []; } };
 const fbnNew = () => { const S = new Set(fbnSeen()); return Object.entries(hmfbNotes).filter(([k, n]) => /^\d+$/.test(k) && n && n.t && !S.has(fbnSig(k, n))).map(([k]) => +k).sort((a, b) => b - a); };
 function fbnMarkSeen() { const L = Object.entries(hmfbNotes).filter(([k, n]) => /^\d+$/.test(k) && n && n.t).map(([k, n]) => fbnSig(k, n)); try { localStorage.setItem(FBN_KEY, JSON.stringify(L.slice(-300))); } catch (e) {} try { ntRender(); } catch (e) {} }
@@ -9489,7 +9496,7 @@ function hmfbRender() {
   const SL = Object.fromEntries(FB_STAT.map(a => [a[0], a[1]]));
   const noteH = x => { const n = hmfbNotes[String(x.no)]; if (!n || !n.t) return `<div class="hmfb-note none"><b>처리 내용</b><span>아직 처리 전이에요</span></div>`;
     const open = hmfbOpenN.has(x.no) || fbnNew().includes(x.no);
-    return `<div class="hmfb-note${open ? ' open' : ''}"><button type="button" class="hmfb-nh iczno" data-hmfbn="${x.no}" aria-expanded="${open}"><b>처리 내용</b><span>AI · ${esc(n.at ? tmd(n.at) : '')}</span>${fbnNew().includes(x.no) ? '<em class="nw">새 처리</em>' : ''}<i>${open ? '접기 ▴' : '상세보기 ▾'}</i></button>${open ? `<p>${esc(n.t)}</p>` : ''}</div>`; };
+    return `<div class="hmfb-note${open ? ' open' : ''}"><button type="button" class="hmfb-nh iczno" data-hmfbn="${x.no}" aria-expanded="${open}"><b>처리 내용</b><span>AI · ${esc(n.at ? tmd(n.at) : '')}</span>${fbnNew().includes(x.no) ? '<em class="nw">새 처리</em>' : ''}<i>${open ? '접기 ▴' : '상세보기 ▾'}</i></button>${open ? `<p>${esc(n.t)}</p>${fbImgs(n)}` : ''}</div>`; };
   const cmH = x => { const C = x.cm || [], open = hmfbOpenCm.has(x.id); return `<div class="hmfb-cm">${C.map(c => `<div class="hmfb-c"><small><b>${esc(c.by)}</b> · ${tm(c.at)}</small><p>${esc(c.t)}</p></div>`).join('')}
     ${open ? `<form class="hmfb-cf" data-hmfbcm="${esc(x.id)}" autocomplete="off"><textarea rows="2" maxlength="1000" placeholder="처리 내용에 이어서 의견을 적어 주세요 (예: 이름은 잘 나와요, 번호가 반대로 나와요)" aria-label="이어서 의견"></textarea><div class="hmfb-cb"><button type="button" class="btn sm iczno" data-hmfbcx="${esc(x.id)}">닫기</button><button type="submit" class="btn pri sm iczno">의견 남기기</button></div></form>`
       : `<button type="button" class="hmfb-cmo iczno" data-hmfbco="${esc(x.id)}">＋ 이어서 의견 더하기${C.length ? ' · ' + C.length + '개' : ''}</button>`}</div>`; };
