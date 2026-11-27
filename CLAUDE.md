@@ -23,6 +23,7 @@ GitHub Pages로 열려요: https://herb5-i.github.io/herb5_order/
 | `index.html`, `manifest.webmanifest`, `sw.js`, `logo-hi.png`, `icon-*.png` (맨 위) | **첫 화면** (로고 두 개). 이건 직접 고쳐요. 카페24 연결에서 돌아온 주소(`?code=`)는 `shop/`으로 넘겨요 |
 | `shop/` | **허브아이 완성본. 직접 고치지 말고 빌드로만 만들어요.** |
 | `farm/`, `sync_farm.sh` | 허브다섯메 농장 사이트 (herbfive-farm 저장소에서 가져온 완성본) |
+| `tools/farm_theme.py`, `tools/farm_memo.js` | 허브다섯메에 허브아이 디자인 · **개선 메모 칸**(첫 화면 맨 위 고정)을 덧붙여요. `sync_farm.sh`가 저절로 불러요. 메모 칸은 `tools/farm_memo.js`를 고치고 `python3 tools/farm_theme.py` (farm/ 파일 직접 X) |
 | `firebase-config.js` | Firebase 연결값 (공개돼도 되는 값) |
 | `cafe24-worker/worker.js` | Cloudflare 워커 (카페24 · 네이버 API 중계). 사용자가 Cloudflare에 직접 붙여 넣어 배포해요 |
 | `firestore.rules` | Firestore 보안 규칙 |
@@ -86,6 +87,7 @@ GitHub Pages로 열려요: https://herb5-i.github.io/herb5_order/
      ```
      📌 ✅ 😥 💡 👉 로 시작하는 줄은 사이트에서 굵은 제목으로 보여요. 사진 안내 문구는 사진 옆에 저절로 붙으니 따로 안 적어요.
 3. 이어서 의견(피드백)이 달리면 그 내용을 반영하고 `t`를 고쳐 적어요.
+   - **허브다섯메 메모** (사용자 요청, 2026-11-27): 읽기 주소 아래쪽 '허브다섯메 사이트 개선 메모'에 따로 나와요. 번호는 허브아이와 따로 세요. 처리 내용은 맨 위 `fb_notes_farm.json`에 같은 틀로 적고, 사진은 `fb_img/farm-번호-1.png`처럼 앞에 `farm-`을 붙여요. 허브다섯메 첫 화면 메모 칸과 허브아이 홈 메모 칸의 [허브다섯메]에 보여요.
 4. 처리 내용을 올린 뒤에는 **사용자 휴대폰으로 알림**(PushNotification)을 보내요: 몇 번 메모를 어떻게 처리했는지 한 줄로. 사이트에서도 `fb_notes.json`이 바뀌면 직원들 알림(종 · 앱 아이콘 숫자)에 "개선 메모 처리 내용 N건이 올라왔어요"가 떠요.
 
 ## 참고

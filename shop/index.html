@@ -2127,7 +2127,10 @@ html.dark .ntdrawer{background:#1b221d}.hmnt-it{display:flex;align-items:center;
 .hmnt-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--mute)}
 .hmfb{margin-bottom:24px}.hmfb .hm-lb small{display:block;font-weight:400;font-size:12.5px;margin-top:2px}.hmfb-pin{color:var(--acc);flex:none}.hmfb-pin svg{width:18px;height:18px;display:block}
 .hmfb-f textarea{width:100%;box-sizing:border-box;border-radius:14px;border:1px solid var(--line);padding:10px 12px;font:inherit;font-size:15px;color:var(--ink);background:var(--card);resize:vertical;min-height:64px}
-.hmfb-b{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.hmfb-mic{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--acc);display:grid;place-items:center;cursor:pointer;flex:none}.hmfb-mic svg{width:22px;height:22px}
+.hmfb-b{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.hmfb-site{display:flex;gap:6px;margin:12px 0 0;flex-wrap:wrap}
+.hmfb-site button{min-height:36px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.hmfb-site button.on{border-color:var(--acc);background:var(--acc2);color:var(--acc)}.hmfb-mic{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--acc);display:grid;place-items:center;cursor:pointer;flex:none}.hmfb-mic svg{width:22px;height:22px}
 .hmfb-mic.on{background:#d9483b;border-color:#d9483b;color:#fff;animation:hmfbp 1.2s infinite}@keyframes hmfbp{0%{box-shadow:0 0 0 0 rgba(217,72,59,.45)}70%{box-shadow:0 0 0 12px rgba(217,72,59,0)}100%{box-shadow:0 0 0 0 rgba(217,72,59,0)}}
 .hmfb-b .msg{flex:1 1 160px;min-width:0}#hmfb-list{margin-top:12px}.hmfb-it{padding:10px 0;border-top:1px solid var(--line);font-size:14px}.hmfb-it p{margin:0 0 4px;white-space:pre-wrap;overflow-wrap:anywhere}
 .hmfb-it small{display:flex;gap:6px;align-items:center;flex-wrap:wrap;color:var(--mute);font-size:12px}.hmfb-st{border:0;font:inherit;font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--acc2);color:var(--acc);cursor:default}.hmfb-st.new{background:#fde8e4;color:#b04a33}.hmfb-st.done{background:var(--line);color:var(--mute)}
@@ -10414,6 +10417,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && ntOpen) nt
 setInterval(() => { try { ntRender(); } catch (e) {} }, 60000);
 setTimeout(() => { try { ntRender(); } catch (e) {} }, 3000);
 // ---------- 홈 개선 메모 (고정 칸 · 중계 서버에 모아 둬요 · 마이크로 말해서 적기) ----------
+// 허브다섯메 메모: 같은 칸에서 [허브아이] [허브다섯메]로 바꿔 봐요 (중계 서버에 따로 모여요 · 처리 내용은 fb_notes_farm.json)
+let hmfbSite = 'hi', hmfbFL = null, hmfbFN = {}, hmfbFOld = false;
+const fbQ = () => hmfbSite === 'farm' ? '?site=farm' : '';
+const fbSetL = (list, site = hmfbSite) => { if (!list) return; if (site === 'farm') hmfbFL = list; else hmfbL = list; };
 let hmfbBusy = false, hmfbL = null, hmfbAll = false, hmfbT = null, hmfbRec = null, hmfbVoice = false;
 const hmfbOk = () => !!(c24Cfg().worker && window.h5Fb);
 // 처리 내용: 📌 ✅ 😥 💡 👉 로 시작하는 줄은 굵은 제목으로 보여요
@@ -10444,34 +10451,41 @@ setInterval(() => { try { const l = document.getElementById('hmfb-list');
   fbnVis = ok ? fbnVis + 1 : 0;
   if (fbnVis >= 3) { fbnVis = 0; if (fbnNew().length) fbnMarkSeen(); if (fbmNew().length) fbmMarkSeen(); } } catch (e) {} }, 1000);
 async function hmfbNotesLoad() { if (!/^https?:$/.test(location.protocol) || Date.now() - hmfbNotesAt < 60e3) return; hmfbNotesAt = Date.now();
-  try { const base = /\/shop\/(index\.html)?$/.test(location.pathname) ? '../' : './'; const r = await fetch(base + 'fb_notes.json?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { hmfbNotes = await r.json(); hmfbRender(); try { ntRender(); } catch (e) {} } } catch (e) {} }
+  try { const base = /\/shop\/(index\.html)?$/.test(location.pathname) ? '../' : './'; const r = await fetch(base + 'fb_notes.json?t=' + Date.now(), { cache: 'no-store' }); if (r.ok) { hmfbNotes = await r.json(); hmfbRender(); try { ntRender(); } catch (e) {} }
+    const r2 = await fetch(base + 'fb_notes_farm.json?t=' + Date.now(), { cache: 'no-store' }); if (r2.ok) { hmfbFN = await r2.json(); if (hmfbSite === 'farm') hmfbRender(); } } catch (e) {} }
 // 메모 상태: 메모됨(새로 들어옴) · 처리중 · 반영함 · 반영 안 됨 — 위 네모칸을 누르면 그 상태만 모아 봐요
 const FB_STAT = [['memo', '메모됨', '새로 들어와 아직 처리 전'], ['doing', '처리중', '확인했고 고치는 중'], ['done', '반영함', '사이트에 반영했어요'], ['hold', '반영 안 됨', '보류 · 나중에']];
 let hmfbF = null, hmfbOpenN = new Set();
-function hmfbStat(x) { const n = hmfbNotes[String(x.no)];
+function hmfbStat(x, N = hmfbNotes) { const n = N[String(x.no)];
   if (!n || !n.st) return n && n.t ? 'doing' : 'memo'; return n.st === 'hold' ? 'hold' : n.st === 'done' ? 'done' : 'doing'; }   // AI가 적은 처리 내용(fb_notes.json)으로만 정해요
 function hmfbRender() {
   const box = $('hmfb-list'); if (!box) return;
   if (!hmfbOk()) { box.innerHTML = '<p class="hw-foot">로그인한 웹 버전에서 카페24 중계 서버가 연결되면 메모가 모여요</p>'; return; }
-  if (!hmfbL) { box.innerHTML = '<p class="hw-foot">메모 불러오는 중…</p>'; return; }
-  const ALL = hmfbL.slice().reverse(), cnt = {}; ALL.forEach(x => { const k = hmfbStat(x); cnt[k] = (cnt[k] || 0) + 1; });
-  const L = hmfbF ? ALL.filter(x => hmfbStat(x) === hmfbF) : ALL, show = hmfbAll || hmfbF ? L : L.slice(0, 3), ST = { new: '새 메모', seen: '확인함', done: '반영함' };
+  const FARM = hmfbSite === 'farm', SRC = FARM ? hmfbFL : hmfbL, N = FARM ? hmfbFN : hmfbNotes, NW = FARM ? [] : fbnNew();
+  const siteBar = `<div class="hmfb-site" role="group" aria-label="어느 사이트 메모를 볼까요">${[['hi', '허브아이', hmfbL], ['farm', '허브다섯메', hmfbFL]].map(([k, l, a]) => `<button type="button" class="iczno${hmfbSite === k ? ' on' : ''}" data-hmfbsite="${k}" aria-pressed="${hmfbSite === k}">${l}${a ? ' · ' + a.length : ''}</button>`).join('')}</div>`;
+  if (FARM && hmfbFOld) { box.innerHTML = siteBar + '<p class="hw-foot warn">카페24 중계 서버를 새로 올려야 허브다섯메 메모가 보여요 (Cloudflare에 새 worker.js 붙여 넣기)</p>'; return; }
+  if (!SRC) { box.innerHTML = siteBar + '<p class="hw-foot">메모 불러오는 중…</p>'; return; }
+  const ALL = SRC.slice().reverse(), cnt = {}; ALL.forEach(x => { const k = hmfbStat(x, N); cnt[k] = (cnt[k] || 0) + 1; });
+  const L = hmfbF ? ALL.filter(x => hmfbStat(x, N) === hmfbF) : ALL, show = hmfbAll || hmfbF ? L : L.slice(0, 3), ST = { new: '새 메모', seen: '확인함', done: '반영함' };
   const tm = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
   const tmd = iso => { const d = new Date(iso); return (d.getMonth() + 1) + '/' + d.getDate(); };
   const SL = Object.fromEntries(FB_STAT.map(a => [a[0], a[1]]));
-  const noteH = x => { const n = hmfbNotes[String(x.no)]; if (!n || !n.t) return `<div class="hmfb-note none"><b>처리 내용</b><span>아직 처리 전이에요</span></div>`;
-    const open = hmfbOpenN.has(x.no) || fbnNew().includes(x.no);
-    return `<div class="hmfb-note${open ? ' open' : ''}"><button type="button" class="hmfb-nh iczno" data-hmfbn="${x.no}" aria-expanded="${open}"><b>처리 내용</b><span>AI · ${esc(n.at ? tmd(n.at) : '')}</span>${fbnNew().includes(x.no) ? '<em class="nw">새 처리</em>' : ''}<i>${open ? '접기 ▴' : '상세보기 ▾'}</i></button>${open ? `<p>${fbFmt(n.t)}</p>${fbImgs(n)}` : ''}</div>`; };
+  const noteH = x => { const n = N[String(x.no)]; if (!n || !n.t) return `<div class="hmfb-note none"><b>처리 내용</b><span>아직 처리 전이에요</span></div>`;
+    const open = hmfbOpenN.has(x.no) || NW.includes(x.no);
+    return `<div class="hmfb-note${open ? ' open' : ''}"><button type="button" class="hmfb-nh iczno" data-hmfbn="${x.no}" aria-expanded="${open}"><b>처리 내용</b><span>AI · ${esc(n.at ? tmd(n.at) : '')}</span>${NW.includes(x.no) ? '<em class="nw">새 처리</em>' : ''}<i>${open ? '접기 ▴' : '상세보기 ▾'}</i></button>${open ? `<p>${fbFmt(n.t)}</p>${fbImgs(n)}` : ''}</div>`; };
   const cmH = x => { const C = x.cm || [], open = hmfbOpenCm.has(x.id); return `<div class="hmfb-cm">${C.map(c => `<div class="hmfb-c"><small><b>${esc(c.by)}</b> · ${tm(c.at)}</small><p>${esc(c.t)}</p></div>`).join('')}
     ${open ? `<form class="hmfb-cf" data-hmfbcm="${esc(x.id)}" autocomplete="off"><textarea rows="2" maxlength="1000" placeholder="처리 내용에 이어서 의견을 적어 주세요 (예: 이름은 잘 나와요, 번호가 반대로 나와요)" aria-label="이어서 의견"></textarea><div class="hmfb-cb"><button type="button" class="btn sm iczno" data-hmfbcx="${esc(x.id)}">닫기</button><button type="submit" class="btn pri sm iczno">의견 남기기</button></div></form>`
       : `<button type="button" class="hmfb-cmo iczno" data-hmfbco="${esc(x.id)}">＋ 이어서 의견 더하기${C.length ? ' · ' + C.length + '개' : ''}</button>`}</div>`; };
-  const tiles = `<div class="fbs-t" role="group" aria-label="메모 상태로 보기">${FB_STAT.map(([k, l, d]) => `<button type="button" class="fbs fbs-${k}${hmfbF === k ? ' on' : ''} iczno" data-hmfbf="${k}" aria-pressed="${hmfbF === k}"><b>${cnt[k] || 0}</b><span>${l}</span></button>`).join('')}</div>`
+  const tiles = siteBar + `<div class="fbs-t" role="group" aria-label="메모 상태로 보기">${FB_STAT.map(([k, l, d]) => `<button type="button" class="fbs fbs-${k}${hmfbF === k ? ' on' : ''} iczno" data-hmfbf="${k}" aria-pressed="${hmfbF === k}"><b>${cnt[k] || 0}</b><span>${l}</span></button>`).join('')}</div>`
     ;
-  box.innerHTML = !ALL.length ? '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : tiles + (!hmfbF ? '' : !L.length ? '<p class="hw-foot">이 상태인 메모가 없어요</p>' : show.map(x => `<div class="hmfb-it st-${hmfbStat(x)}"><div class="hmfb-top"><span class="fbs-chip fbs-${hmfbStat(x)}">${SL[hmfbStat(x)]}</span></div><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}${hmfbMine(x) ? `<button type="button" class="hmfb-del iczno" data-hmfbdel="${esc(x.id)}" title="메모 지우기" aria-label="메모 #${x.no} 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</small>${noteH(x)}${cmH(x)}</div>`).join('')) +
+  box.innerHTML = !ALL.length ? siteBar + '<p class="hw-foot">아직 메모가 없어요. 첫 메모를 남겨 보세요</p>' : tiles + (!hmfbF ? '' : !L.length ? '<p class="hw-foot">이 상태인 메모가 없어요</p>' : show.map(x => `<div class="hmfb-it st-${hmfbStat(x, N)}"><div class="hmfb-top"><span class="fbs-chip fbs-${hmfbStat(x, N)}">${SL[hmfbStat(x, N)]}</span></div><p>${esc(x.text)}</p><small><b>#${x.no}</b><span>${esc(x.by)}</span><span>${tm(x.at)}</span>${x.voice ? '<span>음성</span>' : ''}${hmfbMine(x) ? `<button type="button" class="hmfb-del iczno" data-hmfbdel="${esc(x.id)}" title="메모 지우기" aria-label="메모 #${x.no} 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg></button>` : ''}</small>${noteH(x)}${cmH(x)}</div>`).join('')) +
     '';
 }
 document.addEventListener('click', e => { if (!e.target.closest) return; const f = e.target.closest('[data-hmfbf]'); if (f) { const k = f.dataset.hmfbf || null; hmfbF = hmfbF === k ? null : k; hmfbRender(); return; }
-  const n = e.target.closest('[data-hmfbn]'); if (n) { const no = +n.dataset.hmfbn; if (hmfbOpenN.has(no) || fbnNew().includes(no)) { hmfbOpenN.delete(no); if (fbnNew().includes(no)) fbnMarkOne(no); } else hmfbOpenN.add(no); hmfbRender(); } });
+  const n = e.target.closest('[data-hmfbn]'); if (n) { const no = +n.dataset.hmfbn, NW = hmfbSite === 'hi' ? fbnNew() : []; if (hmfbOpenN.has(no) || NW.includes(no)) { hmfbOpenN.delete(no); if (NW.includes(no)) fbnMarkOne(no); } else hmfbOpenN.add(no); hmfbRender(); }
+  const sb = e.target.closest('[data-hmfbsite]'); if (sb && sb.dataset.hmfbsite !== hmfbSite) { hmfbSite = sb.dataset.hmfbsite; hmfbOpenN = new Set(); hmfbOpenCm = new Set(); hmfbAll = false;
+    $('hmfb-t').placeholder = hmfbSite === 'farm' ? '허브다섯메 메모예요. 예: 점검 사진 올리기가 불편해요' : '예: 재고 화면에서 품목 찾기가 불편해요 · 마이크를 누르고 말해도 돼요';
+    $('hmfb-msg').className = 'msg'; $('hmfb-msg').textContent = ''; hmfbRender(); if (hmfbSite === 'farm' && !hmfbFL) hmfbLoad(); } });
 // 새 개선 메모(아직 처리 내용이 없는 메모): 이 기기에서 한 번 보면 알림에서 빠져요
 const FBM_KEY = 'herb5_fbmemo_seen';
 const fbmSeen = () => { try { return JSON.parse(localStorage.getItem(FBM_KEY) || '[]'); } catch (e) { return []; } };
@@ -10482,20 +10496,22 @@ document.addEventListener('click', e => { if (!e.target.closest) return; const o
   const x = e.target.closest('[data-hmfbcx]'); if (x) { hmfbOpenCm.delete(x.dataset.hmfbcx); hmfbRender(); } });
 document.addEventListener('submit', async e => { const f = e.target.closest && e.target.closest('[data-hmfbcm]'); if (!f) return; e.preventDefault(); const ta = f.querySelector('textarea'), t = ta.value.trim(), m = $('hmfb-msg'), bt = f.querySelector('[type=submit]');
   if (!t) { ta.focus(); return; } bt.disabled = true;
-  try { const d = await c24Call('/fb/cm', { method: 'POST', body: JSON.stringify({ id: f.dataset.hmfbcm, text: t }) }); hmfbL = d.list || hmfbL; hmfbOpenCm.delete(f.dataset.hmfbcm); hmfbRender(); m.className = 'msg ok'; m.textContent = '의견을 남겼어요'; }
+  try { const d = await c24Call('/fb/cm' + fbQ(), { method: 'POST', body: JSON.stringify({ id: f.dataset.hmfbcm, text: t }) }); fbSetL(d.list); hmfbOpenCm.delete(f.dataset.hmfbcm); hmfbRender(); m.className = 'msg ok'; m.textContent = '의견을 남겼어요'; }
   catch (er) { bt.disabled = false; m.className = 'msg err'; m.textContent = /404|찾지 못한 경로|Not Found/i.test(String(er.message || er)) && !/메모를/.test(String(er.message)) ? '중계 서버를 새로 올려야 의견을 남길 수 있어요' : '남기지 못했어요: ' + (er.message || er); } });
 const hmfbMine = x => document.body.classList.contains('is-admin') || (typeof fbUser !== 'undefined' && fbUser && fbUser.email && x.by === fbUser.email.split('@')[0]);
 document.addEventListener('click', async e => { const b = e.target.closest && e.target.closest('[data-hmfbdel]'); if (!b) return; const m = $('hmfb-msg');
   if (!b.dataset.sure) { b.dataset.sure = 1; b.classList.add('sure'); b.title = '한 번 더 누르면 지워요'; m.className = 'msg'; m.textContent = '한 번 더 누르면 메모를 지워요'; clearTimeout(b._t); b._t = setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.classList.remove('sure'); b.title = '메모 지우기'; } }, 3500); return; }
-  b.disabled = true; try { const d = await c24Call('/fb/del', { method: 'POST', body: JSON.stringify({ id: b.dataset.hmfbdel }) }); hmfbL = d.list || hmfbL.filter(x => x.id !== b.dataset.hmfbdel); m.className = 'msg ok'; m.textContent = '메모를 지웠어요'; hmfbRender(); try { ntRender(); } catch (er) {} }
+  b.disabled = true; try { const d = await c24Call('/fb/del' + fbQ(), { method: 'POST', body: JSON.stringify({ id: b.dataset.hmfbdel }) }); fbSetL(d.list); m.className = 'msg ok'; m.textContent = '메모를 지웠어요'; hmfbRender(); try { ntRender(); } catch (er) {} }
   catch (er) { b.disabled = false; m.className = 'msg err'; m.textContent = /404|Not Found|없는 주소|찾지 못한 경로/i.test(String(er.message || er)) && !/메모를/.test(String(er.message)) ? '중계 서버를 새로 올려야 지울 수 있어요' : '지우지 못했어요: ' + (er.message || er); } });
-async function hmfbLoad() { hmfbNotesLoad(); if (!hmfbOk()) { hmfbRender(); return; } if (hmfbBusy) return; hmfbBusy = true; try { const d = await c24Call('/fb'); hmfbL = d.list || []; } catch (e) { if (!hmfbL) { $('hmfb-list').innerHTML = '<p class="hw-foot warn">메모를 불러오지 못했어요: ' + esc(e.message || e) + '</p>'; return; } } finally { hmfbBusy = false; } hmfbRender(); try { ntRender(); } catch (e) {} }
+async function hmfbLoad() { hmfbNotesLoad(); if (!hmfbOk()) { hmfbRender(); return; } if (hmfbBusy) return; hmfbBusy = true; try { const d = await c24Call('/fb'); hmfbL = d.list || []; } catch (e) { if (!hmfbL) { $('hmfb-list').innerHTML = '<p class="hw-foot warn">메모를 불러오지 못했어요: ' + esc(e.message || e) + '</p>'; return; } } finally { hmfbBusy = false; }
+  try { const f = await c24Call('/fb?site=farm'); hmfbFOld = f.site !== 'farm'; hmfbFL = hmfbFOld ? null : (f.list || []); } catch (e) {}   /* 예전 중계 서버는 site를 몰라서 허브아이 메모를 돌려줘요 → 섞이지 않게 안 보여 줘요 */ hmfbRender(); try { ntRender(); } catch (e) {} }
 function hmfbTick() { clearTimeout(hmfbT); hmfbT = setTimeout(() => { if (!document.hidden && $('v-home') && !$('v-home').classList.contains('hidden')) hmfbLoad(); hmfbTick(); }, 60000); }
 $('hmfb-f').addEventListener('submit', async e => { e.preventDefault(); const t = $('hmfb-t').value.trim(), m = $('hmfb-msg'); m.className = 'msg';
   if (!t) { m.className = 'msg err'; m.textContent = '메모를 적거나 마이크를 눌러 말해 주세요'; return; }
   if (!hmfbOk()) { m.className = 'msg err'; m.textContent = '로그인한 웹 버전에서만 남길 수 있어요'; return; }
+  if (hmfbSite === 'farm' && (hmfbFOld || !hmfbFL)) { m.className = 'msg err'; m.textContent = hmfbFOld ? '카페24 중계 서버를 새로 올려야 허브다섯메 메모를 남길 수 있어요' : '허브다섯메 메모를 불러온 뒤에 남겨 주세요'; return; }
   if (hmfbRec) hmfbRec.stop(); $('hmfb-go').disabled = true;
-  try { const d = await c24Call('/fb', { method: 'POST', body: JSON.stringify({ text: t, voice: hmfbVoice }) }); hmfbL = d.list || hmfbL; $('hmfb-t').value = ''; hmfbVoice = false; m.className = 'msg ok'; m.textContent = '#' + d.no + ' 메모를 남겼어요'; hmfbRender(); }
+  try { const site = hmfbSite, d = await c24Call('/fb' + fbQ(), { method: 'POST', body: JSON.stringify({ text: t, voice: hmfbVoice }) }); fbSetL(d.list, site); $('hmfb-t').value = ''; hmfbVoice = false; m.className = 'msg ok'; m.textContent = '#' + d.no + (site === 'farm' ? ' 허브다섯메' : '') + ' 메모를 남겼어요'; hmfbRender(); }
   catch (er) { m.className = 'msg err'; m.textContent = '남기지 못했어요: ' + (er.message || er); } finally { $('hmfb-go').disabled = false; } });
 // 음성으로 적기. 휴대폰(갤럭시 크롬 · 아이폰 사파리)은 같은 말을 두 번씩 돌려주는 버그가 있어요
 // (안드로이드: 끝난 문장을 결과 목록에 한 번 더 넣음 / 아이폰: 앞 문장까지 이어 붙인 결과를 또 줌).

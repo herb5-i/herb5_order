@@ -24,11 +24,12 @@ export default {
       if (url.pathname === '/exchange' && req.method === 'POST') { needAdmin(who); const { code } = await req.json(); return json(await exchange(env, code), cors); }
       if (url.pathname === '/orders') return json(await orders(env, url.searchParams), cors);
       if (url.pathname === '/bytrack') return json(await byTrack(env, url.searchParams), cors);
-      if (url.pathname === '/fb' && req.method === 'POST') return json(await fbAdd(env, await req.json(), who), cors);
-      if (url.pathname === '/fb') return json(await fbList(env), cors);
-      if (url.pathname === '/fb/cm' && req.method === 'POST') return json(await fbCm(env, await req.json(), who), cors);   // 개선 메모에 이어서 의견 달기
-      if (url.pathname === '/fb/del' && req.method === 'POST') return json(await fbDel(env, await req.json(), who), cors);   // 개선 메모 지우기: 쓴 사람 또는 관리자
-      if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json()), cors); }
+      const fbSite = url.searchParams.get('site') === 'farm' ? 'farm' : 'hi';   // 개선 메모: 허브아이(hi) · 허브다섯메(farm) 따로 모아요
+      if (url.pathname === '/fb' && req.method === 'POST') return json(await fbAdd(env, await req.json(), who, fbSite), cors);
+      if (url.pathname === '/fb') return json(await fbList(env, fbSite), cors);
+      if (url.pathname === '/fb/cm' && req.method === 'POST') return json(await fbCm(env, await req.json(), who, fbSite), cors);   // 개선 메모에 이어서 의견 달기
+      if (url.pathname === '/fb/del' && req.method === 'POST') return json(await fbDel(env, await req.json(), who, fbSite), cors);   // 개선 메모 지우기: 쓴 사람 또는 관리자
+      if (url.pathname === '/fb/st' && req.method === 'POST') { needAdmin(who); return json(await fbSt(env, await req.json(), fbSite), cors); }
       if (url.pathname === '/fb/link') { needAdmin(who); return json(await fbLink(env, url, url.searchParams.get('new') === '1'), cors); }
       if (url.pathname === '/claimord') return json(await claimOrd(env, url.searchParams), cors);   // 취소 · 반품 카드 눌렀을 때 주문 정보 (결제자 이름은 화면에만, 저장 안 해요)
       if (url.pathname === '/hold' && req.method === 'POST') { needAdmin(who); return json(await holdSet(env, await req.json()), cors); }   // 날짜 지정 주문: 배송보류 + 희망배송일 (관리자만)
@@ -195,30 +196,33 @@ async function crm(env, q) {
 // 고객 카드에서 [이름 · 연락처 보기]를 누를 때만: 그 주문의 주문자 · 수령인을 보여주고 어디에도 저장하지 않아요
 // ---------- 개선 메모 (홈 화면 고정 칸): 직원이 적은 불편한 점 · 바라는 점. KV 'fb'에 모아 둬요 ----------
 const FB_ST = { new: '새 메모', seen: '확인함', done: '반영함' };
-const fbGet = async env => JSON.parse((await env.TOKENS.get('fb')) || '[]');
+// 허브아이 메모는 KV 'fb', 허브다섯메 메모는 KV 'fbfarm'에 따로 모아요 (번호도 따로 세요)
+const fbKey = site => site === 'farm' ? 'fbfarm' : 'fb';
+const fbGet = async (env, site) => JSON.parse((await env.TOKENS.get(fbKey(site))) || '[]');
+const fbPut = (env, site, L) => env.TOKENS.put(fbKey(site), JSON.stringify(L));
 const fbKst = iso => new Date(new Date(iso).getTime() + 9 * 3600e3).toISOString().replace('T', ' ').slice(0, 16);
-async function fbAdd(env, body, who) {
+async function fbAdd(env, body, who, site) {
   const text = String((body && body.text) || '').trim().slice(0, 1000); if (!text) throw fail(400, 'empty', '메모를 적어 주세요');
-  const L = await fbGet(env), no = L.reduce((m, x) => Math.max(m, x.no || 0), 0) + 1;
+  const L = await fbGet(env, site), no = L.reduce((m, x) => Math.max(m, x.no || 0), 0) + 1;
   L.push({ id: 'f' + Date.now().toString(36), no, text, by: who.email.split('@')[0], at: new Date().toISOString(), st: 'new', voice: !!(body && body.voice) });
-  await env.TOKENS.put('fb', JSON.stringify(L.slice(-500))); return { ok: true, no, list: L.slice(-500) };
+  await fbPut(env, site, L.slice(-500)); return { ok: true, no, list: L.slice(-500) };
 }
-async function fbList(env) { return { list: await fbGet(env) }; }
-async function fbCm(env, body, who) {
+async function fbList(env, site) { return { list: await fbGet(env, site), site }; }   // site: 새 중계 서버인지 사이트가 확인해요
+async function fbCm(env, body, who, site) {
   const t = String((body && body.text) || '').trim().slice(0, 1000); if (!t) throw fail(400, 'empty', '의견을 적어 주세요');
-  const L = await fbGet(env), x = L.find(v => v.id === (body && body.id)); if (!x) throw fail(404, 'none', '메모를 찾지 못했어요');
+  const L = await fbGet(env, site), x = L.find(v => v.id === (body && body.id)); if (!x) throw fail(404, 'none', '메모를 찾지 못했어요');
   x.cm = (x.cm || []).concat([{ by: who.email.split('@')[0], at: new Date().toISOString(), t, voice: !!(body && body.voice) }]).slice(-50); x.cmNew = true;
-  await env.TOKENS.put('fb', JSON.stringify(L)); return { ok: true, list: L };
+  await fbPut(env, site, L); return { ok: true, list: L };
 }
-async function fbDel(env, body, who) {
-  const L = await fbGet(env), i = L.findIndex(v => v.id === (body && body.id)); if (i < 0) throw fail(404, 'none', '메모를 찾지 못했어요');
+async function fbDel(env, body, who, site) {
+  const L = await fbGet(env, site), i = L.findIndex(v => v.id === (body && body.id)); if (i < 0) throw fail(404, 'none', '메모를 찾지 못했어요');
   if (who.role !== 'admin' && L[i].by !== who.email.split('@')[0]) throw fail(403, 'own', '내가 쓴 메모만 지울 수 있어요');
-  L.splice(i, 1); await env.TOKENS.put('fb', JSON.stringify(L)); return { ok: true, list: L };
+  L.splice(i, 1); await fbPut(env, site, L); return { ok: true, list: L };
 }
-async function fbSt(env, body) {
-  const L = await fbGet(env), x = L.find(v => v.id === (body && body.id)); if (!x) throw fail(404, 'none', '메모를 찾지 못했어요');
+async function fbSt(env, body, site) {
+  const L = await fbGet(env, site), x = L.find(v => v.id === (body && body.id)); if (!x) throw fail(404, 'none', '메모를 찾지 못했어요');
   if (!FB_ST[body.st]) throw fail(400, 'st', '상태가 맞지 않아요'); x.st = body.st; x.stAt = new Date().toISOString();
-  await env.TOKENS.put('fb', JSON.stringify(L)); return { ok: true, list: L };
+  await fbPut(env, site, L); return { ok: true, list: L };
 }
 async function fbLink(env, url, renew) {
   let k = await env.TOKENS.get('fbkey');
@@ -228,10 +232,11 @@ async function fbLink(env, url, renew) {
 async function fbRead(env, k) {
   const key = await env.TOKENS.get('fbkey'), head = { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' };
   if (!key || !k || k !== key) return new Response('주소가 맞지 않아요', { status: 403, headers: head });
-  const L = (await fbGet(env)).slice().reverse(), n = L.filter(x => x.st === 'new').length;
-  const txt = `허브아이 사이트 개선 메모 · 총 ${L.length}건 · 새 메모 ${n}건 · ${fbKst(new Date().toISOString())} 기준 (한국 시간)\n\n` +
-    L.map(x => `#${x.no} [${FB_ST[x.st] || x.st}] ${fbKst(x.at)} · ${x.by}${x.voice ? ' · 음성' : ''}\n${x.text}\n` + (x.cm || []).map(c => `  └ 이어서 의견 · ${fbKst(c.at)} · ${c.by}${c.voice ? ' · 음성' : ''}\n    ${c.t}\n`).join('')).join('\n');
-  return new Response(txt || '아직 메모가 없어요', { headers: head });
+  const one = x => `#${x.no} [${FB_ST[x.st] || x.st}] ${fbKst(x.at)} · ${x.by}${x.voice ? ' · 음성' : ''}\n${x.text}\n` + (x.cm || []).map(c => `  └ 이어서 의견 · ${fbKst(c.at)} · ${c.by}${c.voice ? ' · 음성' : ''}\n    ${c.t}\n`).join('');
+  const L = (await fbGet(env, 'hi')).slice().reverse(), n = L.filter(x => x.st === 'new').length, F = (await fbGet(env, 'farm')).slice().reverse();
+  const txt = `허브아이 사이트 개선 메모 · 총 ${L.length}건 · 새 메모 ${n}건 · ${fbKst(new Date().toISOString())} 기준 (한국 시간)\n\n` + L.map(one).join('\n') +
+    `\n\n==================== 허브다섯메 사이트 개선 메모 · 총 ${F.length}건 (번호는 허브아이와 따로 세요 · 처리 내용은 fb_notes_farm.json) ====================\n\n` + (F.length ? F.map(one).join('\n') : '아직 메모가 없어요\n');
+  return new Response(txt, { headers: head });
 }
 
 // ---------- 택배 사고: 송장번호로 카페24 주문 찾기 (받는 분 · 주문자 이름 · 전화 · 주소는 돌려주지 않아요) ----------

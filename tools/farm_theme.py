@@ -90,10 +90,15 @@ def main():
             "document.addEventListener('click',function(e){var t=e.target&&e.target.closest&&e.target.closest('img[alt=\"허브다섯메\"],.m-logo');if(!t)return;e.preventDefault();e.stopPropagation();location.href=home;},true);"
             "var tip=function(){document.querySelectorAll('img[alt=\"허브다섯메\"],.m-logo').forEach(function(x){x.title='처음 화면으로 (허브아이 · 허브다섯메 고르기)'})};"
             "document.addEventListener('DOMContentLoaded',tip);setInterval(tip,2000);})();</script>")
+    # 개선 메모 칸 (첫 화면 맨 위 고정 · 허브아이 메모 칸과 같은 모양): tools/farm_memo.js → farm/herbi-memo.js
+    src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'farm_memo.js'), encoding='utf-8').read()
+    open(os.path.join(FARM, 'herbi-memo.js'), 'w', encoding='utf-8').write(src)
+    import hashlib; mv = hashlib.md5(src.encode('utf-8')).hexdigest()[:8]
     for f in ('admin.html', 'staff.html', 'index.html'):
         p = os.path.join(FARM, f); s = open(p, encoding='utf-8').read()
-        s = re.sub(r'<!--herbi-theme-->.*?<!--/herbi-theme-->', '', s, flags=re.S)
-        s = s.replace('</head>', '<!--herbi-theme-->' + head + '<!--/herbi-theme-->\n</head>', 1)
+        s = re.sub(r'<!--herbi-theme-->.*?<!--/herbi-theme-->\n?', '', s, flags=re.S)
+        extra = f'<script src="herbi-memo.js?v={mv}" defer></script>' if f != 'index.html' else ''
+        s = s.replace('</head>', '<!--herbi-theme-->' + head + extra + '<!--/herbi-theme-->\n</head>', 1)
         open(p, 'w', encoding='utf-8').write(s)
     print('herbi-theme.css 규칙', gen.count('\n') + 1, '줄')
 main()
