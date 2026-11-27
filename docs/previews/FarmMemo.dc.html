@@ -8,25 +8,24 @@
 <body>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
-<style>body{margin:0}button{font-family:inherit;cursor:pointer}textarea{font-family:inherit}</style>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0}button{font-family:inherit;cursor:pointer}textarea{font-family:inherit}textarea::placeholder{color:#8a948d}</style>
 </helmet>
 <div style="{{ t.root }}">
 <div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px">
 
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
 <span style="font-size: 13px; font-weight: 700; color: #fff; background: #b86b00; border-radius: 99px; padding: 4px 12px">미리보기 · 예시 데이터</span>
-<h1 style="{{ t.h1 }}">허브다섯메에도 개선 메모</h1>
+<h1 style="{{ t.h1 }}">허브다섯메 첫 화면에 개선 메모 고정</h1>
 <button type="button" onClick="{{ toggleDark }}" style="{{ t.pill }}">{{ darkLabel }}</button>
 </div>
 
 <div style="{{ t.note }}">
 <b style="{{ t.noteHead }}">이렇게 바뀌어요</b><br>
-1. 허브다섯메 화면 오른쪽 아래에 <b>[개선 메모]</b> 버튼이 생겨요. 휴대폰은 아래 메뉴 바로 위, PC는 오른쪽 아래 구석이에요.<br>
-2. 같은 휴대폰 · PC에서 <b>허브아이에 로그인해 둔 사람</b>만 메모를 남길 수 있어요. 안 했으면 로그인 안내가 나와요.<br>
-3. 메모는 허브아이 메모와 <b>따로</b> 모여요. 번호도 1번부터 따로 세요.<br>
-4. 허브아이 홈의 메모 칸에 <b>[허브아이] [허브다섯메]</b> 두 칸이 생겨서, 관리자가 거기서 상태(새 메모 · 확인함 · 반영함)를 바꿔요.<br>
-<span style="{{ t.small }}">위 단추로 '로그인 함 / 안 함'을 바꿔 볼 수 있어요. 왼쪽 휴대폰의 [개선 메모]를 누르고 메모도 남겨 보세요.</span>
+1. 허브다섯메 <b>첫 화면 맨 위</b>에 개선 메모 칸이 <b>고정</b>돼요. 핀 모양이 붙고, 다른 화면으로 가도 첫 화면에 늘 있어요.<br>
+2. 모양은 허브아이 메모 칸과 <b>똑같아요</b>. 쓰는 칸, 마이크, [남기기], 상태 4칸(메모됨 · 처리중 · 반영함 · 반영 안 됨), 처리 내용, 이어서 의견까지 같아요.<br>
+3. 허브아이에 로그인해 둔 사람만 쓸 수 있어요. 메모는 허브다섯메 것만 <b>따로</b> 모이고, 번호도 1번부터 따로 세요.<br>
+<span style="{{ t.small }}">위 단추로 '로그인 함 / 안 함'을 바꿔 볼 수 있어요. 상태 칸을 누르면 그 상태의 메모가 펼쳐져요.</span>
 </div>
 
 <div style="display: flex; flex-wrap: wrap; gap: 8px">
@@ -38,168 +37,181 @@
 
 <!-- 허브다섯메 휴대폰 -->
 <div style="display: flex; flex-direction: column; gap: 10px; align-items: center">
-<div style="{{ t.cap }}">허브다섯메 (휴대폰)</div>
+<div style="{{ t.cap }}">허브다섯메 첫 화면 (휴대폰)</div>
 <div style="{{ t.phone }}">
 <div style="{{ t.farmHead }}"><b style="{{ t.farmLogo }}">허브다섯메</b><span style="{{ t.small }}">직원용</span></div>
-<div style="{{ t.farmBody }}">
-<div style="{{ t.ph }}">농장 화면은 그대로예요</div>
-<div style="{{ t.ph2 }}"></div>
-<div style="{{ t.ph2 }}"></div>
-</div>
-<button type="button" onClick="{{ openSheet }}" style="{{ t.fab }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4"/></svg>개선 메모</button>
-<div style="{{ t.tabs }}">농장 아래 메뉴 (그대로)</div>
+<div style="{{ t.scroll }}">
 
-<sc-if value="{{ sheet }}" hint-placeholder-val="{{ false }}">
-<div style="{{ t.dim }}"></div>
-<div style="{{ t.sheet }}">
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
-<b style="{{ t.sheetHead }}">개선 메모 · 허브다섯메</b>
-<button type="button" onClick="{{ closeSheet }}" style="{{ t.pill }}">닫기</button>
+<div style="{{ t.w }}">
+<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+<span style="{{ t.lb }}">개선 메모</span>
+<span aria-label="도움말" style="{{ t.info }}">!</span>
+<span style="flex: 1"></span>
+<span title="첫 화면에 고정된 칸이에요" style="{{ t.pin }}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span>
 </div>
 
 <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; flex-direction: column; gap: 10px">
-<span style="{{ t.small }}">불편한 점 · 바라는 점을 적어 주세요. 사장님과 같이 보고 고쳐요.</span>
-<textarea aria-label="개선 메모" placeholder="예: 점검 사진을 한 번에 여러 장 올리고 싶어요 · 마이크를 누르고 말해도 돼요" value="{{ draft }}" onInput="{{ onDraft }}" style="{{ t.ta }}"></textarea>
-<div style="display: flex; gap: 8px">
-<button type="button" aria-label="말로 적기" style="{{ t.mic }}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-<button type="button" onClick="{{ add }}" style="{{ t.send }}">남기기</button>
+<div>
+<textarea aria-label="개선 메모" placeholder="예: 점검 화면에서 사진 올리기가 불편해요 · 마이크를 누르고 말해도 돼요" value="{{ draft }}" onInput="{{ onDraft }}" style="{{ t.ta }}"></textarea>
+<div style="display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap">
+<button type="button" aria-label="말로 적기" style="{{ t.mic }}"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg></button>
+<button type="button" onClick="{{ add }}" style="{{ t.go }}">남기기</button>
+<span style="{{ t.msg }}">{{ msg }}</span>
 </div>
-<span style="{{ t.ok }}">{{ msg }}</span>
-<div style="display: flex; flex-direction: column; gap: 8px; max-height: 330px; overflow: auto">
-<sc-for list="{{ memos }}" as="m" hint-placeholder-count="3">
-<div style="{{ m.box }}">
-<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap"><b style="{{ m.noS }}">#{{ m.no }}</b><span style="{{ m.stS }}">{{ m.stL }}</span><span style="{{ m.meta }}">{{ m.at }} · {{ m.by }}</span></div>
-<div style="{{ m.txt }}">{{ m.text }}</div>
-<sc-if value="{{ m.hasAns }}" hint-placeholder-val="{{ false }}"><div style="{{ m.ans }}">{{ m.answer }}</div></sc-if>
-</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 4px">
+<sc-for list="{{ tiles }}" as="k" hint-placeholder-count="4">
+<button type="button" onClick="{{ k.go }}" style="{{ k.st }}"><b style="{{ k.numS }}">{{ k.n }}</b><span style="{{ k.labS }}">{{ k.l }}</span></button>
 </sc-for>
 </div>
+<sc-for list="{{ items }}" as="x" hint-placeholder-count="1">
+<div style="{{ x.it }}">
+<div style="display: flex; margin-bottom: 4px"><span style="{{ x.chip }}">{{ x.stL }}</span></div>
+<p style="{{ x.p }}">{{ x.text }}</p>
+<div style="{{ x.meta }}"><b>#{{ x.no }}</b><span>{{ x.by }}</span><span>{{ x.at }}</span></div>
+<div style="{{ x.note }}">
+<button type="button" onClick="{{ x.toggle }}" style="{{ x.nh }}"><b style="{{ x.nhB }}">처리 내용</b><span style="{{ x.nhS }}">{{ x.nAt }}</span><i style="{{ x.nhI }}">{{ x.nBtn }}</i></button>
+<sc-if value="{{ x.open }}" hint-placeholder-val="{{ false }}"><p style="{{ x.np }}">{{ x.nt }}</p></sc-if>
+</div>
+<div style="{{ x.cm }}"><button type="button" style="{{ x.cmo }}">＋ 이어서 의견 더하기</button></div>
+</div>
+</sc-for>
 </div>
 </sc-if>
 
 <sc-if value="{{ loggedOut }}" hint-placeholder-val="{{ false }}">
 <div style="{{ t.lock }}">
 <b style="{{ t.lockHead }}">허브아이에 로그인한 사람만 메모를 남길 수 있어요</b>
-<span style="{{ t.small }}">이 휴대폰에서 허브아이에 한 번 로그인해 두면, 허브다섯메에서도 바로 메모를 쓸 수 있어요.</span>
-<button type="button" onClick="{{ setIn }}" style="{{ t.send }}">허브아이 로그인하러 가기</button>
-<span style="{{ t.small }}">로그인하면 이 화면으로 다시 돌아와요</span>
+<span style="{{ t.small }}">이 휴대폰에서 허브아이에 한 번 로그인해 두면 여기서 바로 써요. 로그인하면 이 화면으로 돌아와요.</span>
+<button type="button" onClick="{{ setIn }}" style="{{ t.go }}">허브아이 로그인하러 가기</button>
 </div>
 </sc-if>
 </div>
-</sc-if>
+
+<div style="{{ t.ph }}">농장 첫 화면 (그대로)</div>
+<div style="{{ t.ph2 }}"></div>
+</div>
+<div style="{{ t.tabs }}">농장 아래 메뉴 (그대로)</div>
 </div>
 </div>
 
 <!-- 허브아이 홈 메모 칸 -->
-<div style="display: flex; flex-direction: column; gap: 10px; align-items: center; width: 400px; max-width: 100%">
-<div style="{{ t.cap }}">허브아이 홈 · 개선 메모 칸 (관리자)</div>
-<div style="{{ t.card }}">
-<b style="{{ t.sheetHead }}">개선 메모</b>
-<div style="display: flex; gap: 6px">
+<div style="display: flex; flex-direction: column; gap: 10px; align-items: center; width: 380px; max-width: 100%">
+<div style="{{ t.cap }}">허브아이 홈 · 개선 메모 칸</div>
+<div style="{{ t.wFull }}">
+<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px">
+<span style="{{ t.lb }}">개선 메모</span>
+<span aria-label="도움말" style="{{ t.info }}">!</span>
+<span style="flex: 1"></span>
+<span style="{{ t.pin }}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5Z"/><path d="M12 14v6"/></svg></span>
+</div>
+<div style="display: flex; gap: 6px; margin-bottom: 10px">
 <button type="button" onClick="{{ viewHi }}" style="{{ vHi }}">허브아이 · 9</button>
-<button type="button" onClick="{{ viewFarm }}" style="{{ vFarm }}">허브다섯메 · {{ farmCount }}<span style="{{ t.badge }}">새 {{ farmNew }}</span></button>
+<button type="button" onClick="{{ viewFarm }}" style="{{ vFarm }}">허브다섯메 · {{ farmCount }}</button>
 </div>
 <sc-if value="{{ showHi }}" hint-placeholder-val="{{ false }}">
-<div style="{{ t.small }}">지금처럼 허브아이 메모가 보여요 (1~9번)</div>
+<div style="{{ t.small }}">지금과 똑같이 허브아이 메모(1~9번)가 보여요</div>
 </sc-if>
 <sc-if value="{{ showFarm }}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<sc-for list="{{ adminMemos }}" as="a" hint-placeholder-count="3">
-<div style="{{ a.box }}">
-<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap"><b style="{{ a.noS }}">#{{ a.no }}</b><span style="{{ a.meta }}">{{ a.at }} · {{ a.by }}</span></div>
-<div style="{{ a.txt }}">{{ a.text }}</div>
-<div style="display: flex; gap: 6px; flex-wrap: wrap">
-<button type="button" onClick="{{ a.setNew }}" style="{{ a.bNew }}">새 메모</button>
-<button type="button" onClick="{{ a.setSeen }}" style="{{ a.bSeen }}">확인함</button>
-<button type="button" onClick="{{ a.setDone }}" style="{{ a.bDone }}">반영함</button>
-</div>
-</div>
+<div style="{{ t.small }}">허브다섯메 메모를 여기서도 볼 수 있어요. 상태 4칸과 처리 내용은 왼쪽과 같아요.</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{ tilesMini }}" as="k" hint-placeholder-count="4">
+<div style="{{ k.st }}"><b style="{{ k.numS }}">{{ k.n }}</b><span style="{{ k.labS }}">{{ k.l }}</span></div>
 </sc-for>
+</div>
 </div>
 </sc-if>
 </div>
+<div style="{{ t.small }}">메모를 처리하면 처리 내용은 저(AI)가 적어요. 허브아이 메모와 같은 방법이에요.</div>
 </div>
 
 </div>
 
 <div style="{{ t.note }}">
-<b style="{{ t.noteHead }}">사장님이 하실 일 (진행하면)</b><br>
+<b style="{{ t.noteHead }}">진행하면 사장님이 하실 일</b><br>
 · 카페24 중계 서버(worker.js)를 조금 고쳐요. 고친 파일을 <b>Cloudflare에 한 번 붙여 넣어</b> 주시면 돼요.<br>
-· 저한테 '메모 불러와'라고 하실 때 허브다섯메 메모도 같이 읽을 수 있게, 읽기 주소를 따로 하나 더 만들어요.<br>
-<span style="{{ t.small }}">메모 내용 · 이름은 예시예요. 실제 메모가 아니에요.</span>
+· '메모 불러와'라고 하실 때 허브다섯메 메모도 같이 읽어요.<br>
+<span style="{{ t.small }}">메모 내용 · 이름 · 날짜는 예시예요.</span>
 </div>
 
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1250}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":1300}}'>
 class Component extends DCLogic {
-  constructor(p) { super(p); this.state = { dark: false, login: true, sheet: true, draft: '', msg: '', view: 'farm',
+  constructor(p) { super(p); this.state = { dark: false, login: true, draft: '', msg: '', view: 'farm', f: 'done', open: { 1: true },
     memos: [
-      { no: 3, st: 'new', at: '11/27 10:12', by: 'farm01', text: '비 오는 날에는 물 주기 할 일을 빼 주면 좋겠어요', answer: '' },
-      { no: 2, st: 'seen', at: '11/26 16:40', by: 'farm02', text: '병해충 목록에서 로즈마리만 골라 보고 싶어요', answer: '' },
-      { no: 1, st: 'done', at: '11/25 09:05', by: 'farm01', text: '점검 사진을 한 번에 여러 장 올리고 싶어요', answer: '📌 사진을 한 번에 5장까지 올릴 수 있어요\n✅ 사진 고르기에서 여러 장을 같이 누르면 돼요' }
+      { no: 1, st: 'done', at: '11/25 09:05', by: 'farm01', text: '점검 사진을 한 번에 여러 장 올리고 싶어요', nAt: 'AI · 11/26', nt: '📌 한 줄 요약\n사진을 한 번에 5장까지 올려요\n\n✅ 이렇게 바뀌었어요\n1. 사진 고르기에서 여러 장을 같이 눌러요\n\n👉 할 일\n따로 하실 건 없어요' },
+      { no: 2, st: 'doing', at: '11/26 16:40', by: 'farm02', text: '병해충 목록에서 로즈마리만 골라 보고 싶어요', nAt: 'AI · 11/27', nt: '📌 한 줄 요약\n품목별로 골라 보기를 만드는 중이에요' },
+      { no: 3, st: 'memo', at: '11/27 10:12', by: 'farm01', text: '비 오는 날에는 물 주기 할 일을 빼 주면 좋겠어요', nAt: '', nt: '' }
     ] }; }
   renderVals() {
     const s = this.state, D = s.dark;
-    const c = D ? { bg: '#121814', card: '#1b231e', line: '#2c372f', ink: '#e7ede8', acc: '#6cc28f', acc2: '#223629', mute: '#b7c3bb', frame: '#0d120f', ph: '#232c26', warn: '#e0a050', warnBg: '#3a2c18', blue: '#8fb8ff', blueBg: '#1f2a3d' }
-                : { bg: '#f4f5f3', card: '#ffffff', line: '#e5e8e3', ink: '#1f2620', acc: '#2f7d55', acc2: '#e9f4ee', mute: '#4f5c54', frame: '#f6f7f8', ph: '#e9ece8', warn: '#a35f00', warnBg: '#fdf1df', blue: '#2a5bb8', blueBg: '#e8effc' };
-    const ST = { new: ['새 메모', c.warn, c.warnBg], seen: ['확인함', c.blue, c.blueBg], done: ['반영함', c.acc, c.acc2] };
+    const c = D ? { bg: '#121614', card: '#1a1f1c', line: '#2a322d', ink: '#e4e9e5', mute: '#98a29b', acc: '#5bb486', acc2: 'rgba(63,154,108,.18)', w: 'linear-gradient(180deg,#1f2821,#1a211c)', wb: 'rgba(255,255,255,.05)', lb: '#e08a74', frame: '#121614', ph: '#1f2621', go: '#3f9a6c' }
+                : { bg: '#f6f7f4', card: '#ffffff', line: '#e2e6e1', ink: '#1f2a24', mute: '#68736c', acc: '#2f7d55', acc2: '#e9f4ee', w: 'linear-gradient(180deg,#fffdf8,#faf7ef)', wb: 'rgba(255,255,255,.95)', lb: '#b04a33', frame: '#f6f7f8', ph: '#e9ece8', go: '#2f7d55' };
+    const STAT = [['memo', '메모됨', '#c0392b', 'rgba(192,57,43,.07)', '#c0392b'], ['doing', '처리중', '#b86b00', 'rgba(208,138,58,.09)', '#d08a3a'], ['done', '반영함', c.acc, c.acc2, c.acc], ['hold', '반영 안 됨', '#6a7266', c.bg, '#8a9286']];
+    const SL = Object.fromEntries(STAT.map(a => [a[0], a]));
     const t = {
-      root: `min-height: 1250px; box-sizing: border-box; padding: 28px 16px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: ${c.ink}; background: ${c.bg}`,
+      root: `min-height: 1300px; box-sizing: border-box; padding: 28px 16px; font-family: 'Noto Sans KR', system-ui, sans-serif; color: ${c.ink}; background: ${D ? '#0f1311' : '#eef0ec'}`,
       h1: `margin: 0; font-size: 20px; font-weight: 800; color: ${c.ink}; flex: 1; min-width: 220px`,
       pill: `min-height: 44px; padding: 0 16px; border-radius: 99px; border: 1px solid ${c.line}; background: ${c.card}; color: ${c.ink}; font-size: 14px; font-weight: 700`,
       note: `background: ${c.card}; border: 1px solid ${c.line}; border-radius: 18px; padding: 16px 18px; font-size: 15px; line-height: 1.85; color: ${c.ink}`,
       noteHead: `font-size: 16px; color: ${c.acc}`,
       small: `font-size: 13.5px; color: ${c.mute}; line-height: 1.6`,
       cap: `font-size: 15px; font-weight: 800; color: ${c.mute}; background: ${c.card}; border: 1px solid ${c.line}; border-radius: 99px; padding: 4px 14px`,
-      phone: `width: 360px; max-width: 100%; height: 780px; box-sizing: border-box; border: 8px solid ${D ? '#2a312c' : '#d9ddd6'}; border-radius: 36px; background: ${c.frame}; position: relative; overflow: hidden; display: flex; flex-direction: column`,
+      phone: `width: 360px; max-width: 100%; height: 820px; box-sizing: border-box; border: 8px solid ${D ? '#2a312c' : '#d9ddd6'}; border-radius: 36px; background: ${c.frame}; overflow: hidden; display: flex; flex-direction: column`,
       farmHead: `display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: ${c.card}; border-bottom: 1px solid ${c.line}`,
       farmLogo: `font-size: 18px; font-weight: 800; color: ${c.acc}`,
-      farmBody: `flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 12px`,
-      ph: `height: 120px; border-radius: 16px; background: ${c.ph}; display: flex; align-items: center; justify-content: center; font-size: 14px; color: ${c.mute}`,
-      ph2: `height: 90px; border-radius: 16px; background: ${c.ph}`,
-      fab: `position: absolute; right: 14px; bottom: 84px; min-height: 48px; padding: 0 18px; border-radius: 99px; border: 0; background: ${D ? '#2f7d55' : c.acc}; color: #fff; font-size: 15px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 8px 20px -8px rgba(0,0,0,.45)`,
-      tabs: `height: 58px; margin: 0 8px 10px; border-radius: 22px; background: ${c.card}; border: 1px solid ${c.line}; display: flex; align-items: center; justify-content: center; font-size: 13.5px; color: ${c.mute}`,
-      dim: `position: absolute; inset: 0; background: rgba(0,0,0,${D ? '.55' : '.3'})`,
-      sheet: `position: absolute; left: 0; right: 0; bottom: 0; max-height: 92%; overflow: auto; background: ${c.card}; border-radius: 24px 24px 0 0; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px`,
-      sheetHead: `font-size: 17px; font-weight: 800; color: ${c.ink}`,
-      ta: `width: 100%; min-height: 84px; box-sizing: border-box; border-radius: 14px; border: 1px solid ${c.line}; background: ${D ? '#151a17' : '#fff'}; color: ${c.ink}; padding: 12px; font-size: 15px; line-height: 1.5; resize: vertical`,
-      mic: `width: 48px; height: 48px; border-radius: 99px; border: 1px solid ${c.line}; background: ${c.card}; color: ${c.acc}; display: inline-flex; align-items: center; justify-content: center; padding: 0`,
-      send: `flex: 1; min-height: 48px; border-radius: 14px; border: 0; background: ${D ? '#2f7d55' : c.acc}; color: #fff; font-size: 16px; font-weight: 800; padding: 0 16px`,
-      ok: `font-size: 14px; font-weight: 700; color: ${c.acc}`,
-      lock: `display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: ${c.warnBg}; border: 1px solid ${c.line}`,
-      lockHead: `font-size: 16px; color: ${c.ink}; line-height: 1.5`,
-      card: `width: 100%; box-sizing: border-box; background: ${c.card}; border: 1px solid ${c.line}; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px`,
-      badge: `margin-left: 6px; font-size: 12px; font-weight: 800; color: #fff; background: #c0392b; border-radius: 99px; padding: 1px 7px`
+      scroll: `flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px`,
+      w: `border-radius: 22px; border: 1px solid ${c.wb}; background: ${c.w}; box-shadow: 0 10px 24px -18px rgba(40,60,30,.45); padding: 17px; flex: none`,
+      wFull: `width: 100%; box-sizing: border-box; border-radius: 22px; border: 1px solid ${c.wb}; background: ${c.w}; box-shadow: 0 10px 24px -18px rgba(40,60,30,.45); padding: 17px`,
+      lb: `font-size: 13.5px; font-weight: 600; color: ${c.lb}`,
+      info: `width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid ${c.mute}; color: ${c.mute}; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box`,
+      pin: `color: ${c.acc}; display: flex`,
+      ta: `width: 100%; box-sizing: border-box; border-radius: 14px; border: 1px solid ${c.line}; padding: 10px 12px; font-size: 15px; color: ${c.ink}; background: ${c.card}; resize: vertical; min-height: 64px; line-height: 1.5`,
+      mic: `width: 44px; height: 44px; border-radius: 50%; border: 1px solid ${c.line}; background: ${c.card}; color: ${c.acc}; display: grid; place-items: center; padding: 0; flex: none`,
+      go: `min-height: 36px; padding: 0 14px; border-radius: 10px; border: 0; background: ${c.go}; color: #fff; font-size: 14px; font-weight: 700`,
+      msg: `flex: 1 1 120px; min-width: 0; font-size: 13px; color: ${c.acc}; font-weight: 700`,
+      lock: `display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding: 14px; border-radius: 14px; background: ${c.bg}; border: 1px solid ${c.line}`,
+      lockHead: `font-size: 15px; color: ${c.ink}; line-height: 1.5`,
+      ph: `height: 140px; border-radius: 22px; background: ${c.ph}; display: flex; align-items: center; justify-content: center; font-size: 14px; color: ${c.mute}; flex: none`,
+      ph2: `height: 110px; border-radius: 22px; background: ${c.ph}; flex: none`,
+      tabs: `height: 58px; margin: 0 8px 10px; border-radius: 22px; background: ${c.card}; border: 1px solid ${c.line}; display: flex; align-items: center; justify-content: center; font-size: 13.5px; color: ${c.mute}; flex: none`
     };
-    const seg = on => `min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid ${on ? c.acc : c.line}; background: ${on ? c.acc2 : c.card}; color: ${on ? c.acc : c.ink}; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center`;
-    const setSt = (no, st) => () => this.setState({ memos: s.memos.map(m => m.no === no ? Object.assign({}, m, { st }) : m) });
-    const box = `border: 1px solid ${c.line}; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; background: ${c.card}`;
-    const common = m => ({ no: m.no, at: m.at, by: m.by, text: m.text, box,
-      noS: `font-size: 15px; color: ${c.ink}`, meta: `font-size: 13px; color: ${c.mute}`, txt: `font-size: 15px; line-height: 1.55; color: ${c.ink}; white-space: pre-wrap` });
-    const memos = s.memos.map(m => Object.assign(common(m), {
-      stL: ST[m.st][0], stS: `font-size: 12.5px; font-weight: 800; color: ${ST[m.st][1]}; background: ${ST[m.st][2]}; border-radius: 99px; padding: 2px 9px`,
-      hasAns: !!m.answer, answer: '처리 내용\n' + m.answer, ans: `font-size: 14px; line-height: 1.6; white-space: pre-wrap; color: ${c.ink}; background: ${c.acc2}; border-radius: 10px; padding: 10px 12px` }));
-    const adminMemos = s.memos.map(m => Object.assign(common(m), {
-      setNew: setSt(m.no, 'new'), setSeen: setSt(m.no, 'seen'), setDone: setSt(m.no, 'done'),
-      bNew: seg(m.st === 'new'), bSeen: seg(m.st === 'seen'), bDone: seg(m.st === 'done') }));
+    const seg = on => `min-height: 40px; padding: 0 14px; border-radius: 12px; border: 1.5px solid ${on ? c.acc : c.line}; background: ${on ? c.acc2 : c.card}; color: ${on ? c.acc : c.ink}; font-size: 14px; font-weight: 700`;
+    const cnt = {}; s.memos.forEach(m => cnt[m.st] = (cnt[m.st] || 0) + 1);
+    const tile = (a, big) => { const on = s.f === a[0];
+      return { n: cnt[a[0]] || 0, l: a[1], go: () => this.setState({ f: on ? null : a[0] }),
+        st: `display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: ${big ? '10px 12px' : '8px'}; border-radius: 14px; border: 1.5px solid ${on && big ? a[4] : c.line}; background: ${on && big ? a[3] : c.card}; text-align: left; min-width: 0`,
+        numS: `font-size: ${big ? 22 : 18}px; font-weight: 800; line-height: 1.2; color: ${a[2]}`,
+        labS: `font-size: ${big ? 14 : 12}px; font-weight: 700; color: ${c.ink}; white-space: nowrap` }; };
+    const items = !s.f ? [] : s.memos.filter(m => m.st === s.f).map(m => { const a = SL[m.st], has = !!m.nt, open = !!s.open[m.no];
+      return { no: m.no, by: m.by, at: m.at, text: m.text, stL: a[1], nAt: has ? m.nAt : '아직 처리 전이에요', nt: m.nt, open: has && open,
+        nBtn: has ? (open ? '접기 ▴' : '상세보기 ▾') : '',
+        toggle: () => { if (!has) return; const o = Object.assign({}, s.open); o[m.no] = !open; this.setState({ open: o }); },
+        it: `padding: 10px 0; border-top: 1px solid ${c.line}; font-size: 14px`,
+        chip: `font-size: 12px; font-weight: 700; color: #fff; background: ${a[2]}; border-radius: 99px; padding: 2px 10px`,
+        p: `margin: 0 0 4px; color: ${c.ink}; white-space: pre-wrap; font-size: 14.5px`,
+        meta: `display: flex; gap: 6px; align-items: center; flex-wrap: wrap; color: ${c.mute}; font-size: 12px`,
+        note: `margin-top: 8px; padding: 9px 12px; border-radius: 12px; background: ${has ? c.acc2 : c.bg}; font-size: 13.5px`,
+        nh: `display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: none; padding: 0; text-align: left; color: inherit; font-size: 13.5px`,
+        nhB: `color: ${has ? c.acc : c.mute}`, nhS: `font-size: 12px; color: ${c.mute}`, nhI: `margin-left: auto; font-style: normal; font-size: 12.5px; font-weight: 700; color: ${c.acc}`,
+        np: `margin: 6px 0 0; white-space: pre-line; line-height: 1.6; color: ${c.ink}`,
+        cm: `margin-top: 6px; padding-left: 12px; border-left: 2px solid ${c.line}`,
+        cmo: `border: 0; background: none; color: ${c.acc}; font-size: 13px; font-weight: 700; padding: 4px 0` }; });
     return {
-      t, memos, adminMemos,
-      darkLabel: D ? '밝은 화면으로 보기' : '다크 모드로 보기',
-      toggleDark: () => this.setState({ dark: !D }),
-      setIn: () => this.setState({ login: true }), setOut: () => this.setState({ login: false, sheet: true }),
-      segIn: seg(s.login), segOut: seg(!s.login),
-      loggedIn: s.login, loggedOut: !s.login,
-      sheet: s.sheet, openSheet: () => this.setState({ sheet: true }), closeSheet: () => this.setState({ sheet: false, msg: '' }),
+      t, items,
+      tiles: STAT.map(a => tile(a, true)), tilesMini: STAT.map(a => tile(a, false)),
+      darkLabel: D ? '밝은 화면으로 보기' : '다크 모드로 보기', toggleDark: () => this.setState({ dark: !D }),
+      setIn: () => this.setState({ login: true }), setOut: () => this.setState({ login: false }),
+      segIn: seg(s.login), segOut: seg(!s.login), loggedIn: s.login, loggedOut: !s.login,
       draft: s.draft, onDraft: e => this.setState({ draft: e.target.value }), msg: s.msg,
       add: () => { const tx = s.draft.trim(); if (!tx) { this.setState({ msg: '메모를 적어 주세요' }); return; }
-        const no = Math.max(...s.memos.map(m => m.no)) + 1; const d = new Date();
-        this.setState({ draft: '', msg: '#' + no + ' 메모를 남겼어요', memos: [{ no, st: 'new', at: (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'), by: 'farm01', text: tx, answer: '' }].concat(s.memos) }); },
+        const no = Math.max(...s.memos.map(m => m.no)) + 1, d = new Date();
+        this.setState({ draft: '', f: 'memo', msg: '#' + no + ' 메모를 남겼어요', memos: s.memos.concat([{ no, st: 'memo', at: (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'), by: 'farm01', text: tx, nAt: '', nt: '' }]) }); },
       viewHi: () => this.setState({ view: 'hi' }), viewFarm: () => this.setState({ view: 'farm' }),
       vHi: seg(s.view === 'hi'), vFarm: seg(s.view === 'farm'), showHi: s.view === 'hi', showFarm: s.view === 'farm',
-      farmCount: s.memos.length, farmNew: s.memos.filter(m => m.st === 'new').length
+      farmCount: s.memos.length
     };
   }
 }
