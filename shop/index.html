@@ -49,6 +49,12 @@ h1{font-size:24px;margin:0 0 4px}
 .sumtbl{width:100%;border-collapse:collapse}
 .sumtbl td{padding:8px 14px;border-top:1px solid var(--line);vertical-align:middle}
 .sumtbl tr:first-child td{border-top:0}
+.sumlive{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin:0 0 10px;font-size:12.5px;color:var(--mute)}.sumlive b{color:#b86b00}.sumlive .ibtn{width:32px;height:32px}
+.sumlv td.sl-s,.sumlv td.sl-n,.sumlv td.sl-l{text-align:right;white-space:nowrap;font-size:13px;padding-left:4px;padding-right:10px;width:1%}.sumlv td.q{width:1%;white-space:nowrap}
+.sumlv td.sl-s{color:var(--mute)}.sumlv td.sl-n{color:#b86b00;font-weight:700}.sumlv td.sl-n:not(.on){color:var(--mute);font-weight:400}.sumlv td.sl-l{font-weight:800;color:var(--acc)}.sumlv td.sl-l.bad{color:#c0392b}
+.sumlv tr.slh td{font-size:11px;font-weight:700;color:var(--mute);padding-top:6px;padding-bottom:6px;background:rgba(0,0,0,.025);text-align:right}html.dark .sumlv tr.slh td{background:rgba(255,255,255,.04)}.sumlv tr.slh td.sl-n{color:#b86b00}.sumlv tr.onlynew .q{color:var(--mute)}
+.sumlv tr.slh .sm{display:none}.sumlv tr.slh td{white-space:nowrap}.sumlv td:first-child{white-space:normal}.sumlv .nm,.sumlv .op{word-break:keep-all;overflow-wrap:break-word}.sumgrid.lv{grid-template-columns:repeat(auto-fill,minmax(min(100%,400px),1fr))}
+@media(max-width:520px){.sumlv td{padding-left:7px;padding-right:4px}.sumlv td:first-child{padding-left:12px}.sumlv td.q{font-size:18px}.sumlv td.sl-s,.sumlv td.sl-n,.sumlv td.sl-l{font-size:11.5px;padding-right:5px}.sumlv td.sl-l:last-child{padding-right:10px}.sumlv tr.slh td{font-size:10.5px}.sumlv tr.slh .lg{display:none}.sumlv tr.slh .sm{display:inline}.sumlv .nm{font-size:13px}}
 .sumtbl .nm{font-size:14px}.sumtbl .op{font-size:13px;color:#444}
 .sumtbl .nm+.op{color:var(--mute);font-size:12px;margin-top:1px}
 .sumtbl td.q{text-align:right;font-size:20px;font-weight:700;width:60px;font-variant-numeric:tabular-nums}
@@ -6813,7 +6819,9 @@ function renderSum() {
   const del = $('sdel'); del.classList.toggle('hidden', !sumSel); delete del.dataset.sure; del.classList.remove('danger'); del.innerHTML = IC.trash; del.title = sumSel ? fmtDay(sumSel) + ' 기록 지우기' : '';
   renderUFiles(); renderTrash();
   const res = sumSel ? uplResult(sumSel, sumSlot) : null;
-  body.innerHTML = res ? sumCards(res.sheet3).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
+  let live = null; if (res && sumSel === isoDate(new Date()) && ostOn()) { incEnsure(); sumLiveTick(); try { live = sumLiveCalc(sumSel, sumSlot); } catch (e) { live = null; } }
+  const liveErr = res && !live && sumSel === isoDate(new Date()) && ostOn() ? `<div class="sumlive"><span>${incErr ? '⚠ 새 주문을 못 불러왔어요: ' + esc(incErr) : '카페24 배송준비중 주문을 불러오는 중…'}</span><button type="button" class="ibtn iczno" data-sumre="1" title="다시 받기" aria-label="다시 받기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button></div>` : '';
+  body.innerHTML = res ? liveErr + sumCards(res.sheet3, live).html : '<div class="card sumempty">' + (sumSel ? '이 날 기록을 지금 규칙으로 정리하지 못했어요.' : '정리 탭에서 원본 엑셀을 올리면 날짜별로 저장돼요.<br>달력에서 날짜를 누르면 그날 집계가 나와요.') + '</div>';
 }
 let ufPick = new Set();
 function renderUFiles() {
@@ -6950,7 +6958,7 @@ document.addEventListener('click', e => {
   if (t.dataset.snav2) { sumMonth = new Date(sumMonth.getFullYear(), sumMonth.getMonth() + Number(t.dataset.snav2), 1); renderSumCal(); return; }
   if (t.dataset.sday) { sumSel = t.dataset.sday; sumSlot = null; renderSum(); }
 });
-function sumCards(sheet3) {
+function sumCards(sheet3, live) {
   const groups = new Map();
   sheet3.slice(1).forEach((row, i) => {
     const [nm, opt, qty] = row, name = String(nm || '');
@@ -6958,6 +6966,7 @@ function sumCards(sheet3) {
     if (!groups.has(g)) groups.set(g, []);
     groups.get(g).push({ name, opt: opt || '', qty: Number(qty) || 0, star: name.startsWith('★') });
   });
+  if (live) return sumCardsLive(groups, live);
   let all = 0;
   const html = '<div class="sumgrid">' + [...groups.entries()].map(([g, items]) => {
     const tot = items.reduce((a, b) => a + b.qty, 0); all += tot;
@@ -6968,6 +6977,52 @@ function sumCards(sheet3) {
   }).join('') + '</div>';
   return { html, total: all };
 }
+// ---------- 집계 보기 (오늘): 작업할 양 → 재고 → 새 주문(카페24 배송준비중 중 아직 정리 안 함) → 남은 재고 ----------
+// 재고 = 지금 재고 + 이 날 정리분으로 이미 빠진 양 (정리 전 재고), 남은 재고 = 재고 − 작업할 양 − 새 주문.
+// 로즈마리 · 타임 · 애플민트처럼 여러 옵션이 재고 하나를 같이 쓰면 재고 · 남은 재고는 그 재고의 첫 줄에만 한 번 적어요.
+function sumLiveCalc(day, slot) {
+  if (!incD) return null;
+  const done = new Set(); Object.keys(upl).filter(d => d >= isoDate(new Date(Date.now() - 7 * 864e5)) || d === day).forEach(d => ['am', 'pm'].forEach(sl => ((upl[d][sl] && upl[d][sl].rows) || []).forEach(x => { if (x.o) done.add(String(x.o)); })));
+  const rows = [HIST_HEAD], today = isoDate(new Date()); let nOrd = 0;
+  (incD.orders || []).forEach(o => { if (done.has(String(o.order_id))) return; nOrd++; (o.items || []).forEach(i => rows.push([o.order_id, today, i.product_name || '', i.option_value || '', Number(i.quantity) || 0, '', '', i.additional_option_value || ''])); });
+  let sh3 = []; try { sh3 = rows.length > 1 ? CORE.process(rows, rules, { regions: {}, places: {} }).sheet3.slice(1) : []; } catch (e) { sh3 = []; }
+  let comp = { items: [] }; try { comp = stkCompute(); } catch (e) {}
+  const byKey = new Map(comp.items.map(x => [x.key, x])), claim = stkClaimer([...byKey.keys()]), alias = stkAliasFn();
+  const keyOf = (n, o, q) => { const out = []; stkRowUse({ p: n, op: o, q, n: '' }, today).forEach(([n2, o2, q2]) => { const u = { key: stkK(stkBase(n2, o2)), n: n2, o: o2, g: gramOf(o2), q: q2 }, to = alias(u) || claim(u), x = to ? byKey.get(to) : null;
+    if (x && x.rec) out.push([x.key, x.urule ? stkUnitAmt(x.urule, u) : stkIsW(x.unit) ? (u.g === null ? 0 : u.g * u.q) : u.q]); else out.push([null, 0]); }); return out; };
+  const ded = new Map(); byKey.forEach(x => { let v = 0; x.batches.forEach(b => { if (b.day === day && (slot === 'all' || b.slot === slot)) v += b.q; }); ded.set(x.key, v); });
+  const newQ = new Map(); sh3.forEach(([n, o, q]) => { const k = String(n ?? '').trim() + '\u0001' + String(o ?? '').trim(); newQ.set(k, (newQ.get(k) || 0) + (Number(q) || 0)); });
+  return { byKey, keyOf, ded, newQ, nOrd, at: incD.at };
+}
+function sumCardsLive(groups, L) {
+  const rk = i => i.name + '\u0001' + (i.opt || '');
+  // 새 주문에만 있는 품목도 그 묶음 끝에 붙여요 (작업할 양 0)
+  const seen = new Set(); groups.forEach(items => items.forEach(i => seen.add(rk(i))));
+  L.newQ.forEach((q, k) => { if (seen.has(k)) return; const [n, o] = k.split('\u0001'), g = groupOf(n); if (!groups.has(g)) groups.set(g, []); groups.get(g).push({ name: n, opt: o, qty: 0, star: n.startsWith('★'), onlyNew: true }); });
+  // 재고별로 작업 · 새 주문 양을 모아요
+  const work = new Map(), nw = new Map(), rowKey = new Map();
+  groups.forEach(items => items.forEach(i => { const nq = L.newQ.get(rk(i)) || 0; i.nw = nq;
+    const W = i.qty ? L.keyOf(i.name, i.opt, i.qty) : [], N = nq ? L.keyOf(i.name, i.opt, nq) : [], ks = new Set(W.concat(N).map(a => a[0]));
+    i.key = ks.size === 1 && !ks.has(null) ? [...ks][0] : (ks.size ? null : (L.keyOf(i.name, i.opt, 1)[0] || [null])[0]);
+    W.forEach(([k, a]) => { if (k) work.set(k, (work.get(k) || 0) + a); }); N.forEach(([k, a]) => { if (k) nw.set(k, (nw.get(k) || 0) + a); }); }));
+  const shown = new Set(); let all = 0;
+  const cell = i => { const x = i.key && L.byKey.get(i.key); if (!x) return '<td class="sl-s">—</td><td class="sl-n">' + (i.nw ? '+' + i.nw : '0') + '</td><td class="sl-l">—</td>';
+    const nwT = '<td class="sl-n' + (i.nw ? ' on' : '') + '">' + (i.nw ? '+' + i.nw : '0') + '</td>';
+    if (shown.has(i.key)) return '<td class="sl-s"></td>' + nwT + '<td class="sl-l"></td>';
+    shown.add(i.key); const st = (x.cur || 0) + (L.ded.get(x.key) || 0), left = st - (work.get(x.key) || 0) - (nw.get(x.key) || 0), round = v => stkIsW(x.unit) ? Math.round(v) : Math.round(v * 100) / 100;
+    return `<td class="sl-s">${esc(stkShow(x.unit, round(st)))}</td>${nwT}<td class="sl-l${left < 0 ? ' bad' : ''}">${left < 0 ? esc(stkShow(x.unit, round(-left))) + ' 부족' : esc(stkShow(x.unit, round(left)))}</td>`; };
+  const html = `<div class="sumlive"><span>카페24 배송준비중 · 아직 정리 안 한 주문 <b>${L.nOrd}건</b> · ${new Date(L.at).toTimeString().slice(0, 5)}</span><button type="button" class="ibtn iczno${incBusy ? ' spin' : ''}" data-sumre="1" title="새로 받기" aria-label="새로 받기"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg></button></div><div class="sumgrid lv">` + [...groups.entries()].map(([g, items]) => {
+    const tot = items.reduce((a, b) => a + b.qty, 0); all += tot;
+    const grams = items.every(i => gramOf(i.opt) !== null) ? items.reduce((a, i) => a + gramOf(i.opt) * i.qty, 0) : null;
+    return `<div class="sumcard"><div class="sumhd"><b>${esc(g)}</b><span>${tot}개${grams ? ' · ' + fmtG(grams) : ''}</span></div><table class="sumtbl sumlv"><tr class="slh"><td></td><td class="q"><span class="lg">작업할 양</span><span class="sm">작업</span></td><td class="sl-s">재고</td><td class="sl-n"><span class="lg">새 주문</span><span class="sm">새 주문</span></td><td class="sl-l"><span class="lg">남은 재고</span><span class="sm">남음</span></td></tr>` +
+      items.map(i => `<tr class="${i.star ? 'star' : ''}${i.onlyNew ? ' onlynew' : ''}"><td>${i.name !== g || !i.opt ? `<div class="nm">${esc(i.name)}</div>` : ''}${i.opt ? `<div class="op">${esc(i.opt)}</div>` : ''}</td><td class="q">${i.qty}</td>${cell(i)}</tr>`).join('') +
+      '</table></div>';
+  }).join('') + '</div>';
+  return { html, total: all };
+}
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-sumre]')) { incErr = ''; incLoad(); } });
+let sumLiveT = null;
+function sumLiveTick() { clearInterval(sumLiveT); sumLiveT = setInterval(() => { const b = $('sumbody'); if (!b || !b.offsetParent || document.hidden) return; if (sumSel === isoDate(new Date())) { incErr = ''; incLoad(); } }, 300e3); }
 document.addEventListener('click', e => {
   const p = e.target.dataset && e.target.dataset.reg;
   if (p === undefined) return;
@@ -10738,7 +10793,7 @@ async function incLoad() {   // 카페24에서 지금 배송준비중인 주문 
   if (incBusy) return; incBusy = true; incErr = ''; incRender(); try { homeSoon(); } catch (e) {}
   try { const d = await c24Call('/ostorders?code=N20'); incD = { orders: d.orders || [], lab: '카페24 배송준비중 주문', at: Date.now() }; incOpen = new Set(); }
   catch (e) { incErr = e && e.code === 'not_found' ? '새 worker.js를 Cloudflare에 배포하면 배송준비중 주문이 보여요' : ((e && e.message) || String(e)); if (e && (e.code === 'not_connected' || e.code === 'expired')) try { c24Status(); } catch (er) {} }
-  finally { incBusy = false; incRender(); try { homeSoon(); } catch (e) {} }
+  finally { incBusy = false; incRender(); try { homeSoon(); } catch (e) {} try { const b = $('sumbody'); if (b && b.offsetParent) renderSum(); } catch (e) {} }
 }
 let incCache = null;
 function incCalc() {
